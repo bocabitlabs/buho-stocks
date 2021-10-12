@@ -1,0 +1,10 @@
+{
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "buho backend",
+      "database": "${workspaceFolder:buho-backend}/data/db.sqlite3"
+    }
+  ]
+}
