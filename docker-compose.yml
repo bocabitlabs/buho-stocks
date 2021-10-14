@@ -9,8 +9,5 @@ services:
     ports:
     - 8000:8000
     volumes:
-    - ./requirements.txt:/usr/src/backend/requirements.txt
-    # - ./static_my_project:/static_my_project
-    - ./src:/usr/src/backend
+    - ./backend:/usr/src/backend
     - ./data/:/usr/src/data
-    - ./config:/usr/src/backend/config
