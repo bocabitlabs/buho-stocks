@@ -116,3 +116,7 @@ GitHub.sublime-settings
 .history
 config/config.py
 .DS_Store
+
+node_modules
+client/node_modules/
+backend/config/config.py
