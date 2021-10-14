@@ -1,6 +1,6 @@
 # from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -12,7 +12,7 @@ from markets.models import Market
 class MarketListAPIView(APIView):
     # add permission to check if user is authenticated
     # permission_classes = [permissions.IsAuthenticated]
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -45,7 +45,7 @@ class MarketListAPIView(APIView):
 
 class MarketDetailAPIView(APIView):
     # add permission to check if user is authenticated
-    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, todo_id, user_id):
