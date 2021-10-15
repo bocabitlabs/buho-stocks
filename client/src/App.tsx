@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import logo from "./logo.svg";
+import "./App.css";
+import { useTranslation } from "react-i18next";
 
 function App() {
-
   const [userData, setUserData] = useState();
-  const [token, setToken] = useState("")
-  const [markets, setMarkets] = useState("")
+  const [token, setToken] = useState("");
+  const [markets, setMarkets] = useState("");
 
-  const storedToken = localStorage.getItem('token');
+  const storedToken = localStorage.getItem("token");
+
+  const { i18n } = useTranslation();
+
+  useEffect(() => {
+    // const settings = SettingsService.getSettings()
+    // i18n.changeLanguage(settings.language);
+  }, [i18n])
 
   const registerUser = () => {
     const data = {
@@ -18,43 +25,61 @@ function App() {
       first_name: "John",
       last_name: "Doe",
       email: "johndoe@fakeemail.com"
-    }
-    fetch('/auth/register/', { method: 'POST', headers: {
-      'Content-Type': 'application/json'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    }, body: JSON.stringify(data) })
-  .then(response => response.json())
-  .then(data => {console.log(data); setUserData(data)});
-  }
+    };
+    fetch("/auth/register/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data)
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setUserData(data);
+      });
+  };
 
   const getToken = () => {
     const data = {
       username: "pepe",
       password: "ABCD12345!"
-    }
-    fetch('/auth/api-token-auth/', { method: 'POST', headers: {
-      'Content-Type': 'application/json'
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    }, body: JSON.stringify(data) })
-  .then(response => response.json())
-  .then(data => {console.log(data);
-    setToken(data);
-    localStorage.setItem('token', data.token);
-  });
-  }
+    };
+    fetch("/auth/api-token-auth/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: JSON.stringify(data)
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setToken(data);
+        localStorage.setItem("token", data.token);
+      });
+  };
 
   const getMarkets = () => {
-    const storedToken = localStorage.getItem('token');
-    console.log(storedToken)
+    const storedToken = localStorage.getItem("token");
+    console.log(storedToken);
 
-    fetch('/api/v1/markets/', { method: 'GET', headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Token '+ storedToken
-      // 'Content-Type': 'application/x-www-form-urlencoded',
-    }})
-  .then(response => response.json())
-  .then(data => {console.log(data); setToken(data)});
-  }
+    fetch("/api/v1/markets/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Token " + storedToken
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      }
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setToken(data);
+      });
+  };
 
   return (
     <div className="App">
