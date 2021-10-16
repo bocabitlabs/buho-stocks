@@ -1,9 +1,16 @@
 version: '3.8'
 services:
-  app:
+  migration:
     build:
       context: .
       dockerfile: Dockerfile
+    image: buho-stocks-docker
+    command: ["python", "manage.py", "migrate"]
+    volumes:
+      - ./backend:/usr/src/backend
+      - ./data/:/usr/src/data
+  app:
+    image: buho-stocks-docker
     container_name: buho-backend
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     ports:
@@ -11,3 +18,5 @@ services:
     volumes:
     - ./backend:/usr/src/backend
     - ./data/:/usr/src/data
+    depends_on:
+        - migration
