@@ -2,15 +2,15 @@ import React, { useEffect, useState } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import { useTranslation } from "react-i18next";
+import { useAuthContext } from "hooks/use-auth/use-auth-context";
 
 function App() {
-  const [userData, setUserData] = useState();
+  const [, setUserData] = useState();
   const [token, setToken] = useState("");
-  const [markets, setMarkets] = useState("");
-
-  const storedToken = localStorage.getItem("token");
+  const [markets, ] = useState("");
 
   const { i18n } = useTranslation();
+  const auth = useAuthContext();
 
   useEffect(() => {
     // const settings = SettingsService.getSettings()
@@ -81,6 +81,10 @@ function App() {
       });
   };
 
+  const signout = () => {
+    auth.signout();
+  };
+
   return (
     <div className="App">
       <header className="App-header">
@@ -88,6 +92,7 @@ function App() {
         <button onClick={registerUser}>Register User</button>
         <button onClick={getToken}>Get token</button>
         <button onClick={getMarkets}>Get markets</button>
+        <button onClick={signout}>Signout</button>
 
         <p>
           Edit <code>src/App.tsx</code> and save to reload.

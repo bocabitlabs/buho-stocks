@@ -1,10 +1,9 @@
 import { createContext } from "react";
-import { LocationState } from "types/location";
 
 export type AuthContextType = {
   isAuthenticated: boolean;
   token: string;
-  signin: (username: string, password: string, from: LocationState) => void;
+  signin: (username: string, password: string) => void;
   signout: () => null;
 };
 

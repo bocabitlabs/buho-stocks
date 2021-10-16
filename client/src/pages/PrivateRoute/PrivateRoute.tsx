@@ -2,14 +2,11 @@
 
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import { FC } from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, RouteProps } from "react-router-dom";
 
-interface Props {
-  // any props that come into the component
-}
 
 // screen if you're not yet authenticated.
-export const PrivateRoute: FC<Props> = ({ children, ...rest }) => {
+export const PrivateRoute: FC<RouteProps> = ({ children, ...rest }) => {
   let auth = useAuthContext();
   return (
     <Route

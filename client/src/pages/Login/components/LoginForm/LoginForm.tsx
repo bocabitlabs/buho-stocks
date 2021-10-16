@@ -1,7 +1,8 @@
 import { Button, Checkbox, Form, Input } from "antd";
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Link } from "react-router-dom";
 
-const LoginForm = () => {
+export const LoginForm = () => {
   const onFinish = (values: any) => {
     console.log('Received values of form: ', values);
   };
@@ -29,6 +30,7 @@ const LoginForm = () => {
           placeholder="Password"
         />
       </Form.Item>
+
       <Form.Item>
         <Form.Item name="remember" valuePropName="checked" noStyle>
           <Checkbox>Remember me</Checkbox>
@@ -43,7 +45,7 @@ const LoginForm = () => {
         <Button type="primary" htmlType="submit" className="login-form-button">
           Log in
         </Button>
-        Or <a href="">register now!</a>
+        Or <Link to="/register">register now!</Link>
       </Form.Item>
     </Form>
   );

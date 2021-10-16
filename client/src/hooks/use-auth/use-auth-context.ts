@@ -1,7 +1,6 @@
 import { AuthContextType } from "contexts/auth";
 import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-import { LocationState } from "types/location";
 
 export function useAuthContext(): AuthContextType {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -12,11 +11,13 @@ export function useAuthContext(): AuthContextType {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setIsAuthenticated(true);
+      history.replace("/app");
     }
-  }, []);
+    console.log(storedToken)
+  }, [history]);
 
   const signin = useCallback(
-    (username: string, password: string, from: LocationState) => {
+    (username: string, password: string) => {
       const data = {
         username: "pepe",
         password: "ABCD12345!"
@@ -34,7 +35,7 @@ export function useAuthContext(): AuthContextType {
           setIsAuthenticated(true);
           setToken(data);
           localStorage.setItem("token", data.token);
-          history.replace(from.from.pathname);
+          history.replace("/app");
         });
       // return result;
     },
@@ -45,8 +46,9 @@ export function useAuthContext(): AuthContextType {
     setToken("");
     setIsAuthenticated(false);
     localStorage.setItem("token", "");
+    history.replace("/login");
     return null;
-  }, []);
+  }, [history]);
 
   return {
     isAuthenticated,

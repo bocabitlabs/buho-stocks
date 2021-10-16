@@ -1,21 +1,19 @@
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
-import { useLocation } from "react-router-dom";
-import { LocationState } from "types/location";
+import { LoginForm } from "./components/LoginForm/LoginForm";
 
 export function LoginPage() {
-  let location = useLocation<LocationState>();
   let auth = useAuthContext();
 
-  let { from } = location.state || { from: { pathname: "/" } };
   let login = () => {
     const username = "pepe";
     const password = "popo";
-    auth.signin(username, password, from);
+    auth.signin(username, password);
   };
 
   return (
     <div>
-      <p>You must log in to view the page at {from.pathname}</p>
+      <LoginForm/>
+      <p>You must log in to view the app</p>
       <button onClick={login}>Log in</button>
     </div>
   );
