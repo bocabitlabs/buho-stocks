@@ -1,20 +1,31 @@
+import { Col, Layout, Row } from "antd";
+import { Content, Footer } from "antd/lib/layout/layout";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
+import { useHistory } from "react-router-dom";
 import { LoginForm } from "./components/LoginForm/LoginForm";
 
 export function LoginPage() {
   let auth = useAuthContext();
+  let history = useHistory();
 
-  let login = () => {
-    const username = "pepe";
-    const password = "popo";
-    auth.signin(username, password);
-  };
+  if(auth.isAuthenticated){
+    history.replace("/app");
+  }
 
   return (
-    <div>
-      <LoginForm/>
-      <p>You must log in to view the app</p>
-      <button onClick={login}>Log in</button>
-    </div>
+    <Layout>
+      <Row>
+        <Col span={12} offset={6}>
+          <Content style={{ padding: "40px 50px" }}>
+            <div className="site-layout-content">
+              <LoginForm />
+            </div>
+          </Content>
+          <Footer style={{ textAlign: "center", zIndex: 999 }}>
+            Bocabitlabs 2021
+          </Footer>
+        </Col>
+      </Row>
+    </Layout>
   );
 }

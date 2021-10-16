@@ -1,52 +1,75 @@
-import { Button, Checkbox, Form, Input } from "antd";
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Button, Form, Input, PageHeader } from "antd";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { useAuthContext } from "hooks/use-auth/use-auth-context";
 
 export const LoginForm = () => {
+  let auth = useAuthContext();
+  const { t } = useTranslation();
+
   const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
+    console.log("Received values of form: ", values);
+
+    const data = {
+      username: "pepe",
+      password: "ABCD12345!"
+    };
+
+    const username = values.username ? values.username : data.username;
+    const password = values.password ? values.password : data.password;
+    auth.signin(username, password);
   };
 
   return (
     <Form
       name="normal_login"
+      layout="vertical"
       className="login-form"
       initialValues={{ remember: true }}
       onFinish={onFinish}
     >
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: 'Please input your Username!' }]}
+      <PageHeader
+        className="site-page-header-responsive"
+        title="Buho Stocks"
+        subTitle={t("Sign in")}
       >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-      </Form.Item>
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: 'Please input your Password!' }]}
-      >
-        <Input
-          prefix={<LockOutlined className="site-form-item-icon" />}
-          type="password"
-          placeholder="Password"
-        />
-      </Form.Item>
-
-      <Form.Item>
-        <Form.Item name="remember" valuePropName="checked" noStyle>
-          <Checkbox>Remember me</Checkbox>
+        <Form.Item
+          name="username"
+          label={t("Username")}
+          rules={[{ required: true, message: t("Please input your Username!") }]}
+        >
+          <Input
+            prefix={<UserOutlined className="site-form-item-icon" />}
+            placeholder="Username"
+          />
+        </Form.Item>
+        <Form.Item
+          name="password"
+          label={t("Password")}
+          rules={[{ required: true, message: t("Please input your Password") }]}
+        >
+          <Input
+            prefix={<LockOutlined className="site-form-item-icon" />}
+            type="password"
+            placeholder={t("Password")}
+          />
         </Form.Item>
 
-        <a className="login-form-forgot" href="">
-          Forgot password
-        </a>
-      </Form.Item>
-
-      <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
-          Log in
-        </Button>
-        Or <Link to="/register">register now!</Link>
-      </Form.Item>
+        <Form.Item>
+          <Button
+            type="primary"
+            htmlType="submit"
+            className="login-form-button"
+          >
+            {t("Sign in")}
+          </Button>{" "}
+          {t("Or")} <Link to="/register">{t("register now!")}</Link>
+        </Form.Item>
+        {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
+          <Button onClick={onFinish}>Dev login</Button>
+        )}
+      </PageHeader>
     </Form>
   );
 };
