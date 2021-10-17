@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from "react";
-import logo from "./logo.svg";
 import "./App.css";
 import { useTranslation } from "react-i18next";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
-import { Avatar, Breadcrumb, Col, Layout, Menu, Row } from "antd";
+import { Avatar, Breadcrumb, Col, Layout, Row } from "antd";
 import { Content, Footer, Header } from "antd/lib/layout/layout";
 import {
-  AppstoreOutlined,
-  HomeOutlined,
-  MailOutlined,
-  SettingOutlined,
   UserOutlined
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import SubMenu from "antd/lib/menu/SubMenu";
 import Title from "antd/lib/typography/Title";
+import AppSidebar from "components/AppSidebar/AppSidebar";
 
 function App() {
   const [markets] = useState("");
@@ -60,35 +56,35 @@ function App() {
         }}
       >
         <Row justify="space-between">
-          <Col span={8}>
-            <span style={{float: "left"}}><Title style={{fontSize: 30, lineHeight: "inherit"}}>Buho Stocks</Title></span>
-            <Menu theme="light" mode="horizontal" defaultSelectedKeys={["1"]}>
+          <Col span={20}>
+            <span style={{ float: "left" }}>
+              <Title style={{ fontSize: 30, lineHeight: "inherit" }}>
+                Buho Stocks
+              </Title>
+            </span>
+            {/* <Menu theme="light" mode="horizontal" defaultSelectedKeys={["1"]}>
               <Link to={"/app"}>
                 <Menu.Item key="1" icon={<HomeOutlined />}>
                   Home
                 </Menu.Item>
               </Link>
-            </Menu>
+            </Menu> */}
           </Col>
-          <Col span={8} offset={8} style={{ textAlign: "right" }}>
+          <Col span={4} style={{ textAlign: "right" }}>
             <Link to={"/profile"}>
-              <Avatar style={{ backgroundColor: 'rgb(50 152 254)' }} icon={<UserOutlined />} />
+              <Avatar
+                style={{ backgroundColor: "rgb(50 152 254)" }}
+                icon={<UserOutlined />}
+              />
             </Link>
           </Col>
         </Row>
       </Header>
-      <Row style={{ padding: "0 20px", marginTop: 64 }}>
+      <Row style={{ marginTop: 64 }} justify="space-around">
         <Col span={6}>
-          <Menu mode="inline" style={{ width: 256, marginTop: 20 }}>
-            <Menu.Item key="1">Portfolios</Menu.Item>
-            <Menu.Item key="2">Markets</Menu.Item>
-            <Menu.Item key="3">Currencies</Menu.Item>
-            <Menu.Item key="4">Sectors</Menu.Item>
-            <Menu.Item key="4">Import & Export</Menu.Item>
-            <Menu.Item key="4">Settings</Menu.Item>
-          </Menu>
+          <AppSidebar/>
         </Col>
-        <Col span={18}>
+        <Col span={17}>
           <Content className="site-layout">
             <Breadcrumb style={{ margin: "16px 0" }}>
               <Breadcrumb.Item>Home</Breadcrumb.Item>
