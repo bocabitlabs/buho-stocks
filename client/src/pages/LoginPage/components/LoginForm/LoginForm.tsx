@@ -1,14 +1,16 @@
-import { Button, Form, Input, PageHeader } from "antd";
+import { Button, Form, Input, message, PageHeader } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
+import getRoute, { HOME_ROUTE } from "routes";
 
 export const LoginForm = () => {
-  let auth = useAuthContext();
+  const auth = useAuthContext();
+  const history = useHistory();
   const { t } = useTranslation();
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
 
     const data = {
@@ -18,7 +20,14 @@ export const LoginForm = () => {
 
     const username = values.username ? values.username : data.username;
     const password = values.password ? values.password : data.password;
-    auth.signin(username, password);
+    const response = await auth.signin(username, password);
+    if(response?.error){
+      message.error({ content: t(`Error ${response.statusCode}: Unable to log in`) });
+      return response;
+    }else{
+      message.success({ content: t("You are logged in") });
+      history.replace(getRoute(HOME_ROUTE));
+    }
   };
 
   return (
@@ -64,7 +73,7 @@ export const LoginForm = () => {
           >
             {t("Sign in")}
           </Button>{" "}
-          {t("Or")} <Link to="/register">{t("register now!")}</Link>
+          {t("Or")} <Link to="/app/register">{t("register now!")}</Link>
         </Form.Item>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
           <Button onClick={onFinish}>Dev login</Button>

@@ -1,16 +1,17 @@
-import { Col, Layout, Menu, PageHeader, Row } from "antd";
-import { Content, Footer, Header } from "antd/lib/layout/layout";
+import { Col, Layout, Row } from "antd";
+import { Content, Footer } from "antd/lib/layout/layout";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import React, { ReactElement } from "react";
 import { useHistory } from "react-router-dom";
+import getRoute, { HOME_ROUTE } from "routes";
 import RegisterForm from "./components/RegisterForm";
 
-export default function Register(): ReactElement {
+export default function RegisterPage(): ReactElement {
   let auth = useAuthContext();
   let history = useHistory();
 
   if (auth.isAuthenticated) {
-    history.replace("/app");
+    history.replace(getRoute(HOME_ROUTE));
   }
 
   return (

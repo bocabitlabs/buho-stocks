@@ -3,8 +3,8 @@
     {
       "previewLimit": 50,
       "driver": "SQLite",
-      "name": "buho backend",
-      "database": "${workspaceFolder:buho-backend}/data/db.sqlite3"
+      "name": "buho stocks",
+      "database": "/Users/rene/projects/github/buho-backend/data/db.sqlite3"
     }
   ]
 }

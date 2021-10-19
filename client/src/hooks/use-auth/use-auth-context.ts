@@ -1,6 +1,8 @@
+import { ApiClient, IApiResponse, IRegistrationData } from "api/api-client";
 import { AuthContextType } from "contexts/auth";
 import { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
+import getRoute, { HOME_ROUTE } from "routes";
 
 export function useAuthContext(): AuthContextType {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -11,48 +13,55 @@ export function useAuthContext(): AuthContextType {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
       setIsAuthenticated(true);
-      history.replace("/app");
+      history.replace(getRoute(HOME_ROUTE));
     }
-    console.log(storedToken)
+    console.log(storedToken);
   }, [history]);
 
-  const signin = useCallback(
-    (username: string, password: string) => {
-      const data = {
-        username: "pepe",
-        password: "ABCD12345!"
-      };
-      fetch("/auth/api-token-auth/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          setIsAuthenticated(true);
-          setToken(data);
-          localStorage.setItem("token", data.token);
-          history.replace("/app");
-        });
-      // return result;
-    },
-    [history]
-  );
+  const signin = async (
+    username: string,
+    password: string
+  ): Promise<IApiResponse> => {
+    const data = {
+      username: username,
+      password: password
+    };
+
+    const client = new ApiClient();
+    const response = await client.loginUser(data);
+    if (response.error) {
+      return response;
+    }
+    history.replace(getRoute(HOME_ROUTE));
+    console.log(data);
+    setIsAuthenticated(true);
+    setToken(response.result);
+    localStorage.setItem("token", response.result.token);
+    return response;
+  };
+
+  const register = async (data: IRegistrationData): Promise<IApiResponse> => {
+    const client = new ApiClient();
+    const response = await client.registerUser(data);
+    if (response.error) {
+      return response;
+    }
+    history.replace("/app/login");
+    return response;
+  };
 
   const signout = useCallback(() => {
     setToken("");
     setIsAuthenticated(false);
     localStorage.setItem("token", "");
-    history.replace("/login");
+    history.replace("/app/login");
     return null;
   }, [history]);
 
   return {
     isAuthenticated,
     token,
+    register,
     signin,
     signout
   };

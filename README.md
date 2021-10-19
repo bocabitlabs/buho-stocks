@@ -18,6 +18,10 @@ docker-compose exec app python manage.py flush --no-input
 ```
 
 ```bash
+docker-compose exec app python manage.py makemigrations
+```
+
+```bash
 docker-compose exec app python manage.py migrate
 ```
 

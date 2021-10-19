@@ -15,6 +15,7 @@ import React, {
 } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import getRoute, { HOME_ROUTE } from "routes";
 
 
 interface RoutePathProps {
@@ -25,26 +26,26 @@ interface RoutePathProps {
 }
 
 const navLinks: RoutePathProps[] = [
-  { key: "0", path: "/home", text: "Home", icon: <HomeOutlined /> },
-  { key: "1", path: "/portfolios", text: "Portfolios", icon: <BookOutlined /> },
-  { key: "2", path: "/markets", text: "Markets", icon: <BankOutlined /> },
+  { key: "0", path: getRoute(HOME_ROUTE), text: "Home", icon: <HomeOutlined /> },
+  { key: "1", path: "/app/portfolios", text: "Portfolios", icon: <BookOutlined /> },
+  { key: "2", path: "/app/markets", text: "Markets", icon: <BankOutlined /> },
   {
     key: "3",
-    path: "/currencies",
+    path: "/app/currencies",
     text: "Currencies",
     icon: <DollarCircleOutlined />
   },
-  { key: "4", path: "/sectors", text: "Sectors", icon: <ClusterOutlined /> },
+  { key: "4", path: "/app/sectors", text: "Sectors", icon: <ClusterOutlined /> },
   {
     key: "5",
-    path: "/import-export",
+    path: "/app/import-export",
     text: "Import & Export",
     icon: <ImportOutlined />
   },
 
   {
-    key: "5",
-    path: "/settings",
+    key: "6",
+    path: "/app/settings",
     text: "Settings",
     icon: <SettingOutlined />
   }

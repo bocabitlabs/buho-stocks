@@ -1,15 +1,16 @@
-import { Button, Form, Input, PageHeader } from "antd";
+import { Button, Form, Input, message, PageHeader } from "antd";
+import { IRegistrationData } from "api/api-client";
+import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router";
 import { Link } from "react-router-dom";
 
 const RegisterForm = () => {
   const [form] = Form.useForm();
-  const history = useHistory();
   const { t } = useTranslation();
+  const auth = useAuthContext();
 
-  const onFinish = (values: any) => {
+  const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
     const devData = {
       username: "pepe",
@@ -19,7 +20,7 @@ const RegisterForm = () => {
       lastName: "Doe",
       email: "johndoe@fakeemail.com"
     };
-    const data = {
+    const data: IRegistrationData = {
       username: values.username? values.username : devData.username,
       password: values.password? values.password: devData.password,
       password2: values.password2? values.password2: devData.password2,
@@ -28,18 +29,12 @@ const RegisterForm = () => {
       email: values.email? values.email: devData.email
     };
 
-    fetch("/auth/register/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        history.replace("/login");
-      });
+    const response = await auth.register(data);
+    if(response?.error){
+      message.error({ content: t(`Error ${response.statusCode}: Unable to create user`) });
+    }else{
+      message.success({ content: t("User created") });
+    }
   };
 
   return (
@@ -53,12 +48,12 @@ const RegisterForm = () => {
       <PageHeader
         className="site-page-header-responsive"
         title="Buho Stocks"
-        subTitle="Register"
+        subTitle={t("Register")}
       >
         <Form.Item
           name="username"
-          label="Username"
-          tooltip="What do you want others to call you?"
+          label={t("Username")}
+          tooltip={t("What do you want others to call you?")}
           rules={[
             {
               required: true,
@@ -72,15 +67,15 @@ const RegisterForm = () => {
 
         <Form.Item
           name="email"
-          label="E-mail"
+          label={t("E-mail")}
           rules={[
             {
               type: "email",
-              message: "The input is not valid E-mail!"
+              message: t("The input is not valid E-mail")
             },
             {
               required: true,
-              message: "Please input your E-mail!"
+              message: t("Please input your E-mail")
             }
           ]}
         >
@@ -89,11 +84,11 @@ const RegisterForm = () => {
 
         <Form.Item
           name="password"
-          label="Password"
+          label={t("Password")}
           rules={[
             {
               required: true,
-              message: "Please input your password!"
+              message: t("Please input your password")
             }
           ]}
           hasFeedback
@@ -103,13 +98,13 @@ const RegisterForm = () => {
 
         <Form.Item
           name="password2"
-          label="Confirm Password"
+          label={t("Confirm Password")}
           dependencies={["password"]}
           hasFeedback
           rules={[
             {
               required: true,
-              message: "Please confirm your password!"
+              message: t("Please confirm your password")
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -117,7 +112,7 @@ const RegisterForm = () => {
                   return Promise.resolve();
                 }
                 return Promise.reject(
-                  new Error("The two passwords that you entered do not match!")
+                  new Error(t("The two passwords that you entered do not match"))
                 );
               }
             })
@@ -128,12 +123,12 @@ const RegisterForm = () => {
 
         <Form.Item
           name="firstName"
-          label="First Name"
-          tooltip="What do you want others to call you?"
+          label={t("First Name")}
+          tooltip={t("What do you want others to call you?")}
           rules={[
             {
               required: true,
-              message: "Please input your first name!",
+              message: t("Please input your first name"),
               whitespace: true
             }
           ]}
@@ -143,12 +138,12 @@ const RegisterForm = () => {
 
         <Form.Item
           name="lastName"
-          label="Last name"
-          tooltip="What do you want others to call you?"
+          label={t("Last name")}
+          tooltip={t("What is your last name?")}
           rules={[
             {
               required: true,
-              message: "Please input your last name!",
+              message: t("Please input your last name"),
               whitespace: true
             }
           ]}
@@ -158,11 +153,11 @@ const RegisterForm = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Register
-          </Button> {t("Already registered?")} <Link to="/login">sign in!</Link>
+            {t("Register")}
+          </Button> {t("Already registered?")} <Link to="/app/login">sign in!</Link>
         </Form.Item>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
-          <Button onClick={onFinish}>Dev register</Button>
+          <Button onClick={onFinish}>{t("Dev register")}</Button>
         )}
       </PageHeader>
     </Form>

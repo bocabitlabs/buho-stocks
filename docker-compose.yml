@@ -7,7 +7,7 @@ services:
     image: buho-stocks-docker
     command: ["python", "manage.py", "migrate"]
     volumes:
-      - ./backend:/usr/src/backend
+      - ./backend:/usr/src/app
       - ./data/:/usr/src/data
   app:
     image: buho-stocks-docker
@@ -15,7 +15,7 @@ services:
     ports:
     - 8000:8000
     volumes:
-    - ./backend:/usr/src/backend
+    - ./backend:/usr/src/app
     - ./data/:/usr/src/data
     depends_on:
         - migration

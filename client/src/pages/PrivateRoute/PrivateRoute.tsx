@@ -17,7 +17,7 @@ export const PrivateRoute: FC<RouteProps> = ({ children, ...rest }) => {
         ) : (
           <Redirect
             to={{
-              pathname: "/login",
+              pathname: "/app/login",
               state: { from: location }
             }}
           />

@@ -2,6 +2,7 @@ import { Col, Layout, Row } from "antd";
 import { Content, Footer } from "antd/lib/layout/layout";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import { useHistory } from "react-router-dom";
+import getRoute, { HOME_ROUTE } from "routes";
 import { LoginForm } from "./components/LoginForm/LoginForm";
 
 export function LoginPage() {
@@ -9,7 +10,7 @@ export function LoginPage() {
   let history = useHistory();
 
   if(auth.isAuthenticated){
-    history.replace("/app");
+    history.replace(getRoute(HOME_ROUTE));
   }
 
   return (
