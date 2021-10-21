@@ -10,6 +10,8 @@ from settings.models import UserSettings
 from settings.serializers import UserSettingsSerializer
 
 # Create your views here.
+
+
 class UserSettingsListAPIView(APIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -19,8 +21,8 @@ class UserSettingsListAPIView(APIView):
         '''
         List all the market items for given requested user
         '''
-        todos = UserSettings.objects.filter(user=request.user.id)
-        serializer = UserSettingsSerializer(todos, many=True)
+        todo = UserSettings.objects.get(user=request.user.id)
+        serializer = UserSettingsSerializer(todo)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
@@ -52,7 +54,7 @@ class UserSettingsDetailAPIView(APIView):
         Helper method to get the object with given todo_id, and user_id
         '''
         try:
-            return UserSettings.objects.get(id=todo_id, user = user_id)
+            return UserSettings.objects.get(id=todo_id, user=user_id)
         except UserSettings.DoesNotExist:
             return None
 
@@ -73,22 +75,26 @@ class UserSettingsDetailAPIView(APIView):
 
     # 4. Update
     @swagger_auto_schema(request_body=UserSettingsSerializer)
-    def put(self, request, market_id, *args, **kwargs):
+    def put(self, request, settings_id, *args, **kwargs):
         '''
-        Updates the todo item with given todo_id if exists
+        Updates the settings item with given todo_id if exists
         '''
-        todo_instance = self.get_object(market_id, request.user.id)
+        todo_instance = self.get_object(settings_id, request.user.id)
         if not todo_instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
+                {"res": "Object with settings id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST
             )
         data = {
-            'task': request.data.get('task'),
-            'completed': request.data.get('completed'),
-            'user': request.user.id
+            'company_display_mode': request.data.get('company_display_mode'),
+            'company_sort_by': request.data.get('company_sort_by'),
+            'language': request.data.get('language'),
+            'main_portfolio': request.data.get('main_portfolio'),
+            'portfolio_sort_by': request.data.get('portfolio_sort_by'),
+            'portfolio_display_mode': request.data.get('portfolio_display_mode')
         }
-        serializer = UserSettingsSerializer(instance = todo_instance, data=data, partial = True)
+        serializer = UserSettingsSerializer(
+            instance=todo_instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

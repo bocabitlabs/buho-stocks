@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('company_display_mode', models.CharField(max_length=200)),
                 ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(blank=True, null=False, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

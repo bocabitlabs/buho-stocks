@@ -31,13 +31,18 @@ class MarketListAPIView(APIView):
         Create the Market with given market data
         '''
         data = {
-            'task': request.data.get('task'),
-            'completed': request.data.get('completed'),
-            'user': request.user.id
+            'name': request.data.get('name'),
+            'description': request.data.get('description'),
+            'color': request.data.get('color'),
+            'region': request.data.get('region'),
+            'open_time': request.data.get('open_time'),
+            'close_time': request.data.get('close_time')
         }
+        print(data)
         serializer = MarketSerializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            print("Serializer is valid")
+            serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -53,7 +58,7 @@ class MarketDetailAPIView(APIView):
         Helper method to get the object with given todo_id, and user_id
         '''
         try:
-            return Market.objects.get(id=todo_id, user = user_id)
+            return Market.objects.get(id=todo_id, user=user_id)
         except Market.DoesNotExist:
             return None
 
@@ -89,7 +94,8 @@ class MarketDetailAPIView(APIView):
             'completed': request.data.get('completed'),
             'user': request.user.id
         }
-        serializer = MarketSerializer(instance = todo_instance, data=data, partial = True)
+        serializer = MarketSerializer(
+            instance=todo_instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -6,4 +6,4 @@ class MarketSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Market
         fields = ['name', 'description', 'color', 'region', 'open_time',
-                  'close_time', 'date_created', 'last_updated']
+                  'close_time', 'date_created', 'last_updated', 'id']

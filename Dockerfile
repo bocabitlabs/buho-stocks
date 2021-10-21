@@ -34,7 +34,7 @@ RUN pip install --no-cache-dir --upgrade -r /usr/src/requirements.txt
 WORKDIR /usr/src/client
 COPY ./client/package.json /usr/src/client
 COPY ./client/yarn.lock /usr/src/client
-RUN yarn
+RUN yarn --production --pure-lockfile
 
 COPY ./client /usr/src/client
 RUN yarn build

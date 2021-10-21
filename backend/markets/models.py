@@ -10,10 +10,10 @@ class Market(models.Model):
     open_time = models.TimeField()
     close_time = models.TimeField()
 
-    date_created = models.DateTimeField(auto_created=True)
+    date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    user = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = True)
+    user = models.ForeignKey(User, on_delete = models.CASCADE, blank = True, null = False)
 
 
     def __str___(self):

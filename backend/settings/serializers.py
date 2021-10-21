@@ -5,4 +5,5 @@ from rest_framework import serializers
 class UserSettingsSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = UserSettings
-        fields = ['language']
+        fields = ['company_display_mode', 'company_sort_by', 'language', 'last_updated',
+                  'main_portfolio', 'portfolio_sort_by', 'portfolio_display_mode', 'id']

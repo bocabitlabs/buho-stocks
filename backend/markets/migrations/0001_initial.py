@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
             name='Market',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_created', models.DateTimeField(auto_created=True)),
+                ('date_created', models.DateTimeField(auto_now_add=True)),
                 ('name', models.CharField(max_length=200)),
                 ('description', models.TextField()),
                 ('color', models.CharField(max_length=200)),
@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
                 ('open_time', models.TimeField()),
                 ('close_time', models.TimeField()),
                 ('last_updated', models.DateTimeField(auto_now=True)),
-                ('user', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(blank=True, null=False, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]
