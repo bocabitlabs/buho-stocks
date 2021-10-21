@@ -11,7 +11,7 @@ export default function RegisterPage(): ReactElement {
   let history = useHistory();
 
   if (auth.isAuthenticated) {
-    history.replace(getRoute(HOME_ROUTE));
+    history.push(getRoute(HOME_ROUTE));
   }
 
   return (

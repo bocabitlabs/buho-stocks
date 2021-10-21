@@ -23,14 +23,13 @@ export interface IApiResponse {
 }
 
 export class ApiClient {
-  private marketsEndpoint = "/api/v1/markets/";
-  private settingsEndpoint = "/api/v1/settings/";
-  private registerUserEndpoint = "/auth/register/";
-  private loginUserEndpoint = "/auth/api-token-auth/";
+  loginUserEndpoint = "/auth/api-token-auth/";
+  marketsEndpoint = "/api/v1/markets/";
+  settingsEndpoint = "/api/v1/settings/";
+  registerUserEndpoint = "/auth/register/";
 
   private getHeaders = (authenticated = false) => {
     const storedToken = localStorage.getItem("token");
-    console.debug(storedToken);
     let headers: HttpRequestHeader = {
       "Content-Type": "application/json",
       Accept: "application/json"
@@ -41,9 +40,10 @@ export class ApiClient {
     return headers;
   };
 
-  private makeGetRequest = async (path: string, authenticated = false) => {
+  makeGetRequest = async (path: string, authenticated = false) => {
     const controller = new AbortController();
     const { signal } = controller;
+    let error = false;
 
     const response = await fetch(path, {
       method: "GET",
@@ -53,14 +53,13 @@ export class ApiClient {
     // Wait 2 seconds to abort both requests
     setTimeout(() => controller.abort(), 2000);
     if (!response.ok) {
-      const message = `An error has occured: ${response.status}`;
-      throw new Error(message);
+      error = true;
     }
     const content = await response.json();
-    return content;
+    return { error, result: content, statusCode: response.status };
   };
 
-  private makePostRequest = async (
+  makePostRequest = async (
     path: string,
     data: any,
     authenticated = false
@@ -84,43 +83,52 @@ export class ApiClient {
     return { error, result: content, statusCode: response.status };
   };
 
-  getMarkets = async () => {
-    const result = await this.makeGetRequest(this.marketsEndpoint, true);
-    return result;
+  makePutRequest = async (
+    path: string,
+    id: number,
+    data: any,
+    authenticated = false
+  ) => {
+    const controller = new AbortController();
+    const { signal } = controller;
+    let error = false;
+
+    const response = await fetch(path + id + "/", {
+      method: "PUT",
+      headers: this.getHeaders(authenticated),
+      body: JSON.stringify(data),
+      signal
+    });
+    // Wait 2 seconds to abort both requests
+    setTimeout(() => controller.abort(), 2000);
+    if (!response.ok) {
+      error = true;
+    }
+    const content = await response.json();
+    return { error, result: content, statusCode: response.status };
   };
 
-  getSettings = async () => {
-    const result = await this.makeGetRequest(this.settingsEndpoint, true);
-    return result;
-  };
+  makeDeleteRequest = async (
+    path: string,
+    id: number,
+    authenticated = false
+  ) => {
+    const controller = new AbortController();
+    const { signal } = controller;
+    let error = false;
 
-  registerUser = async (
-    registrationData: IRegistrationData
-  ): Promise<IApiResponse> => {
-    try {
-      const result = await this.makePostRequest(
-        this.registerUserEndpoint,
-        registrationData,
-        true
-      );
-      return result;
-    } catch (error) {
-      console.error(error);
-      return { error: true, result: error, statusCode: 0 };
+    const response = await fetch(path + id + "/", {
+      method: "DELETE",
+      headers: this.getHeaders(authenticated),
+      signal
+    });
+    // Wait 2 seconds to abort both requests
+    setTimeout(() => controller.abort(), 2000);
+    if (!response.ok) {
+      error = true;
     }
-  };
-  loginUser = async (loginData: ILoginData): Promise<IApiResponse> => {
-    try {
-      const result = await this.makePostRequest(
-        this.loginUserEndpoint,
-        loginData,
-        true
-      );
-      return result;
-    } catch (error) {
-      console.error(error);
-      return { error: true, result: error, statusCode: 0 };
-    }
+    const content = await response.json();
+    return { error, result: content, statusCode: response.status };
   };
 }
 

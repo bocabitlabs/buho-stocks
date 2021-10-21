@@ -1,13 +1,11 @@
-import { Button, Form, Input, message, PageHeader } from "antd";
+import { Button, Form, Input, PageHeader } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link, useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
-import getRoute, { HOME_ROUTE } from "routes";
 
 export const LoginForm = () => {
   const auth = useAuthContext();
-  const history = useHistory();
   const { t } = useTranslation();
 
   const onFinish = async (values: any) => {
@@ -20,14 +18,7 @@ export const LoginForm = () => {
 
     const username = values.username ? values.username : data.username;
     const password = values.password ? values.password : data.password;
-    const response = await auth.signin(username, password);
-    if(response?.error){
-      message.error({ content: t(`Error ${response.statusCode}: Unable to log in`) });
-      return response;
-    }else{
-      message.success({ content: t("You are logged in") });
-      history.replace(getRoute(HOME_ROUTE));
-    }
+    auth.signin(username, password);
   };
 
   return (

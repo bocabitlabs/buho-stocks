@@ -1,4 +1,4 @@
-import { Button, Form, Input, message, PageHeader } from "antd";
+import { Button, Form, Input, PageHeader } from "antd";
 import { IRegistrationData } from "api/api-client";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import React from "react";
@@ -29,12 +29,7 @@ const RegisterForm = () => {
       email: values.email? values.email: devData.email
     };
 
-    const response = await auth.register(data);
-    if(response?.error){
-      message.error({ content: t(`Error ${response.statusCode}: Unable to create user`) });
-    }else{
-      message.success({ content: t("User created") });
-    }
+    auth.register(data);
   };
 
   return (

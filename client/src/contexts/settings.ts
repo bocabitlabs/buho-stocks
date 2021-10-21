@@ -1,4 +1,3 @@
-import { IApiResponse } from "api/api-client";
 import { createContext } from "react";
 import { ISettings, ISettingsFormFields } from "types/settings";
 
@@ -6,15 +5,15 @@ import { ISettings, ISettingsFormFields } from "types/settings";
 export type SettingsContextType = {
   isLoading: boolean;
   settings: ISettings | null;
-  get: () => ISettings|null;
-  update: (newValue: ISettingsFormFields) => Promise<IApiResponse>| undefined;
+  get: () => void;
+  update: (settingsId: number, newValues: ISettingsFormFields) => void;
 };
 
 export const settingsDefaultValue: SettingsContextType = {
   isLoading: false,
   settings: null,
-  get: () => null,
-  update: (newValue: ISettingsFormFields) => undefined
+  get: () => undefined,
+  update: (settingsId: number, newValues: ISettingsFormFields) => undefined
 };
 
 export const SettingsContext = createContext<SettingsContextType>(

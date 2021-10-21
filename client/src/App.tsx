@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.css";
 import { useTranslation } from "react-i18next";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
@@ -16,17 +16,13 @@ import CurrenciesPage from "pages/CurrenciesPage/CurrenciesPage";
 import MarketsPage from "pages/MarketsPage/MarketsPage";
 import PortfoliosPage from "pages/PortfoliosPage/PortfoliosPage";
 import getRoute, { APP_BASE_ROUTE, HOME_ROUTE, SETTINGS_ROUTE } from "routes";
-import MarketDetailsPage from "pages/MarketDetailsPage/MarketDetailsPage";
 import SubMenu from "antd/lib/menu/SubMenu";
+import MarketsAddPage from "pages/MarketsAddPage/MarketsAddPage";
+import MarketsEditPage from "pages/MarketsEditPage/MarketsEditPage";
 
 function App() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const auth = useAuthContext();
-
-  useEffect(() => {
-    // const settings = SettingsService.getSettings()
-    // i18n.changeLanguage(settings.language);
-  }, [i18n]);
 
   const signout = () => {
     auth.signout();
@@ -53,11 +49,16 @@ function App() {
           </Col>
           <Col span={2} offset={10} style={{ textAlign: "right" }}>
             <Menu theme="light" mode="horizontal" defaultSelectedKeys={["1"]}>
-              <SubMenu style={{ position: 'absolute', top: 0, right: 0 }} key="sub1" icon={<UserOutlined  />}>
-                <Menu.Item key="3" onClick={signout}>{t("Sign out")}</Menu.Item>
+              <SubMenu
+                style={{ position: "absolute", top: 0, right: 0 }}
+                key="sub1"
+                icon={<UserOutlined />}
+              >
+                <Menu.Item key="3" onClick={signout}>
+                  {t("Sign out")}
+                </Menu.Item>
               </SubMenu>
             </Menu>
-            {/* </Link> */}
           </Col>
         </Row>
       </Header>
@@ -65,29 +66,20 @@ function App() {
         <Col span={6}>
           <AppSidebar />
         </Col>
+
         <Col span={17}>
           <Content className="site-layout">
-            {/* <Breadcrumb style={{ margin: "16px 0" }}>
-              <Breadcrumb.Item>Home</Breadcrumb.Item>
-              <Breadcrumb.Item>List</Breadcrumb.Item>
-              <Breadcrumb.Item>App</Breadcrumb.Item>
-            </Breadcrumb> */}
-
             <Switch>
               <Route exact path={getRoute(APP_BASE_ROUTE)}>
                 <Redirect to={getRoute(HOME_ROUTE)} />
               </Route>
               <Route exact path={getRoute(HOME_ROUTE)} component={HomePage} />
               <Route exact path="/app/portfolios" component={PortfoliosPage} />
-              <Route
-                exact
-                path="/app/markets/:id/edit"
-                component={MarketDetailsPage}
-              />
+              <Route exact path="/app/markets/add" component={MarketsAddPage} />
               <Route
                 exact
                 path="/app/markets/:id"
-                component={MarketDetailsPage}
+                component={MarketsEditPage}
               />
               <Route exact path="/app/markets" component={MarketsPage} />
               <Route exact path="/app/currencies" component={CurrenciesPage} />
@@ -108,26 +100,6 @@ function App() {
       </Row>
       <Footer style={{ textAlign: "center" }}>Bocabitlabs ©2021</Footer>
     </Layout>
-    // <div className="App">
-    //   <header className="App-header">
-    //     <img src={logo} className="App-logo" alt="logo" />
-    //     <button onClick={getMarkets}>Get markets</button>
-    //     <button onClick={signout}>Signout</button>
-
-    //     <p>
-    //       Edit <code>src/App.tsx</code> and save to reload.
-    //       {JSON.stringify(markets)}
-    //     </p>
-    //     <a
-    //       className="App-link"
-    //       href="https://reactjs.org"
-    //       target="_blank"
-    //       rel="noopener noreferrer"
-    //     >
-    //       Learn React
-    //     </a>
-    //   </header>
-    // </div>
   );
 }
 

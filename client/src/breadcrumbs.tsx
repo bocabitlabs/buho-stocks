@@ -10,8 +10,6 @@ interface IDict {
 const Breadcrumbs = () => {
   const location = useLocation();
   let {id} = useParams<{id: string}>();
-  console.log("Location:")
-  console.log(location)
 
   const breadcrumbNameMap: IDict = {
     "/app/currencies": "Currencies",
@@ -30,17 +28,11 @@ const Breadcrumbs = () => {
 
   // const pathSnippets = location.pathname.split("/").filter((i) => i);
   const pathSnippets = location.pathname.split('/').filter(i => i);
-
-  console.log(pathSnippets);
   // pathSnippets.shift();
   const extraBreadcrumbItems: any[] = [];
     pathSnippets.forEach((_, index) => {
       const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
       Object.keys(breadcrumbNameMap).forEach((item) => {
-        console.log("ITEM:")
-        console.log(item)
-        console.log(url)
-        console.log(pathToRegexp(item).test(url))
         if (pathToRegexp(item).test(url)) {
           extraBreadcrumbItems.push(<Breadcrumb.Item key={url}>
             <Link to={url}>

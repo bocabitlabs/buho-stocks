@@ -8,6 +8,7 @@ export interface ISettingsFormFields{
 }
 
 export interface ISettings extends ISettingsFormFields {
+  id: number,
   dateCreated: string;
   lastUpdated: string;
 }
