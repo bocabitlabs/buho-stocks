@@ -26,7 +26,6 @@
 	"extensions": [
 		"coenraads.bracket-pair-colorizer",
 		"ms-python.python",
-		"ms-python.vscode-pylance",
 		"wayou.vscode-todo-highlight"
 	],
 
