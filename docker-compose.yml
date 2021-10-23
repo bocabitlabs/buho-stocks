@@ -4,13 +4,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: buho-stocks-docker
+    image: buhostocksdocker
     command: ["python", "manage.py", "migrate"]
     volumes:
       - ./backend:/usr/src/app
       - ./data/:/usr/src/data
   app:
-    image: buho-stocks-docker
+    image: buhostocksdocker
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     ports:
     - 8000:8000

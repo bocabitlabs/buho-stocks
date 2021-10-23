@@ -15,7 +15,7 @@ from settings.serializers import UserSettingsSerializer
 class UserSettingsListAPIView(APIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
+    # test
     # 1. List all
     def get(self, request, *args, **kwargs):
         '''
