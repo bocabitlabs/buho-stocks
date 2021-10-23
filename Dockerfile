@@ -1,5 +1,3 @@
-# pull the official base image
-#FROM python:3.9.7-buster
 FROM tiangolo/uwsgi-nginx:python3.9
 
 RUN apt-get update
