@@ -18,10 +18,19 @@ export function useMarketsContext(): MarketsContextType {
     setIsLoading(true);
     const response = await MarketService.getAll();
     if (response.error) {
-      return response;
+      console.error(response);
     }
-    console.log(response);
     setMarkets(response.result);
+    setIsLoading(false);
+  }, []);
+
+  const getById = useCallback(async (id: number) => {
+    setIsLoading(true);
+    const response = await MarketService.getById(id);
+    if (response?.error) {
+      console.error(response);
+    }
+    setMarket(response.result);
     setIsLoading(false);
   }, []);
 
@@ -54,6 +63,19 @@ export function useMarketsContext(): MarketsContextType {
     return response;
   };
 
+  const update = async (id: number, newValues: IMarketFormFields) => {
+    const response = await MarketService.update(id, newValues);
+    if (response?.error) {
+      message.error({
+        content: t(`Error ${response.statusCode}: Unable to update market`)
+      });
+    } else {
+      getById(id);
+      message.success({ content: t("Market has been updated") });
+    }
+    return response;
+  };
+
   return {
     isLoading,
     market,
@@ -61,5 +83,7 @@ export function useMarketsContext(): MarketsContextType {
     create,
     deleteById,
     getAll,
+    getById,
+    update
   };
 }

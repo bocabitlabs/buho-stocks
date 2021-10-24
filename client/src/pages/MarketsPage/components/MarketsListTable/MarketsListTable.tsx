@@ -6,6 +6,8 @@ import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useTranslation } from "react-i18next";
 import { useMarketsContext } from "hooks/use-markets/use-markets-context";
 import getRoute, { MARKETS_ROUTE } from "routes";
+import moment from "moment";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
 export default function MarketsListTable() {
   const {
@@ -17,11 +19,11 @@ export default function MarketsListTable() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    const getAllMarkets = async ()=> {
-      getMarkets()
-    }
-    getAllMarkets()
-  }, [getMarkets])
+    const getAllMarkets = async () => {
+      getMarkets();
+    };
+    getAllMarkets();
+  }, [getMarkets]);
 
   function confirm(recordId: number) {
     console.log(recordId);
@@ -43,9 +45,7 @@ export default function MarketsListTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: any) => (
-        <Link to={`${getRoute(MARKETS_ROUTE)}/${record.id}`}>{text}</Link>
-      ),
+      render: (text: string, record: any) => (<strong>{text}</strong>),
       sorter: (a: IMarket, b: IMarket) => a.name.localeCompare(b.name)
     },
     {
@@ -66,19 +66,27 @@ export default function MarketsListTable() {
       title: t("Opening time"),
       dataIndex: "openTime",
       key: "openTime",
-      sorter: (a: IMarket, b: IMarket) => a.openTime.localeCompare(b.openTime)
+      sorter: (a: IMarket, b: IMarket) => a.openTime.localeCompare(b.openTime),
+      render: (text: string, record: any) =>
+        moment(text, "HH:mm").format("HH:mm")
     },
     {
       title: t("Closing time"),
       dataIndex: "closeTime",
       key: "closeTime",
-      sorter: (a: IMarket, b: IMarket) => a.closeTime.localeCompare(b.closeTime)
+      sorter: (a: IMarket, b: IMarket) =>
+        a.closeTime.localeCompare(b.closeTime),
+      render: (text: string, record: any) =>
+        moment(text, "HH:mm").format("HH:mm")
     },
     {
       title: t("Action"),
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
+          <Link to={`${getRoute(MARKETS_ROUTE)}/${record.id}`}>
+            <Button icon={<EditOutlined />}></Button>
+          </Link>
           <Popconfirm
             key={`market-delete-${record.key}`}
             title={`Delete market ${record.name}?`}
@@ -86,9 +94,7 @@ export default function MarketsListTable() {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger type="text">
-              {t("Delete")}
-            </Button>
+            <Button danger icon={<DeleteOutlined />}></Button>
           </Popconfirm>
         </Space>
       )
@@ -108,8 +114,8 @@ export default function MarketsListTable() {
     }));
   };
 
-  if(isLoading){
-    return <Spin/>
+  if (isLoading) {
+    return <Spin />;
   }
 
   return (

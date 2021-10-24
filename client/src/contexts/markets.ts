@@ -7,8 +7,9 @@ export type MarketsContextType = {
   market: IMarket | null;
   create: (newValues: IMarketFormFields) => void;
   getAll: () => void;
-  deleteById:(id: number) => void;
-  // update: (marketId: number, newValues: IMarketFormFields) => void;
+  getById: (marketId: number) => void;
+  deleteById:(marketId: number) => void;
+  update: (marketId: number, newValues: IMarketFormFields) => void;
 };
 
 export const marketsDefaultValue: MarketsContextType = {
@@ -17,8 +18,9 @@ export const marketsDefaultValue: MarketsContextType = {
   market: null,
   create: (newValues: IMarketFormFields) => undefined,
   getAll: () => [],
-  deleteById: (id: number) => undefined
-  // update: (settingsId: number, newValues: IMarketFormFields) => undefined
+  getById: (marketId: number) => undefined,
+  deleteById: (id: number) => undefined,
+  update: (settingsId: number, newValues: IMarketFormFields) => undefined
 };
 
 export const MarketsContext =

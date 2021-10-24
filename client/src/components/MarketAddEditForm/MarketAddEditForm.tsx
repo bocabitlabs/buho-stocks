@@ -1,5 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import { Button, Form, Input, TimePicker } from "antd";
+import { Button, Form, Input, Spin, TimePicker } from "antd";
 
 import moment from "moment";
 import CountrySelector from "components/CountrySelector/CountrySelector";
@@ -22,21 +22,25 @@ function MarketAddEditForm({
   const {
     market,
     create: addMarket,
-    // getAll: fetchMarkets
-    // getById: getMarketById,
-    // update: updateMarket
+    getById: getMarketById,
+    update: updateMarket
   } = useMarketsContext();
-  console.log(addMarket)
 
   useEffect(() => {
-    // if (marketId) {
-    //   const newMarket = getMarketById(marketId);
-    //   if (newMarket) {
-    //     setColor(newMarket.color);
-    //     setRegion(newMarket.region);
-    //   }
-    // }
-  }, []);
+    if (marketId) {
+      const id: number = +marketId;
+      getMarketById(id);
+    }
+  }, [marketId, getMarketById]);
+
+  useEffect(() => {
+    if (marketId) {
+      if (market) {
+        setColor(market.color);
+        setRegion(market.region);
+      }
+    }
+  }, [marketId, market]);
 
   const handleSubmit = (values: any) => {
     const { name, description, openTime, closeTime } = values;
@@ -48,22 +52,13 @@ function MarketAddEditForm({
       openTime: openTime.format("HH:mm"),
       closeTime: closeTime.format("HH:mm")
     };
-    // if (marketId) {
-    //   changes = updateMarket(marketId, newMarket);
-    // } else {
-    addMarket(newMarket);
-    // }
-    // if (changes.changes) {
-    //   fetchMarkets();
-    //   if (!marketId) {
-    //     message.success({ content: t("Market has been added"), key });
-    //   } else {
-    //     message.success({ content: t("Market has been updated"), key });
-    //   }
-    //   history.push("/markets");
-    // } else {
-    //   message.success({ content: t("Unable to add the market"), key });
-    // }
+    console.log(newMarket);
+    if (marketId) {
+      const id: number = +marketId;
+      updateMarket(id, newMarket);
+    } else {
+      addMarket(newMarket);
+    }
   };
 
   const handleColorChange = (color: any, event: any) => {
@@ -76,7 +71,7 @@ function MarketAddEditForm({
   };
 
   if (marketId && !market) {
-    return null;
+    return <Spin />;
   }
 
   return (

@@ -3,6 +3,7 @@ import MarketAddEditForm from "components/MarketAddEditForm/MarketAddEditForm";
 import { MarketsContext } from "contexts/markets";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
 import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
 import MarketsEditPageHeader from "./components/MarketsEditPageHeader/MarketsEditPageHeader";
 
 // Params are placeholders in the URL that begin
@@ -11,8 +12,13 @@ import MarketsEditPageHeader from "./components/MarketsEditPageHeader/MarketsEdi
 // is used for matching dynami§wc segments in other
 // popular web frameworks like Rails and Express.
 
-export default function MarketsAddPage() {
+export interface IRouteParams {
+  id: string;
+}
+
+export default function MarketsEditPage() {
   const marketsContext = useContext(MarketsContext);
+  const { id } = useParams<IRouteParams>();
 
   return (
     <WrapperPage>
@@ -20,7 +26,7 @@ export default function MarketsAddPage() {
         <MarketsEditPageHeader>
           <Row>
             <Col>
-              {/* <MarketAddEditForm /> */}
+              <MarketAddEditForm marketId={id} />
             </Col>
             <Col></Col>
           </Row>

@@ -14,6 +14,7 @@ const MarketsPageHeader: FC<ReactNode> = ({ children }) => {
       title={t("Markets")}
       extra={[
         <Button
+          key="add-button"
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => {
