@@ -21,7 +21,7 @@ export default function CountrySelector({ handleChange, initialValue }: Props): 
         aria-label={element.name}
         style={{ paddingRight: "1em" }}
       >
-        <FlagIcon code={element.code} size="1x" />
+        <FlagIcon code={element.code} size="lg" />
       </span>
       {element.name}
     </div>
