@@ -1,6 +1,10 @@
 # from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import (
+    SessionAuthentication,
+    BasicAuthentication,
+    TokenAuthentication,
+)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -17,9 +21,9 @@ class MarketListAPIView(APIView):
 
     # 1. List all
     def get(self, request, *args, **kwargs):
-        '''
+        """
         List all the market items for given requested user
-        '''
+        """
         todos = Market.objects.filter(user=request.user.id)
         serializer = MarketSerializer(todos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -27,18 +31,17 @@ class MarketListAPIView(APIView):
     # 2. Create
     @swagger_auto_schema(request_body=MarketSerializer)
     def post(self, request, *args, **kwargs):
-        '''
+        """
         Create the Market with given market data
-        '''
+        """
         data = {
-            'name': request.data.get('name'),
-            'description': request.data.get('description'),
-            'color': request.data.get('color'),
-            'region': request.data.get('region'),
-            'open_time': request.data.get('open_time'),
-            'close_time': request.data.get('close_time')
+            "name": request.data.get("name"),
+            "description": request.data.get("description"),
+            "color": request.data.get("color"),
+            "region": request.data.get("region"),
+            "openTime": request.data.get("openTime"),
+            "closeTime": request.data.get("closeTime"),
         }
-        print(data)
         serializer = MarketSerializer(data=data)
         if serializer.is_valid():
             print("Serializer is valid")
@@ -54,9 +57,9 @@ class MarketDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, todo_id, user_id):
-        '''
+        """
         Helper method to get the object with given todo_id, and user_id
-        '''
+        """
         try:
             return Market.objects.get(id=todo_id, user=user_id)
         except Market.DoesNotExist:
@@ -64,14 +67,14 @@ class MarketDetailAPIView(APIView):
 
     # 3. Retrieve
     def get(self, request, market_id, *args, **kwargs):
-        '''
+        """
         Retrieves the Todo with given todo_id
-        '''
+        """
         todo_instance = self.get_object(market_id, request.user.id)
         if not todo_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
 
         serializer = MarketSerializer(todo_instance)
@@ -80,22 +83,24 @@ class MarketDetailAPIView(APIView):
     # 4. Update
     @swagger_auto_schema(request_body=MarketSerializer)
     def put(self, request, market_id, *args, **kwargs):
-        '''
+        """
         Updates the todo item with given todo_id if exists
-        '''
+        """
         todo_instance = self.get_object(market_id, request.user.id)
         if not todo_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         data = {
-            'task': request.data.get('task'),
-            'completed': request.data.get('completed'),
-            'user': request.user.id
+            "name": request.data.get("name"),
+            "description": request.data.get("description"),
+            "color": request.data.get("color"),
+            "region": request.data.get("region"),
+            "openTime": request.data.get("openTime"),
+            "closeTime": request.data.get("closeTime"),
         }
-        serializer = MarketSerializer(
-            instance=todo_instance, data=data, partial=True)
+        serializer = MarketSerializer(instance=todo_instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -103,17 +108,14 @@ class MarketDetailAPIView(APIView):
 
     # 5. Delete
     def delete(self, request, market_id, *args, **kwargs):
-        '''
+        """
         Deletes the todo item with given todo_id if exists
-        '''
+        """
         market_instance = self.get_object(market_id, request.user.id)
         if not market_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST
+                status=status.HTTP_400_BAD_REQUEST,
             )
         market_instance.delete()
-        return Response(
-            {"res": "Object deleted!"},
-            status=status.HTTP_200_OK
-        )
+        return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)
