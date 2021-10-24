@@ -3,15 +3,12 @@ services:
   build_app:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     image: buhostocksdocker
   app:
     image: buhostocksdocker
     command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
     ports:
     - 8000:8000
-    volumes:
-    - ./backend:/usr/src/app
-    - ./data/:/usr/src/data
     depends_on:
     - build_app
