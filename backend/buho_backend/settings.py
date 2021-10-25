@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # 'todo',
     "markets",
+    "sectors",
     "settings",
     "rest_framework",
     "rest_framework.authtoken",

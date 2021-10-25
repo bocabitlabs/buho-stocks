@@ -2,7 +2,7 @@ from settings.models import UserSettings
 from rest_framework import serializers
 
 
-class UserSettingsSerializer(serializers.HyperlinkedModelSerializer):
+class UserSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserSettings
         fields = ['company_display_mode', 'company_sort_by', 'language', 'last_updated',

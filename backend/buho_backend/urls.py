@@ -41,6 +41,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # path('markets/', include('rest_framework.urls', namespace='rest_framework')),
     path('api/v1/markets/', include("markets.urls")),
+    path('api/v1/sectors/', include("sectors.urls")),
     path('api/v1/settings/', include("settings.urls")),
     path('auth/', include('auth.urls')),
     url(r'^swagger(?P<format>\.json|\.yaml)$',
