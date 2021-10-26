@@ -90,6 +90,9 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
         # Any other parsers
     ),
+    'JSON_UNDERSCOREIZE': {
+        'no_underscore_before_number': True,
+    },
 }
 
 WSGI_APPLICATION = "buho_backend.wsgi.application"

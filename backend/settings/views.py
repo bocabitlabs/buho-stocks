@@ -10,6 +10,20 @@ from settings.models import UserSettings
 from settings.serializers import UserSettingsSerializer
 
 
+class UserSettingsListAPIView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    # test
+    # 1. List all
+    def get(self, request, *args, **kwargs):
+        '''
+        List all the market items for given requested user
+        '''
+        todo = UserSettings.objects.get(user=request.user.id)
+        serializer = UserSettingsSerializer(todo)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserSettingsDetailAPIView(APIView):
     # add permission to check if user is authenticated
     authentication_classes = [SessionAuthentication, TokenAuthentication]
