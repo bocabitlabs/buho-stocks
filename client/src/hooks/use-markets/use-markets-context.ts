@@ -16,7 +16,7 @@ export function useMarketsContext(): MarketsContextType {
 
   const getAll = useCallback(async () => {
     setIsLoading(true);
-    const response = await MarketService.getAll();
+    const response = await new MarketService().getAll();
     if (response.error) {
       console.error(response);
     }
@@ -26,7 +26,7 @@ export function useMarketsContext(): MarketsContextType {
 
   const getById = useCallback(async (id: number) => {
     setIsLoading(true);
-    const response = await MarketService.getById(id);
+    const response = await new MarketService().getById(id);
     if (response?.error) {
       console.error(response);
     }
@@ -36,7 +36,7 @@ export function useMarketsContext(): MarketsContextType {
 
   const create = async (newValues: IMarketFormFields) => {
     console.log("CREATE");
-    const response = await MarketService.create(newValues);
+    const response = await new MarketService().create(newValues);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to create market`)
@@ -50,7 +50,7 @@ export function useMarketsContext(): MarketsContextType {
   };
 
   const deleteById = async (id: number) => {
-    const response = await MarketService.deleteById(id);
+    const response = await new MarketService().deleteById(id);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to delete market`)
@@ -64,7 +64,7 @@ export function useMarketsContext(): MarketsContextType {
   };
 
   const update = async (id: number, newValues: IMarketFormFields) => {
-    const response = await MarketService.update(id, newValues);
+    const response = await new MarketService().update(id, newValues);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to update market`)

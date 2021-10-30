@@ -23,11 +23,6 @@ export interface IApiResponse {
 }
 
 export class ApiClient {
-  loginUserEndpoint = "/auth/api-token-auth/";
-  marketsEndpoint = "/api/v1/markets/";
-  settingsEndpoint = "/api/v1/settings/";
-  registerUserEndpoint = "/auth/register/";
-
   private getHeaders = (authenticated = false) => {
     const storedToken = localStorage.getItem("token");
     let headers: HttpRequestHeader = {

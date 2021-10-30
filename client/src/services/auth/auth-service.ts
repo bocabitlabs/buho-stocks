@@ -1,13 +1,16 @@
 import ApiClient, { IApiResponse, ILoginData, IRegistrationData } from "api/api-client";
 
 export default class AuthService {
-  static registerUser = async (
+  loginUserEndpoint = "/auth/api-token-auth/";
+  registerUserEndpoint = "/auth/register/";
+
+  registerUser = async (
     registrationData: IRegistrationData
   ): Promise<IApiResponse> => {
     try {
       const client = new ApiClient();
       const result = await client.makePostRequest(
-        client.registerUserEndpoint,
+        this.registerUserEndpoint,
         registrationData,
         true
       );
@@ -17,11 +20,11 @@ export default class AuthService {
       return { error: true, result: error, statusCode: 0 };
     }
   };
-  static loginUser = async (loginData: ILoginData): Promise<IApiResponse> => {
+  loginUser = async (loginData: ILoginData): Promise<IApiResponse> => {
     try {
       const client = new ApiClient();
       const result = await client.makePostRequest(
-        client.loginUserEndpoint,
+        this.loginUserEndpoint,
         loginData,
         true
       );

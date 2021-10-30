@@ -16,7 +16,7 @@ export function useSettingsContext(): SettingsContextType {
 
   const get = async () => {
     setIsLoading(true);
-    const response = await SettingsService.getSettings();
+    const response = await new SettingsService().getSettings();
     if (response.error) {
       return response;
     }
@@ -26,7 +26,7 @@ export function useSettingsContext(): SettingsContextType {
 
   const update = async (settingsId: number, newValues: ISettingsFormFields) => {
     // const response = await client.updateSettings(settingsId, data);
-    const response = await SettingsService.updateSettings(
+    const response = await new SettingsService().updateSettings(
       settingsId,
       newValues
     );

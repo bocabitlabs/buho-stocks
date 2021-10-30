@@ -36,7 +36,7 @@ export function useAuthContext(): AuthContextType {
       password: password
     };
 
-    const response = await AuthService.loginUser(data);
+    const response = await new AuthService().loginUser(data);
     if (response.error) {
       return response;
     }
@@ -57,14 +57,14 @@ export function useAuthContext(): AuthContextType {
   };
 
   const register = async (data: IRegistrationData): Promise<IApiResponse> => {
-    const response = await AuthService.registerUser(data);
-    if (response.error) {
-      return response;
-    }
+    const response = await new AuthService().registerUser(data);
+
+    console.log(response)
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to create user`)
       });
+      return response;
     } else {
       message.success({ content: t("User created") });
     }
