@@ -5,8 +5,13 @@ import { PrivateRoute } from "pages/PrivateRoute/PrivateRoute";
 import Register from "pages/RegisterPage/RegisterPage";
 import React, { ReactElement, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
-import getRoute, { LOGIN_ROUTE, REGISTER_ROUTE } from "routes";
+import {
+  Route,
+  BrowserRouter as Router,
+  Switch,
+  Redirect
+} from "react-router-dom";
+import getRoute, { HOME_ROUTE, LOGIN_ROUTE, REGISTER_ROUTE } from "routes";
 
 export default function Main(): ReactElement {
   const { i18n } = useTranslation();
@@ -19,6 +24,9 @@ export default function Main(): ReactElement {
   return (
     <Router>
       <Switch>
+        <Route exact path={"/"}>
+          <Redirect to={getRoute(HOME_ROUTE)} />
+        </Route>
         <Route path={getRoute(LOGIN_ROUTE)}>
           <LoginPage />
         </Route>

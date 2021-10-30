@@ -70,7 +70,7 @@ function App() {
         <Col span={17}>
           <Content className="site-layout">
             <Switch>
-              <Route exact path={getRoute(APP_BASE_ROUTE)}>
+              <Route exact path={APP_BASE_ROUTE}>
                 <Redirect to={getRoute(HOME_ROUTE)} />
               </Route>
               <Route exact path={getRoute(HOME_ROUTE)} component={HomePage} />
