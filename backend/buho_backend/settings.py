@@ -104,7 +104,7 @@ WSGI_APPLICATION = "buho_backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "/usr/src/data/db.sqlite3",
+        "NAME": config.DATABASE_PATH,
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
