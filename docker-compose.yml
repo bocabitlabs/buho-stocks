@@ -7,8 +7,8 @@ services:
     image: buhostocksdocker
   app:
     image: buhostocksdocker
-    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
-    ports:
-    - 8000:8000
+    # command: ["python", "manage.py", "runserver", "0.0.0.0:8080"]
+    # ports:
+    # - 8080:8080
     depends_on:
     - build_app

@@ -15,7 +15,7 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
-ENV LISTEN_PORT 8000
+ENV LISTEN_PORT 8080
 
 ENV UWSGI_INI /usr/src/uwsgi.ini
 COPY ./uwsgi.ini /usr/src/uwsgi.ini
@@ -46,7 +46,7 @@ COPY ./backend /usr/src/app
 #COPY ./config/config.sample.py /usr/src/backend/config/config.py
 COPY ./data/db.sqlite3.base /usr/src/data/db.sqlite3
 
-EXPOSE 8000
+EXPOSE 8080
 
 RUN python manage.py collectstatic
 
