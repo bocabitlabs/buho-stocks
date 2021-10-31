@@ -5,20 +5,22 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Yarn: React",
-      "type": "node",
-      "request": "launch",
-      "runtimeArgs": ["start"],
-      "runtimeExecutable": "yarn",
-      "cwd": "${workspaceRoot}/client",
-    },
-    {
       "name": "Python: Django",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/backend/manage.py",
       "args": ["runserver", "0.0.0.0:8001"],
       "django": true
+    },
+    {
+      "name": "Yarn: React",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "runtimeArgs": ["start"],
+      "runtimeExecutable": "yarn",
+      "cwd": "${workspaceRoot}/client",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/client"
     }
   ]
 }
