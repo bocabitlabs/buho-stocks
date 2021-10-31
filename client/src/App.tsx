@@ -15,10 +15,19 @@ import SectorsPage from "pages/SectorsPage/SectorsPage";
 import CurrenciesPage from "pages/CurrenciesPage/CurrenciesPage";
 import MarketsPage from "pages/MarketsPage/MarketsPage";
 import PortfoliosPage from "pages/PortfoliosPage/PortfoliosPage";
-import getRoute, { APP_BASE_ROUTE, HOME_ROUTE, SETTINGS_ROUTE } from "routes";
+import getRoute, {
+  APP_BASE_ROUTE,
+  HOME_ROUTE,
+  MARKETS_ADD_ROUTE,
+  MARKETS_ROUTE,
+  SECTORS_ADD_ROUTE,
+  SECTORS_ROUTE,
+  SETTINGS_ROUTE
+} from "routes";
 import SubMenu from "antd/lib/menu/SubMenu";
 import MarketsAddPage from "pages/MarketsAddPage/MarketsAddPage";
 import MarketsEditPage from "pages/MarketsEditPage/MarketsEditPage";
+import SectorsAddPage from "pages/SectorsAddPage/SectorsAddpage";
 
 function App() {
   const { t } = useTranslation();
@@ -75,15 +84,29 @@ function App() {
               </Route>
               <Route exact path={getRoute(HOME_ROUTE)} component={HomePage} />
               <Route exact path="/app/portfolios" component={PortfoliosPage} />
-              <Route exact path="/app/markets/add" component={MarketsAddPage} />
+              <Route exact path={getRoute(MARKETS_ADD_ROUTE)} component={MarketsAddPage} />
               <Route
                 exact
                 path="/app/markets/:id"
                 component={MarketsEditPage}
               />
-              <Route exact path="/app/markets" component={MarketsPage} />
+              <Route
+                exact
+                path={getRoute(MARKETS_ROUTE)}
+                component={MarketsPage}
+              />
               <Route exact path="/app/currencies" component={CurrenciesPage} />
-              <Route exact path="/app/sectors" component={SectorsPage} />
+              <Route
+                exact
+                path={getRoute(SECTORS_ROUTE)}
+                component={SectorsPage}
+              />
+              <Route
+                exact
+                path={getRoute(SECTORS_ADD_ROUTE)}
+                component={SectorsAddPage}
+              />
+
               <Route
                 exact
                 path="/app/import-export"
