@@ -30,7 +30,8 @@
 		"python.linting.mypyPath": "/usr/local/py-utils/bin/mypy",
 		"python.linting.pycodestylePath": "/usr/local/py-utils/bin/pycodestyle",
 		"python.linting.pydocstylePath": "/usr/local/py-utils/bin/pydocstyle",
-		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint"
+		"python.linting.pylintPath": "/usr/local/py-utils/bin/pylint",
+		"python.linting.pylintArgs": ["--load-plugins=pylint_django", "--django-settings-module=buho_backend.settings"]
 	},
 
 	// Add the IDs of extensions you want installed when the container is created.
@@ -41,7 +42,9 @@
 		"dbaeumer.vscode-eslint",
 		"eg2.vscode-npm-script",
 		"esbenp.prettier-vscode",
-		"visualstudioexptteam.vscodeintellicode"
+		"visualstudioexptteam.vscodeintellicode",
+		"donjayamanne.python-extension-pack",
+		"njpwerner.autodocstring"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
