@@ -3,6 +3,10 @@ from django.db import models
 
 
 class SectorBase(models.Model):
+    """
+    Base class for the sectors models
+    """
+
     class Meta:
         abstract = True
 
@@ -15,14 +19,16 @@ class SectorBase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
 
-# Create your models here.
 class SuperSector(SectorBase):
-    pass
+    """Super sector model class"""
 
 
-# Create your models here.
 class Sector(SectorBase):
-    super_sector = models.ForeignKey(SuperSector, on_delete=models.CASCADE, related_name='sectors')
+    """Sector model class"""
+
+    super_sector = models.ForeignKey(
+        SuperSector, on_delete=models.CASCADE, related_name="sectors"
+    )
 
     def __str___(self):
-        return self.title
+        return self.name
