@@ -25,7 +25,7 @@ jobs:
         cache-dependency-path: client/yarn.lock
     - name: Install Dependencies
       run: |
-        yarn
+        cd client && yarn
     - name: Run Tests
       run: |
         cd client && yarn test
