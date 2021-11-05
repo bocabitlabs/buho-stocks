@@ -25,6 +25,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pwd
+        ls -la /usr/src/app/
         mv backend/config/config.sample.py /usr/src/app/config/config.py
     - name: Run Tests
       run: |
