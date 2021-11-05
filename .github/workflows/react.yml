@@ -28,4 +28,4 @@ jobs:
         yarn
     - name: Run Tests
       run: |
-        yarn test
+        cd client && yarn test
