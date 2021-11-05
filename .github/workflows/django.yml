@@ -26,7 +26,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         mv backend/config/config.sample.py backend/config/config.py
-        sed -i -e "s/\/usr\/src\/data\/db.sqlite3/$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')/g" ${{GITHUB_WORKSPACE}}/backend/db.sqlite3
+        sed -i -e "s/\/usr\/src\/data\/db.sqlite3/$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')/g" ${{env.GITHUB_WORKSPACE}}/backend/db.sqlite3
     - name: Run Tests
       run: |
         python backend/manage.py test
