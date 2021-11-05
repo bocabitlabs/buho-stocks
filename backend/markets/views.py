@@ -1,8 +1,6 @@
-# from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
 from rest_framework.authentication import (
     SessionAuthentication,
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -14,8 +12,8 @@ from markets.models import Market
 
 
 class MarketListAPIView(APIView):
-    # add permission to check if user is authenticated
-    # permission_classes = [permissions.IsAuthenticated]
+    """Get all the markets from a user"""
+
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -52,23 +50,23 @@ class MarketListAPIView(APIView):
 
 
 class MarketDetailAPIView(APIView):
-    # add permission to check if user is authenticated
+    """Operations for a single Market"""
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, todo_id, user_id):
+    def get_object(self, market_id, user_id):
         """
-        Helper method to get the object with given todo_id, and user_id
+        Get a market object from a user given the market id
         """
         try:
-            return Market.objects.get(id=todo_id, user=user_id)
+            return Market.objects.get(id=market_id, user=user_id)
         except Market.DoesNotExist:
             return None
 
     # 3. Retrieve
     def get(self, request, market_id, *args, **kwargs):
         """
-        Retrieves the Todo with given todo_id
+        Retrieve the market item with given market_id
         """
         todo_instance = self.get_object(market_id, request.user.id)
         if not todo_instance:
@@ -84,7 +82,7 @@ class MarketDetailAPIView(APIView):
     @swagger_auto_schema(request_body=MarketSerializer)
     def put(self, request, market_id, *args, **kwargs):
         """
-        Updates the todo item with given todo_id if exists
+        Update the market item with given market_id
         """
         todo_instance = self.get_object(market_id, request.user.id)
         if not todo_instance:
@@ -109,7 +107,7 @@ class MarketDetailAPIView(APIView):
     # 5. Delete
     def delete(self, request, market_id, *args, **kwargs):
         """
-        Deletes the todo item with given todo_id if exists
+        Delete the market item with given market_id
         """
         market_instance = self.get_object(market_id, request.user.id)
         if not market_instance:
