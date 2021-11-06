@@ -10,7 +10,7 @@ import { IMarket, IMarketFormFields } from "types/market";
 export function useMarketsContext(): MarketsContextType {
   const [market, setMarket] = useState<IMarket | null>(null);
   const [markets, setMarkets] = useState<IMarket[] | []>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const history = useHistory();
 
@@ -35,7 +35,6 @@ export function useMarketsContext(): MarketsContextType {
   }, []);
 
   const create = async (newValues: IMarketFormFields) => {
-    console.log("CREATE");
     const response = await new MarketService().create(newValues);
     if (response?.error) {
       message.error({

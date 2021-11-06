@@ -1,5 +1,7 @@
 # Buho Backend (WIP)
 
+[![Django CI](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg)](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml) [![React CI](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg)](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml)
+
 ```bash
 python3 -m venv ./env
 source ./env/bin/activate
