@@ -8,15 +8,10 @@ import {
   SettingOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import React, {
-  ReactElement,
-  useEffect,
-  useState
-} from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import getRoute, { HOME_ROUTE } from "routes";
-
 
 interface RoutePathProps {
   key: string;
@@ -26,8 +21,18 @@ interface RoutePathProps {
 }
 
 const navLinks: RoutePathProps[] = [
-  { key: "0", path: getRoute(HOME_ROUTE), text: "Home", icon: <HomeOutlined /> },
-  { key: "1", path: "/app/portfolios", text: "Portfolios", icon: <BookOutlined /> },
+  {
+    key: "0",
+    path: getRoute(HOME_ROUTE),
+    text: "Home",
+    icon: <HomeOutlined />
+  },
+  {
+    key: "1",
+    path: "/app/portfolios",
+    text: "Portfolios",
+    icon: <BookOutlined />
+  },
   { key: "2", path: "/app/markets", text: "Markets", icon: <BankOutlined /> },
   {
     key: "3",
@@ -35,7 +40,12 @@ const navLinks: RoutePathProps[] = [
     text: "Currencies",
     icon: <DollarCircleOutlined />
   },
-  { key: "4", path: "/app/sectors", text: "Sectors", icon: <ClusterOutlined /> },
+  {
+    key: "4",
+    path: "/app/sectors",
+    text: "Sectors",
+    icon: <ClusterOutlined />
+  },
   {
     key: "5",
     path: "/app/import-export",
@@ -61,12 +71,12 @@ export default function AppSidebar(): ReactElement {
   );
 
   const onClickMenu = (item: any) => {
-    let clicked = navLinks.find((_item) => _item.key === item.key);
+    const clicked = navLinks.find((_item) => _item.key === item.key);
     history.push(clicked?.path || "");
   };
 
   useEffect(() => {
-    let selected =
+    const selected =
       navLinks.find((item) => location.pathname.startsWith(item.path))?.key ||
       "";
     setSelectedKey(selected);

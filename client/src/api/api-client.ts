@@ -6,8 +6,8 @@ export interface IRegistrationData {
   username: string;
   password: string;
   password2: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   email: string;
 }
 
@@ -25,12 +25,12 @@ export interface IApiResponse {
 export class ApiClient {
   private getHeaders = (authenticated = false) => {
     const storedToken = localStorage.getItem("token");
-    let headers: HttpRequestHeader = {
+    const headers: HttpRequestHeader = {
       "Content-Type": "application/json",
       Accept: "application/json"
     };
     if (authenticated) {
-      headers["Authorization"] = "Token " + storedToken;
+      headers.Authorization = `Token ${storedToken}`;
     }
     return headers;
   };
@@ -54,11 +54,7 @@ export class ApiClient {
     return { error, result: content, statusCode: response.status };
   };
 
-  makePostRequest = async (
-    path: string,
-    data: any,
-    authenticated = false
-  ) => {
+  makePostRequest = async (path: string, data: any, authenticated = false) => {
     const controller = new AbortController();
     const { signal } = controller;
     let error = false;
@@ -88,7 +84,7 @@ export class ApiClient {
     const { signal } = controller;
     let error = false;
 
-    const response = await fetch(path + id + "/", {
+    const response = await fetch(`${path + id}/`, {
       method: "PUT",
       headers: this.getHeaders(authenticated),
       body: JSON.stringify(data),
@@ -112,7 +108,7 @@ export class ApiClient {
     const { signal } = controller;
     let error = false;
 
-    const response = await fetch(path + id + "/", {
+    const response = await fetch(`${path + id}/`, {
       method: "DELETE",
       headers: this.getHeaders(authenticated),
       signal

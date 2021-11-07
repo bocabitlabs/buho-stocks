@@ -28,7 +28,7 @@ export default function MarketsEditPage() {
             <Col>
               <MarketAddEditForm marketId={id} />
             </Col>
-            <Col></Col>
+            <Col />
           </Row>
         </MarketsEditPageHeader>
       </MarketsContext.Provider>

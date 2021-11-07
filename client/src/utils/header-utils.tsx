@@ -8,3 +8,5 @@ export function breadcrumbItemRender(route: any) {
     </Link>
   );
 }
+
+export default breadcrumbItemRender;

@@ -1,17 +1,19 @@
-import React, { ReactElement } from 'react'
-import countries from 'utils/countries';
-import FlagIcon from 'utils/flag-icon';
+import React, { ReactElement } from "react";
+import countries from "utils/countries";
+import FlagIcon from "utils/flag-icon";
 
 interface Props {
-  code: string
+  code: string;
 }
 
-export default function CountryFlag({code}: Props): ReactElement| null {
+export default function CountryFlag({ code }: Props): ReactElement | null {
   const country = countries[code];
-  if(country){
+  if (country) {
     return (
-      <span title={`Flag for ${country.name}`}><FlagIcon code={code} size="lg" /></span>
-    )
+      <span title={`Flag for ${country.name}`}>
+        <FlagIcon code={code} size="lg" />
+      </span>
+    );
   }
   return null;
 }

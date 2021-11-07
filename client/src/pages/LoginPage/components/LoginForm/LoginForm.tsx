@@ -1,3 +1,5 @@
+import React from "react";
+
 import { Button, Form, Input, PageHeader } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
@@ -37,7 +39,9 @@ export const LoginForm = () => {
         <Form.Item
           name="username"
           label={t("Username")}
-          rules={[{ required: true, message: t("Please input your Username!") }]}
+          rules={[
+            { required: true, message: t("Please input your Username!") }
+          ]}
         >
           <Input
             prefix={<UserOutlined className="site-form-item-icon" />}
@@ -73,3 +77,5 @@ export const LoginForm = () => {
     </Form>
   );
 };
+
+export default LoginForm;

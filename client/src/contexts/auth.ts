@@ -5,7 +5,9 @@ export type AuthContextType = {
   isLoading: boolean;
   isAuthenticated: boolean;
   token: string;
-  register: (data: IRegistrationData) => Promise<IApiResponse>| undefined;
+  // eslint-disable-next-line no-unused-vars
+  register: (data: IRegistrationData) => Promise<IApiResponse> | undefined;
+  // eslint-disable-next-line no-unused-vars
   signin: (username: string, password: string) => void;
   signout: () => null;
 };

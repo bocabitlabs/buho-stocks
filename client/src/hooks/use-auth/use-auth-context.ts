@@ -17,7 +17,7 @@ export function useAuthContext(): AuthContextType {
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [token, setToken] = useState("");
-  let history = useHistory();
+  const history = useHistory();
   const { t } = useTranslation();
   const location = useLocation<LocationState>();
 
@@ -32,8 +32,8 @@ export function useAuthContext(): AuthContextType {
 
   const signin = async (username: string, password: string) => {
     const data = {
-      username: username,
-      password: password
+      username,
+      password
     };
 
     const response = await new AuthService().loginUser(data);
@@ -49,25 +49,23 @@ export function useAuthContext(): AuthContextType {
         content: t(`Error ${response.statusCode}: Unable to log in`)
       });
       return response;
-    } else {
-      message.success({ content: t("You are logged in") });
-      let { from } = location.state || { from: { pathname: "/" } };
-      history.push(from);
     }
+    message.success({ content: t("You are logged in") });
+    const { from } = location.state || { from: { pathname: "/" } };
+    history.push(from);
+    return true;
   };
 
   const register = async (data: IRegistrationData): Promise<IApiResponse> => {
     const response = await new AuthService().registerUser(data);
-
-    console.log(response)
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to create user`)
       });
       return response;
-    } else {
-      message.success({ content: t("User created") });
     }
+    message.success({ content: t("User created") });
+
     history.push(getRoute(LOGIN_ROUTE));
     return response;
   };
@@ -89,3 +87,5 @@ export function useAuthContext(): AuthContextType {
     signout
   };
 }
+
+export default useAuthContext;

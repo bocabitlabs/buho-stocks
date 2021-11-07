@@ -24,7 +24,7 @@ export default function Main(): ReactElement {
   return (
     <Router>
       <Switch>
-        <Route exact path={"/"}>
+        <Route exact path="/">
           <Redirect to={getRoute(HOME_ROUTE)} />
         </Route>
         <Route path={getRoute(LOGIN_ROUTE)}>

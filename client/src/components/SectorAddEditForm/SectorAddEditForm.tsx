@@ -15,7 +15,9 @@ function SectorAddEditForm({
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
-  const [superSectorId, setSuperSectorId] = useState<number | undefined>(undefined);
+  const [superSectorId, setSuperSectorId] = useState<number | undefined>(
+    undefined
+  );
   const { t } = useTranslation();
 
   const {
@@ -57,13 +59,13 @@ function SectorAddEditForm({
     }
   };
 
-  const handleColorChange = (color: any, event: any) => {
-    setColor(color.hex);
+  const handleColorChange = (newColor: any) => {
+    setColor(newColor.hex);
   };
 
-  const handleSuperSectorChange = (id: number) => {
-    setSuperSectorId(id);
-  };
+  // const handleSuperSectorChange = (id: number) => {
+  //   setSuperSectorId(id);
+  // };
 
   if (sectorId && !sector) {
     return <Spin />;
@@ -77,7 +79,7 @@ function SectorAddEditForm({
       initialValues={{
         name: sector?.name,
         isSuperSector: sector?.isSuperSector,
-        superSector: sector?.superSector
+        superSectorId
       }}
     >
       <Form.Item
@@ -114,18 +116,15 @@ function SectorAddEditForm({
       >
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
-      <Form.Item name="superSector" label={t("Super sector")}>
-        <Select
-          placeholder={t("Select its super sector")}
-          allowClear
-        >
+      <Form.Item name="superSectorId" label={t("Super sector")}>
+        <Select placeholder={t("Select its super sector")} allowClear>
           {superSectors &&
-            superSectors.map((sector: ISector, index: number) => (
+            superSectors.map((sectorItem: ISector) => (
               <Select.Option
-                value={sector.id}
-                key={`sector-${sector.id}-${index}`}
+                value={sectorItem.id}
+                key={`sector-${sectorItem.id}-${sectorItem.id}`}
               >
-                {sector.name}
+                {sectorItem.name}
               </Select.Option>
             ))}
         </Select>
@@ -145,5 +144,9 @@ function SectorAddEditForm({
     </Form>
   );
 }
+
+SectorAddEditForm.defaultProps = {
+  sectorId: null
+};
 
 export default SectorAddEditForm;

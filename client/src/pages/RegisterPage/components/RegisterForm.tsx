@@ -21,12 +21,12 @@ const RegisterForm = () => {
       email: "johndoe@fakeemail.com"
     };
     const data: IRegistrationData = {
-      username: values.username? values.username : devData.username,
-      password: values.password? values.password: devData.password,
-      password2: values.password2? values.password2: devData.password2,
-      first_name: values.firstName? values.firstName: devData.firstName,
-      last_name: values.lastName? values.lastName: devData.lastName,
-      email: values.email? values.email: devData.email
+      username: values.username ? values.username : devData.username,
+      password: values.password ? values.password : devData.password,
+      password2: values.password2 ? values.password2 : devData.password2,
+      firstName: values.firstName ? values.firstName : devData.firstName,
+      lastName: values.lastName ? values.lastName : devData.lastName,
+      email: values.email ? values.email : devData.email
     };
 
     auth.register(data);
@@ -107,7 +107,9 @@ const RegisterForm = () => {
                   return Promise.resolve();
                 }
                 return Promise.reject(
-                  new Error(t("The two passwords that you entered do not match"))
+                  new Error(
+                    t("The two passwords that you entered do not match")
+                  )
                 );
               }
             })
@@ -149,7 +151,8 @@ const RegisterForm = () => {
         <Form.Item>
           <Button type="primary" htmlType="submit">
             {t("Register")}
-          </Button> {t("Already registered?")} <Link to="/app/login">sign in!</Link>
+          </Button>{" "}
+          {t("Already registered?")} <Link to="/app/login">sign in!</Link>
         </Form.Item>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
           <Button onClick={onFinish}>{t("Dev register")}</Button>

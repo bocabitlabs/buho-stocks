@@ -1,3 +1,5 @@
+import React from "react";
+
 import { Col, Layout, Row } from "antd";
 import { Content, Footer } from "antd/lib/layout/layout";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
@@ -6,10 +8,10 @@ import getRoute, { HOME_ROUTE } from "routes";
 import { LoginForm } from "./components/LoginForm/LoginForm";
 
 export function LoginPage() {
-  let auth = useAuthContext();
-  let history = useHistory();
+  const auth = useAuthContext();
+  const history = useHistory();
 
-  if(auth.isAuthenticated){
+  if (auth.isAuthenticated) {
     history.push(getRoute(HOME_ROUTE));
   }
 
@@ -30,3 +32,5 @@ export function LoginPage() {
     </Layout>
   );
 }
+
+export default LoginPage;

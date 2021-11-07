@@ -43,20 +43,20 @@ export default function SectorsListTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: any) => (<strong>{text}</strong>),
+      render: (text: string) => <strong>{text}</strong>,
       sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name)
     },
     {
       title: t("Super sector"),
       dataIndex: "superSector",
       key: "superSector",
-      render: (text: string, record: any) => text,
+      render: (text: string) => text
     },
     {
       title: t("Is super sector"),
       dataIndex: "isSuperSector",
       key: "isSuperSector",
-      render: (text: string, record: any) => text,
+      render: (text: string) => text
     },
     {
       title: t("Action"),
@@ -64,7 +64,7 @@ export default function SectorsListTable() {
       render: (text: string, record: any) => (
         <Space size="middle">
           <Link to={`${getRoute(MARKETS_ROUTE)}/${record.id}`}>
-            <Button icon={<EditOutlined />}></Button>
+            <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm
             key={`market-delete-${record.key}`}
@@ -73,7 +73,7 @@ export default function SectorsListTable() {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger icon={<DeleteOutlined />}></Button>
+            <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       )

@@ -80,7 +80,9 @@ export function useSectorsContext(): SectorsContextType {
     const response = await new SectorService().create(newValues, isSuperSector);
     if (response?.error) {
       message.error({
-        content: t(`Error ${response.statusCode}: Unable to create super sector`)
+        content: t(
+          `Error ${response.statusCode}: Unable to create super sector`
+        )
       });
     } else {
       setSector(response.result);
@@ -110,7 +112,9 @@ export function useSectorsContext(): SectorsContextType {
     const response = await new SectorService().deleteById(id, isSuperSector);
     if (response?.error) {
       message.error({
-        content: t(`Error ${response.statusCode}: Unable to delete super sector`)
+        content: t(
+          `Error ${response.statusCode}: Unable to delete super sector`
+        )
       });
     } else {
       setSector(null);
@@ -122,7 +126,11 @@ export function useSectorsContext(): SectorsContextType {
 
   const update = async (id: number, newValues: ISectorFormFields) => {
     const isSuperSector = true;
-    const response = await new SectorService().update(id, newValues, isSuperSector);
+    const response = await new SectorService().update(
+      id,
+      newValues,
+      isSuperSector
+    );
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to update sector`)
@@ -134,9 +142,16 @@ export function useSectorsContext(): SectorsContextType {
     return response;
   };
 
-  const updateSuperSector = async (id: number, newValues: ISectorFormFields) => {
+  const updateSuperSector = async (
+    id: number,
+    newValues: ISectorFormFields
+  ) => {
     const isSuperSector = true;
-    const response = await new SectorService().update(id, newValues, isSuperSector);
+    const response = await new SectorService().update(
+      id,
+      newValues,
+      isSuperSector
+    );
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to update sector`)
@@ -166,3 +181,5 @@ export function useSectorsContext(): SectorsContextType {
     updateSuperSector
   };
 }
+
+export default useSectorsContext;

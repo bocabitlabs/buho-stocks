@@ -10,10 +10,6 @@ export function useSettingsContext(): SettingsContextType {
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
 
-  useEffect(() => {
-    get();
-  }, []);
-
   const get = async () => {
     setIsLoading(true);
     const response = await new SettingsService().getSettings();
@@ -22,6 +18,7 @@ export function useSettingsContext(): SettingsContextType {
     }
     setSettings(response.result);
     setIsLoading(false);
+    return true;
   };
 
   const update = async (settingsId: number, newValues: ISettingsFormFields) => {
@@ -40,6 +37,10 @@ export function useSettingsContext(): SettingsContextType {
     }
   };
 
+  useEffect(() => {
+    get();
+  }, []);
+
   return {
     isLoading,
     settings,
@@ -47,3 +48,5 @@ export function useSettingsContext(): SettingsContextType {
     update
   };
 }
+
+export default useSettingsContext;

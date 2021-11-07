@@ -5,13 +5,15 @@ import FlagIcon from "utils/flag-icon";
 import countries from "utils/countries";
 import { useTranslation } from "react-i18next";
 
-
 interface Props {
   handleChange: any;
   initialValue?: string;
 }
 
-export default function CountrySelector({ handleChange, initialValue }: Props): ReactElement {
+export default function CountrySelector({
+  handleChange,
+  initialValue
+}: Props): ReactElement {
   const { t } = useTranslation();
 
   const getLabel = (element: any) => (
@@ -34,7 +36,7 @@ export default function CountrySelector({ handleChange, initialValue }: Props): 
         style={{ width: "100%" }}
         onChange={handleChange}
         optionLabelProp="label"
-        defaultValue={initialValue? initialValue: ""}
+        defaultValue={initialValue}
       >
         {Object.keys(countries).map((key: string) => {
           const element = countries[key];
@@ -52,3 +54,7 @@ export default function CountrySelector({ handleChange, initialValue }: Props): 
     </div>
   );
 }
+
+CountrySelector.defaultProps = {
+  initialValue: ""
+};

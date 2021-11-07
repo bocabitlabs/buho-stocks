@@ -86,3 +86,5 @@ export function useMarketsContext(): MarketsContextType {
     update
   };
 }
+
+export default useMarketsContext;

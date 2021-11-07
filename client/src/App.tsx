@@ -84,7 +84,11 @@ function App() {
               </Route>
               <Route exact path={getRoute(HOME_ROUTE)} component={HomePage} />
               <Route exact path="/app/portfolios" component={PortfoliosPage} />
-              <Route exact path={getRoute(MARKETS_ADD_ROUTE)} component={MarketsAddPage} />
+              <Route
+                exact
+                path={getRoute(MARKETS_ADD_ROUTE)}
+                component={MarketsAddPage}
+              />
               <Route
                 exact
                 path="/app/markets/:id"

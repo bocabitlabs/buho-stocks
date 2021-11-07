@@ -13,8 +13,8 @@ export type SectorsContextType = {
   getAllSuperSectors: () => void;
   getById: (id: number) => void;
   getSuperSectorById: (id: number) => void;
-  deleteById:(marketId: number) => void;
-  deleteSuperSectorById:(id: number) => void;
+  deleteById: (marketId: number) => void;
+  deleteSuperSectorById: (id: number) => void;
   update: (id: number, newValues: ISectorFormFields) => void;
   updateSuperSector: (id: number, newValues: ISectorFormFields) => void;
 };
@@ -25,15 +25,23 @@ export const sectorsDefaultValue: SectorsContextType = {
   superSectors: [],
   sector: null,
   superSector: null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   create: (newValues: ISectorFormFields) => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   createSuperSector: (newValues: ISectorFormFields) => undefined,
   getAll: () => [],
   getAllSuperSectors: () => [],
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getById: (id: number) => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getSuperSectorById: (id: number) => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteById: (id: number) => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   deleteSuperSectorById: (id: number) => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update: (id: number, newValues: ISectorFormFields) => undefined,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   updateSuperSector: (id: number, newValues: ISectorFormFields) => undefined
 };
 

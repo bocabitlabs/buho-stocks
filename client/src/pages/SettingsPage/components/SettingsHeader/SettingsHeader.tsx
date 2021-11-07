@@ -7,10 +7,7 @@ const SettingsPageHeader: FC<ReactNode> = ({ children }) => {
   const { t } = useTranslation();
 
   return (
-    <PageHeader
-      className="site-page-header"
-      title={t("Settings")}
-    >
+    <PageHeader className="site-page-header" title={t("Settings")}>
       {children}
     </PageHeader>
   );

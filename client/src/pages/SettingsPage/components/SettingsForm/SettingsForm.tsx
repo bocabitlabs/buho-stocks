@@ -7,18 +7,14 @@ import { useSettingsContext } from "hooks/use-settings/use-settings-context";
 
 function SettingsForm(): ReactElement | null {
   const [form] = Form.useForm();
-  const {
-    isLoading,
-    settings,
-    update: updateSettings
-  } = useSettingsContext();
+  const { isLoading, settings, update: updateSettings } = useSettingsContext();
   const { t, i18n } = useTranslation();
 
   const handleUpdate = async (values: any) => {
     const {
       // companyDisplayMode,
       // companySortBy,
-      language,
+      language
       // mainPortfolio,
       // portfolioDisplayMode,
       // portfolioSortBy
@@ -49,7 +45,7 @@ function SettingsForm(): ReactElement | null {
       initialValues={{
         // companyDisplayMode: settings.companyDisplayMode,
         // companySortBy: settings.companySortBy,
-        language: settings?.language,
+        language: settings?.language
         // mainPortfolio: settings.mainPortfolio,
         // portfolioDisplayMode: settings.portfolioDisplayMode,
         // portfolioSortBy: settings.portfolioSortBy
@@ -58,10 +54,10 @@ function SettingsForm(): ReactElement | null {
       {JSON.stringify(settings)}
       <Form.Item name="language" label={t("Language")}>
         <Select placeholder={t("Select a language")}>
-          <Select.Option value={"en"} key={"en"}>
+          <Select.Option value="en" key="en">
             English
           </Select.Option>
-          <Select.Option value={"es"} key={"es"}>
+          <Select.Option value="es" key="es">
             Español
           </Select.Option>
         </Select>

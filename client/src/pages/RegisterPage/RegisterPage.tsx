@@ -7,8 +7,8 @@ import getRoute, { HOME_ROUTE } from "routes";
 import RegisterForm from "./components/RegisterForm";
 
 export default function RegisterPage(): ReactElement {
-  let auth = useAuthContext();
-  let history = useHistory();
+  const auth = useAuthContext();
+  const history = useHistory();
 
   if (auth.isAuthenticated) {
     history.push(getRoute(HOME_ROUTE));

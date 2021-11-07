@@ -5,10 +5,7 @@ const WrapperPage: FC<ReactNode> = ({ children }) => {
   return (
     <>
       <Breadcrumbs />
-      <div
-        className="site-layout-background"
-        style={{ minHeight: 380 }}
-      >
+      <div className="site-layout-background" style={{ minHeight: 380 }}>
         {children}
       </div>
     </>

@@ -22,7 +22,7 @@ export default function SectorsAddPage() {
             <Col>
               <SectorAddEditForm />
             </Col>
-            <Col></Col>
+            <Col />
           </Row>
         </SectorsAddPageHeader>
       </MarketsContext.Provider>

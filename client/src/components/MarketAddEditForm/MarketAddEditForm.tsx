@@ -1,6 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { Button, Form, Input, Spin, TimePicker } from "antd";
 
+// eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import ColorSelector from "components/ColorSelector/ColorSelector";
@@ -61,8 +62,8 @@ function MarketAddEditForm({
     }
   };
 
-  const handleColorChange = (color: any, event: any) => {
-    setColor(color.hex);
+  const handleColorChange = (newColor: any) => {
+    setColor(newColor.hex);
   };
 
   const handleCountryChange = (code: string) => {
@@ -162,5 +163,9 @@ function MarketAddEditForm({
     </Form>
   );
 }
+
+MarketAddEditForm.defaultProps = {
+  marketId: null
+};
 
 export default MarketAddEditForm;

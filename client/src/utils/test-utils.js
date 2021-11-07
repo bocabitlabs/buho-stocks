@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable import/no-extraneous-dependencies */
 import React from "react";
 import { render } from "@testing-library/react";
 import { Router } from "react-router-dom";
 import { createMemoryHistory } from "history";
-
 
 /**
  * Render a component with React Router support

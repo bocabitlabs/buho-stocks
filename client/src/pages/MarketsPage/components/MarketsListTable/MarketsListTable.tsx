@@ -6,6 +6,7 @@ import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useTranslation } from "react-i18next";
 import { useMarketsContext } from "hooks/use-markets/use-markets-context";
 import getRoute, { MARKETS_ROUTE } from "routes";
+// eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -45,7 +46,7 @@ export default function MarketsListTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: any) => (<strong>{text}</strong>),
+      render: (text: string) => <strong>{text}</strong>,
       sorter: (a: IMarket, b: IMarket) => a.name.localeCompare(b.name)
     },
     {
@@ -59,7 +60,7 @@ export default function MarketsListTable() {
       title: t("Region"),
       dataIndex: "region",
       key: "region",
-      render: (text: string, record: any) => <CountryFlag code={text} />,
+      render: (text: string) => <CountryFlag code={text} />,
       sorter: (a: IMarket, b: IMarket) => a.region.localeCompare(b.region)
     },
     {
@@ -67,8 +68,7 @@ export default function MarketsListTable() {
       dataIndex: "openTime",
       key: "openTime",
       sorter: (a: IMarket, b: IMarket) => a.openTime.localeCompare(b.openTime),
-      render: (text: string, record: any) =>
-        moment(text, "HH:mm").format("HH:mm")
+      render: (text: string) => moment(text, "HH:mm").format("HH:mm")
     },
     {
       title: t("Closing time"),
@@ -76,8 +76,7 @@ export default function MarketsListTable() {
       key: "closeTime",
       sorter: (a: IMarket, b: IMarket) =>
         a.closeTime.localeCompare(b.closeTime),
-      render: (text: string, record: any) =>
-        moment(text, "HH:mm").format("HH:mm")
+      render: (text: string) => moment(text, "HH:mm").format("HH:mm")
     },
     {
       title: t("Action"),
@@ -85,7 +84,7 @@ export default function MarketsListTable() {
       render: (text: string, record: any) => (
         <Space size="middle">
           <Link to={`${getRoute(MARKETS_ROUTE)}/${record.id}`}>
-            <Button icon={<EditOutlined />}></Button>
+            <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm
             key={`market-delete-${record.key}`}
@@ -94,7 +93,7 @@ export default function MarketsListTable() {
             okText="Yes"
             cancelText="No"
           >
-            <Button danger icon={<DeleteOutlined />}></Button>
+            <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       )

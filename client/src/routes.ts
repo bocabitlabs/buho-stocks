@@ -14,11 +14,9 @@ const SECTORS_ADD_ROUTE = "/sectors/add";
 const SECTORS_DETAILS_ROUTE = "/sectors/:id";
 const SECTORS_EDIT_ROUTE = "/sectors/:id/edit";
 
-
 const getRoute = (route: string): string => {
   return APP_BASE_ROUTE + route;
 };
-
 
 export default getRoute;
 
@@ -35,5 +33,5 @@ export {
   SECTORS_ROUTE,
   SECTORS_ADD_ROUTE,
   SECTORS_DETAILS_ROUTE,
-  SECTORS_EDIT_ROUTE,
+  SECTORS_EDIT_ROUTE
 };

@@ -1,3 +1,4 @@
+import React from "react";
 import { HomeOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "antd";
 import { pathToRegexp } from "path-to-regexp";
@@ -9,7 +10,7 @@ interface IDict {
 
 const Breadcrumbs = () => {
   const location = useLocation();
-  let {id} = useParams<{id: string}>();
+  const { id } = useParams<{ id: string }>();
 
   const breadcrumbNameMap: IDict = {
     "/app/currencies": "Currencies",
@@ -27,24 +28,26 @@ const Breadcrumbs = () => {
   };
 
   // const pathSnippets = location.pathname.split("/").filter((i) => i);
-  const pathSnippets = location.pathname.split('/').filter(i => i);
+  const pathSnippets = location.pathname.split("/").filter((i) => i);
   // pathSnippets.shift();
   const extraBreadcrumbItems: any[] = [];
-    pathSnippets.forEach((_, index) => {
-      const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
-      Object.keys(breadcrumbNameMap).forEach((item) => {
-        if (pathToRegexp(item).test(url)) {
-          extraBreadcrumbItems.push(<Breadcrumb.Item key={url}>
-            <Link to={url}>
-              {breadcrumbNameMap[item]}
-            </Link>
-          </Breadcrumb.Item>);
-        }
-      });
+  pathSnippets.forEach((_, index) => {
+    const url = `/${pathSnippets.slice(0, index + 1).join("/")}`;
+    Object.keys(breadcrumbNameMap).forEach((item) => {
+      if (pathToRegexp(item).test(url)) {
+        extraBreadcrumbItems.push(
+          <Breadcrumb.Item key={url}>
+            <Link to={url}>{breadcrumbNameMap[item]}</Link>
+          </Breadcrumb.Item>
+        );
+      }
     });
+  });
   const breadcrumbItems = [
     <Breadcrumb.Item key="home">
-      <Link to="/app/home"><HomeOutlined/></Link>
+      <Link to="/app/home">
+        <HomeOutlined />
+      </Link>
     </Breadcrumb.Item>
   ].concat(extraBreadcrumbItems);
   return (
