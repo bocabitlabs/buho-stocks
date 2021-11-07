@@ -14,3 +14,5 @@ export const serializeMarket = (data: any) => {
   };
   return serializedData;
 };
+
+export default serializeMarket;

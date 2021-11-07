@@ -1,4 +1,4 @@
-export interface ISectorFormFields{
+export interface ISectorFormFields {
   name: string;
   color: string;
   superSector?: number;
@@ -6,7 +6,7 @@ export interface ISectorFormFields{
 }
 
 export interface ISector extends ISectorFormFields {
-  id: number,
+  id: number;
   dateCreated: string;
   lastUpdated: string;
 }

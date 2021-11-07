@@ -1,7 +1,13 @@
-import ApiClient, { IApiResponse, ILoginData, IRegistrationData } from "api/api-client";
+import {
+  IApiResponse,
+  ILoginData,
+  IRegistrationData,
+  ApiClient
+} from "api/api-client";
 
 export default class AuthService {
   loginUserEndpoint = "/auth/api-token-auth/";
+
   registerUserEndpoint = "/auth/register/";
 
   registerUser = async (
@@ -16,10 +22,10 @@ export default class AuthService {
       );
       return result;
     } catch (error) {
-      console.error(error);
       return { error: true, result: error, statusCode: 0 };
     }
   };
+
   loginUser = async (loginData: ILoginData): Promise<IApiResponse> => {
     try {
       const client = new ApiClient();
@@ -30,7 +36,6 @@ export default class AuthService {
       );
       return result;
     } catch (error) {
-      console.error(error);
       return { error: true, result: error, statusCode: 0 };
     }
   };

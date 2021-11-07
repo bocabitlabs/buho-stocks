@@ -1,4 +1,4 @@
-export interface IMarketFormFields{
+export interface IMarketFormFields {
   name: string;
   description: string;
   color: string;
@@ -8,7 +8,7 @@ export interface IMarketFormFields{
 }
 
 export interface IMarket extends IMarketFormFields {
-  id: number,
+  id: number;
   dateCreated: string;
   lastUpdated: string;
 }

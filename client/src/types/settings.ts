@@ -1,4 +1,4 @@
-export interface ISettingsFormFields{
+export interface ISettingsFormFields {
   language: string;
   companySortBy: string;
   companyDisplayMode: string;
@@ -8,7 +8,7 @@ export interface ISettingsFormFields{
 }
 
 export interface ISettings extends ISettingsFormFields {
-  id: number,
+  id: number;
   dateCreated: string;
   lastUpdated: string;
 }
