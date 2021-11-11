@@ -37,8 +37,8 @@ class MarketListAPIView(APIView):
             "description": request.data.get("description"),
             "color": request.data.get("color"),
             "region": request.data.get("region"),
-            "openTime": request.data.get("openTime"),
-            "closeTime": request.data.get("closeTime"),
+            "open_time": request.data.get("open_time"),
+            "close_time": request.data.get("close_time"),
         }
         serializer = MarketSerializer(data=data)
         if serializer.is_valid():
@@ -51,6 +51,7 @@ class MarketListAPIView(APIView):
 
 class MarketDetailAPIView(APIView):
     """Operations for a single Market"""
+
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
