@@ -1,9 +1,9 @@
+import React, { useContext } from "react";
 import { Col, Row } from "antd";
+import SectorsAddPageHeader from "./components/SectorsAddHeader/SectorsAddHeader";
 import SectorAddEditForm from "components/SectorAddEditForm/SectorAddEditForm";
 import { MarketsContext } from "contexts/markets";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
-import React, { useContext } from "react";
-import SectorsAddPageHeader from "./components/SectorsAddHeader/SectorsAddHeader";
 
 // Params are placeholders in the URL that begin
 // with a colon, like the `:id` param defined in

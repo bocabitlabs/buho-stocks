@@ -1,3 +1,6 @@
+import React, { ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { useHistory, useLocation } from "react-router-dom";
 import {
   BankOutlined,
   BookOutlined,
@@ -8,9 +11,6 @@ import {
   SettingOutlined
 } from "@ant-design/icons";
 import { Menu } from "antd";
-import React, { ReactElement, useEffect, useState } from "react";
-import { useHistory, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import getRoute, { HOME_ROUTE } from "routes";
 
 interface RoutePathProps {

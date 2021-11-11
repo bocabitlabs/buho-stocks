@@ -1,90 +1,72 @@
-import { message } from "antd";
-import { IApiResponse, IRegistrationData } from "api/api-client";
+import { useCallback, useEffect, useReducer, useState } from "react";
 import { AuthContextType } from "contexts/auth";
-import { useCallback, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
-import getRoute, { HOME_ROUTE, LOGIN_ROUTE } from "routes";
-import AuthService from "services/auth/auth-service";
 
-interface LocationState {
-  from: {
-    pathname: string;
-  };
+interface MyState {
+  isAuthenticated: boolean;
+  token: any;
 }
 
 export function useAuthContext(): AuthContextType {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [token, setToken] = useState("");
-  const history = useHistory();
-  const { t } = useTranslation();
-  const location = useLocation<LocationState>();
+  const [isWorking, setIsWorking] = useState(false);
+  const [state, setState] = useReducer(
+    // eslint-disable-next-line @typescript-eslint/no-shadow
+    (state: MyState, newState: Partial<MyState>) => {
+      console.log("useReducer newState: ", newState);
+      return { ...state, ...newState };
+    },
+    {
+      isAuthenticated: !!localStorage.getItem("token"),
+      token: localStorage.getItem("token")
+    }
+  );
 
   useEffect(() => {
-    setIsLoading(true);
-    const storedToken = localStorage.getItem("token");
-    if (storedToken) {
-      setIsAuthenticated(true);
+    console.debug("useAuth useEffect state:", state);
+  }, [state]);
+
+  const authenticate = useCallback(
+    (newToken: string) => {
+      // if (!state.isAuthenticated) {
+      console.debug("useAuth: Calling authenticate");
+      localStorage.setItem("token", newToken);
+
+      // const storedToken = localStorage.getItem("token");
+      console.log("useAuth authenticate previous state: ", state);
+      console.log("useAuth authenticate new token:", newToken);
+      // console.log(
+      //   "useAuth new state: ",
+      //   JSON.stringify({ isAuthenticated: true, token: storedToken })
+      // );
+      setState({ isAuthenticated: true, token: newToken });
+      // }
+    },
+    [state]
+  );
+
+  const clearToken = useCallback(() => {
+    if (state.isAuthenticated) {
+      console.debug("useAuth: Calling clearToken");
+      setState({ isAuthenticated: false, token: null });
     }
-    setIsLoading(false);
-  }, [history, location.state]);
+  }, [state.isAuthenticated]);
 
-  const signin = async (username: string, password: string) => {
-    const data = {
-      username,
-      password
-    };
+  const prueba = useCallback(() => {
+    console.debug("useAuth: Calling prueba");
+    setState({ isAuthenticated: false, token: null });
+  }, []);
 
-    const response = await new AuthService().loginUser(data);
-    if (response.error) {
-      return response;
-    }
-    setIsAuthenticated(true);
-    localStorage.setItem("token", response.result.token);
-    setToken(response.result);
-    history.push(getRoute(HOME_ROUTE));
-    if (response?.error) {
-      message.error({
-        content: t(`Error ${response.statusCode}: Unable to log in`)
-      });
-      return response;
-    }
-    message.success({ content: t("You are logged in") });
-    const { from } = location.state || { from: { pathname: "/" } };
-    history.push(from);
-    return true;
-  };
-
-  const register = async (data: IRegistrationData): Promise<IApiResponse> => {
-    const response = await new AuthService().registerUser(data);
-    if (response?.error) {
-      message.error({
-        content: t(`Error ${response.statusCode}: Unable to create user`)
-      });
-      return response;
-    }
-    message.success({ content: t("User created") });
-
-    history.push(getRoute(LOGIN_ROUTE));
-    return response;
-  };
-
-  const signout = useCallback(() => {
-    setToken("");
-    setIsAuthenticated(false);
-    localStorage.setItem("token", "");
-    history.push(getRoute(LOGIN_ROUTE));
-    return null;
-  }, [history]);
+  const updateIsWorking = useCallback(() => {
+    console.debug("useAuth: Calling updateIsWorking");
+    setIsWorking(true);
+  }, []);
 
   return {
-    isLoading,
-    isAuthenticated,
-    token,
-    register,
-    signin,
-    signout
+    state,
+    isWorking,
+    authenticate,
+    clearToken,
+    prueba,
+    updateIsWorking
   };
 }
 

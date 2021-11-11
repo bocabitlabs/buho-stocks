@@ -1,32 +1,29 @@
-import { message } from "antd";
-import { SettingsContextType } from "contexts/settings";
-import { useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import SettingsService from "services/settings/settings-service";
+import { message } from "antd";
+import { AuthContext } from "contexts/auth";
+import { SettingsContextType } from "contexts/settings";
+import { useApi } from "hooks/use-api/use-api-hook";
 import { ISettings, ISettingsFormFields } from "types/settings";
 
 export function useSettingsContext(): SettingsContextType {
   const [settings, setSettings] = useState<ISettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
+  const { get: apiGet, put: updateSettings } = useApi();
+  const endpoint = "/api/v1/settings/";
+  const { state: authState } = useContext(AuthContext);
 
-  const get = async () => {
+  const get = useCallback(async () => {
     setIsLoading(true);
-    const response = await new SettingsService().getSettings();
-    if (response.error) {
-      return response;
-    }
-    setSettings(response.result);
+    const result = await apiGet(endpoint);
+    console.log(result);
+    setSettings(result);
     setIsLoading(false);
-    return true;
-  };
+  }, [apiGet]);
 
   const update = async (settingsId: number, newValues: ISettingsFormFields) => {
-    // const response = await client.updateSettings(settingsId, data);
-    const response = await new SettingsService().updateSettings(
-      settingsId,
-      newValues
-    );
+    const response = await updateSettings(endpoint, { settingsId, newValues });
 
     if (response?.error) {
       message.error({
@@ -38,9 +35,13 @@ export function useSettingsContext(): SettingsContextType {
   };
 
   useEffect(() => {
-    get();
-  }, []);
-
+    if (authState.isAuthenticated) {
+      get();
+      console.log("user is authenticated. Should get settings");
+    } else {
+      console.log("User is not logged in. No getting settings");
+    }
+  }, [get]);
   return {
     isLoading,
     settings,

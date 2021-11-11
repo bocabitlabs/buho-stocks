@@ -1,24 +1,29 @@
-import { IApiResponse, IRegistrationData } from "api/api-client";
 import { createContext } from "react";
 
-export type AuthContextType = {
-  isLoading: boolean;
+interface MyState {
   isAuthenticated: boolean;
-  token: string;
+  token: any;
+}
+
+export type AuthContextType = {
+  state: MyState;
+  isWorking: boolean;
   // eslint-disable-next-line no-unused-vars
-  register: (data: IRegistrationData) => Promise<IApiResponse> | undefined;
+  // register: (data: IRegistrationData) => Promise<IApiResponse> | undefined;
   // eslint-disable-next-line no-unused-vars
-  signin: (username: string, password: string) => void;
-  signout: () => null;
+  clearToken: () => void;
+  authenticate: (newToken: string) => void;
+  prueba: () => void;
+  updateIsWorking: () => void;
 };
 
 export const authDefaultValue: AuthContextType = {
-  isLoading: false,
-  isAuthenticated: false,
-  token: "",
-  register: () => undefined,
-  signin: () => undefined,
-  signout: (): null => null
+  state: { isAuthenticated: false, token: null },
+  isWorking: false,
+  clearToken: () => undefined,
+  authenticate: (): null => null,
+  prueba: () => null,
+  updateIsWorking: () => "pepe"
 };
 
 export const AuthContext = createContext<AuthContextType>(authDefaultValue);

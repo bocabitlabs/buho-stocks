@@ -1,18 +1,11 @@
-import {
-  IApiResponse,
-  ILoginData,
-  IRegistrationData,
-  ApiClient
-} from "api/api-client";
+import { ILoginData, IRegistrationData, ApiClient } from "api/api-client";
 
 export default class AuthService {
   loginUserEndpoint = "/auth/api-token-auth/";
 
   registerUserEndpoint = "/auth/register/";
 
-  registerUser = async (
-    registrationData: IRegistrationData
-  ): Promise<IApiResponse> => {
+  registerUser = async (registrationData: IRegistrationData): Promise<any> => {
     try {
       const client = new ApiClient();
       const result = await client.makePostRequest(
@@ -26,7 +19,7 @@ export default class AuthService {
     }
   };
 
-  loginUser = async (loginData: ILoginData): Promise<IApiResponse> => {
+  loginUser = async (loginData: ILoginData): Promise<any> => {
     try {
       const client = new ApiClient();
       const result = await client.makePostRequest(

@@ -1,10 +1,10 @@
-import { message } from "antd";
-import { SectorsContextType } from "contexts/secctors";
 import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
-import getRoute, { MARKETS_ROUTE } from "routes";
-import SectorService from "services/sectors/sectors-service";
+import { message } from "antd";
+import { SectorsContextType } from "contexts/secctors";
+import { useApi } from "hooks/use-api/use-api-hook";
+import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector, ISectorFormFields } from "types/sector";
 
 export function useSectorsContext(): SectorsContextType {
@@ -15,54 +15,63 @@ export function useSectorsContext(): SectorsContextType {
   const [isLoading, setIsLoading] = useState(true);
   const { t } = useTranslation();
   const history = useHistory();
+  const {
+    get: apiGet,
+    post: apiPost,
+    put: apiPut,
+    delete: apiDelete
+  } = useApi();
+  const endpoint = "/api/v1/sectors/";
+  const endpointSuperSector = "/api/v1/sectors/super/";
 
   const getAll = useCallback(async () => {
     setIsLoading(true);
-    const isSuperSector = false;
-    const response = await new SectorService().getAll(isSuperSector);
+    const response = await apiGet(endpoint);
     if (response.error) {
       console.error(response);
     }
-    setSectors(response.result);
+    setSectors(response);
     setIsLoading(false);
-  }, []);
+  }, [apiGet]);
 
   const getAllSuperSectors = useCallback(async () => {
     setIsLoading(true);
-    const isSuperSector = true;
-    const response = await new SectorService().getAll(isSuperSector);
+    const response = await apiGet(endpointSuperSector);
     if (response.error) {
       console.error(response);
     }
-    setSuperSectors(response.result);
+    setSuperSectors(response);
     setIsLoading(false);
-  }, []);
+  }, [apiGet]);
 
-  const getById = useCallback(async (id: number) => {
-    setIsLoading(true);
-    const isSuperSector = false;
-    const response = await new SectorService().getById(id, isSuperSector);
-    if (response?.error) {
-      console.error(response);
-    }
-    setSector(response.result);
-    setIsLoading(false);
-  }, []);
+  const getById = useCallback(
+    async (id: number) => {
+      setIsLoading(true);
+      const response = await apiGet(endpoint + id);
+      if (response?.error) {
+        console.error(response);
+      }
+      setSector(response.result);
+      setIsLoading(false);
+    },
+    [apiGet]
+  );
 
-  const getSuperSectorById = useCallback(async (id: number) => {
-    setIsLoading(true);
-    const isSuperSector = true;
-    const response = await new SectorService().getById(id, isSuperSector);
-    if (response?.error) {
-      console.error(response);
-    }
-    setSuperSector(response.result);
-    setIsLoading(false);
-  }, []);
+  const getSuperSectorById = useCallback(
+    async (id: number) => {
+      setIsLoading(true);
+      const response = await apiGet(endpointSuperSector + id);
+      if (response?.error) {
+        console.error(response);
+      }
+      setSuperSector(response.result);
+      setIsLoading(false);
+    },
+    [apiGet]
+  );
 
   const create = async (newValues: ISectorFormFields) => {
-    const isSuperSector = false;
-    const response = await new SectorService().create(newValues, isSuperSector);
+    const response = await apiPost(endpoint, newValues);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to create sector`)
@@ -70,14 +79,13 @@ export function useSectorsContext(): SectorsContextType {
     } else {
       setSector(response.result);
       message.success({ content: t("Sector has been created") });
+      history.push(getRoute(SECTORS_ROUTE));
     }
-    history.push(getRoute(MARKETS_ROUTE));
     return response;
   };
 
   const createSuperSector = async (newValues: ISectorFormFields) => {
-    const isSuperSector = true;
-    const response = await new SectorService().create(newValues, isSuperSector);
+    const response = await apiPost(endpointSuperSector, newValues);
     if (response?.error) {
       message.error({
         content: t(
@@ -87,14 +95,13 @@ export function useSectorsContext(): SectorsContextType {
     } else {
       setSector(response.result);
       message.success({ content: t("Super sector has been created") });
+      history.push(getRoute(SECTORS_ROUTE));
     }
-    history.push(getRoute(MARKETS_ROUTE));
     return response;
   };
 
   const deleteById = async (id: number) => {
-    const isSuperSector = false;
-    const response = await new SectorService().deleteById(id, isSuperSector);
+    const response = await apiDelete(endpoint + id);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to delete sector`)
@@ -108,8 +115,7 @@ export function useSectorsContext(): SectorsContextType {
   };
 
   const deleteSuperSectorById = async (id: number) => {
-    const isSuperSector = true;
-    const response = await new SectorService().deleteById(id, isSuperSector);
+    const response = await apiDelete(endpointSuperSector + id);
     if (response?.error) {
       message.error({
         content: t(
@@ -125,12 +131,7 @@ export function useSectorsContext(): SectorsContextType {
   };
 
   const update = async (id: number, newValues: ISectorFormFields) => {
-    const isSuperSector = true;
-    const response = await new SectorService().update(
-      id,
-      newValues,
-      isSuperSector
-    );
+    const response = await apiPut(`${endpoint + id}/`, newValues);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to update sector`)
@@ -146,12 +147,7 @@ export function useSectorsContext(): SectorsContextType {
     id: number,
     newValues: ISectorFormFields
   ) => {
-    const isSuperSector = true;
-    const response = await new SectorService().update(
-      id,
-      newValues,
-      isSuperSector
-    );
+    const response = await apiPut(`${endpointSuperSector + id}/`, newValues);
     if (response?.error) {
       message.error({
         content: t(`Error ${response.statusCode}: Unable to update sector`)

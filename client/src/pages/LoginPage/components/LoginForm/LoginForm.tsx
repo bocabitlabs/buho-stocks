@@ -1,14 +1,33 @@
-import React from "react";
-
-import { Button, Form, Input, PageHeader } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useAuthContext } from "hooks/use-auth/use-auth-context";
+import { Link, useHistory } from "react-router-dom";
+import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import { Button, Form, Input, PageHeader } from "antd";
+import { AuthContext } from "contexts/auth";
+import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
+import getRoute, { HOME_ROUTE } from "routes";
 
 export const LoginForm = () => {
-  const auth = useAuthContext();
+  const loginActions = useLoginActions();
   const { t } = useTranslation();
+  const { state, isWorking, updateIsWorking } = useContext(AuthContext);
+  const history = useHistory();
+
+  React.useEffect(() => {
+    console.log("LoginForm state from useEffect: ", state);
+    if (state.isAuthenticated) {
+      console.log("LoginForm state from useEffect is authenticated: ", state);
+      history.replace(getRoute(HOME_ROUTE));
+    }
+  }, [state, history]);
+
+  React.useEffect(() => {
+    console.debug("LoginForm useEffect state:", state);
+  }, [state]);
+
+  React.useEffect(() => {
+    console.log("LoginForm isWorking from useEffect: ", isWorking);
+  }, [isWorking]);
 
   const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
@@ -17,10 +36,13 @@ export const LoginForm = () => {
       username: "pepe",
       password: "ABCD12345!"
     };
-
+    console.log(data);
     const username = values.username ? values.username : data.username;
     const password = values.password ? values.password : data.password;
-    auth.signin(username, password);
+    await loginActions.signin(username, password);
+    console.log("isWorking previous: ", isWorking);
+    updateIsWorking();
+    console.log("isWorking after: ", isWorking);
   };
 
   return (

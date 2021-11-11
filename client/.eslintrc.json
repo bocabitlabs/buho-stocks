@@ -31,8 +31,32 @@
     "prettier"
   ],
   "rules": {
+    "no-console": "off",
     "prettier/prettier": "error",
-    "no-console": ["warn", { "allow": ["warn", "error"] }],
+    // "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "import/order": [
+      "error",
+      {
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true
+        },
+        "pathGroups": [
+          {
+            "pattern": "react*",
+            "group": "external",
+            "position": "before"
+          },
+          {
+            "pattern": "{.,..}/**/*.+(css|scss)", // eslint-plugin-import#1239
+            "group": "sibling",
+            "position": "after"
+          }
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "newlines-between": "never"
+      }
+    ],
     "import/extensions": [
       "error",
       "ignorePackages",

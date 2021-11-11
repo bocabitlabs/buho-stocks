@@ -1,10 +1,10 @@
-import { Button, Popconfirm, Space, Spin, Table } from "antd";
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import getRoute, { MARKETS_ROUTE } from "routes";
+import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Space, Spin, Table } from "antd";
 import { useSectorsContext } from "hooks/use-sectors/use-sectors-context";
+import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector } from "types/sector";
 
 export default function SectorsListTable() {
@@ -12,6 +12,7 @@ export default function SectorsListTable() {
     sectors,
     isLoading,
     getAll: getSectors,
+    getAllSuperSectors,
     deleteById: deleteSectorById
   } = useSectorsContext();
   const { t } = useTranslation();
@@ -22,6 +23,13 @@ export default function SectorsListTable() {
     };
     getAllSectors();
   }, [getSectors]);
+
+  useEffect(() => {
+    const getAllSectors = async () => {
+      getAllSuperSectors();
+    };
+    getAllSectors();
+  }, [getAllSuperSectors]);
 
   function confirm(recordId: number) {
     console.log(recordId);
@@ -63,7 +71,7 @@ export default function SectorsListTable() {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`${getRoute(MARKETS_ROUTE)}/${record.id}`}>
+          <Link to={`${getRoute(SECTORS_ROUTE)}/${record.id}`}>
             <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm
@@ -95,9 +103,5 @@ export default function SectorsListTable() {
     return <Spin />;
   }
 
-  return (
-    <>
-      <Table columns={columns} dataSource={getData()} />
-    </>
-  );
+  return <Table columns={columns} dataSource={getData()} />;
 }

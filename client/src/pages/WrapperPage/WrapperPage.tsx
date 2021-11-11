@@ -1,5 +1,5 @@
-import Breadcrumbs from "breadcrumbs";
 import React, { FC, ReactNode } from "react";
+import Breadcrumbs from "breadcrumbs";
 
 const WrapperPage: FC<ReactNode> = ({ children }) => {
   return (

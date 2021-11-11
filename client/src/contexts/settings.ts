@@ -11,7 +11,7 @@ export type SettingsContextType = {
 export const settingsDefaultValue: SettingsContextType = {
   isLoading: false,
   settings: null,
-  get: () => undefined,
+  get: () => null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update: (settingsId: number, newValues: ISettingsFormFields) => undefined
 };

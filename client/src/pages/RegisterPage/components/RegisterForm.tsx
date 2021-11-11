@@ -1,14 +1,14 @@
-import { Button, Form, Input, PageHeader } from "antd";
-import { IRegistrationData } from "api/api-client";
-import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { Button, Form, Input, PageHeader } from "antd";
+import { IRegistrationData } from "api/api-client";
+import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 
 const RegisterForm = () => {
   const [form] = Form.useForm();
   const { t } = useTranslation();
-  const auth = useAuthContext();
+  const auth = useLoginActions();
 
   const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);

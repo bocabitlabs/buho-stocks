@@ -1,20 +1,26 @@
 import React from "react";
-
+import { Redirect } from "react-router-dom";
 import { Col, Layout, Row } from "antd";
 import { Content, Footer } from "antd/lib/layout/layout";
-import { useAuthContext } from "hooks/use-auth/use-auth-context";
-import { useHistory } from "react-router-dom";
-import getRoute, { HOME_ROUTE } from "routes";
 import { LoginForm } from "./components/LoginForm/LoginForm";
+import { useAuthContext } from "hooks/use-auth/use-auth-context";
+import getRoute, { HOME_ROUTE } from "routes";
 
 export function LoginPage() {
-  const auth = useAuthContext();
-  const history = useHistory();
+  const { state, isWorking } = useAuthContext();
+  console.log("LoginPage isAuthenticated:", state.isAuthenticated);
 
-  if (auth.isAuthenticated) {
-    history.push(getRoute(HOME_ROUTE));
+  React.useEffect(() => {
+    console.debug("LoginPage useEffect state:", state);
+  }, [state]);
+
+  React.useEffect(() => {
+    console.log("LoginPage isWorking from useEffect: ", isWorking);
+  }, [isWorking]);
+
+  if (state.isAuthenticated) {
+    return <Redirect to={{ pathname: getRoute(HOME_ROUTE) }} />;
   }
-
   return (
     <Layout>
       <Row>

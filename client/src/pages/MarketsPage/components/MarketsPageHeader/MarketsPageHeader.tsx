@@ -1,9 +1,8 @@
 import React, { FC, ReactNode } from "react";
-
-import { Button, PageHeader } from "antd";
 import { useTranslation } from "react-i18next";
-import { PlusOutlined } from "@ant-design/icons";
 import { useHistory } from "react-router";
+import { PlusOutlined } from "@ant-design/icons";
+import { Button, PageHeader } from "antd";
 
 const MarketsPageHeader: FC<ReactNode> = ({ children }) => {
   const { t } = useTranslation();

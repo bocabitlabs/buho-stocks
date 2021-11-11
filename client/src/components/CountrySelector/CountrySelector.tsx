@@ -1,9 +1,8 @@
 import React, { ReactElement } from "react";
-import { Select } from "antd";
-
-import FlagIcon from "utils/flag-icon";
-import countries from "utils/countries";
 import { useTranslation } from "react-i18next";
+import { Select } from "antd";
+import countries from "utils/countries";
+import FlagIcon from "utils/flag-icon";
 
 interface Props {
   handleChange: any;

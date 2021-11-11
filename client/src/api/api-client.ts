@@ -16,10 +16,14 @@ export interface ILoginData {
   password: string;
 }
 
+// export interface IApiResponse {
+//   error: boolean;
+//   result: any;
+//   statusCode: number;
+// }
+
 export interface IApiResponse {
-  error: boolean;
-  result: any;
-  statusCode: number;
+  [key: string]: string;
 }
 
 export class ApiClient {

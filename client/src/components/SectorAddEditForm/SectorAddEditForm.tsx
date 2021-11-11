@@ -1,8 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import { Button, Form, Input, Select, Spin, Switch } from "antd";
-
-import ColorSelector from "components/ColorSelector/ColorSelector";
 import { useTranslation } from "react-i18next";
+import { Button, Form, Input, Select, Spin, Switch } from "antd";
+import ColorSelector from "components/ColorSelector/ColorSelector";
 import { useSectorsContext } from "hooks/use-sectors/use-sectors-context";
 import { ISector } from "types/sector";
 
@@ -15,17 +14,20 @@ function SectorAddEditForm({
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
-  const [superSectorId, setSuperSectorId] = useState<number | undefined>(
-    undefined
-  );
+  // const [superSectorId, setSuperSectorId] = useState<number | undefined>(
+  //   undefined
+  // );
   const { t } = useTranslation();
 
   const {
     sector,
     superSectors,
     create: addSector,
+    createSuperSector,
+    getAllSuperSectors,
     getById: getSectorById,
-    update: updateSector
+    update: updateSector,
+    updateSuperSector
   } = useSectorsContext();
 
   useEffect(() => {
@@ -36,21 +38,40 @@ function SectorAddEditForm({
   }, [sectorId, getSectorById]);
 
   useEffect(() => {
+    const getAll = async () => {
+      getAllSuperSectors();
+    };
+    getAll();
+  }, [getAllSuperSectors]);
+
+  useEffect(() => {
     if (sectorId) {
       if (sector) {
         setColor(sector.color);
-        setSuperSectorId(sector.superSector);
+        // setSuperSectorId(sector.superSector);
       }
     }
   }, [sectorId, sector]);
 
   const handleSubmit = (values: any) => {
-    const { name } = values;
+    const { name, isSuperSector, superSectorId } = values;
     const newSector = {
       name,
-      color
+      color,
+      superSector: superSectorId
     };
     console.log(newSector);
+
+    if (isSuperSector) {
+      if (sectorId) {
+        const id: number = +sectorId;
+        updateSuperSector(id, newSector);
+      } else if (isSuperSector && !sectorId) {
+        createSuperSector(newSector);
+      }
+      return;
+    }
+
     if (sectorId) {
       const id: number = +sectorId;
       updateSector(id, newSector);
@@ -79,7 +100,7 @@ function SectorAddEditForm({
       initialValues={{
         name: sector?.name,
         isSuperSector: sector?.isSuperSector,
-        superSectorId
+        superSectorId: sector?.superSector
       }}
     >
       <Form.Item

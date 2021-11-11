@@ -30,7 +30,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src",
+    "lint": "eslint . --ext .tsx,.ts,.js,.jsx",
     "prettier:fix": "prettier --write",
     "prettier:check": "prettier --check .",
     "prepare-husky": "cd .. && husky install client/.husky"

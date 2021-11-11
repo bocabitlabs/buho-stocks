@@ -1,8 +1,8 @@
-import { SectorsContext } from "contexts/secctors";
-import WrapperPage from "pages/WrapperPage/WrapperPage";
 import React, { useContext } from "react";
 import SectorsListTable from "./components/SectorsListTable/SectorsListTable";
 import SectorsPageHeader from "./components/SectorsPageHeader/SectorsPageHeader";
+import { SectorsContext } from "contexts/secctors";
+import WrapperPage from "pages/WrapperPage/WrapperPage";
 
 // Params are placeholders in the URL that begin
 // with a colon, like the `:id` param defined in

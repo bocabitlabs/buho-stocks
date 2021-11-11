@@ -1,14 +1,14 @@
-import { Button, Popconfirm, Space, Spin, Table } from "antd";
 import React, { useEffect } from "react";
-import { IMarket } from "types/market";
-import { Link } from "react-router-dom";
-import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useTranslation } from "react-i18next";
-import { useMarketsContext } from "hooks/use-markets/use-markets-context";
-import getRoute, { MARKETS_ROUTE } from "routes";
+import { Link } from "react-router-dom";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import CountryFlag from "components/CountryFlag/CountryFlag";
+import { useMarketsContext } from "hooks/use-markets/use-markets-context";
+import getRoute, { MARKETS_ROUTE } from "routes";
+import { IMarket } from "types/market";
 
 export default function MarketsListTable() {
   const {

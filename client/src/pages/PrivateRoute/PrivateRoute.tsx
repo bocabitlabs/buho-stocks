@@ -1,34 +1,21 @@
-import React, { FC } from "react";
-
-import { Spin } from "antd";
+// import { useAuthContext } from "hooks/use-auth/use-auth-context";
+import React from "react";
+import { Redirect, RouteProps } from "react-router";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
-import { Redirect, Route, RouteProps } from "react-router-dom";
+import getRoute, { LOGIN_ROUTE } from "routes";
 
-// screen if you're not yet authenticated.
-export const PrivateRoute: FC<RouteProps> = ({ children, ...rest }) => {
-  const { isLoading, isAuthenticated } = useAuthContext();
+export type PrivateRouteProps = {
+  component: React.FunctionComponent<any>;
+} & RouteProps;
 
-  if (isLoading) {
-    return <Spin />;
+const PrivateRoute = ({ component: Component, ...rest }: PrivateRouteProps) => {
+  const { state } = useAuthContext();
+
+  if (state.isAuthenticated) {
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    return <Component {...rest} />;
   }
-  return (
-    <Route
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...rest}
-      render={({ location }) =>
-        isAuthenticated ? (
-          children
-        ) : (
-          <Redirect
-            to={{
-              pathname: "/app/login",
-              state: { from: location }
-            }}
-          />
-        )
-      }
-    />
-  );
+  return <Redirect to={getRoute(LOGIN_ROUTE)} />;
 };
 
 export default PrivateRoute;

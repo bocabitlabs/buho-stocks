@@ -1,10 +1,10 @@
+import React, { useContext } from "react";
+import { useParams } from "react-router-dom";
 import { Col, Row } from "antd";
+import MarketsEditPageHeader from "./components/MarketsEditPageHeader/MarketsEditPageHeader";
 import MarketAddEditForm from "components/MarketAddEditForm/MarketAddEditForm";
 import { MarketsContext } from "contexts/markets";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
-import React, { useContext } from "react";
-import { useParams } from "react-router-dom";
-import MarketsEditPageHeader from "./components/MarketsEditPageHeader/MarketsEditPageHeader";
 
 // Params are placeholders in the URL that begin
 // with a colon, like the `:id` param defined in

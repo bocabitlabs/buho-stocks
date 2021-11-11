@@ -1,7 +1,6 @@
 import React, { FC, ReactNode } from "react";
-
-import { PageHeader } from "antd";
 import { useTranslation } from "react-i18next";
+import { PageHeader } from "antd";
 
 const MarketsAddPageHeader: FC<ReactNode> = ({ children }) => {
   const { t } = useTranslation();

@@ -1,8 +1,6 @@
 import { renderHook, act } from "@testing-library/react-hooks";
-import { IMarket, IMarketFormFields } from "types/market";
-import MarketsService from "services/markets/markets-service";
-
 import { useMarketsContext } from "./use-markets-context";
+import { IMarket, IMarketFormFields } from "types/market";
 
 const marketFormProps: IMarketFormFields = {
   name: "NYSE",

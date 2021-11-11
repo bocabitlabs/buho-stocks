@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { Col, Row } from "antd";
-import MarketsAddPageHeader from "./components/MarketsAddPageHeader/MarketsAddPageHeader";
-import MarketAddEditForm from "components/MarketAddEditForm/MarketAddEditForm";
+import SectorsEditPageHeader from "./components/SectorsEditHeader/SectorsEditHeader";
+import SectorAddEditForm from "components/SectorAddEditForm/SectorAddEditForm";
 import { MarketsContext } from "contexts/markets";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
 
@@ -11,20 +11,20 @@ import WrapperPage from "pages/WrapperPage/WrapperPage";
 // is used for matching dynami§wc segments in other
 // popular web frameworks like Rails and Express.
 
-export default function MarketsAddPage() {
+export default function SectorsAddPage() {
   const marketsContext = useContext(MarketsContext);
 
   return (
     <WrapperPage>
       <MarketsContext.Provider value={marketsContext}>
-        <MarketsAddPageHeader>
+        <SectorsEditPageHeader>
           <Row>
             <Col>
-              <MarketAddEditForm />
+              <SectorAddEditForm />
             </Col>
             <Col />
           </Row>
-        </MarketsAddPageHeader>
+        </SectorsEditPageHeader>
       </MarketsContext.Provider>
     </WrapperPage>
   );

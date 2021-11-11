@@ -1,11 +1,10 @@
 import React, { ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Button, Form, Input, Spin, TimePicker } from "antd";
-
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import CountrySelector from "components/CountrySelector/CountrySelector";
 import ColorSelector from "components/ColorSelector/ColorSelector";
-import { useTranslation } from "react-i18next";
+import CountrySelector from "components/CountrySelector/CountrySelector";
 import { useMarketsContext } from "hooks/use-markets/use-markets-context";
 
 interface AddEditFormProps {

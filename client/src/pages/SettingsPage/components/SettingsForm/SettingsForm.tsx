@@ -1,13 +1,16 @@
-import React, { ReactElement } from "react";
-import { Button, Form, Select, Spin } from "antd";
-
+import React, { ReactElement, useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { Button, Form, Select, Spin } from "antd";
+import { SettingsContext } from "contexts/settings";
 import { ISettingsFormFields } from "types/settings";
-import { useSettingsContext } from "hooks/use-settings/use-settings-context";
 
 function SettingsForm(): ReactElement | null {
   const [form] = Form.useForm();
-  const { isLoading, settings, update: updateSettings } = useSettingsContext();
+  const {
+    isLoading,
+    settings,
+    update: updateSettings
+  } = useContext(SettingsContext);
   const { t, i18n } = useTranslation();
 
   const handleUpdate = async (values: any) => {
