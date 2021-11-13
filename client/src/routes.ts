@@ -4,6 +4,12 @@ const REGISTER_ROUTE = "/register";
 
 const HOME_ROUTE = "/home";
 const SETTINGS_ROUTE = "/settings";
+
+const CURRENCIES_ROUTE = "/currencies";
+const CURRENCIES_ADD_ROUTE = "/currencies/add";
+const CURRENCIES_DETAILS_ROUTE = "/currencies/:id";
+const CURRENCIES_EDIT_ROUTE = "/currencies/:id/edit";
+
 const MARKETS_ROUTE = "/markets";
 const MARKETS_ADD_ROUTE = "/markets/add";
 const MARKETS_DETAILS_ROUTE = "/markets/:id";
@@ -22,6 +28,10 @@ export default getRoute;
 
 export {
   APP_BASE_ROUTE,
+  CURRENCIES_ROUTE,
+  CURRENCIES_ADD_ROUTE,
+  CURRENCIES_DETAILS_ROUTE,
+  CURRENCIES_EDIT_ROUTE,
   LOGIN_ROUTE,
   REGISTER_ROUTE,
   HOME_ROUTE,

@@ -25,6 +25,7 @@ import SectorsPage from "pages/SectorsPage/SectorsPage";
 import SettingsPage from "pages/SettingsPage/SettingsPage";
 import getRoute, {
   APP_BASE_ROUTE,
+  CURRENCIES_ROUTE,
   HOME_ROUTE,
   MARKETS_ADD_ROUTE,
   MARKETS_ROUTE,
@@ -122,7 +123,7 @@ function App() {
                 />
                 <PrivateRoute
                   exact
-                  path="/app/currencies"
+                  path={getRoute(CURRENCIES_ROUTE)}
                   component={CurrenciesPage}
                 />
                 <PrivateRoute
