@@ -39,12 +39,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # 'todo',
+    "currencies",
     "markets",
     "sectors",
     "settings",
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
+    "djmoney",
 ]
 
 MIDDLEWARE = [
@@ -90,8 +92,8 @@ REST_FRAMEWORK = {
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
         # Any other parsers
     ),
-    'JSON_UNDERSCOREIZE': {
-        'no_underscore_before_number': True,
+    "JSON_UNDERSCOREIZE": {
+        "no_underscore_before_number": True,
     },
 }
 

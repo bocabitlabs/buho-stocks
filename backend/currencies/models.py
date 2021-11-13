@@ -2,13 +2,12 @@ from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
-class Market(models.Model):
+class Currency(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    abbreviation = models.CharField(max_length=200)
     color = models.CharField(max_length=200)
-    region = models.CharField(max_length=200)
-    open_time = models.TimeField()
-    close_time = models.TimeField()
+    symbol = models.CharField(max_length=200)
+    country = models.CharField(max_length=200)
 
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)

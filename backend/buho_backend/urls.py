@@ -27,7 +27,7 @@ from drf_yasg import openapi
 schema_view = get_schema_view(
     openapi.Info(
         title="Buho Backend API",
-        default_version='v1',
+        default_version="v1",
         description="Backend docs",
         terms_of_service="https://www.google.com/policies/terms/",
         license=openapi.License(name="GPL3 License"),
@@ -38,16 +38,23 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    # path('markets/', include('rest_framework.urls', namespace='rest_framework')),
-    path('api/v1/markets/', include("markets.urls")),
-    path('api/v1/sectors/', include("sectors.urls")),
-    path('api/v1/settings/', include("settings.urls")),
-    path('auth/', include('auth.urls')),
-    url(r'^swagger(?P<format>\.json|\.yaml)$',
-        schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    url(r'^swagger/$', schema_view.with_ui('swagger',
-        cache_timeout=0), name='schema-swagger-ui'),
-    url(r'^redoc/$', schema_view.with_ui('redoc',
-        cache_timeout=0), name='schema-redoc'),
+    path("admin/", admin.site.urls),
+    path("api/v1/currencies/", include("currencies.urls")),
+    path("api/v1/markets/", include("markets.urls")),
+    path("api/v1/sectors/", include("sectors.urls")),
+    path("api/v1/settings/", include("settings.urls")),
+    path("auth/", include("auth.urls")),
+    url(
+        r"^swagger(?P<format>\.json|\.yaml)$",
+        schema_view.without_ui(cache_timeout=0),
+        name="schema-json",
+    ),
+    url(
+        r"^swagger/$",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    url(
+        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
 ]
