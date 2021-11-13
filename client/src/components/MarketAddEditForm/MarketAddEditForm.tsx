@@ -1,11 +1,11 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Form, Input, Spin, TimePicker } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { useMarketsContext } from "hooks/use-markets/use-markets-context";
+import { MarketsContext } from "contexts/markets";
 
 interface AddEditFormProps {
   marketId?: string;
@@ -24,7 +24,7 @@ function MarketAddEditForm({
     create: addMarket,
     getById: getMarketById,
     update: updateMarket
-  } = useMarketsContext();
+  } = useContext(MarketsContext);
 
   useEffect(() => {
     if (marketId) {

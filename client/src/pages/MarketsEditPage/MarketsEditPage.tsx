@@ -1,9 +1,10 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { Col, Row } from "antd";
 import MarketsEditPageHeader from "./components/MarketsEditPageHeader/MarketsEditPageHeader";
 import MarketAddEditForm from "components/MarketAddEditForm/MarketAddEditForm";
 import { MarketsContext } from "contexts/markets";
+import { useMarketsContext } from "hooks/use-markets/use-markets-context";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
 
 // Params are placeholders in the URL that begin
@@ -17,7 +18,7 @@ export interface IRouteParams {
 }
 
 export default function MarketsEditPage() {
-  const marketsContext = useContext(MarketsContext);
+  const marketsContext = useMarketsContext();
   const { id } = useParams<IRouteParams>();
 
   return (

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -6,7 +6,7 @@ import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import { useMarketsContext } from "hooks/use-markets/use-markets-context";
+import { MarketsContext } from "contexts/markets";
 import getRoute, { MARKETS_ROUTE } from "routes";
 import { IMarket } from "types/market";
 
@@ -16,7 +16,7 @@ export default function MarketsListTable() {
     isLoading,
     getAll: getMarkets,
     deleteById: deleteMarketById
-  } = useMarketsContext();
+  } = useContext(MarketsContext);
   const { t } = useTranslation();
 
   useEffect(() => {
