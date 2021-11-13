@@ -2,18 +2,9 @@ import { useCallback } from "react";
 import { useHistory } from "react-router-dom";
 import { message } from "antd";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
-import getRoute, { LOGIN_ROUTE } from "routes";
-
-// interface LocationState {
-//   from: {
-//     pathname: string;
-//   };
-// }
 
 export function useApi() {
   const history = useHistory();
-  // const { t } = useTranslation();
-  // const location = useLocation<LocationState>();
   const { state, clearToken } = useAuthContext();
 
   const authHeader = useCallback(
@@ -38,15 +29,11 @@ export function useApi() {
     (response: any) => {
       return response.text().then((text: string) => {
         const data = text && JSON.parse(text);
-        console.log(response);
         if (!response.ok) {
           if ([401, 403].includes(response.status) || !state.token) {
             // auto logout if 401 Unauthorized or 403 Forbidden response returned from api
             console.log("clearing token");
             clearToken();
-            console.log(history);
-            console.log(getRoute(LOGIN_ROUTE));
-            // history.push(getRoute(LOGIN_ROUTE));
           }
           const error = (data && data.message) || response.statusText;
           message.error(error);

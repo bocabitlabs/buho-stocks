@@ -48,22 +48,25 @@ jest.mock("react-i18next", () => ({
   }
 }));
 
+const mockedGetValue = jest.fn();
+const mockedPostValue = jest.fn();
+const mockedPutValue = jest.fn();
+const mockedDeleteValue = jest.fn();
+
+jest.mock("hooks/use-api/use-api-hook", () => ({
+  useApi: () => ({
+    get: async () => mockedGetValue,
+    post: mockedPostValue,
+    put: mockedPutValue,
+    delete: mockedDeleteValue
+  })
+}));
+
 jest.mock("react-router", () => ({
   useHistory: () => ({
     push: jest.fn()
   })
 }));
-
-// jest.mock("services/markets/markets-service", () => ({
-//   exportAll: () => returnAllExample,
-//   getAll: async () => {console.log("getAll mock");return returnAllExample},
-//   getById: () => returnAllExample[1],
-//   getByName: () => returnAllExample[2],
-//   create: () => ({ changes: 1 }),
-//   deleteById: () => ({ changes: 1 }),
-//   update: () => ({ changes: 1 })
-// }));
-jest.mock("services/markets/markets-service");
 
 describe("useMarketsContext tests", () => {
   beforeEach(() => {
@@ -75,20 +78,18 @@ describe("useMarketsContext tests", () => {
     expect(result.current.isLoading).toBe(false);
   });
 
-  // it("verifies that it loads with 2 markets", () => {
-  //   const { result } = renderHook(() => useMarketsContext());
-  //   expect(result.current.markets.length).toBe(2);
-  // });
+  it("verifies that it loads with no markets", () => {
+    const { result } = renderHook(() => useMarketsContext());
+    expect(result.current.markets.length).toBe(0);
+  });
 
-  // it("verifies that it loads with no market", () => {
-  //   const { result } = renderHook(() => useMarketsContext());
-  //   expect(result.current.market).toBe(null);
-  // });
+  it("verifies that it loads with no market", () => {
+    const { result } = renderHook(() => useMarketsContext());
+    expect(result.current.market).toBe(null);
+  });
 
   it("verifies that getAll returns the markets", async () => {
-    const getAllMocked = jest.fn();
-    getAllMocked.mockReturnValue({ result: returnAllExample });
-    MarketsService.prototype.getAll = getAllMocked;
+    mockedGetValue.mockReturnValue(returnAllExample);
     const { result, waitForNextUpdate } = renderHook(() => useMarketsContext());
 
     act(() => {
@@ -99,9 +100,7 @@ describe("useMarketsContext tests", () => {
   });
 
   it("verifies that getById returns the market 1", async () => {
-    const getByIdMocked = jest.fn();
-    getByIdMocked.mockReturnValue({ result: returnAllExample[0] });
-    MarketsService.prototype.getById = getByIdMocked;
+    mockedGetValue.mockReturnValue(returnAllExample[0]);
     const { result, waitForNextUpdate } = renderHook(() => useMarketsContext());
     act(() => {
       result.current.getById(1);
@@ -111,9 +110,7 @@ describe("useMarketsContext tests", () => {
   });
 
   it("creates a market and returns changes", async () => {
-    const createMocked = jest.fn();
-    createMocked.mockReturnValue({ result: returnAllExample[0] });
-    MarketsService.prototype.create = createMocked;
+    mockedPostValue.mockReturnValue(returnAllExample[0]);
     const { result, waitForNextUpdate } = renderHook(() => useMarketsContext());
     act(() => {
       result.current.create(marketFormProps);
@@ -123,10 +120,8 @@ describe("useMarketsContext tests", () => {
   });
 
   it("updates a market and returns changes", async () => {
-    const updateMocked = jest.fn();
-    updateMocked.mockReturnValue({ result: returnAllExample[0] });
-    MarketsService.prototype.update = updateMocked;
-    MarketsService.prototype.getById = updateMocked;
+    mockedGetValue.mockReturnValue(returnAllExample[0]);
+    mockedPutValue.mockReturnValue(returnAllExample[0]);
     const { result, waitForNextUpdate } = renderHook(() => useMarketsContext());
     act(() => {
       result.current.update(1, marketFormProps);
@@ -136,12 +131,9 @@ describe("useMarketsContext tests", () => {
   });
 
   it("deletes a market", async () => {
-    const deleteMocked = jest.fn();
-    const getAllMocked = jest.fn();
-    getAllMocked.mockReturnValue({ result: returnAllExample });
-    deleteMocked.mockReturnValue({ result: returnAllExample[0] });
-    MarketsService.prototype.deleteById = deleteMocked;
-    MarketsService.prototype.getAll = getAllMocked;
+    mockedGetValue.mockReturnValue(returnAllExample);
+    mockedDeleteValue.mockReturnValue(returnAllExample[0]);
+
     const { result, waitForNextUpdate } = renderHook(() => useMarketsContext());
     act(() => {
       result.current.deleteById(1);
