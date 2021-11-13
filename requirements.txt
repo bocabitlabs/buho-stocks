@@ -1,5 +1,6 @@
 black==21.9b0
 Django==3.2.8
+django-money==2.1
 djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-yasg==1.20.0
