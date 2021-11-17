@@ -18,16 +18,17 @@ class CurrencyListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     # 1. List all
+    @swagger_auto_schema(tags=["currencies"])
     def get(self, request, *args, **kwargs):
         """
         List all the currency items for given requested user
         """
-        todos = Currency.objects.filter(user=request.user.id)
-        serializer = CurrencySerializer(todos, many=True)
+        elements = Currency.objects.filter(user=request.user.id)
+        serializer = CurrencySerializer(elements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
-    @swagger_auto_schema(request_body=CurrencySerializer)
+    @swagger_auto_schema(tags=["currencies"], request_body=CurrencySerializer)
     def post(self, request, *args, **kwargs):
         """
         Create the Currency with given currency data
@@ -64,30 +65,31 @@ class CurrencyDetailAPIView(APIView):
             return None
 
     # 3. Retrieve
+    @swagger_auto_schema(tags=["currencies"])
     def get(self, request, currency_id, *args, **kwargs):
         """
         Retrieve the currency item with given currency_id
         """
-        todo_instance = self.get_object(currency_id, request.user.id)
-        if not todo_instance:
+        instance = self.get_object(currency_id, request.user.id)
+        if not instance:
             return Response(
                 {"res": "Object with currency id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = CurrencySerializer(todo_instance)
+        serializer = CurrencySerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
-    @swagger_auto_schema(request_body=CurrencySerializer)
+    @swagger_auto_schema(tags=["currencies"], request_body=CurrencySerializer)
     def put(self, request, currency_id, *args, **kwargs):
         """
         Update the currency item with given currency_id
         """
-        todo_instance = self.get_object(currency_id, request.user.id)
-        if not todo_instance:
+        instance = self.get_object(currency_id, request.user.id)
+        if not instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
+                {"res": "Object with currency id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         data = {
@@ -97,13 +99,14 @@ class CurrencyDetailAPIView(APIView):
             "country": request.data.get("country"),
             "symbol": request.data.get("symbol"),
         }
-        serializer = CurrencySerializer(instance=todo_instance, data=data, partial=True)
+        serializer = CurrencySerializer(instance=instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 5. Delete
+    @swagger_auto_schema(tags=["currencies"])
     def delete(self, request, currency_id, *args, **kwargs):
         """
         Delete the currency item with given currency_id
@@ -111,7 +114,7 @@ class CurrencyDetailAPIView(APIView):
         currency_instance = self.get_object(currency_id, request.user.id)
         if not currency_instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
+                {"res": "Object with currency id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         currency_instance.delete()

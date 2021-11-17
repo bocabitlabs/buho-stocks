@@ -28,6 +28,7 @@ class SectorListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     # 1. List all
+    @swagger_auto_schema(tags=["sectors"])
     def get(self, request, *args, **kwargs):
         """
         List all the market items for given requested user
@@ -37,7 +38,7 @@ class SectorListAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
-    @swagger_auto_schema(request_body=SectorSerializer)
+    @swagger_auto_schema(tags=["sectors"], request_body=SectorSerializer)
     def post(self, request, *args, **kwargs):
         """
         Create the Sector with given market data
@@ -73,6 +74,7 @@ class SectorDetailAPIView(APIView):
             return None
 
     # 3. Retrieve
+    @swagger_auto_schema(tags=["sectors"])
     def get(self, request, sector_id, *args, **kwargs):
         """
         Retrieves the Todo with given todo_id
@@ -88,7 +90,7 @@ class SectorDetailAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
-    @swagger_auto_schema(request_body=SectorSerializer)
+    @swagger_auto_schema(tags=["sectors"], request_body=SectorSerializer)
     def put(self, request, sector_id, *args, **kwargs):
         """
         Updates the todo item with given todo_id if exists
@@ -111,6 +113,7 @@ class SectorDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 5. Delete
+    @swagger_auto_schema(tags=["sectors"])
     def delete(self, request, sector_id, *args, **kwargs):
         """
         Deletes the todo item with given todo_id if exists
@@ -135,6 +138,7 @@ class SuperSectorListAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     # 1. List all
+    @swagger_auto_schema(tags=["super_sectors"])
     def get(self, request, *args, **kwargs):
         """
         List all the market items for given requested user
@@ -144,7 +148,7 @@ class SuperSectorListAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
-    @swagger_auto_schema(request_body=SuperSectorSerializer)
+    @swagger_auto_schema(tags=["super_sectors"], request_body=SuperSectorSerializer)
     def post(self, request, *args, **kwargs):
         """
         Create the Sector with given market data
@@ -181,6 +185,7 @@ class SuperSectorDetailAPIView(APIView):
             return None
 
     # 3. Retrieve
+    @swagger_auto_schema(tags=["super_sectors"])
     def get(self, request, sector_id, *args, **kwargs):
         """
         Retrieves the Todo with given todo_id
@@ -196,7 +201,7 @@ class SuperSectorDetailAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
-    @swagger_auto_schema(request_body=SuperSectorSerializer)
+    @swagger_auto_schema(tags=["super_sectors"], request_body=SuperSectorSerializer)
     def put(self, request, sector_id, *args, **kwargs):
         """
         Updates the todo item with given todo_id if exists
@@ -217,6 +222,7 @@ class SuperSectorDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 5. Delete
+    @swagger_auto_schema(tags=["super_sectors"])
     def delete(self, request, sector_id, *args, **kwargs):
         """
         Deletes the todo item with given todo_id if exists

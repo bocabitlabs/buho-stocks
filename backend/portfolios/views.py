@@ -7,41 +7,40 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from markets.serializers import MarketSerializer
-from markets.models import Market
+from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
+from portfolios.models import Portfolio
 
 
-class MarketListAPIView(APIView):
+class PortfoliosListAPIView(APIView):
     """Get all the markets from a user"""
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
-    @swagger_auto_schema(tags=["markets"])
+    @swagger_auto_schema(tags=["portfolios"])
     def get(self, request, *args, **kwargs):
         """
-        List all the market items for given requested user
+        List all the portfolio items for given requested user
         """
-        todos = Market.objects.filter(user=request.user.id)
-        serializer = MarketSerializer(todos, many=True)
+        elements = Portfolio.objects.filter(user=request.user.id)
+        serializer = PortfolioSerializerGet(elements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
-    @swagger_auto_schema(tags=["markets"], request_body=MarketSerializer)
+    @swagger_auto_schema(tags=["portfolios"], request_body=PortfolioSerializer)
     def post(self, request, *args, **kwargs):
         """
-        Create the Market with given market data
+        Create the portfolio with given portfolio data
         """
         data = {
             "name": request.data.get("name"),
             "description": request.data.get("description"),
             "color": request.data.get("color"),
-            "region": request.data.get("region"),
-            "open_time": request.data.get("open_time"),
-            "close_time": request.data.get("close_time"),
+            "hide_closed_companies": request.data.get("hide_closed_companies"),
+            "base_currency": request.data.get("base_currency"),
         }
-        serializer = MarketSerializer(data=data)
+        serializer = PortfolioSerializer(data=data)
         if serializer.is_valid():
             print("Serializer is valid")
             serializer.save(user=self.request.user)
@@ -50,73 +49,72 @@ class MarketListAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MarketDetailAPIView(APIView):
-    """Operations for a single Market"""
+class PortfolioDetailAPIView(APIView):
+    """Operations for a single Portfolio"""
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, market_id, user_id):
+    def get_object(self, portfolio_id, user_id):
         """
-        Get a market object from a user given the market id
+        Get a market object from a user given the portfolio id
         """
         try:
-            return Market.objects.get(id=market_id, user=user_id)
-        except Market.DoesNotExist:
+            return Portfolio.objects.get(id=portfolio_id, user=user_id)
+        except Portfolio.DoesNotExist:
             return None
 
     # 3. Retrieve
-    @swagger_auto_schema(tags=["markets"])
-    def get(self, request, market_id, *args, **kwargs):
+    @swagger_auto_schema(tags=["portfolios"])
+    def get(self, request, portfolio_id, *args, **kwargs):
         """
-        Retrieve the market item with given market_id
+        Retrieve the portfolio item with given portfolio_id
         """
-        todo_instance = self.get_object(market_id, request.user.id)
-        if not todo_instance:
+        instance = self.get_object(portfolio_id, request.user.id)
+        if not instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
+                {"res": "Object with portfolio id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = MarketSerializer(todo_instance)
+        serializer = PortfolioSerializerGet(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
-    @swagger_auto_schema(tags=["markets"], request_body=MarketSerializer)
-    def put(self, request, market_id, *args, **kwargs):
+    @swagger_auto_schema(tags=["portfolios"], request_body=PortfolioSerializer)
+    def put(self, request, portfolio_id, *args, **kwargs):
         """
-        Update the market item with given market_id
+        Update the portfolio item with given portfolio_id
         """
-        todo_instance = self.get_object(market_id, request.user.id)
-        if not todo_instance:
+        instance = self.get_object(portfolio_id, request.user.id)
+        if not instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
+                {"res": "Object with portfolio id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         data = {
             "name": request.data.get("name"),
             "description": request.data.get("description"),
             "color": request.data.get("color"),
-            "region": request.data.get("region"),
-            "openTime": request.data.get("openTime"),
-            "closeTime": request.data.get("closeTime"),
+            "hide_closed_companies": request.data.get("hide_closed_companies"),
+            "base_currency": request.data.get("base_currency"),
         }
-        serializer = MarketSerializer(instance=todo_instance, data=data, partial=True)
+        serializer = PortfolioSerializer(instance=instance, data=data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 5. Delete
-    @swagger_auto_schema(tags=["markets"])
-    def delete(self, request, market_id, *args, **kwargs):
+    @swagger_auto_schema(tags=["portfolios"])
+    def delete(self, request, portfolio_id, *args, **kwargs):
         """
-        Delete the market item with given market_id
+        Delete the portfolio item with given portfolio_id
         """
-        market_instance = self.get_object(market_id, request.user.id)
+        market_instance = self.get_object(portfolio_id, request.user.id)
         if not market_instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
+                {"res": "Object with portfolio id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         market_instance.delete()

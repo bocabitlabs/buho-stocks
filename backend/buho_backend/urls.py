@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path
 from django.urls import include
 from rest_framework import permissions
-from rest_framework.authtoken import views
 
 
 from drf_yasg.views import get_schema_view
@@ -39,11 +38,13 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/v1/companies/", include("companies.urls")),
     path("api/v1/currencies/", include("currencies.urls")),
     path("api/v1/markets/", include("markets.urls")),
+    path("api/v1/portfolios/", include("portfolios.urls")),
     path("api/v1/sectors/", include("sectors.urls")),
     path("api/v1/settings/", include("settings.urls")),
-    path("auth/", include("auth.urls")),
+    path("auth/", include("auth.urls"), name="authentication"),
     url(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),

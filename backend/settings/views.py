@@ -15,10 +15,11 @@ class UserSettingsListAPIView(APIView):
     permission_classes = [IsAuthenticated]
     # test
     # 1. List all
+    @swagger_auto_schema(tags=["settings"])
     def get(self, request, *args, **kwargs):
-        '''
+        """
         List all the market items for given requested user
-        '''
+        """
         todo = UserSettings.objects.get(user=request.user.id)
         serializer = UserSettingsSerializer(todo)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -39,6 +40,7 @@ class UserSettingsDetailAPIView(APIView):
             return None
 
     # 3. Retrieve
+    @swagger_auto_schema(tags=["settings"])
     def get(self, request, market_id, *args, **kwargs):
         """
         Retrieves the Todo with given todo_id
@@ -54,7 +56,7 @@ class UserSettingsDetailAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
-    @swagger_auto_schema(request_body=UserSettingsSerializer)
+    @swagger_auto_schema(tags=["settings"], request_body=UserSettingsSerializer)
     def put(self, request, settings_id, *args, **kwargs):
         """
         Updates the settings item with given todo_id if exists
