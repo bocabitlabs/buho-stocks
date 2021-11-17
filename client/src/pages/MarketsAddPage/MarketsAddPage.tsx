@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Col, Row } from "antd";
 import MarketsAddPageHeader from "./components/MarketsAddPageHeader/MarketsAddPageHeader";
 import MarketAddEditForm from "components/MarketAddEditForm/MarketAddEditForm";
 import { MarketsContext } from "contexts/markets";
-import { useMarketsContext } from "hooks/use-markets/use-markets-context";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
 
 // Params are placeholders in the URL that begin
@@ -13,7 +12,7 @@ import WrapperPage from "pages/WrapperPage/WrapperPage";
 // popular web frameworks like Rails and Express.
 
 export default function MarketsAddPage() {
-  const marketsContext = useMarketsContext();
+  const marketsContext = useContext(MarketsContext);
 
   return (
     <WrapperPage>

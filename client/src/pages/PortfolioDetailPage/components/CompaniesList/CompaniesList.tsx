@@ -4,31 +4,30 @@ import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
-import moment from "moment";
-import CountryFlag from "components/CountryFlag/CountryFlag";
-import { MarketsContext } from "contexts/markets";
+import { CompaniesContext } from "contexts/companies";
 import getRoute, { MARKETS_ROUTE } from "routes";
+import { ICompany } from "types/company";
 import { IMarket } from "types/market";
 
-export default function MarketsListTable() {
+export default function CompaniesList() {
   const {
-    markets,
+    companies,
     isLoading,
-    getAll: getMarkets,
-    deleteById: deleteMarketById
-  } = useContext(MarketsContext);
+    getAll: getCompanies,
+    deleteById: deleteCompanyById
+  } = useContext(CompaniesContext);
   const { t } = useTranslation();
 
   useEffect(() => {
-    const getAllMarkets = async () => {
-      getMarkets();
+    const getAll = async () => {
+      getCompanies();
     };
-    getAllMarkets();
-  }, [getMarkets]);
+    getAll();
+  }, [getCompanies]);
 
   function confirm(recordId: number) {
     console.log(recordId);
-    deleteMarketById(recordId);
+    deleteCompanyById(recordId);
   }
 
   const columns: any = [
@@ -46,7 +45,11 @@ export default function MarketsListTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string) => <strong>{text}</strong>,
+      render: (text: string, record: ICompany) => (
+        <Link to={`/app/portfolios/${record.portfolio}/companies/${record.id}`}>
+          {text}
+        </Link>
+      ),
       sorter: (a: IMarket, b: IMarket) => a.name.localeCompare(b.name)
     },
     {
@@ -55,28 +58,6 @@ export default function MarketsListTable() {
       key: "description",
       sorter: (a: IMarket, b: IMarket) =>
         a.description.localeCompare(b.description)
-    },
-    {
-      title: t("Region"),
-      dataIndex: "region",
-      key: "region",
-      render: (text: string) => <CountryFlag code={text} />,
-      sorter: (a: IMarket, b: IMarket) => a.region.localeCompare(b.region)
-    },
-    {
-      title: t("Opening time"),
-      dataIndex: "openTime",
-      key: "openTime",
-      sorter: (a: IMarket, b: IMarket) => a.openTime.localeCompare(b.openTime),
-      render: (text: string) => moment(text, "HH:mm").format("HH:mm")
-    },
-    {
-      title: t("Closing time"),
-      dataIndex: "closeTime",
-      key: "closeTime",
-      sorter: (a: IMarket, b: IMarket) =>
-        a.closeTime.localeCompare(b.closeTime),
-      render: (text: string) => moment(text, "HH:mm").format("HH:mm")
     },
     {
       title: t("Action"),
@@ -88,7 +69,7 @@ export default function MarketsListTable() {
           </Link>
           <Popconfirm
             key={`market-delete-${record.key}`}
-            title={`Delete market ${record.name}?`}
+            title={`Delete company ${record.name}?`}
             onConfirm={() => confirm(record.id)}
             okText="Yes"
             cancelText="No"
@@ -101,15 +82,13 @@ export default function MarketsListTable() {
   ];
 
   const getData = () => {
-    return markets.map((market: IMarket) => ({
-      id: market.id,
-      key: market.id,
-      name: market.name,
-      description: market.description,
-      region: market.region,
-      openTime: market.openTime,
-      closeTime: market.closeTime,
-      color: market.color
+    return companies.map((element: ICompany) => ({
+      id: element.id,
+      key: element.id,
+      name: element.name,
+      description: element.description,
+      color: element.color,
+      portfolio: element.portfolio
     }));
   };
 
@@ -117,5 +96,9 @@ export default function MarketsListTable() {
     return <Spin />;
   }
 
-  return <Table columns={columns} dataSource={getData()} />;
+  return (
+    <>
+      <Table columns={columns} dataSource={getData()} />
+    </>
+  );
 }

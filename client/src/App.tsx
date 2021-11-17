@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Redirect, Switch } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import "./App.css";
 import { UserOutlined } from "@ant-design/icons";
 import { Col, Layout, Menu, Row } from "antd";
@@ -11,12 +11,17 @@ import AppSidebar from "components/AppSidebar/AppSidebar";
 import { SettingsContext } from "contexts/settings";
 import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 import { useSettingsContext } from "hooks/use-settings/use-settings-context";
+import CompaniesAddPage from "pages/CompaniesAddPage/CompaniesAddPage";
+import CompanyDetailsPage from "pages/CompanyDetailsPage/CompanyDetailsPage";
+import CurrenciesAddPage from "pages/CurrenciesAddPage/CurrenciesAddPage";
 import CurrenciesPage from "pages/CurrenciesPage/CurrenciesPage";
 import HomePage from "pages/HomePage/HomePage";
 import ImportExportPage from "pages/ImportExportPage/ImportExportPage";
 import MarketsAddPage from "pages/MarketsAddPage/MarketsAddPage";
 import MarketsEditPage from "pages/MarketsEditPage/MarketsEditPage";
 import MarketsPage from "pages/MarketsPage/MarketsPage";
+import PortfolioDetailsPage from "pages/PortfolioDetailPage/PortfolioDetailsPage";
+import PortfoliosAddPage from "pages/PortfoliosAddPage/PortfoliosAddPage";
 import PortfoliosPage from "pages/PortfoliosPage/PortfoliosPage";
 import PrivateRoute from "pages/PrivateRoute/PrivateRoute";
 import SectorsAddPage from "pages/SectorsAddPage/SectorsAddpage";
@@ -25,10 +30,16 @@ import SectorsPage from "pages/SectorsPage/SectorsPage";
 import SettingsPage from "pages/SettingsPage/SettingsPage";
 import getRoute, {
   APP_BASE_ROUTE,
+  COMPANIES_ADD_ROUTE,
+  COMPANIES_DETAILS_ROUTE,
+  CURRENCIES_ADD_ROUTE,
   CURRENCIES_ROUTE,
   HOME_ROUTE,
   MARKETS_ADD_ROUTE,
   MARKETS_ROUTE,
+  PORTFOLIOS_ADD_ROUTE,
+  PORTFOLIOS_DETAILS_ROUTE,
+  PORTFOLIOS_ROUTE,
   SECTORS_ADD_ROUTE,
   SECTORS_ROUTE,
   SETTINGS_ROUTE
@@ -96,16 +107,31 @@ function App() {
                 />
                 <PrivateRoute
                   exact
+                  path={getRoute(COMPANIES_ADD_ROUTE)}
+                  component={CompaniesAddPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={getRoute(COMPANIES_DETAILS_ROUTE)}
+                  component={CompanyDetailsPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={getRoute(CURRENCIES_ADD_ROUTE)}
+                  component={CurrenciesAddPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={getRoute(CURRENCIES_ROUTE)}
+                  component={CurrenciesPage}
+                />
+                <PrivateRoute
+                  exact
                   path={getRoute(HOME_ROUTE)}
                   component={HomePage}
                 >
                   <HomePage />
                 </PrivateRoute>
-                <PrivateRoute
-                  exact
-                  path="/app/portfolios"
-                  component={PortfoliosPage}
-                />
                 <PrivateRoute
                   exact
                   path={getRoute(MARKETS_ADD_ROUTE)}
@@ -123,8 +149,18 @@ function App() {
                 />
                 <PrivateRoute
                   exact
-                  path={getRoute(CURRENCIES_ROUTE)}
-                  component={CurrenciesPage}
+                  path={getRoute(PORTFOLIOS_ADD_ROUTE)}
+                  component={PortfoliosAddPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={getRoute(PORTFOLIOS_DETAILS_ROUTE)}
+                  component={PortfolioDetailsPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={getRoute(PORTFOLIOS_ROUTE)}
+                  component={PortfoliosPage}
                 />
                 <PrivateRoute
                   exact
@@ -151,6 +187,7 @@ function App() {
                   path={getRoute(SETTINGS_ROUTE)}
                   component={SettingsPage}
                 />
+                <Route render={() => <div>This page does not exist</div>} />
               </Switch>
             </Content>
           </Col>

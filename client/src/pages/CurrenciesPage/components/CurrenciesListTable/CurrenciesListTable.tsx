@@ -58,7 +58,7 @@ export default function CurrenciesListTable() {
       title: t("Symbol"),
       dataIndex: "symbol",
       key: "symbol",
-      render: (text: string) => <CountryFlag code={text} />,
+      render: (text: string) => text,
       sorter: (a: ICurrency, b: ICurrency) => a.symbol.localeCompare(b.symbol)
     },
     {

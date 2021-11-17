@@ -3,25 +3,25 @@ import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, PageHeader } from "antd";
-import getRoute, { CURRENCIES_ADD_ROUTE } from "routes";
+import getRoute, { PORTFOLIOS_ADD_ROUTE } from "routes";
 
-const CurrenciesPageHeader: FC<ReactNode> = ({ children }) => {
+const PortfoliosPageHeader: FC<ReactNode> = ({ children }) => {
   const { t } = useTranslation();
   const history = useHistory();
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Currencies")}
+      title={t("Portfolios")}
       extra={[
         <Button
           key="add-button"
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => {
-            history.push(getRoute(CURRENCIES_ADD_ROUTE));
+            history.push(getRoute(PORTFOLIOS_ADD_ROUTE));
           }}
         >
-          {t("Add currency")}
+          {t("Add portfolio")}
         </Button>
       ]}
     >
@@ -30,4 +30,4 @@ const CurrenciesPageHeader: FC<ReactNode> = ({ children }) => {
   );
 };
 
-export default CurrenciesPageHeader;
+export default PortfoliosPageHeader;
