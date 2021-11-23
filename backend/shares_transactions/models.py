@@ -4,8 +4,11 @@ from buho_backend.transaction_types import TransactionType
 from companies.models import Company
 from djmoney.models.fields import MoneyField
 
-# Create your models here.
-class SharesTransaction(models.Model):
+
+class Transaction(models.Model):
+    class Meta:
+        abstract = True
+
     name = models.CharField(max_length=200)
     count = models.IntegerField()
     color = models.CharField(max_length=200)
@@ -22,11 +25,14 @@ class SharesTransaction(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    company = models.ForeignKey(
-        Company, on_delete=models.CASCADE, related_name="shares_transactions"
-    )
-
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     def __str___(self):
         return self.name
+
+
+class SharesTransaction(Transaction):
+
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="shares_transactions"
+    )

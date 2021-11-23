@@ -7,31 +7,31 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from shares_transactions.models import SharesTransaction
-from shares_transactions.serializers import SharesTransactionSerializer
+from dividends_transactions.models import DividendsTransaction
+from dividends_transactions.serializers import DividendsTransactionSerializer
 
 
-class SharesTransactionsListAPIView(APIView):
+class DividendsTransactionsListAPIView(APIView):
     """Get all the shares transactions from a user's company"""
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
-    @swagger_auto_schema(tags=["company_shares"])
+    @swagger_auto_schema(tags=["company_dividends"])
     def get(self, request, company_id, *args, **kwargs):
         """
         List all the company items for given requested user
         """
-        elements = SharesTransaction.objects.filter(
+        elements = DividendsTransaction.objects.filter(
             user=request.user.id, company=company_id
         )
-        serializer = SharesTransactionSerializer(elements, many=True)
+        serializer = DividendsTransactionSerializer(elements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
     @swagger_auto_schema(
-        tags=["company_shares"], request_body=SharesTransactionSerializer
+        tags=["company_dividends"], request_body=DividendsTransactionSerializer
     )
     def post(self, request, company_id, *args, **kwargs):
         """
@@ -49,7 +49,7 @@ class SharesTransactionsListAPIView(APIView):
             "notes": request.data.get("notes"),
             "company": company_id,
         }
-        serializer = SharesTransactionSerializer(data=data)
+        serializer = DividendsTransactionSerializer(data=data)
         if serializer.is_valid():
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -57,7 +57,7 @@ class SharesTransactionsListAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class SharesTransactionDetailAPIView(APIView):
+class DividendsTransactionDetailAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
     authentication_classes = [SessionAuthentication, TokenAuthentication]
@@ -68,14 +68,14 @@ class SharesTransactionDetailAPIView(APIView):
         Get a market object from a user given the portfolio id
         """
         try:
-            return SharesTransaction.objects.get(
+            return DividendsTransaction.objects.get(
                 id=transaction_id, company=company_id, user=user_id
             )
-        except SharesTransaction.DoesNotExist:
+        except DividendsTransaction.DoesNotExist:
             return None
 
     # 3. Retrieve
-    @swagger_auto_schema(tags=["company_shares"])
+    @swagger_auto_schema(tags=["company_dividends"])
     def get(self, request, company_id, transaction_id, *args, **kwargs):
         """
         Retrieve the company item with given company_id
@@ -87,12 +87,12 @@ class SharesTransactionDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = SharesTransactionSerializer(instance)
+        serializer = DividendsTransactionSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
     @swagger_auto_schema(
-        tags=["company_shares"], request_body=SharesTransactionSerializer
+        tags=["company_dividends"], request_body=DividendsTransactionSerializer
     )
     def put(self, request, company_id, transaction_id, *args, **kwargs):
         """
@@ -116,7 +116,7 @@ class SharesTransactionDetailAPIView(APIView):
             "notes": request.data.get("notes"),
             "company": company_id,
         }
-        serializer = SharesTransactionSerializer(
+        serializer = DividendsTransactionSerializer(
             instance=instance, data=data, partial=True
         )
         if serializer.is_valid():
@@ -125,10 +125,10 @@ class SharesTransactionDetailAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     # 5. Delete
-    @swagger_auto_schema(tags=["company_shares"])
+    @swagger_auto_schema(tags=["company_dividends"])
     def delete(self, request, company_id, transaction_id, *args, **kwargs):
         """
-        Delete the company item with given transaction id
+        Delete the item with given transaction id
         """
         market_instance = self.get_object(transaction_id, company_id, request.user.id)
         if not market_instance:

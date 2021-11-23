@@ -1,15 +1,15 @@
 from rest_framework import serializers
 from companies.models import Company
-from shares_transactions.models import SharesTransaction
+from dividends_transactions.models import DividendsTransaction
 
 
-class SharesTransactionSerializer(serializers.ModelSerializer):
+class DividendsTransactionSerializer(serializers.ModelSerializer):
     company = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects.all(), many=False, read_only=False
     )
 
     class Meta:
-        model = SharesTransaction
+        model = DividendsTransaction
         fields = [
             "id",
             "name",
