@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    SessionAuthentication,
+    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -14,7 +14,7 @@ from dividends_transactions.serializers import DividendsTransactionSerializer
 class DividendsTransactionsListAPIView(APIView):
     """Get all the shares transactions from a user's company"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -26,7 +26,9 @@ class DividendsTransactionsListAPIView(APIView):
         elements = DividendsTransaction.objects.filter(
             user=request.user.id, company=company_id
         )
-        serializer = DividendsTransactionSerializer(elements, many=True)
+        serializer = DividendsTransactionSerializer(
+            elements, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
@@ -38,18 +40,23 @@ class DividendsTransactionsListAPIView(APIView):
         Create a shares transaction with given data
         """
         data = {
-            "name": request.data.get("name"),
             "count": request.data.get("count"),
             "color": request.data.get("color"),
             "exchange_rate": request.data.get("exchange_rate"),
             "transaction_date": request.data.get("transaction_date"),
             "type": request.data.get("type"),
-            "price_per_share": request.data.get("price_per_share"),
+            "gross_price_per_share": request.data.get("gross_price_per_share"),
+            "gross_price_per_share_currency": request.data.get(
+                "gross_price_per_share_currency"
+            ),
             "total_commission": request.data.get("total_commission"),
+            "total_commission_currency": request.data.get("total_commission_currency"),
             "notes": request.data.get("notes"),
             "company": company_id,
         }
-        serializer = DividendsTransactionSerializer(data=data)
+        serializer = DividendsTransactionSerializer(
+            data=data, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -60,7 +67,7 @@ class DividendsTransactionsListAPIView(APIView):
 class DividendsTransactionDetailAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, transaction_id, company_id, user_id):
@@ -87,7 +94,9 @@ class DividendsTransactionDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = DividendsTransactionSerializer(instance)
+        serializer = DividendsTransactionSerializer(
+            instance, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
@@ -105,19 +114,22 @@ class DividendsTransactionDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         data = {
-            "name": request.data.get("name"),
             "count": request.data.get("count"),
             "color": request.data.get("color"),
             "exchange_rate": request.data.get("exchange_rate"),
             "transaction_date": request.data.get("transaction_date"),
             "type": request.data.get("type"),
-            "price_per_share": request.data.get("price_per_share"),
+            "gross_price_per_share": request.data.get("gross_price_per_share"),
+            "gross_price_per_share_currency": request.data.get(
+                "gross_price_per_share_currency"
+            ),
             "total_commission": request.data.get("total_commission"),
+            "total_commission_currency": request.data.get("total_commission_currency"),
             "notes": request.data.get("notes"),
             "company": company_id,
         }
         serializer = DividendsTransactionSerializer(
-            instance=instance, data=data, partial=True
+            instance=instance, data=data, partial=True, context={"request": request}
         )
         if serializer.is_valid():
             serializer.save()
