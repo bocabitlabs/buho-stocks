@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from "react";
+import React, { FC, ReactNode, useContext, useEffect } from "react";
 import { AuthContext } from "contexts/auth";
 import { SettingsContext } from "contexts/settings";
 import i18n from "i18n";
 
-function SettingsLoader() {
+const SettingsLoader: FC<ReactNode> = ({ children }) => {
   const { settings, get: getSettings } = useContext(SettingsContext);
   const { state: authState } = useContext(AuthContext);
 
@@ -19,7 +19,7 @@ function SettingsLoader() {
     }
   }, []);
 
-  return <></>;
-}
+  return <>{children}</>;
+};
 
 export default SettingsLoader;
