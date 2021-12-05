@@ -1,17 +1,8 @@
-from currencies.models import Currency
 from rest_framework import serializers
 
 
-class CurrencySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Currency
-        fields = [
-            "name",
-            "abbreviation",
-            "color",
-            "country",
-            "symbol",
-            "date_created",
-            "last_updated",
-            "id",
-        ]
+class CurrencySerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
+    code = serializers.CharField(max_length=200)
+    symbol = serializers.CharField(max_length=200)
+    countries = serializers.StringRelatedField(many=True)
