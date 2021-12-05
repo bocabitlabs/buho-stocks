@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from currencies.models import Currency
 
 # Create your models here.
 class Portfolio(models.Model):
@@ -12,9 +11,9 @@ class Portfolio(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    base_currency = models.ForeignKey(
-        Currency, on_delete=models.RESTRICT, related_name="portfolios"
-    )
+    base_currency = models.CharField(max_length=50)
+    country_code = models.CharField(max_length=200)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     def __str___(self):

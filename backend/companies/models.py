@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from currencies.models import Currency
 from sectors.models import Sector
 from markets.models import Market
 from portfolios.models import Portfolio
@@ -21,10 +20,8 @@ class Company(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    currency = models.ForeignKey(
-        Currency, on_delete=models.RESTRICT, related_name="companies"
-    )
-    dividends_currency = models.ForeignKey(Currency, on_delete=models.RESTRICT)
+    base_currency = models.CharField(max_length=50)
+    dividends_currency = models.CharField(max_length=50)
 
     sector = models.ForeignKey(
         Sector, on_delete=models.RESTRICT, related_name="companies"

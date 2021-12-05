@@ -1,10 +1,11 @@
+from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from sectors.models import Sector, SuperSector
 from rest_framework import serializers
 
 
 class SectorSerializer(serializers.ModelSerializer):
-    super_sector = serializers.PrimaryKeyRelatedField(
-        queryset=SuperSector.objects.all(), many=False, read_only=False
+    super_sector = UserFilteredPrimaryKeyRelatedField(
+        queryset=SuperSector.objects, many=False, read_only=False
     )
 
     class Meta:

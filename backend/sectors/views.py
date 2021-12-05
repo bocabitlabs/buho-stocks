@@ -1,7 +1,6 @@
 # from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    SessionAuthentication,
     BasicAuthentication,
     TokenAuthentication,
 )
@@ -21,7 +20,6 @@ class SectorListAPIView(APIView):
     # add permission to check if user is authenticated
     # permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [
-        SessionAuthentication,
         BasicAuthentication,
         TokenAuthentication,
     ]
@@ -61,7 +59,7 @@ class SectorListAPIView(APIView):
 
 class SectorDetailAPIView(APIView):
     # add permission to check if user is authenticated
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, todo_id, user_id):
@@ -131,7 +129,6 @@ class SectorDetailAPIView(APIView):
 class SuperSectorListAPIView(APIView):
     # add permission to check if user is authenticated
     authentication_classes = [
-        SessionAuthentication,
         BasicAuthentication,
         TokenAuthentication,
     ]
@@ -169,7 +166,6 @@ class SuperSectorListAPIView(APIView):
 class SuperSectorDetailAPIView(APIView):
     # add permission to check if user is authenticated
     authentication_classes = [
-        SessionAuthentication,
         BasicAuthentication,
         TokenAuthentication,
     ]

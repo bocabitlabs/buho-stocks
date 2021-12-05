@@ -1,20 +1,19 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    SessionAuthentication,
+    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from currencies.models import get_currency_details
 from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
 from portfolios.models import Portfolio
 
 
 class PortfoliosListAPIView(APIView):
-    """Get all the markets from a user"""
-
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -24,7 +23,12 @@ class PortfoliosListAPIView(APIView):
         List all the portfolio items for given requested user
         """
         elements = Portfolio.objects.filter(user=request.user.id)
-        serializer = PortfolioSerializerGet(elements, many=True)
+        for element in elements:
+            base_currency = get_currency_details(element.base_currency)
+            element.base_currency = base_currency
+        serializer = PortfolioSerializerGet(
+            elements, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
@@ -39,10 +43,10 @@ class PortfoliosListAPIView(APIView):
             "color": request.data.get("color"),
             "hide_closed_companies": request.data.get("hide_closed_companies"),
             "base_currency": request.data.get("base_currency"),
+            "country_code": request.data.get("country_code"),
         }
-        serializer = PortfolioSerializer(data=data)
+        serializer = PortfolioSerializer(data=data, context={"request": request})
         if serializer.is_valid():
-            print("Serializer is valid")
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -52,13 +56,10 @@ class PortfoliosListAPIView(APIView):
 class PortfolioDetailAPIView(APIView):
     """Operations for a single Portfolio"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, user_id):
-        """
-        Get a market object from a user given the portfolio id
-        """
         try:
             return Portfolio.objects.get(id=portfolio_id, user=user_id)
         except Portfolio.DoesNotExist:
@@ -71,13 +72,16 @@ class PortfolioDetailAPIView(APIView):
         Retrieve the portfolio item with given portfolio_id
         """
         instance = self.get_object(portfolio_id, request.user.id)
+
+        base_currency = get_currency_details(instance.base_currency)
+        instance.base_currency = base_currency
+
         if not instance:
             return Response(
                 {"res": "Object with portfolio id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        serializer = PortfolioSerializerGet(instance)
+        serializer = PortfolioSerializerGet(instance, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
@@ -98,8 +102,11 @@ class PortfolioDetailAPIView(APIView):
             "color": request.data.get("color"),
             "hide_closed_companies": request.data.get("hide_closed_companies"),
             "base_currency": request.data.get("base_currency"),
+            "country_code": request.data.get("country_code"),
         }
-        serializer = PortfolioSerializer(instance=instance, data=data, partial=True)
+        serializer = PortfolioSerializer(
+            instance=instance, data=data, partial=True, context={"request": request}
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -111,11 +118,11 @@ class PortfolioDetailAPIView(APIView):
         """
         Delete the portfolio item with given portfolio_id
         """
-        market_instance = self.get_object(portfolio_id, request.user.id)
-        if not market_instance:
+        instance = self.get_object(portfolio_id, request.user.id)
+        if not instance:
             return Response(
                 {"res": "Object with portfolio id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        market_instance.delete()
+        instance.delete()
         return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)

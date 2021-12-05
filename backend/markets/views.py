@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    SessionAuthentication,
+    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -14,7 +14,7 @@ from markets.models import Market
 class MarketListAPIView(APIView):
     """Get all the markets from a user"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -24,7 +24,7 @@ class MarketListAPIView(APIView):
         List all the market items for given requested user
         """
         todos = Market.objects.filter(user=request.user.id)
-        serializer = MarketSerializer(todos, many=True)
+        serializer = MarketSerializer(todos, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
@@ -41,7 +41,7 @@ class MarketListAPIView(APIView):
             "open_time": request.data.get("open_time"),
             "close_time": request.data.get("close_time"),
         }
-        serializer = MarketSerializer(data=data)
+        serializer = MarketSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             print("Serializer is valid")
             serializer.save(user=self.request.user)
@@ -53,7 +53,7 @@ class MarketListAPIView(APIView):
 class MarketDetailAPIView(APIView):
     """Operations for a single Market"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, market_id, user_id):
@@ -78,7 +78,7 @@ class MarketDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = MarketSerializer(todo_instance)
+        serializer = MarketSerializer(todo_instance, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
@@ -101,7 +101,12 @@ class MarketDetailAPIView(APIView):
             "openTime": request.data.get("openTime"),
             "closeTime": request.data.get("closeTime"),
         }
-        serializer = MarketSerializer(instance=todo_instance, data=data, partial=True)
+        serializer = MarketSerializer(
+            instance=todo_instance,
+            data=data,
+            partial=True,
+            context={"request": request},
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

@@ -15,13 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, register_converter
 from django.urls import include
 from rest_framework import permissions
 
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from buho_backend import path_converters
+
+register_converter(path_converters.DateConverter, "date")
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -40,6 +43,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/companies/", include("companies.urls")),
     path("api/v1/currencies/", include("currencies.urls")),
+    path("api/v1/exchange-rates/", include("exchange_rates.urls")),
     path("api/v1/markets/", include("markets.urls")),
     path("api/v1/portfolios/", include("portfolios.urls")),
     path("api/v1/sectors/", include("sectors.urls")),
