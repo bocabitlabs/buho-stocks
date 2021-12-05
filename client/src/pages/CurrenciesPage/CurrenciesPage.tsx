@@ -9,12 +9,12 @@ export default function CurrenciesPage(): ReactElement {
   const currenciesContext = useCurrenciesContext();
 
   return (
-    <WrapperPage>
-      <CurrenciesContext.Provider value={currenciesContext}>
+    <CurrenciesContext.Provider value={currenciesContext}>
+      <WrapperPage>
         <CurrenciesPageHeader>
           <CurrenciesListTable />
         </CurrenciesPageHeader>
-      </CurrenciesContext.Provider>
-    </WrapperPage>
+      </WrapperPage>
+    </CurrenciesContext.Provider>
   );
 }
