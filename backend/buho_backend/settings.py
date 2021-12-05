@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "currencies",
     "dividends_transactions",
     "exchange_rates",
+    "log_messages",
     "markets",
     "portfolios",
     "rights_transactions",

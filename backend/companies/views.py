@@ -42,7 +42,6 @@ class CompaniesListAPIView(APIView):
         """
         Create the company with given portfolio data
         """
-        print(portfolio_id)
         data = {
             "name": request.data.get("name"),
             "description": request.data.get("description"),

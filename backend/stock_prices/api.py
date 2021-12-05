@@ -37,9 +37,19 @@ class StockPricesApi:
             return serializer.data
 
     def get_historical_data(
-        self, ticker: str, from_date: str, to_date: str, minimum_values=None
+        self, ticker: str, from_date: str, to_date: str, minimum_values: int = None
     ) -> dict:
+        """Get the historical prices for a given ticker and range of dates.
 
+        Args:
+            ticker (str): Ticker of the company
+            from_date (str): Start date of the range
+            to_date (str): End date of the range
+            minimum_values (int, optional): Minimum values to retrieve. Defaults to None.
+
+        Returns:
+            dict: [description]
+        """
         prices = StockPrice.objects.filter(
             ticker=ticker, transaction_date__range=[from_date, to_date]
         )
