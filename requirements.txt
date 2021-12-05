@@ -1,9 +1,13 @@
 black==21.9b0
 Django==3.2.8
+django-filter==21.1
 django-money==2.1
 djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-yasg==1.20.0
+forex-python==1.6
 pre-commit==2.15.0
 pylint==2.11.1
 pylint-django==2.4.4
+requests==2.26.0
+yfinance==0.1.67
