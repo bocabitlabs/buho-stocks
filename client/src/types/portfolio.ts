@@ -6,6 +6,7 @@ interface IPortfolioBase {
   description: string;
   color: string;
   hideClosedCompanies: boolean;
+  countryCode: string;
 }
 
 export interface IPortfolioFormFields extends IPortfolioBase {

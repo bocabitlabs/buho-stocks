@@ -1,6 +1,9 @@
 import { ICurrency } from "./currency";
+import { IDividendsTransaction } from "./dividends-transaction";
 import { IMarket } from "./market";
+import { IRightsTransaction } from "./rights-transaction";
 import { ISector } from "./sector";
+import { ISharesTransaction } from "./shares-transaction";
 
 interface ICompanyBase {
   name: string;
@@ -15,7 +18,7 @@ interface ICompanyBase {
 }
 
 export interface ICompanyFormFields extends ICompanyBase {
-  currency: number;
+  baseCurrency: string;
   dividendsCurrency: number;
   sector: number;
   market: number;
@@ -24,11 +27,14 @@ export interface ICompanyFormFields extends ICompanyBase {
 
 export interface ICompany extends ICompanyBase {
   id: number;
-  currency: ICurrency;
+  baseCurrency: ICurrency;
   dividendsCurrency: ICurrency;
   sector: ISector;
   market: IMarket;
   portfolio: number;
+  sharesTransactions: ISharesTransaction[];
+  rightsTransactions: IRightsTransaction[];
+  dividendsTransactions: IDividendsTransaction[];
   dateCreated: string;
   lastUpdated: string;
 }

@@ -1,12 +1,16 @@
-export interface ISectorFormFields {
+export interface ISectorBase {
   name: string;
   color: string;
-  superSector?: number;
   isSuperSector?: boolean;
 }
 
-export interface ISector extends ISectorFormFields {
+export interface ISectorFormFields extends ISectorBase {
+  superSector?: number;
+}
+
+export interface ISector extends ISectorBase {
   id: number;
+  superSector?: ISector;
   dateCreated: string;
   lastUpdated: string;
 }
