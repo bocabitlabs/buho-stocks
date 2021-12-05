@@ -91,7 +91,7 @@ function CompanyAddEditForm({
       name,
       color,
       description,
-      currency,
+      baseCurrency: currency,
       dividendsCurrency,
       sector,
       market,
@@ -173,30 +173,31 @@ function CompanyAddEditForm({
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
       <Form.Item name="currency" label={t("Currency")}>
-        <Select placeholder={t("Select a currency")} allowClear>
+        <Select showSearch placeholder={t("Select a currency")} allowClear>
           {currencies &&
-            currencies.map((sectorItem: ICurrency) => (
+            currencies.map((item: ICurrency) => (
               <Select.Option
-                value={sectorItem.id}
-                key={`currency-${sectorItem.id}-${sectorItem.id}`}
+                value={item.code}
+                key={`currency-${item.code}-${item.code}`}
               >
-                {sectorItem.name}
+                {item.name} ({item.code})
               </Select.Option>
             ))}
         </Select>
       </Form.Item>
       <Form.Item name="dividendsCurrency" label={t("Dividends Currency")}>
         <Select
+          showSearch
           placeholder={t("Select a currency for the dividends")}
           allowClear
         >
           {currencies &&
-            currencies.map((sectorItem: ICurrency) => (
+            currencies.map((item: ICurrency) => (
               <Select.Option
-                value={sectorItem.id}
-                key={`currency-${sectorItem.id}-${sectorItem.id}`}
+                value={item.code}
+                key={`currency-${item.code}-${item.code}`}
               >
-                {sectorItem.name}
+                {item.name} ({item.code})
               </Select.Option>
             ))}
         </Select>

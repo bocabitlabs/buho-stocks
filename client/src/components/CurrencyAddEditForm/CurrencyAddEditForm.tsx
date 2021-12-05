@@ -17,12 +17,7 @@ function CurrencyAddEditForm({
   const [country, setCountry] = useState("");
   const { t } = useTranslation();
 
-  const {
-    currency,
-    create: addCurrency,
-    getById: getMarketById,
-    update: updateCurrency
-  } = useContext(CurrenciesContext);
+  const { currency, getById: getMarketById } = useContext(CurrenciesContext);
 
   useEffect(() => {
     if (currencyId) {
@@ -31,14 +26,7 @@ function CurrencyAddEditForm({
     }
   }, [currencyId, getMarketById]);
 
-  useEffect(() => {
-    if (currencyId) {
-      if (currency) {
-        setColor(currency.color);
-        setCountry(currency.country);
-      }
-    }
-  }, [currencyId, currency]);
+  useEffect(() => {}, [currencyId, currency]);
 
   const handleSubmit = (values: any) => {
     const { name, abbreviation, symbol } = values;
@@ -50,12 +38,6 @@ function CurrencyAddEditForm({
       symbol
     };
     console.log(newElement);
-    if (currencyId) {
-      const id: number = +currencyId;
-      updateCurrency(id, newElement);
-    } else {
-      addCurrency(newElement);
-    }
   };
 
   const handleColorChange = (newColor: any) => {
@@ -78,8 +60,6 @@ function CurrencyAddEditForm({
       onFinish={handleSubmit}
       initialValues={{
         name: currency?.name,
-        abbreviation: currency?.abbreviation,
-        country: currency?.country,
         symbol: currency?.symbol
       }}
     >
@@ -117,10 +97,7 @@ function CurrencyAddEditForm({
         <Input type="text" />
       </Form.Item>
       <Form.Item name="country" label={t("Country")}>
-        <CountrySelector
-          handleChange={handleCountryChange}
-          initialValue={currency?.country}
-        />
+        <CountrySelector handleChange={handleCountryChange} />
       </Form.Item>
       <Form.Item
         label={

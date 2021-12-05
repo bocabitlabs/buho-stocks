@@ -2,9 +2,10 @@ import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Form, Input, Select, Spin, Switch } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
+import CountrySelector from "components/CountrySelector/CountrySelector";
 import { useCurrenciesContext } from "hooks/use-currencies/use-currencies-context";
 import { usePortfoliosContext } from "hooks/use-portfolios/use-portfolios-context";
-import { ISector } from "types/sector";
+import { ICurrency } from "types/currency";
 
 interface AddEditFormProps {
   portfolioId?: string;
@@ -15,6 +16,8 @@ function PortfolioAddEditForm({
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
+  const [country, setCountry] = useState("");
+
   // const [superSectorId, setSuperSectorId] = useState<number | undefined>(
   //   undefined
   // );
@@ -47,7 +50,7 @@ function PortfolioAddEditForm({
     if (portfolioId) {
       if (portfolio) {
         setColor(portfolio.color);
-        // setSuperSectorId(sector.superSector);
+        setCountry(portfolio.countryCode);
       }
     }
   }, [portfolioId, portfolio]);
@@ -59,7 +62,8 @@ function PortfolioAddEditForm({
       color,
       description,
       baseCurrency: baseCurrencyId,
-      hideClosedCompanies
+      hideClosedCompanies,
+      countryCode: country
     };
     console.log(newPortfolio);
 
@@ -75,9 +79,10 @@ function PortfolioAddEditForm({
     setColor(newColor.hex);
   };
 
-  // const handleSuperSectorChange = (id: number) => {
-  //   setSuperSectorId(id);
-  // };
+  const handleCountryChange = (newValue: string) => {
+    console.debug(newValue);
+    setCountry(newValue);
+  };
 
   if (portfolioId && !portfolio) {
     return <Spin />;
@@ -130,17 +135,23 @@ function PortfolioAddEditForm({
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
       <Form.Item name="baseCurrencyId" label={t("Base currency")}>
-        <Select placeholder={t("Select a base currency")} allowClear>
+        <Select showSearch placeholder={t("Select a base currency")} allowClear>
           {currencies &&
-            currencies.map((sectorItem: ISector) => (
+            currencies.map((item: ICurrency) => (
               <Select.Option
-                value={sectorItem.id}
-                key={`currency-${sectorItem.id}-${sectorItem.id}`}
+                value={item.code}
+                key={`currency-${item.code}-${item.code}`}
               >
-                {sectorItem.name}
+                {item.name} ({item.code})
               </Select.Option>
             ))}
         </Select>
+      </Form.Item>
+      <Form.Item name="country" label={t("Country")}>
+        <CountrySelector
+          handleChange={handleCountryChange}
+          initialValue={portfolio?.countryCode}
+        />
       </Form.Item>
       <Form.Item
         label={t("Hide closed companies")}

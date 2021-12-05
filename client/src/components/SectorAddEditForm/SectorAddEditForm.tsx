@@ -1,8 +1,8 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Form, Input, Select, Spin, Switch } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
-import { useSectorsContext } from "hooks/use-sectors/use-sectors-context";
+import { SectorsContext } from "contexts/secctors";
 import { ISector } from "types/sector";
 
 interface AddEditFormProps {
@@ -24,32 +24,17 @@ function SectorAddEditForm({
     superSectors,
     create: addSector,
     createSuperSector,
-    getAllSuperSectors,
-    getById: getSectorById,
     update: updateSector,
     updateSuperSector
-  } = useSectorsContext();
+  } = useContext(SectorsContext);
+
+  console.log(sector);
+  console.log(superSectors);
 
   useEffect(() => {
-    if (sectorId) {
-      const id: number = +sectorId;
-      getSectorById(id);
-    }
-  }, [sectorId, getSectorById]);
-
-  useEffect(() => {
-    const getAll = async () => {
-      getAllSuperSectors();
-    };
-    getAll();
-  }, [getAllSuperSectors]);
-
-  useEffect(() => {
-    if (sectorId) {
-      if (sector) {
-        setColor(sector.color);
-        // setSuperSectorId(sector.superSector);
-      }
+    if (sectorId && sector) {
+      setColor(sector.color);
+      // setSuperSectorId(sector.superSector);
     }
   }, [sectorId, sector]);
 
@@ -61,6 +46,7 @@ function SectorAddEditForm({
       superSector: superSectorId
     };
     console.log(newSector);
+    console.log(superSectors);
 
     if (isSuperSector) {
       if (sectorId) {
@@ -84,10 +70,6 @@ function SectorAddEditForm({
     setColor(newColor.hex);
   };
 
-  // const handleSuperSectorChange = (id: number) => {
-  //   setSuperSectorId(id);
-  // };
-
   if (sectorId && !sector) {
     return <Spin />;
   }
@@ -100,14 +82,14 @@ function SectorAddEditForm({
       initialValues={{
         name: sector?.name,
         isSuperSector: sector?.isSuperSector,
-        superSectorId: sector?.superSector
+        superSectorId: sector?.superSector?.id
       }}
     >
       <Form.Item
         name="name"
         label={t("Name")}
         rules={[
-          { required: true, message: t("Please input the name of the market") }
+          { required: true, message: t("Please input the name of the sector") }
         ]}
       >
         <Input type="text" placeholder="NYSE, NASDAQ,..." />
