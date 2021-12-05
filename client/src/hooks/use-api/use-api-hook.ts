@@ -57,7 +57,11 @@ export function useApi() {
           requestOptions.headers["Content-Type"] = "application/json";
           requestOptions.body = JSON.stringify(body);
         }
-        return fetch(url, requestOptions).then(handleResponse);
+        let requestUrl = url;
+        if (!requestUrl.endsWith("/")) {
+          requestUrl += "/";
+        }
+        return fetch(requestUrl, requestOptions).then(handleResponse);
       };
     },
     [authHeader, handleResponse]
