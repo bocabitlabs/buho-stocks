@@ -1,6 +1,6 @@
 // import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import React from "react";
-import { Redirect, RouteProps } from "react-router";
+import { Redirect, Route, RouteProps } from "react-router";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import getRoute, { LOGIN_ROUTE } from "routes";
 
@@ -13,7 +13,7 @@ const PrivateRoute = ({ component: Component, ...rest }: PrivateRouteProps) => {
 
   if (state.isAuthenticated) {
     // eslint-disable-next-line react/jsx-props-no-spreading
-    return <Component {...rest} />;
+    return <Route {...rest} component={Component} />;
   }
   return <Redirect to={getRoute(LOGIN_ROUTE)} />;
 };
