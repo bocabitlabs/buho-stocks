@@ -15,8 +15,8 @@ export default function SectorsAddPage() {
   const marketsContext = useContext(MarketsContext);
 
   return (
-    <WrapperPage>
-      <MarketsContext.Provider value={marketsContext}>
+    <MarketsContext.Provider value={marketsContext}>
+      <WrapperPage>
         <SectorsAddPageHeader>
           <Row>
             <Col>
@@ -25,7 +25,7 @@ export default function SectorsAddPage() {
             <Col />
           </Row>
         </SectorsAddPageHeader>
-      </MarketsContext.Provider>
-    </WrapperPage>
+      </WrapperPage>
+    </MarketsContext.Provider>
   );
 }

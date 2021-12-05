@@ -5,7 +5,7 @@ import { PageHeader } from "antd";
 const SectorsEditPageHeader: FC<ReactNode> = ({ children }) => {
   const { t } = useTranslation();
   return (
-    <PageHeader className="site-page-header" title={t("Add sector")}>
+    <PageHeader className="site-page-header" title={t("Edit sector")}>
       {children}
     </PageHeader>
   );

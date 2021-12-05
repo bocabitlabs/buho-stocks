@@ -14,12 +14,12 @@ export default function Sectors() {
   const context = useContext(SectorsContext);
 
   return (
-    <WrapperPage>
-      <SectorsContext.Provider value={context}>
+    <SectorsContext.Provider value={context}>
+      <WrapperPage>
         <SectorsPageHeader>
           <SectorsListTable />
         </SectorsPageHeader>
-      </SectorsContext.Provider>
-    </WrapperPage>
+      </WrapperPage>
+    </SectorsContext.Provider>
   );
 }
