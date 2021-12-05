@@ -15,12 +15,12 @@ export default function Markets() {
   const marketsContext = useMarketsContext();
 
   return (
-    <WrapperPage>
-      <MarketsContext.Provider value={marketsContext}>
+    <MarketsContext.Provider value={marketsContext}>
+      <WrapperPage>
         <MarketsPageHeader>
           <MarketsListTable />
         </MarketsPageHeader>
-      </MarketsContext.Provider>
-    </WrapperPage>
+      </WrapperPage>
+    </MarketsContext.Provider>
   );
 }

@@ -13,17 +13,18 @@ import WrapperPage from "pages/WrapperPage/WrapperPage";
 // is used for matching dynami§wc segments in other
 // popular web frameworks like Rails and Express.
 
-export interface IRouteParams {
+export interface IParams {
   id: string;
 }
 
 export default function MarketsEditPage() {
   const marketsContext = useMarketsContext();
-  const { id } = useParams<IRouteParams>();
-
+  const params = useParams<IParams>();
+  const { id } = params;
+  console.log("ID: ", id);
   return (
-    <WrapperPage>
-      <MarketsContext.Provider value={marketsContext}>
+    <MarketsContext.Provider value={marketsContext}>
+      <WrapperPage>
         <MarketsEditPageHeader>
           <Row>
             <Col>
@@ -32,7 +33,7 @@ export default function MarketsEditPage() {
             <Col />
           </Row>
         </MarketsEditPageHeader>
-      </MarketsContext.Provider>
-    </WrapperPage>
+      </WrapperPage>
+    </MarketsContext.Provider>
   );
 }
