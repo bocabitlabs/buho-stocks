@@ -1,29 +1,21 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { CompaniesContext } from "contexts/companies";
+import { PortfoliosContext } from "contexts/portfolios";
 import getRoute, { MARKETS_ROUTE } from "routes";
 import { ICompany } from "types/company";
 import { IMarket } from "types/market";
 
 export default function CompaniesList() {
-  const {
-    companies,
-    isLoading,
-    getAll: getCompanies,
-    deleteById: deleteCompanyById
-  } = useContext(CompaniesContext);
-  const { t } = useTranslation();
+  const { deleteById: deleteCompanyById } = useContext(CompaniesContext);
 
-  useEffect(() => {
-    const getAll = async () => {
-      getCompanies();
-    };
-    getAll();
-  }, [getCompanies]);
+  const { isLoading, portfolio } = useContext(PortfoliosContext);
+
+  const { t } = useTranslation();
 
   function confirm(recordId: number) {
     console.log(recordId);
@@ -81,20 +73,23 @@ export default function CompaniesList() {
     }
   ];
 
-  const getData = () => {
-    return companies.map((element: ICompany) => ({
-      id: element.id,
-      key: element.id,
-      name: element.name,
-      description: element.description,
-      color: element.color,
-      portfolio: element.portfolio
-    }));
-  };
-
-  if (isLoading) {
+  if (isLoading || !portfolio) {
     return <Spin />;
   }
+
+  const getData = () => {
+    if (portfolio) {
+      return portfolio.companies.map((element: ICompany) => ({
+        id: element.id,
+        key: element.id,
+        name: element.name,
+        description: element.description,
+        color: element.color,
+        portfolio: element.portfolio
+      }));
+    }
+    return [];
+  };
 
   return (
     <>

@@ -23,13 +23,12 @@ export default function CompaniesAddPage({
   const marketsContext = useMarketsContext();
   const sectorsContext = useSectorsContext();
 
-  console.log("Add company page");
   return (
-    <WrapperPage>
-      <CurrenciesContext.Provider value={currenciesContext}>
-        <MarketsContext.Provider value={marketsContext}>
-          <SectorsContext.Provider value={sectorsContext}>
-            <CompaniesContext.Provider value={context}>
+    <CurrenciesContext.Provider value={currenciesContext}>
+      <MarketsContext.Provider value={marketsContext}>
+        <SectorsContext.Provider value={sectorsContext}>
+          <CompaniesContext.Provider value={context}>
+            <WrapperPage>
               <CompanyAddPageHeader portfolioId={id}>
                 <Row>
                   <Col>
@@ -38,10 +37,10 @@ export default function CompaniesAddPage({
                   <Col />
                 </Row>
               </CompanyAddPageHeader>
-            </CompaniesContext.Provider>
-          </SectorsContext.Provider>
-        </MarketsContext.Provider>
-      </CurrenciesContext.Provider>
-    </WrapperPage>
+            </WrapperPage>
+          </CompaniesContext.Provider>
+        </SectorsContext.Provider>
+      </MarketsContext.Provider>
+    </CurrenciesContext.Provider>
   );
 }
