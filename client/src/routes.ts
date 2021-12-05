@@ -29,6 +29,19 @@ const SECTORS_ADD_ROUTE = "/sectors/add";
 const SECTORS_DETAILS_ROUTE = "/sectors/:id";
 const SECTORS_EDIT_ROUTE = "/sectors/:id/edit";
 
+const SHARES_ADD_ROUTE = "/portfolios/:id/companies/:companyId/shares/add";
+const SHARES_EDIT_ROUTE =
+  "/portfolios/:id/companies/:companyId/shares/:transactionId";
+
+const RIGHTS_ADD_ROUTE = "/portfolios/:id/companies/:companyId/rights/add";
+const RIGHTS_EDIT_ROUTE =
+  "/portfolios/:id/companies/:companyId/rights/:transactionId";
+
+const DIVIDENDS_ADD_ROUTE =
+  "/portfolios/:id/companies/:companyId/dividends/add";
+const DIVIDENDS_EDIT_ROUTE =
+  "/portfolios/:id/companies/:companyId/dividends/:transactionId";
+
 const getRoute = (route: string): string => {
   return APP_BASE_ROUTE + route;
 };
@@ -44,6 +57,8 @@ export {
   CURRENCIES_ADD_ROUTE,
   CURRENCIES_DETAILS_ROUTE,
   CURRENCIES_EDIT_ROUTE,
+  DIVIDENDS_ADD_ROUTE,
+  DIVIDENDS_EDIT_ROUTE,
   LOGIN_ROUTE,
   REGISTER_ROUTE,
   HOME_ROUTE,
@@ -56,8 +71,12 @@ export {
   PORTFOLIOS_ADD_ROUTE,
   PORTFOLIOS_DETAILS_ROUTE,
   PORTFOLIOS_EDIT_ROUTE,
+  RIGHTS_ADD_ROUTE,
+  RIGHTS_EDIT_ROUTE,
   SECTORS_ROUTE,
   SECTORS_ADD_ROUTE,
   SECTORS_DETAILS_ROUTE,
-  SECTORS_EDIT_ROUTE
+  SECTORS_EDIT_ROUTE,
+  SHARES_ADD_ROUTE,
+  SHARES_EDIT_ROUTE
 };

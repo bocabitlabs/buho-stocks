@@ -9,12 +9,12 @@ export default function PortfoliosPage(): ReactElement {
   const portfoliosContext = usePortfoliosContext();
 
   return (
-    <WrapperPage>
-      <PortfoliosContext.Provider value={portfoliosContext}>
+    <PortfoliosContext.Provider value={portfoliosContext}>
+      <WrapperPage>
         <PortfoliosPageHeader>
           <PortfolioList />
         </PortfoliosPageHeader>
-      </PortfoliosContext.Provider>
-    </WrapperPage>
+      </WrapperPage>
+    </PortfoliosContext.Provider>
   );
 }

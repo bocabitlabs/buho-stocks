@@ -17,9 +17,9 @@ export default function PortfoliosAddPage() {
   const currenciesContext = useContext(CurrenciesContext);
 
   return (
-    <WrapperPage>
-      <CurrenciesContext.Provider value={currenciesContext}>
-        <PortfoliosContext.Provider value={context}>
+    <CurrenciesContext.Provider value={currenciesContext}>
+      <PortfoliosContext.Provider value={context}>
+        <WrapperPage>
           <PortfoliosAddPageHeader>
             <Row>
               <Col>
@@ -28,8 +28,8 @@ export default function PortfoliosAddPage() {
               <Col />
             </Row>
           </PortfoliosAddPageHeader>
-        </PortfoliosContext.Provider>
-      </CurrenciesContext.Provider>
-    </WrapperPage>
+        </WrapperPage>
+      </PortfoliosContext.Provider>
+    </CurrenciesContext.Provider>
   );
 }

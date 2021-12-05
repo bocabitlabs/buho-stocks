@@ -1,39 +1,31 @@
-import React, { FC, ReactNode, useContext, useEffect } from "react";
+import React, { FC, ReactNode, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router";
+import { useHistory, useParams } from "react-router";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Spin } from "antd";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { PortfoliosContext } from "contexts/portfolios";
 
 interface Props {
-  portfolioId: number;
   children: ReactNode;
 }
 
-const PortfolioDetailsPageHeader: FC<Props> = ({
-  portfolioId,
-  children
-}: Props) => {
+export interface IParams {
+  id: string;
+}
+
+const PortfolioDetailsPageHeader: FC<Props> = ({ children }: Props) => {
   const { t } = useTranslation();
-  const {
-    portfolio,
-    getById: getPortfolioById,
-    deleteById: deletePortfolioById
-  } = useContext(PortfoliosContext);
+  const { portfolio, deleteById: deletePortfolioById } =
+    useContext(PortfoliosContext);
   const history = useHistory();
+  const params = useParams<IParams>();
+  const { id } = params;
+  console.log("ID: ", id);
 
   function confirm() {
-    deletePortfolioById(portfolioId);
+    deletePortfolioById(+id);
   }
-
-  useEffect(() => {
-    console.log(`Get portfolio details by ID:${+portfolioId}`);
-    const getDetails = async () => {
-      getPortfolioById(portfolioId);
-    };
-    getDetails();
-  }, [getPortfolioById, portfolioId]);
 
   if (!portfolio) {
     return <Spin />;
@@ -44,10 +36,7 @@ const PortfolioDetailsPageHeader: FC<Props> = ({
       title={portfolio?.name}
       subTitle={portfolio?.description}
       tags={[
-        <CountryFlag
-          code={portfolio.baseCurrency.country}
-          key={portfolio.baseCurrency.country}
-        />
+        <CountryFlag code={portfolio.countryCode} key={portfolio.countryCode} />
       ]}
       extra={[
         <Button
@@ -55,7 +44,7 @@ const PortfolioDetailsPageHeader: FC<Props> = ({
           key="company-add-header"
           icon={<PlusOutlined />}
           onClick={() => {
-            history.push(`/app/portfolios/${portfolioId}/companies/add`);
+            history.push(`/app/portfolios/${id}/companies/add`);
           }}
         >
           {t("Company")}
