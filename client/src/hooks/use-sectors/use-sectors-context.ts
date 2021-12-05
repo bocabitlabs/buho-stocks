@@ -51,7 +51,7 @@ export function useSectorsContext(): SectorsContextType {
       if (response?.error) {
         console.error(response);
       }
-      setSector(response.result);
+      setSector(response);
       setIsLoading(false);
     },
     [apiGet]

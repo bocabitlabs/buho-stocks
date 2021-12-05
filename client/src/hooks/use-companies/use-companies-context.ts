@@ -29,7 +29,7 @@ export function useCompaniesContext(portfolioId: string): CompaniesContextType {
     }
     setCompanies(response);
     setIsLoading(false);
-  }, [apiGet]);
+  }, [apiGet, endpoint]);
 
   const getById = useCallback(
     async (id: number) => {
@@ -42,7 +42,7 @@ export function useCompaniesContext(portfolioId: string): CompaniesContextType {
       setCompany(response);
       setIsLoading(false);
     },
-    [apiGet]
+    [apiGet, endpoint]
   );
 
   const create = async (newValues: ICompanyFormFields) => {

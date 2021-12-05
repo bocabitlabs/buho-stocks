@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from "react";
+import { useCallback, useReducer, useState } from "react";
 import { AuthContextType } from "contexts/auth";
 
 interface MyState {
@@ -11,7 +11,6 @@ export function useAuthContext(): AuthContextType {
   const [state, setState] = useReducer(
     // eslint-disable-next-line @typescript-eslint/no-shadow
     (state: MyState, newState: Partial<MyState>) => {
-      console.log("useReducer newState: ", newState);
       return { ...state, ...newState };
     },
     {
@@ -19,10 +18,6 @@ export function useAuthContext(): AuthContextType {
       token: localStorage.getItem("token")
     }
   );
-
-  useEffect(() => {
-    console.debug("useAuth useEffect state:", state);
-  }, [state]);
 
   const authenticate = useCallback(
     (newToken: string) => {
