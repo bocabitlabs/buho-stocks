@@ -1,39 +1,25 @@
-import React, { FC, ReactNode, useContext, useEffect } from "react";
+import React, { FC, useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Spin } from "antd";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { CompaniesContext } from "contexts/companies";
 
-interface Props {
-  portfolioId: string;
+export interface IParams {
   companyId: string;
-  children: ReactNode;
 }
 
-const CompanyDetailsPageHeader: FC<Props> = ({
-  portfolioId,
-  companyId,
-  children
-}: Props) => {
+const CompanyDetailsPageHeader: FC = ({ children }) => {
   const { t } = useTranslation();
-  const {
-    company,
-    getById: getCompanyById,
-    deleteById: deleteCompanyById
-  } = useContext(CompaniesContext);
+  const { company, deleteById: deleteCompanyById } =
+    useContext(CompaniesContext);
+  const params = useParams<IParams>();
+  const { companyId } = params;
 
   function confirm() {
     deleteCompanyById(+companyId);
   }
-
-  useEffect(() => {
-    console.log(`Get portfolio details by ID:${+portfolioId}`);
-    const getDetails = async () => {
-      getCompanyById(+companyId);
-    };
-    getDetails();
-  }, [getCompanyById, companyId]);
 
   if (!company) {
     return <Spin />;

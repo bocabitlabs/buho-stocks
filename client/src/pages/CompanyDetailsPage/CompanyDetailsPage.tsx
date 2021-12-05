@@ -1,39 +1,54 @@
 import React, { ReactElement } from "react";
+import { useParams } from "react-router-dom";
+import CompanyDetailsLoader from "./components/CompanyDetailsLoader/CompanyDetailsLoader";
 import CompanyDetailsPageHeader from "./components/CompanyDetailsPageHeader/CompanyDetailsPageHeader";
+import CompanyInfo from "./components/CompanyInfo/CompanyInfo";
+import TransactionsTabs from "./components/TransactionsTabs/TransactionsTabs";
 import { CompaniesContext } from "contexts/companies";
 import { CurrenciesContext } from "contexts/currencies";
 import { MarketsContext } from "contexts/markets";
+import { PortfoliosContext } from "contexts/portfolios";
 import { SectorsContext } from "contexts/secctors";
 import { useCompaniesContext } from "hooks/use-companies/use-companies-context";
 import { useCurrenciesContext } from "hooks/use-currencies/use-currencies-context";
 import { useMarketsContext } from "hooks/use-markets/use-markets-context";
+import { usePortfoliosContext } from "hooks/use-portfolios/use-portfolios-context";
 import { useSectorsContext } from "hooks/use-sectors/use-sectors-context";
 import WrapperPage from "pages/WrapperPage/WrapperPage";
-import { ICompanyRouteParams } from "types/company";
 
-export default function CompanyDetailsPage({
-  computedMatch: { params }
-}: ICompanyRouteParams): ReactElement {
-  const { id, companyId } = params;
+export interface IParams {
+  id: string;
+  companyId: string;
+}
 
-  const context = useCompaniesContext(id);
+export default function CompanyDetailsPage(): ReactElement {
+  const params = useParams<IParams>();
+  const { id } = params;
+
+  const companiesContext = useCompaniesContext(id);
   const currenciesContext = useCurrenciesContext();
   const marketsContext = useMarketsContext();
   const sectorsContext = useSectorsContext();
+  const portfoliosContext = usePortfoliosContext();
 
   return (
-    <WrapperPage>
-      <CurrenciesContext.Provider value={currenciesContext}>
-        <MarketsContext.Provider value={marketsContext}>
-          <SectorsContext.Provider value={sectorsContext}>
-            <CompaniesContext.Provider value={context}>
-              <CompanyDetailsPageHeader portfolioId={id} companyId={companyId}>
-                This is content of the company details
-              </CompanyDetailsPageHeader>
-            </CompaniesContext.Provider>
-          </SectorsContext.Provider>
-        </MarketsContext.Provider>
-      </CurrenciesContext.Provider>
-    </WrapperPage>
+    <CurrenciesContext.Provider value={currenciesContext}>
+      <MarketsContext.Provider value={marketsContext}>
+        <SectorsContext.Provider value={sectorsContext}>
+          <CompaniesContext.Provider value={companiesContext}>
+            <PortfoliosContext.Provider value={portfoliosContext}>
+              <CompanyDetailsLoader>
+                <WrapperPage>
+                  <CompanyDetailsPageHeader>
+                    <CompanyInfo />
+                    <TransactionsTabs />
+                  </CompanyDetailsPageHeader>
+                </WrapperPage>
+              </CompanyDetailsLoader>
+            </PortfoliosContext.Provider>
+          </CompaniesContext.Provider>
+        </SectorsContext.Provider>
+      </MarketsContext.Provider>
+    </CurrenciesContext.Provider>
   );
 }
