@@ -56,9 +56,6 @@ class StockPricesDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, transaction_date, user_id):
-        """
-        Get a market object from a user given the portfolio id
-        """
         try:
             return StockPrice.objects.get(
                 company=company_id, transaction_date=transaction_date, user=user_id

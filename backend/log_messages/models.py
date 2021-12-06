@@ -1,11 +1,26 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from portfolios.models import Portfolio
 
 
 class LogMessage(models.Model):
+
+    MESSAGE_TYPE_CREATE_COMPANY = "CREATE_COMPANY"
+    MESSAGE_TYPE_DELETE_COMPANY = "DELETE_COMPANY"
+
+    MESSAGE_TYPE_ADD_DIVIDEND = "ADD_DIVIDEND"
+    MESSAGE_TYPE_DELETE_DIVIDEND = "DELETE_DIVIDEND"
+
+    MESSAGE_TYPE_ADD_SHARES = "ADD_SHARES"
+    MESSAGE_TYPE_DELETE_SHARES = "DELETE_SHARES"
+
+    MESSAGE_TYPE_ADD_RIGHTS = "ADD_RIGHTS"
+    MESSAGE_TYPE_DELETE_RIGHTS = "DELETE_RIGHTS"
+
+    MESSAGE_TYPE_ADD_PRICE = "ADD_PRICE"
+    MESSAGE_TYPE_DELETE_PRICE = "DELETE_PRICE"
+
     message_text = models.CharField(max_length=200)
     message_type = models.CharField(max_length=100)
     date_created = models.DateTimeField(auto_now_add=True)

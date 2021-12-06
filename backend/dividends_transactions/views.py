@@ -7,8 +7,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from companies.models import Company
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
+from log_messages.models import LogMessage
 
 
 class DividendsTransactionsListAPIView(APIView):
@@ -59,6 +61,13 @@ class DividendsTransactionsListAPIView(APIView):
         )
         if serializer.is_valid():
             serializer.save(user=self.request.user)
+            company = Company.objects.get(id=company_id)
+            LogMessage.objects.create(
+                message_type=LogMessage.MESSAGE_TYPE_ADD_DIVIDEND,
+                message_text=f"Dividend added: {company.name} ({company.ticker}). {serializer.data.get('count')} - {serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}",
+                portfolio=company.portfolio,
+                user=self.request.user,
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -142,11 +151,18 @@ class DividendsTransactionDetailAPIView(APIView):
         """
         Delete the item with given transaction id
         """
-        market_instance = self.get_object(transaction_id, company_id, request.user.id)
-        if not market_instance:
+        instance = self.get_object(transaction_id, company_id, request.user.id)
+        if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        market_instance.delete()
+        instance.delete()
+        company = Company.objects.get(id=company_id)
+        LogMessage.objects.create(
+            message_type=LogMessage.MESSAGE_TYPE_DELETE_DIVIDEND,
+            message_text=f"Dividend added: {company.name} ({company.ticker}). {instance.count} - {instance.gross_price_per_share}. {instance.notes}",
+            portfolio=company.portfolio,
+            user=self.request.user,
+        )
         return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)

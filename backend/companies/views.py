@@ -10,6 +10,7 @@ from drf_yasg.utils import swagger_auto_schema
 from companies.serializers import CompanySerializer, CompanySerializerGet
 from companies.models import Company
 from currencies.models import get_currency_details
+from log_messages.models import LogMessage
 
 
 class CompaniesListAPIView(APIView):
@@ -59,8 +60,13 @@ class CompaniesListAPIView(APIView):
         }
         serializer = CompanySerializer(data=data, context={"request": request})
         if serializer.is_valid():
-            print("Serializer is valid")
             serializer.save(user=self.request.user)
+            LogMessage.objects.create(
+                message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
+                message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
+                portfolio=portfolio_id,
+                user=self.request.user,
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -145,11 +151,17 @@ class CompanyDetailAPIView(APIView):
         """
         Delete the company item with given company_id
         """
-        market_instance = self.get_object(company_id, portfolio_id, request.user.id)
-        if not market_instance:
+        instance = self.get_object(company_id, portfolio_id, request.user.id)
+        if not instance:
             return Response(
                 {"res": "Object with company id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        market_instance.delete()
+        instance.delete()
+        LogMessage.objects.create(
+            message_type=LogMessage.MESSAGE_TYPE_DELETE_COMPANY,
+            message_text=f"Company deleted: {instance.name} ({instance.ticker})",
+            portfolio=portfolio_id,
+            user=self.request.user,
+        )
         return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)
