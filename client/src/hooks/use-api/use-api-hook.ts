@@ -1,19 +1,13 @@
 import { useCallback } from "react";
-import { useHistory } from "react-router-dom";
 import { message } from "antd";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 
 export function useApi() {
-  const history = useHistory();
   const { state, clearToken } = useAuthContext();
 
   const authHeader = useCallback(
     (url: string) => {
-      // return auth header with jwt if user is logged in and request is to the api url
-      // const token = auth?.token;
-      // const isLoggedIn = !!token;
       console.log(url);
-      // const isApiUrl = url.startsWith(process.env.REACT_APP_API_URL);
       if (
         state.isAuthenticated
         // && isApiUrl
@@ -42,7 +36,7 @@ export function useApi() {
         return data;
       });
     },
-    [clearToken, state.token, history]
+    [clearToken, state.token]
   );
 
   const request = useCallback(

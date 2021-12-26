@@ -5,7 +5,7 @@ export interface IRightsTransactionFormFields extends Transaction {
 }
 
 export interface IRightsTransaction extends IRightsTransactionFormFields {
-  id: string;
+  id: number;
   dateCreated: string;
   lastUpdated: string;
 }

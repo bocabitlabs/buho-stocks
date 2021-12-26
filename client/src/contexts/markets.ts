@@ -5,11 +5,11 @@ export type MarketsContextType = {
   isLoading: boolean;
   markets: IMarket[] | [];
   market: IMarket | null;
-  create: (newValues: IMarketFormFields) => void;
-  getAll: () => void;
-  getById: (marketId: number) => void;
-  deleteById: (marketId: number) => void;
-  update: (marketId: number, newValues: IMarketFormFields) => void;
+  create: (newValues: IMarketFormFields) => Promise<any>;
+  getAll: () => Promise<any>;
+  getById: (marketId: number) => Promise<any>;
+  deleteById: (marketId: number) => Promise<any>;
+  update: (marketId: number, newValues: IMarketFormFields) => Promise<any>;
 };
 
 export const marketsDefaultValue: MarketsContextType = {
@@ -17,14 +17,15 @@ export const marketsDefaultValue: MarketsContextType = {
   markets: [],
   market: null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create: (newValues: IMarketFormFields) => undefined,
-  getAll: () => [],
+  create: (newValues: IMarketFormFields) => Promise.resolve(),
+  getAll: () => Promise.resolve(),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getById: (marketId: number) => undefined,
+  getById: (marketId: number) => Promise.resolve(),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  deleteById: (id: number) => undefined,
+  deleteById: (id: number) => Promise.resolve(),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update: (settingsId: number, newValues: IMarketFormFields) => undefined
+  update: (settingsId: number, newValues: IMarketFormFields) =>
+    Promise.resolve()
 };
 
 export const MarketsContext =

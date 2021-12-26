@@ -5,7 +5,7 @@ export interface ISharesTransactionFormFields extends Transaction {
 }
 
 export interface ISharesTransaction extends ISharesTransactionFormFields {
-  id: string;
+  id: number;
   dateCreated: string;
   lastUpdated: string;
 }

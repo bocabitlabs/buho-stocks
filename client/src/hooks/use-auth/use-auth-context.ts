@@ -19,24 +19,11 @@ export function useAuthContext(): AuthContextType {
     }
   );
 
-  const authenticate = useCallback(
-    (newToken: string) => {
-      // if (!state.isAuthenticated) {
-      console.debug("useAuth: Calling authenticate");
-      localStorage.setItem("token", newToken);
-
-      // const storedToken = localStorage.getItem("token");
-      console.log("useAuth authenticate previous state: ", state);
-      console.log("useAuth authenticate new token:", newToken);
-      // console.log(
-      //   "useAuth new state: ",
-      //   JSON.stringify({ isAuthenticated: true, token: storedToken })
-      // );
-      setState({ isAuthenticated: true, token: newToken });
-      // }
-    },
-    [state]
-  );
+  const authenticate = useCallback((newToken: string) => {
+    console.debug("useAuth: Calling authenticate");
+    localStorage.setItem("token", newToken);
+    setState({ isAuthenticated: true, token: newToken });
+  }, []);
 
   const clearToken = useCallback(() => {
     if (state.isAuthenticated) {

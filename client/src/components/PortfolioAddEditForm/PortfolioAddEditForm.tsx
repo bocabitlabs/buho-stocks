@@ -1,11 +1,13 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, Select, Spin, Switch } from "antd";
+import useFetch from "use-http";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { useCurrenciesContext } from "hooks/use-currencies/use-currencies-context";
-import { usePortfoliosContext } from "hooks/use-portfolios/use-portfolios-context";
+import { AlertMessagesContext } from "contexts/alert-messages";
 import { ICurrency } from "types/currency";
+import { IPortfolio } from "types/portfolio";
 
 interface AddEditFormProps {
   portfolioId?: string;
@@ -17,34 +19,37 @@ function PortfolioAddEditForm({
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
   const [country, setCountry] = useState("");
-
-  // const [superSectorId, setSuperSectorId] = useState<number | undefined>(
-  //   undefined
-  // );
+  const { createSuccess, createError } = useContext(AlertMessagesContext);
+  const [portfolio, setPortfolio] = useState<IPortfolio | null>(null);
+  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
   const { t } = useTranslation();
-
+  const { get, post, put, response, loading, cache } = useFetch("portfolios/");
   const {
-    portfolio,
-    create: addPortfolio,
-    getById: getPortfolioById,
-    update: updatePortfolio
-  } = usePortfoliosContext();
-
-  const { currencies, getAll: getAllCurrencies } = useCurrenciesContext();
+    get: getCurrencies,
+    response: currenciesResponse,
+    loading: currenciesLoading
+  } = useFetch("currencies/");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (portfolioId) {
-      const id: number = +portfolioId;
-      getPortfolioById(id);
-    }
-  }, [portfolioId, getPortfolioById]);
-
-  useEffect(() => {
-    const getAll = async () => {
-      getAllCurrencies();
+    const fetchPortfolio = async () => {
+      const result = await get(portfolioId);
+      if (response.ok) {
+        setPortfolio(result);
+      }
     };
-    getAll();
-  }, [getAllCurrencies]);
+    const fetchCurrencies = async () => {
+      const result = await getCurrencies();
+      if (currenciesResponse.ok) {
+        setCurrencies(result);
+      }
+    };
+
+    if (portfolioId) {
+      fetchPortfolio();
+    }
+    fetchCurrencies();
+  }, [portfolioId, get, getCurrencies, response, currenciesResponse]);
 
   useEffect(() => {
     if (portfolioId) {
@@ -55,7 +60,7 @@ function PortfolioAddEditForm({
     }
   }, [portfolioId, portfolio]);
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = async (values: any) => {
     const { name, description, baseCurrencyId, hideClosedCompanies } = values;
     const newPortfolio = {
       name,
@@ -69,9 +74,23 @@ function PortfolioAddEditForm({
 
     if (portfolioId) {
       const id: number = +portfolioId;
-      updatePortfolio(id, newPortfolio);
+      await put(`${id}/`, newPortfolio);
+      if (!response.ok) {
+        createError(t("Cannot update portfolio"));
+      } else {
+        cache.clear();
+        createSuccess(t("Portfolio has been updated"));
+        navigate(-1);
+      }
     } else {
-      addPortfolio(newPortfolio);
+      await post(newPortfolio);
+      if (!response.ok) {
+        createError(t("Cannot create portfolio"));
+      } else {
+        cache.clear();
+        createSuccess(t("Portfolio has been created"));
+        navigate(-1);
+      }
     }
   };
 
@@ -84,7 +103,7 @@ function PortfolioAddEditForm({
     setCountry(newValue);
   };
 
-  if (portfolioId && !portfolio) {
+  if (loading) {
     return <Spin />;
   }
 
@@ -104,10 +123,13 @@ function PortfolioAddEditForm({
         name="name"
         label={t("Name")}
         rules={[
-          { required: true, message: t("Please input the name of the market") }
+          {
+            required: true,
+            message: t("Please input the name of the portfolio")
+          }
         ]}
       >
-        <Input type="text" placeholder="NYSE, NASDAQ,..." />
+        <Input type="text" />
       </Form.Item>
       <Form.Item
         label={
@@ -135,7 +157,12 @@ function PortfolioAddEditForm({
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
       <Form.Item name="baseCurrencyId" label={t("Base currency")}>
-        <Select showSearch placeholder={t("Select a base currency")} allowClear>
+        <Select
+          showSearch
+          placeholder={t("Select a base currency")}
+          allowClear
+          loading={currenciesLoading}
+        >
           {currencies &&
             currencies.map((item: ICurrency) => (
               <Select.Option

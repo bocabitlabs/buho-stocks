@@ -1,5 +1,5 @@
 const APP_BASE_ROUTE = "/app";
-const LOGIN_ROUTE = "/login";
+const LOGIN_ROUTE = "/app-login";
 const REGISTER_ROUTE = "/register";
 
 const HOME_ROUTE = "/home";

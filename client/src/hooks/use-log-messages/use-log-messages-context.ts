@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { message } from "antd";
+import useFetch from "use-http";
 import { LogMessagesContextType } from "contexts/log-messages";
-import { useApi } from "hooks/use-api/use-api-hook";
 import { ILogMessage } from "types/log-messages";
 
 export function useLogMessagesContext(
@@ -10,87 +8,65 @@ export function useLogMessagesContext(
 ): LogMessagesContextType {
   const [logMessage, setLogMessage] = useState<ILogMessage | null>(null);
   const [logMessages, setLogMessages] = useState<ILogMessage[] | []>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation();
-  const {
-    get: apiGet,
-    // post: apiPost,
-    // put: apiPut,
-    delete: apiDelete
-  } = useApi();
   const endpoint = `/api/v1/portfolios/${portfolioId}/log-messages/`;
+  const getHeaders = useCallback(() => {
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Token ${localStorage.getItem("token")}`
+    };
+    return headers;
+  }, []);
+  const {
+    get,
+    response,
+    error,
+    del: deleteRequest,
+    loading: isLoading
+  } = useFetch(endpoint, {
+    headers: getHeaders()
+  });
 
   const getAll = useCallback(async () => {
-    setIsLoading(true);
-    const response = await apiGet(endpoint);
-    if (response.error) {
-      console.error(response);
+    const responseValues = await get();
+    if (response.ok) {
+      setLogMessages(responseValues);
+    } else {
+      console.error(error);
     }
-    setLogMessages(response);
-    setIsLoading(false);
-  }, [apiGet, endpoint]);
+  }, [get, response, error]);
 
   const getById = useCallback(
     async (id: number) => {
-      setIsLoading(true);
-      const response = await apiGet(endpoint + id);
-      if (response?.error) {
-        console.error(response);
+      const responseValues = await get(`${id}/`);
+      if (response.ok) {
+        setLogMessage(responseValues);
+      } else {
+        console.error(error);
       }
-      setLogMessage(response);
-      setIsLoading(false);
     },
-    [apiGet, endpoint]
+    [get, response, error]
   );
 
-  // const create = async (newValues: ILogMessageFormFields) => {
-  //   const response = await apiPost(endpoint, newValues);
-  //   if (response?.error) {
-  //     message.error({
-  //       content: t(`Error ${response.statusCode}: Unable to create message`)
-  //     });
-  //   } else {
-  //     setLogMessages(response);
-  //   }
-  //   return response;
-  // };
-
-  const deleteById = async (id: number) => {
-    const response = await apiDelete(endpoint + id);
-    if (response?.error) {
-      message.error({
-        content: t(`Error ${response.statusCode}: Unable to delete message`)
-      });
-    } else {
-      setLogMessage(null);
-      getAll();
-      message.success({ content: t("Message has been deleted") });
-    }
-    return response;
-  };
-
-  // const update = async (id: number, newValues: ILogMessageFormFields) => {
-  //   const response = await apiPut(`${endpoint + id}/`, newValues);
-  //   if (response?.error) {
-  //     message.error({
-  //       content: t(`Error ${response.statusCode}: Unable to update message`)
-  //     });
-  //   } else {
-  //     getById(id);
-  //     message.success({ content: t("Message has been updated") });
-  //   }
-  //   return response;
-  // };
+  const deleteById = useCallback(
+    async (id: number) => {
+      await deleteRequest(`${id}/`);
+      if (response.ok) {
+        setLogMessage(null);
+      } else {
+        console.error(error);
+      }
+      return response;
+    },
+    [deleteRequest, response, error]
+  );
 
   return {
     isLoading,
     logMessage,
     logMessages,
-    // create,
     deleteById,
     getAll,
     getById
-    // update
   };
 }
 

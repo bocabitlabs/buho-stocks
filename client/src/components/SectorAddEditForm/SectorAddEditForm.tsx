@@ -1,68 +1,134 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, Select, Spin, Switch } from "antd";
+import useFetch from "use-http";
 import ColorSelector from "components/ColorSelector/ColorSelector";
-import { SectorsContext } from "contexts/secctors";
+import { AlertMessagesContext } from "contexts/alert-messages";
 import { ISector } from "types/sector";
 
 interface AddEditFormProps {
   sectorId?: string;
+  isSuper?: boolean;
 }
 
 function SectorAddEditForm({
-  sectorId
+  sectorId,
+  isSuper
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
-  // const [superSectorId, setSuperSectorId] = useState<number | undefined>(
-  //   undefined
-  // );
   const { t } = useTranslation();
-
+  const { createSuccess, createError } = useContext(AlertMessagesContext);
+  const [sector, setSector] = useState<ISector | null>(null);
+  const [superSectors, setSuperSectors] = useState<ISector[] | []>([]);
+  const { loading, response, get, post, put, cache } = useFetch();
   const {
-    sector,
-    superSectors,
-    create: addSector,
-    createSuperSector,
-    update: updateSector,
-    updateSuperSector
-  } = useContext(SectorsContext);
-
-  console.log(sector);
-  console.log(superSectors);
+    get: getSuperSectors,
+    post: postSuperSector,
+    put: putSuperSector,
+    response: superSectorsResponse,
+    cache: superSectorCache
+  } = useFetch("super/");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (sectorId && sector) {
-      setColor(sector.color);
-      // setSuperSectorId(sector.superSector);
+    async function fetchSector() {
+      let result;
+      if (isSuper) {
+        console.log("Getting super sector");
+        result = await getSuperSectors(`${sectorId}/`);
+        if (superSectorsResponse.ok) {
+          setSector(result);
+          setColor(result.color);
+          form.setFieldsValue({
+            name: result.name
+          });
+        }
+      } else {
+        result = await get(`${sectorId}/`);
+        if (response.ok) {
+          setSector(result);
+          setColor(result.color);
+          form.setFieldsValue({
+            name: result.name,
+            isSuperSector: result.isSuperSector,
+            superSectorId: result.superSector?.id
+          });
+        }
+      }
     }
-  }, [sectorId, sector]);
+    async function fetchSuperSectors() {
+      const result = await getSuperSectors();
+      if (response.ok) {
+        setSuperSectors(result);
+      }
+    }
 
-  const handleSubmit = (values: any) => {
+    if (sectorId) {
+      fetchSector();
+      fetchSuperSectors();
+    }
+  }, [
+    sectorId,
+    get,
+    response.ok,
+    form,
+    getSuperSectors,
+    superSectorsResponse,
+    isSuper
+  ]);
+
+  const handleSuperSectorSubmit = async (newSector: any) => {
+    let actionType = "update";
+    if (sectorId) {
+      const id: number = +sectorId;
+      await putSuperSector(`${id}/`, newSector);
+    } else {
+      actionType = "create";
+      await postSuperSector(newSector);
+    }
+    if (!superSectorsResponse.ok) {
+      createError(`Cannot ${actionType} super sector`);
+    } else {
+      superSectorCache.clear();
+      createSuccess(`Super sector has been ${actionType}d`);
+      navigate(-1);
+    }
+  };
+
+  const handleSectorSubmit = async (newSector: any) => {
+    let actionType = "update";
+
+    if (sectorId) {
+      const id: number = +sectorId;
+      await put(`${id}/`, newSector);
+    } else {
+      await post(newSector);
+      actionType = "create";
+    }
+    if (!response.ok) {
+      createError(`Cannot ${actionType} sector`);
+    } else {
+      cache.clear();
+      createSuccess(`Sector has been ${actionType}d`);
+      navigate(-1);
+    }
+  };
+
+  const handleSubmit = async (values: any) => {
     const { name, isSuperSector, superSectorId } = values;
     const newSector = {
       name,
       color,
-      superSector: superSectorId
+      superSector: superSectorId,
+      isSuperSector
     };
-    console.log(newSector);
-    console.log(superSectors);
 
-    if (isSuperSector) {
-      if (sectorId) {
-        const id: number = +sectorId;
-        updateSuperSector(id, newSector);
-      } else if (isSuperSector && !sectorId) {
-        createSuperSector(newSector);
-      }
-      return;
-    }
-
-    if (sectorId) {
-      const id: number = +sectorId;
-      updateSector(id, newSector);
+    if (isSuper) {
+      await handleSuperSectorSubmit(newSector);
     } else {
-      addSector(newSector);
+      await handleSectorSubmit(newSector);
     }
   };
 
@@ -80,9 +146,9 @@ function SectorAddEditForm({
       layout="vertical"
       onFinish={handleSubmit}
       initialValues={{
-        name: sector?.name,
-        isSuperSector: sector?.isSuperSector,
-        superSectorId: sector?.superSector?.id
+        name: sectorId ? sector?.name : "",
+        isSuperSector: sectorId ? sector?.isSuperSector : "",
+        superSectorId: sectorId ? sector?.superSector?.id : ""
       }}
     >
       <Form.Item
@@ -92,7 +158,7 @@ function SectorAddEditForm({
           { required: true, message: t("Please input the name of the sector") }
         ]}
       >
-        <Input type="text" placeholder="NYSE, NASDAQ,..." />
+        <Input type="text" placeholder="REIT, Banks, Semiconductors,..." />
       </Form.Item>
       <Form.Item
         label={
@@ -119,37 +185,43 @@ function SectorAddEditForm({
       >
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
-      <Form.Item name="superSectorId" label={t("Super sector")}>
-        <Select placeholder={t("Select its super sector")} allowClear>
-          {superSectors &&
-            superSectors.map((sectorItem: ISector) => (
-              <Select.Option
-                value={sectorItem.id}
-                key={`sector-${sectorItem.id}-${sectorItem.id}`}
-              >
-                {sectorItem.name}
-              </Select.Option>
-            ))}
-        </Select>
-      </Form.Item>
-      <Form.Item
-        label={t("Is a super sector")}
-        name="isSuperSector"
-        valuePropName="checked"
-      >
-        <Switch />
-      </Form.Item>
+      {!isSuper && (
+        <Form.Item name="superSectorId" label={t("Super sector")}>
+          <Select placeholder={t("Select its super sector")} allowClear>
+            {superSectors &&
+              superSectors.map((sectorItem: ISector) => (
+                <Select.Option
+                  value={sectorItem.id}
+                  key={`sector-${sectorItem.id}-${sectorItem.id}`}
+                >
+                  {sectorItem.name}
+                </Select.Option>
+              ))}
+          </Select>
+        </Form.Item>
+      )}
+      {!isSuper && !sectorId && (
+        <Form.Item
+          label={t("Is a super sector")}
+          name="isSuperSector"
+          valuePropName="checked"
+        >
+          <Switch />
+        </Form.Item>
+      )}
       <Form.Item>
-        <Button type="primary" htmlType="submit">
-          {sectorId ? t("Update sector") : t("Add sector")}
+        <Button type="primary" htmlType="submit" loading={loading}>
+          {sectorId
+            ? t(`Update ${isSuper ? "super" : ""} sector`)
+            : t("Add sector")}
         </Button>
       </Form.Item>
     </Form>
   );
 }
-
 SectorAddEditForm.defaultProps = {
-  sectorId: null
+  sectorId: null,
+  isSuper: false
 };
 
 export default SectorAddEditForm;

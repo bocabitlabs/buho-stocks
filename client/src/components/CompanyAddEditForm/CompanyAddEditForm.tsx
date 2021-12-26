@@ -1,12 +1,22 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Input, Select, Spin, Switch } from "antd";
+import { useNavigate } from "react-router-dom";
+import { PlusOutlined } from "@ant-design/icons";
+import {
+  Avatar,
+  Button,
+  Form,
+  Input,
+  Select,
+  Spin,
+  Switch,
+  Upload
+} from "antd";
+import useFetch from "use-http";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { CompaniesContext } from "contexts/companies";
-import { CurrenciesContext } from "contexts/currencies";
-import { MarketsContext } from "contexts/markets";
-import { SectorsContext } from "contexts/secctors";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import { ICompany } from "types/company";
 import { ICurrency } from "types/currency";
 import { IMarket } from "types/market";
 import { ISector } from "types/sector";
@@ -22,48 +32,72 @@ function CompanyAddEditForm({
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
-  const [country, setCountry] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const { t } = useTranslation();
+  const { createError, createSuccess } = useContext(AlertMessagesContext);
 
+  const [company, setCompany] = useState<ICompany | null>(null);
+  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
+  const [markets, setMarkets] = useState<IMarket[]>([]);
+  const [sectors, setSectors] = useState<ISector[]>([]);
+  const [fileList, setFileList] = useState<any[]>([]);
+  const [base64File, setBas64File] = useState<any>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
+
+  const { response, get, put, post, cache, loading } = useFetch(
+    `portfolios/${portfolioId}/companies`
+  );
   const {
-    company,
-    create: addCompany,
-    getById: getCompanyById,
-    update: updateCompany
-  } = useContext(CompaniesContext);
-
-  const { currencies, getAll: getAllCurrencies } =
-    useContext(CurrenciesContext);
-  const { markets, getAll: getAllMarkets } = useContext(MarketsContext);
-  const { sectors, getAll: getAllSectors } = useContext(SectorsContext);
+    get: getCurrencies,
+    response: currenciesResponse,
+    loading: currenciesLoading
+  } = useFetch("currencies");
+  const {
+    response: marketsResponse,
+    get: getMarkets,
+    loading: marketsLoading
+  } = useFetch("markets");
+  const {
+    response: sectorsResponse,
+    get: getSectors,
+    loading: sectorsLoading
+  } = useFetch("sectors");
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (companyId) {
-      const id: number = +companyId;
-      getCompanyById(id);
+    async function loadInitialCompany() {
+      const initialCompany = await get(`${companyId}/`);
+      if (response.ok) {
+        setCompany(initialCompany);
+        setCountryCode(initialCompany.countryCode);
+      }
     }
-  }, [companyId, getCompanyById]);
+    if (companyId) {
+      loadInitialCompany();
+    }
+  }, [response.ok, get, companyId]);
 
   useEffect(() => {
-    const getAll = async () => {
-      getAllCurrencies();
-    };
-    getAll();
-  }, [getAllCurrencies]);
-
+    async function loadInitialCurrencies() {
+      const initialCompany = await getCurrencies();
+      if (currenciesResponse.ok) setCurrencies(initialCompany);
+    }
+    loadInitialCurrencies();
+  }, [currenciesResponse.ok, getCurrencies]);
   useEffect(() => {
-    const getAll = async () => {
-      getAllMarkets();
-    };
-    getAll();
-  }, [getAllMarkets]);
-
+    async function loadInitialMarkets() {
+      const initialMarkets = await getMarkets();
+      if (marketsResponse.ok) setMarkets(initialMarkets);
+    }
+    loadInitialMarkets();
+  }, [marketsResponse.ok, getMarkets]);
   useEffect(() => {
-    const getAll = async () => {
-      getAllSectors();
-    };
-    getAll();
-  }, [getAllSectors]);
+    async function loadInitialSectors() {
+      const initialSectors = await getSectors();
+      if (sectorsResponse.ok) setSectors(initialSectors);
+    }
+    loadInitialSectors();
+  }, [sectorsResponse.ok, getSectors]);
 
   useEffect(() => {
     if (companyId) {
@@ -73,11 +107,17 @@ function CompanyAddEditForm({
     }
   }, [companyId, company]);
 
-  const handleSubmit = (values: any) => {
+  const getBase64 = (img: any, callback: any) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
+  };
+
+  const handleSubmit = async (values: any) => {
     const {
       name,
       description,
-      currency,
+      baseCurrency,
       dividendsCurrency,
       sector,
       market,
@@ -91,25 +131,39 @@ function CompanyAddEditForm({
       name,
       color,
       description,
-      baseCurrency: currency,
+      baseCurrency,
       dividendsCurrency,
       sector,
       market,
+      logo: base64File,
       portfolio: +portfolioId,
       ticker,
       altTickers,
       url,
       broker,
-      countryCode: country,
+      countryCode,
       isClosed
     };
-    console.log(newCompany);
 
     if (companyId) {
       const id: number = +companyId;
-      updateCompany(id, newCompany);
+      await put(`${id}/`, newCompany);
+      if (!response.ok) {
+        createError(t("Cannot update company"));
+      } else {
+        cache.clear();
+        createSuccess(t("Company has been updated"));
+        navigate(-1);
+      }
     } else {
-      addCompany(newCompany);
+      await post("/", newCompany);
+      if (!response.ok) {
+        createError(t("Cannot create company"));
+      } else {
+        cache.clear();
+        createSuccess(t("Company has been created"));
+        navigate(-1);
+      }
     }
   };
 
@@ -119,7 +173,16 @@ function CompanyAddEditForm({
 
   const handleCountryChange = (newValue: string) => {
     console.debug(newValue);
-    setCountry(newValue);
+    setCountryCode(newValue);
+  };
+
+  const handleUpload = ({ fileList: newFileList }: any) => {
+    setFileList(newFileList);
+    console.log(newFileList[0]);
+    setFileName(newFileList[0].name);
+    getBase64(newFileList[0].originFileObj, (imageUrl: any) => {
+      setBas64File(imageUrl);
+    });
   };
 
   if (companyId && !company) {
@@ -132,20 +195,34 @@ function CompanyAddEditForm({
       layout="vertical"
       onFinish={handleSubmit}
       initialValues={{
-        name: company?.name
-        // description: portfolio?.description,
-        // hideClosedCompanies: portfolio?.hideClosedCompanies,
-        // baseCurrencyId: portfolio?.baseCurrency
+        name: company?.name,
+        description: company?.description,
+        ticker: company?.ticker,
+        altTickers: company?.altTickers,
+        broker: company?.broker,
+        url: company?.url,
+        sector: company?.sector.id,
+        baseCurrency: company?.baseCurrency.code,
+        dividendsCurrency: company?.dividendsCurrency.code,
+        market: company?.market.id,
+        isClosed: company?.isClosed,
+        countryCode: company?.countryCode
       }}
     >
       <Form.Item
         name="name"
         label={t("Name")}
         rules={[
-          { required: true, message: t("Please input the name of the market") }
+          { required: true, message: t("Please input the name of the company") }
         ]}
       >
-        <Input type="text" placeholder="NYSE, NASDAQ,..." />
+        <Input type="text" />
+      </Form.Item>
+      <Form.Item name="ticker" label={t("Ticker")}>
+        <Input type="text" />
+      </Form.Item>
+      <Form.Item name="altTickers" label={t("Altnernative tickers")}>
+        <Input type="text" />
       </Form.Item>
       <Form.Item
         label={
@@ -172,8 +249,28 @@ function CompanyAddEditForm({
       >
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
-      <Form.Item name="currency" label={t("Currency")}>
-        <Select showSearch placeholder={t("Select a currency")} allowClear>
+      <Form.Item name="logo" label="Company Logo">
+        <Upload
+          showUploadList={false}
+          name="logo"
+          fileList={fileList}
+          onChange={handleUpload}
+          beforeUpload={() => false} // return false so that antd doesn't upload the picture right away
+        >
+          {company?.logo && !fileName && (
+            <Avatar src={company.logo} style={{ marginRight: 10 }} />
+          )}
+          <Button icon={<PlusOutlined />}>Upload</Button>{" "}
+          {fileName ? `Selected ${fileName}` : ""}
+        </Upload>
+      </Form.Item>
+      <Form.Item name="baseCurrency" label={t("Currency")}>
+        <Select
+          showSearch
+          placeholder={t("Select a currency")}
+          allowClear
+          loading={currenciesLoading}
+        >
           {currencies &&
             currencies.map((item: ICurrency) => (
               <Select.Option
@@ -190,6 +287,7 @@ function CompanyAddEditForm({
           showSearch
           placeholder={t("Select a currency for the dividends")}
           allowClear
+          loading={currenciesLoading}
         >
           {currencies &&
             currencies.map((item: ICurrency) => (
@@ -203,7 +301,11 @@ function CompanyAddEditForm({
         </Select>
       </Form.Item>
       <Form.Item name="market" label={t("Market")}>
-        <Select placeholder={t("Select a market")} allowClear>
+        <Select
+          placeholder={t("Select a market")}
+          allowClear
+          loading={marketsLoading}
+        >
           {markets &&
             markets.map((sectorItem: IMarket) => (
               <Select.Option
@@ -216,12 +318,16 @@ function CompanyAddEditForm({
         </Select>
       </Form.Item>
       <Form.Item name="sector" label={t("Sector")}>
-        <Select placeholder={t("Select a sector")} allowClear>
+        <Select
+          placeholder={t("Select a sector")}
+          allowClear
+          loading={sectorsLoading}
+        >
           {sectors &&
             sectors.map((sectorItem: ISector) => (
               <Select.Option
                 value={sectorItem.id}
-                key={`currency-${sectorItem.id}-${sectorItem.id}`}
+                key={`sector-${sectorItem.id}-${sectorItem.id}`}
               >
                 {sectorItem.name}
               </Select.Option>
@@ -231,12 +337,7 @@ function CompanyAddEditForm({
       <Form.Item label={t("Is closed")} name="isClosed" valuePropName="checked">
         <Switch />
       </Form.Item>
-      <Form.Item name="ticker" label={t("Ticker")}>
-        <Input type="text" />
-      </Form.Item>
-      <Form.Item name="altTickers" label={t("Altnernative tickers")}>
-        <Input type="text" />
-      </Form.Item>
+
       <Form.Item name="broker" label={t("Broker")}>
         <Input type="text" />
       </Form.Item>
@@ -246,15 +347,15 @@ function CompanyAddEditForm({
       <Form.Item name="description" label={t("Description")}>
         <Input type="text" />
       </Form.Item>
-      <Form.Item name="country" label={t("Country")}>
+      <Form.Item name="countryCode" label={t("Country")}>
         <CountrySelector
           handleChange={handleCountryChange}
-          initialValue={company?.countryCode}
+          initialValue={countryCode}
         />
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit">
+        <Button type="primary" htmlType="submit" loading={loading}>
           {companyId ? t("Update company") : t("Add company")}
         </Button>
       </Form.Item>

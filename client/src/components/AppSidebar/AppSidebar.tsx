@@ -1,9 +1,8 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useHistory, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   BankOutlined,
-  BookOutlined,
   ClusterOutlined,
   DollarCircleOutlined,
   HomeOutlined,
@@ -26,12 +25,6 @@ const navLinks: RoutePathProps[] = [
     path: getRoute(HOME_ROUTE),
     text: "Home",
     icon: <HomeOutlined />
-  },
-  {
-    key: "1",
-    path: "/app/portfolios",
-    text: "Portfolios",
-    icon: <BookOutlined />
   },
   { key: "2", path: "/app/markets", text: "Markets", icon: <BankOutlined /> },
   {
@@ -62,9 +55,9 @@ const navLinks: RoutePathProps[] = [
 ];
 
 export default function AppSidebar(): ReactElement {
-  const history = useHistory();
   const location = useLocation();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const [selectedKey, setSelectedKey] = useState(
     navLinks.find((item) => location.pathname.startsWith(item.path))?.key || ""
@@ -72,7 +65,7 @@ export default function AppSidebar(): ReactElement {
 
   const onClickMenu = (item: any) => {
     const clicked = navLinks.find((_item) => _item.key === item.key);
-    history.push(clicked?.path || "");
+    navigate(clicked?.path || "");
   };
 
   useEffect(() => {

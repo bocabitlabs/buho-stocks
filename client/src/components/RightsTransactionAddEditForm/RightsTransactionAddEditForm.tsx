@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Button,
   Col,
@@ -7,54 +8,83 @@ import {
   Form,
   Input,
   InputNumber,
-  message,
   Row,
   Select,
   Spin
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import { CompaniesContext } from "contexts/companies";
-import { ExchangeRatesContext } from "contexts/exchange-rates";
-import { PortfoliosContext } from "contexts/portfolios";
-import { RightsTransactionsContext } from "contexts/rights-transactions";
-import { IRightsTransactionFormFields } from "types/rights-transaction";
+import useFetch from "use-http";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import { ICurrency } from "types/currency";
+import { IExchangeRate } from "types/exchange-rate";
+import {
+  IRightsTransaction,
+  IRightsTransactionFormFields
+} from "types/rights-transaction";
 
 interface IProps {
   transactionId?: string;
+  companyBaseCurrency: ICurrency;
+  portfolioBaseCurrency: ICurrency;
 }
 
 export default function RightsTransactionAddEditForm({
-  transactionId
+  transactionId,
+  companyBaseCurrency,
+  portfolioBaseCurrency
 }: IProps) {
   const [form] = Form.useForm();
   const dateFormat = "YYYY-MM-DD";
-
-  const { company } = useContext(CompaniesContext);
-  const { portfolio } = useContext(PortfoliosContext);
-  const {
-    isLoading: exchangeRateLoading,
-    exchangeRate,
-    get: getExchangeRate
-  } = useContext(ExchangeRatesContext);
-  const {
-    transaction,
-    create: addTransaction,
-    update: updateTransaction
-  } = useContext(RightsTransactionsContext);
+  const { id, companyId } = useParams();
+  const navigate = useNavigate();
   const [currentTransactionDate, setCurrentTransactionDate] = useState<string>(
     moment(new Date()).format(dateFormat)
   );
+  const [transaction, setTransaction] = useState<IRightsTransaction | null>(
+    null
+  );
+  const { createError, createSuccess } = useContext(AlertMessagesContext);
+
   const { t } = useTranslation();
+  const [exchangeRate, setExchangeRate] = useState<IExchangeRate | null>(null);
+  const {
+    loading: exchangeRateLoading,
+    response: exchangeRateResponse,
+    get: getExchangeRate
+  } = useFetch("exchange-rates/");
+
+  const { response, get, put, post, cache } = useFetch(
+    `companies/${companyId}/rights`
+  );
+
   const fetchExchangeRate = async () => {
-    if (company && portfolio) {
-      getExchangeRate(
-        company?.baseCurrency.code,
-        portfolio?.baseCurrency.code,
-        currentTransactionDate
-      );
+    const initialData = await getExchangeRate(
+      `${companyBaseCurrency.code}/${portfolioBaseCurrency.code}/${currentTransactionDate}/`
+    );
+    if (exchangeRateResponse.ok) {
+      setExchangeRate(initialData);
+    } else {
+      form.setFields([
+        {
+          name: "exchangeRate",
+          errors: ["Unable to fetch the exchange rates for the given date"]
+        }
+      ]);
     }
   };
+
+  useEffect(() => {
+    async function loadInitialTransaction() {
+      const initialData = await get(`${transactionId}/`);
+      if (response.ok) {
+        setTransaction(initialData);
+      }
+    }
+    if (transactionId) {
+      loadInitialTransaction();
+    }
+  }, [response.ok, get, transactionId]);
 
   useEffect(() => {
     if (exchangeRate) {
@@ -64,7 +94,7 @@ export default function RightsTransactionAddEditForm({
     }
   }, [exchangeRate, form]);
 
-  const handleAdd = (values: any) => {
+  const handleSubmit = async (values: any) => {
     const {
       count,
       grossPricePerShare,
@@ -74,33 +104,38 @@ export default function RightsTransactionAddEditForm({
       notes
     } = values;
 
-    if (!company || !portfolio) {
-      message.error(
-        "Company and Portfolio must be set in order to create a transaction"
-      );
-      return;
-    }
-
     const newTransactionValues: IRightsTransactionFormFields = {
       count,
       grossPricePerShare,
-      grossPricePerShareCurrency: company.baseCurrency.code,
+      grossPricePerShareCurrency: companyBaseCurrency.code,
       type,
       totalCommission,
-      totalCommissionCurrency: company.baseCurrency.code,
+      totalCommissionCurrency: companyBaseCurrency.code,
       transactionDate: currentTransactionDate,
       notes,
-      exchangeRate: exchangeRateValue,
-      company: company.id,
+      exchangeRate: +exchangeRateValue,
+      company: +companyId!,
       color: "#000",
-      portfolio: portfolio.id
+      portfolio: +id!
     };
     if (transactionId) {
-      console.log(transactionId, newTransactionValues);
-      updateTransaction(+transactionId, newTransactionValues);
+      await put(`${transactionId}/`, newTransactionValues);
+      if (!response.ok) {
+        createError(t("Cannot update transaction"));
+      } else {
+        cache.clear();
+        createSuccess(t("Transaction has been updated"));
+        navigate(-1);
+      }
     } else {
-      console.log(newTransactionValues);
-      addTransaction(newTransactionValues);
+      await post(newTransactionValues);
+      if (!response.ok) {
+        createError(t("Cannot create transaction"));
+      } else {
+        cache.clear();
+        createSuccess(t("Transaction has been created"));
+        navigate(`/app/portfolios/${id}/companies/${companyId}`);
+      }
     }
   };
 
@@ -131,15 +166,18 @@ export default function RightsTransactionAddEditForm({
   //   });
   // };
 
-  if (!portfolio || !company || (transactionId && !transaction)) {
+  // if (!portfolio || !company || (transactionId && !transaction)) {
+  //   return <Spin />;
+  // }
+  if (transactionId && !transaction) {
     return <Spin />;
   }
-  console.log(currentTransactionDate);
+
   return (
     <Form
       form={form}
       layout="vertical"
-      onFinish={handleAdd}
+      onFinish={handleSubmit}
       initialValues={{
         count: transaction?.count,
         grossPricePerShare: transaction?.grossPricePerShare,
@@ -154,29 +192,28 @@ export default function RightsTransactionAddEditForm({
     >
       <Form.Item
         name="count"
-        label={t("Number of rights")}
+        label={t("Number of shares")}
         rules={[
-          { required: true, message: t("Please input the number of rights") }
+          { required: true, message: t("Please input the number of shares") }
         ]}
       >
         <InputNumber min={0} step={1} style={{ width: "100%" }} />
       </Form.Item>
       <Form.Item
         name="grossPricePerShare"
-        label={t("Gross price per right")}
+        label={t("Gross price per share")}
         rules={[
           {
             required: true,
-            message: t("Please input the gross price per right")
+            message: t("Please input the gross price per share")
           }
         ]}
       >
         <InputNumber
           decimalSeparator="."
-          addonAfter={`${company?.baseCurrency.symbol}`}
+          addonAfter={`${companyBaseCurrency.symbol}`}
           min={0}
           step={0.001}
-          // style={{ width: "100%" }}
         />
       </Form.Item>
       <Form.Item
@@ -199,7 +236,7 @@ export default function RightsTransactionAddEditForm({
         ]}
       >
         <InputNumber
-          addonAfter={`${company?.baseCurrency.symbol}`}
+          addonAfter={`${companyBaseCurrency.symbol}`}
           decimalSeparator="."
           min={0}
           step={0.001}
@@ -220,8 +257,7 @@ export default function RightsTransactionAddEditForm({
           onChange={currentTransactionDateChange}
         />
       </Form.Item>
-
-      {company.baseCurrency.code !== portfolio.baseCurrency.code && (
+      {companyBaseCurrency.code !== portfolioBaseCurrency.code && (
         <Row gutter={8}>
           <Col span={12}>
             <Form.Item
@@ -247,44 +283,13 @@ export default function RightsTransactionAddEditForm({
                 onClick={fetchExchangeRate}
                 loading={exchangeRateLoading}
               >
-                {t("Get exchange rate")} ({company.baseCurrency.code} to{" "}
-                {portfolio.baseCurrency.code})
+                {t("Get exchange rate")} ({companyBaseCurrency.code} to{" "}
+                {portfolioBaseCurrency.code})
               </Button>
             </Form.Item>
           </Col>
         </Row>
       )}
-
-      {/* {company.broker.toLowerCase().includes("ing") && (
-        <div>
-          <Divider plain>{t("ING only")}</Divider>
-          <Typography.Text type="secondary">
-            {t(
-              `ING doesn't include a commission field, so it needs to be calculated. Commission and price will be recalculated from total.`
-            )}
-          </Typography.Text>
-
-          <Form.Item name="total" label={t("Total (€)")}>
-            <InputNumber
-              decimalSeparator="."
-              formatter={(value) => `€ ${value}`}
-              min={0}
-              step={0.001}
-              style={{ width: "100%" }}
-            />
-          </Form.Item>
-          <Form.Item>
-            <Button
-              type="default"
-              htmlType="button"
-              onClick={updateFieldsForING}
-            >
-              {t("Obtain Values from total")}
-            </Button>
-          </Form.Item>
-          <Divider plain />
-        </div>
-      )} */}
 
       <Form.Item name="notes" label={t("Notes")}>
         <Input.TextArea rows={4} />

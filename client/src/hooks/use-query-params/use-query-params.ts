@@ -4,7 +4,6 @@ import { useLocation } from "react-router-dom";
 // the query string for you.
 export function useQueryParameters() {
   const currentSearch = useLocation().search;
-  console.log(currentSearch);
   return new URLSearchParams(currentSearch);
 }
 

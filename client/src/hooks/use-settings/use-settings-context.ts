@@ -1,47 +1,73 @@
-import { useCallback, useContext, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { message } from "antd";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import useFetch from "use-http";
 import { AuthContext } from "contexts/auth";
 import { SettingsContextType } from "contexts/settings";
-import { useApi } from "hooks/use-api/use-api-hook";
 import { ISettings, ISettingsFormFields } from "types/settings";
 
 export function useSettingsContext(): SettingsContextType {
   const [settings, setSettings] = useState<ISettings | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const { t } = useTranslation();
-  const { get: apiGet, put: updateSettings } = useApi();
-  const endpoint = "/api/v1/settings/";
   const { state: authState } = useContext(AuthContext);
+  const cancelRequest = useRef<boolean>(false);
+  const endpoint = "/api/v1/settings/";
+  const getHeaders = useCallback(() => {
+    const headers = {
+      Accept: "application/json",
+      Authorization: `Token ${localStorage.getItem("token")}`
+    };
+    return headers;
+  }, []);
+
+  const {
+    get: apiGet,
+    put,
+    response,
+    error,
+    loading: isLoading,
+    cache
+  } = useFetch(endpoint, {
+    headers: getHeaders()
+  });
 
   const get = useCallback(async () => {
-    setIsLoading(true);
-    const result = await apiGet(endpoint);
-    console.log(result);
-    setSettings(result);
-    setIsLoading(false);
-  }, [apiGet]);
-
-  const update = async (settingsId: number, newValues: ISettingsFormFields) => {
-    const response = await updateSettings(endpoint, { settingsId, newValues });
-
-    if (response?.error) {
-      message.error({
-        content: t(`Error ${response.statusCode}: Unable to update settings`)
-      });
+    const responseValues = await apiGet();
+    if (response.ok) {
+      setSettings(responseValues);
     } else {
-      message.success({ content: t("Settings have been updated") });
+      console.error(error);
     }
-  };
+    return response;
+  }, [apiGet, response, error]);
+
+  const update = useCallback(
+    async (settingsId: number, newValues: ISettingsFormFields) => {
+      const responseValues = await put({
+        settingsId,
+        newValues
+      });
+
+      if (response.ok) {
+        setSettings(responseValues);
+        cache.clear();
+      } else {
+        console.error(error);
+      }
+      return response;
+    },
+    [put, response, error, cache]
+  );
 
   useEffect(() => {
+    if (cancelRequest.current) return undefined;
     if (authState.isAuthenticated) {
       get();
-      console.log("user is authenticated. Should get settings");
+      console.log("user is authenticated. Will get settings");
     } else {
-      console.log("User is not logged in. No getting settings");
+      console.log("User is not logged in. Not getting settings");
     }
-  }, [get]);
+    return () => {
+      cancelRequest.current = true;
+    };
+  }, [get, authState.isAuthenticated]);
   return {
     isLoading,
     settings,

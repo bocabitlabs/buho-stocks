@@ -27,30 +27,29 @@ export default function CountrySelector({
       {element.name}
     </div>
   );
-
   return (
-    <div>
-      <Select
-        placeholder={t("Select a country")}
-        style={{ width: "100%" }}
-        onChange={handleChange}
-        optionLabelProp="label"
-        defaultValue={initialValue}
-      >
-        {Object.keys(countries).map((key: string) => {
-          const element = countries[key];
-          return (
-            <Select.Option
-              key={element.key}
-              value={element.code}
-              label={getLabel(element)}
-            >
-              {getLabel(element)}
-            </Select.Option>
-          );
-        })}
-      </Select>
-    </div>
+    <Select
+      placeholder={t("Select a country")}
+      style={{ width: "100%" }}
+      onChange={handleChange}
+      optionLabelProp="label"
+      value={initialValue}
+      defaultValue={initialValue}
+    >
+      {JSON.stringify(initialValue)}
+      {Object.keys(countries).map((key: string) => {
+        const element = countries[key];
+        return (
+          <Select.Option
+            key={element.key}
+            value={element.code}
+            label={getLabel(element)}
+          >
+            {getLabel(element)}
+          </Select.Option>
+        );
+      })}
+    </Select>
   );
 }
 

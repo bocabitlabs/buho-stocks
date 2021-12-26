@@ -4,7 +4,11 @@ import { IExchangeRate } from "types/exchange-rate";
 export type ExchangeRatesContextType = {
   isLoading: boolean;
   exchangeRate: IExchangeRate | null;
-  get: (fromCode: string, toCode: string, exchangeDate: string) => void;
+  get: (
+    fromCode: string,
+    toCode: string,
+    exchangeDate: string
+  ) => Promise<any> | undefined;
 };
 
 export const defaultValue: ExchangeRatesContextType = {

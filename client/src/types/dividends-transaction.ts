@@ -5,7 +5,7 @@ export interface IDividendsTransactionFormFields extends Transaction {
 }
 
 export interface IDividendsTransaction extends IDividendsTransactionFormFields {
-  id: string;
+  id: number;
   dateCreated: string;
   lastUpdated: string;
 }

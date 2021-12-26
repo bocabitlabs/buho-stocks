@@ -1,11 +1,14 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button, Form, Input, Spin, TimePicker } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
+import useFetch from "use-http";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { MarketsContext } from "contexts/markets";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import { IMarket } from "types/market";
 
 interface AddEditFormProps {
   marketId?: string;
@@ -18,31 +21,34 @@ function MarketAddEditForm({
   const [color, setColor] = useState("#607d8b");
   const [region, setRegion] = useState("");
   const { t } = useTranslation();
-
-  const {
-    market,
-    create: addMarket,
-    getById: getMarketById,
-    update: updateMarket
-  } = useContext(MarketsContext);
+  const navigate = useNavigate();
+  const { createError, createSuccess } = useContext(AlertMessagesContext);
+  const [market, setMarket] = useState<IMarket | null>(null);
+  const { response, get, post, put } = useFetch("markets/");
 
   useEffect(() => {
-    if (marketId) {
-      const id: number = +marketId;
-      getMarketById(id);
-    }
-  }, [marketId, getMarketById]);
-
-  useEffect(() => {
-    if (marketId) {
-      if (market) {
-        setColor(market.color);
-        setRegion(market.region);
+    async function fetchMarket() {
+      const result = await get(marketId);
+      if (response.ok) {
+        setMarket(result);
+        setColor(result.color);
+        setRegion(result.region);
+        form.setFieldsValue({
+          name: result.name,
+          description: result.description,
+          // region: result.region,
+          openTime: moment(result.openTime, "HH:mm"),
+          closeTime: moment(result.closeTime, "HH:mm")
+        });
       }
     }
-  }, [marketId, market]);
 
-  const handleSubmit = (values: any) => {
+    if (marketId) {
+      fetchMarket();
+    }
+  }, [marketId, get, response.ok, form]);
+
+  const handleSubmit = async (values: any) => {
     const { name, description, openTime, closeTime } = values;
     const newMarket = {
       name,
@@ -52,12 +58,23 @@ function MarketAddEditForm({
       openTime: openTime.format("HH:mm"),
       closeTime: closeTime.format("HH:mm")
     };
-    console.log(newMarket);
     if (marketId) {
       const id: number = +marketId;
-      updateMarket(id, newMarket);
+      await put(`${id}/`, newMarket);
+      if (!response.ok) {
+        createError(t("Cannot update market"));
+      } else {
+        createSuccess(t("Market has been updated"));
+        navigate(-1);
+      }
     } else {
-      addMarket(newMarket);
+      await post(newMarket);
+      if (!response.ok) {
+        createError(t("Cannot create market"));
+      } else {
+        createSuccess(t("Market created"));
+        navigate(-1);
+      }
     }
   };
 
@@ -106,7 +123,7 @@ function MarketAddEditForm({
       <Form.Item name="region" label={t("Country")}>
         <CountrySelector
           handleChange={handleCountryChange}
-          initialValue={market?.region}
+          initialValue={region}
         />
       </Form.Item>
       <Form.Item

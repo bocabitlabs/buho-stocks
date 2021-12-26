@@ -15,6 +15,7 @@ interface ICompanyBase {
   broker: string;
   countryCode: string;
   isClosed: boolean;
+  logo: string;
 }
 
 export interface ICompanyFormFields extends ICompanyBase {
