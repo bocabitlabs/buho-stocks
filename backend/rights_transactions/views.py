@@ -100,7 +100,7 @@ class RightsTransactionDetailAPIView(APIView):
         instance = self.get_object(company_id, transaction_id, request.user.id)
         if not instance:
             return Response(
-                {"res": "Object with transaction id does not exists"},
+                {"res": f"Object with transaction id {transaction_id} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -118,7 +118,7 @@ class RightsTransactionDetailAPIView(APIView):
         instance = self.get_object(transaction_id, company_id, request.user.id)
         if not instance:
             return Response(
-                {"res": "Object with transaction id does not exists"},
+                {"res": f"Object with transaction id {transaction_id} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         data = {

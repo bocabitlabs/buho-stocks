@@ -27,7 +27,7 @@ class Sector(SectorBase):
     """Sector model class"""
 
     super_sector = models.ForeignKey(
-        SuperSector, on_delete=models.CASCADE, related_name="sectors"
+        SuperSector, on_delete=models.CASCADE, related_name="sectors", null=True
     )
 
     def __str___(self):

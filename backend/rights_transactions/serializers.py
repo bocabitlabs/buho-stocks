@@ -10,10 +10,10 @@ class RightsTransactionSerializer(serializers.ModelSerializer):
     company = UserFilteredPrimaryKeyRelatedField(
         queryset=Company.objects, many=False, read_only=False
     )
-    gross_price_per_share = MoneyField(max_digits=29, decimal_places=19)
+    gross_price_per_share = MoneyField(max_digits=12, decimal_places=3)
     gross_price_per_share_currency = serializers.CharField(max_length=50)
 
-    total_commission = MoneyField(max_digits=29, decimal_places=19)
+    total_commission = MoneyField(max_digits=12, decimal_places=3)
     total_commission_currency = serializers.CharField(max_length=50)
 
     class Meta:

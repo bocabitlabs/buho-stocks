@@ -5,7 +5,7 @@ from djmoney.models.fields import MoneyField
 
 class StockPrice(models.Model):
     company_name = models.CharField(max_length=200)
-    price = MoneyField(max_digits=29, decimal_places=19, default_currency=None)
+    price = MoneyField(max_digits=12, decimal_places=3, default_currency=None)
     transaction_date = models.DateField()
     ticker = models.CharField(max_length=100)
     date_created = models.DateTimeField(auto_now_add=True)

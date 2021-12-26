@@ -1,8 +1,10 @@
-from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
-from currencies.serializers import CurrencySerializer
-from portfolios.models import Portfolio
+from rest_framework.fields import SerializerMethodField
 from rest_framework import serializers
-from companies.serializers import CompanySerializer
+
+from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
+from currencies.models import get_currency_details
+from portfolios.models import Portfolio
+from companies.serializers import CompanySerializerGet
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
@@ -25,5 +27,12 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 
 class PortfolioSerializerGet(PortfolioSerializer):
-    base_currency = CurrencySerializer(many=False, read_only=True)
-    companies = CompanySerializer(many=True, read_only=True)
+    base_currency = SerializerMethodField()
+    companies = CompanySerializerGet(many=True, read_only=True)
+
+    def get_base_currency(self, obj):
+        print("get_base_currency portfolio")
+        print("obj.base_currency:", obj.base_currency)
+        return get_currency_details(
+            obj.base_currency
+        )  # access the price of the product associated with the order_unit object

@@ -9,8 +9,8 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from companies.serializers import CompanySerializer, CompanySerializerGet
 from companies.models import Company
-from currencies.models import get_currency_details
 from log_messages.models import LogMessage
+from portfolios.models import Portfolio
 
 
 class CompaniesListAPIView(APIView):
@@ -26,11 +26,11 @@ class CompaniesListAPIView(APIView):
         List all the portfolio items for given requested user
         """
         elements = Company.objects.filter(user=request.user.id, portfolio=portfolio_id)
-        for element in elements:
-            base_currency = get_currency_details(element.base_currency)
-            dividends_currency = get_currency_details(element.dividends_currency)
-            element.base_currency = base_currency
-            element.dividends_currency = dividends_currency
+        # for element in elements:
+        #     base_currency = get_currency_details(element.base_currency)
+        #     dividends_currency = get_currency_details(element.dividends_currency)
+        #     element.base_currency = base_currency
+        #     element.dividends_currency = dividends_currency
 
         serializer = CompanySerializerGet(
             elements, many=True, context={"request": request}
@@ -52,19 +52,21 @@ class CompaniesListAPIView(APIView):
             "country_code": request.data.get("country_code"),
             "broker": request.data.get("broker"),
             "url": request.data.get("url"),
+            "logo": request.data.get("logo"),
             "base_currency": request.data.get("base_currency"),
             "dividends_currency": request.data.get("dividends_currency"),
             "sector": request.data.get("sector"),
             "market": request.data.get("market"),
             "portfolio": portfolio_id,
         }
+        print(request.data.get("logo"))
         serializer = CompanySerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save(user=self.request.user)
             LogMessage.objects.create(
                 message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
                 message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
-                portfolio=portfolio_id,
+                portfolio=Portfolio.objects.get(id=portfolio_id),
                 user=self.request.user,
             )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -79,9 +81,6 @@ class CompanyDetailAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, company_id, user_id):
-        """
-        Get a market object from a user given the portfolio id
-        """
         try:
             return Company.objects.get(
                 id=company_id, portfolio=portfolio_id, user=user_id
@@ -102,10 +101,6 @@ class CompanyDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        base_currency = get_currency_details(instance.base_currency)
-        dividends_currency = get_currency_details(instance.dividends_currency)
-        instance.base_currency = base_currency
-        instance.dividends_currency = dividends_currency
         serializer = CompanySerializerGet(instance, context={"request": request})
         new_data = serializer.data
 
@@ -132,11 +127,14 @@ class CompanyDetailAPIView(APIView):
             "country_code": request.data.get("country_code"),
             "broker": request.data.get("broker"),
             "url": request.data.get("url"),
+            "logo": request.data.get("logo"),
             "currency": request.data.get("currency"),
             "dividends_currency": request.data.get("dividends_currency"),
             "sector": request.data.get("sector"),
             "market": request.data.get("market"),
+            "portfolio": request.data.get("portfolio"),
         }
+        print(request.data.get("logo"))
         serializer = CompanySerializer(
             instance=instance, data=data, partial=True, context={"request": request}
         )
@@ -151,17 +149,17 @@ class CompanyDetailAPIView(APIView):
         """
         Delete the company item with given company_id
         """
-        instance = self.get_object(company_id, portfolio_id, request.user.id)
+        instance = self.get_object(portfolio_id, company_id, request.user.id)
         if not instance:
             return Response(
-                {"res": "Object with company id does not exists"},
+                {"res": f"Object with company id {company_id} does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         instance.delete()
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_DELETE_COMPANY,
             message_text=f"Company deleted: {instance.name} ({instance.ticker})",
-            portfolio=portfolio_id,
+            portfolio=Portfolio.objects.get(id=portfolio_id),
             user=self.request.user,
         )
         return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)

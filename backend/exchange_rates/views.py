@@ -10,24 +10,23 @@ from drf_yasg.utils import swagger_auto_schema
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from forex_python.converter import CurrencyRates
-import datetime
+from forex_python.converter import CurrencyRates, RatesNotAvailableError
 
 
 def get_exchange_rates_from_api(exchange_from, exchange_to, exchange_date):
     print("Call the exchange API")
+    print(f"From: {exchange_from} To: {exchange_to} Date: {exchange_date}")
+
     c = CurrencyRates()
     rates = c.get_rates(exchange_from, exchange_date)
     desired_exchange = None
     for key in rates:
-        print(key, "->", rates[key])
         data = {
             "exchange_from": exchange_from,
             "exchange_to": key,
             "exchange_date": exchange_date,
-            "exchange_rate": rates[key],
+            "exchange_rate": round(rates[key], 3),
         }
-        print(data)
         serializer = ExchangeRateSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
@@ -108,14 +107,17 @@ class ExchangeRateDetailAPIView(APIView):
             exchange_from, exchange_to, exchange_date, request.user.id
         )
         if not todo_instance:
-            serializer = get_exchange_rates_from_api(
-                exchange_from, exchange_to, exchange_date
-            )
-            if not serializer:
-                return Response(
-                    {"res": "Exchange rate does not exists"},
-                    status=status.HTTP_400_BAD_REQUEST,
+            try:
+                serializer = get_exchange_rates_from_api(
+                    exchange_from, exchange_to, exchange_date
                 )
+                if not serializer:
+                    return Response(
+                        {"res": "Exchange rate does not exists"},
+                        status=status.HTTP_400_BAD_REQUEST,
+                    )
+            except RatesNotAvailableError as e:
+                return Response({"error": True, "message": str(e)}, status=status.HTTP_404_NOT_FOUND)
         else:
             serializer = ExchangeRateSerializer(todo_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)

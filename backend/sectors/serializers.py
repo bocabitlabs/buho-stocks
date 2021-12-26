@@ -5,7 +5,7 @@ from rest_framework import serializers
 
 class SectorSerializer(serializers.ModelSerializer):
     super_sector = UserFilteredPrimaryKeyRelatedField(
-        queryset=SuperSector.objects, many=False, read_only=False
+        queryset=SuperSector.objects, many=False, read_only=False, allow_null=True
     )
 
     class Meta:

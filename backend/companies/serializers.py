@@ -1,9 +1,11 @@
+from rest_framework.fields import SerializerMethodField
+from rest_framework import serializers
+
 from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from buho_backend.validators import validate_ownership
-from currencies.serializers import CurrencySerializer
+from currencies.models import get_currency_details
 from dividends_transactions.serializers import DividendsTransactionSerializer
 from portfolios.models import Portfolio
-from rest_framework import serializers
 from companies.models import Company
 from rights_transactions.serializers import RightsTransactionSerializer
 from sectors.models import Sector
@@ -11,7 +13,7 @@ from sectors.serializers import SectorSerializer
 from markets.models import Market
 from markets.serializers import MarketSerializer
 from shares_transactions.serializers import SharesTransactionSerializer
-
+from drf_extra_fields.fields import Base64ImageField
 
 class CompanySerializer(serializers.ModelSerializer):
     sector = UserFilteredPrimaryKeyRelatedField(
@@ -28,6 +30,7 @@ class CompanySerializer(serializers.ModelSerializer):
     dividends_transactions = UserFilteredPrimaryKeyRelatedField(
         many=True, read_only=True
     )
+    logo = Base64ImageField(max_length=None, use_url=True)
 
     class Meta:
         model = Company
@@ -41,6 +44,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "description",
             "dividends_currency",
             "dividends_transactions",
+            "logo",
             "market",
             "name",
             "portfolio",
@@ -65,11 +69,30 @@ class CompanySerializer(serializers.ModelSerializer):
 
 
 class CompanySerializerGet(CompanySerializer):
-    base_currency = CurrencySerializer(many=False, read_only=True)
-    dividends_currency = CurrencySerializer(many=False, read_only=True)
+    base_currency = SerializerMethodField()
+    dividends_currency = SerializerMethodField()
 
     market = MarketSerializer(many=False, read_only=True)
     sector = SectorSerializer(many=False, read_only=True)
     shares_transactions = SharesTransactionSerializer(many=True, read_only=True)
     rights_transactions = RightsTransactionSerializer(many=True, read_only=True)
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
+
+    def get_base_currency(self, obj):
+        print("get_base_currency company")
+
+        return get_currency_details(
+            obj.base_currency
+        )  # access the price of the product associated with the order_unit object
+
+    def get_dividends_currency(self, obj):
+        print("get_dividends_currency company")
+
+        return get_currency_details(
+            obj.dividends_currency
+        )  # access the price of the product associated with the order_unit object
+
+    def get_logo(self, obj):
+        request = self.context.get('request')
+        photo_url = obj.fingerprint.url
+        return request.build_absolute_uri(photo_url)

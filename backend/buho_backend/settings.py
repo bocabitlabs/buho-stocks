@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from config import config
 
@@ -157,6 +158,9 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATIC_ROOT = "/app/static/"
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = config.MEDIA_ROOT
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {

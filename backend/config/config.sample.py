@@ -7,3 +7,7 @@ SECRET_KEY = 'REPLACE_SECRET_KEY'
 # List of allowed hosts to access the application
 # Default: ['0.0.0.0', 'localhost']
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost']
+
+# Path to the media files uploaded by the users
+# Default: "/usr/src/media/"
+MEDIA_ROOT = "/usr/src/media/"

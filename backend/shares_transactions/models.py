@@ -11,13 +11,13 @@ class Transaction(models.Model):
 
     count = models.IntegerField()
     color = models.CharField(max_length=200)
-    exchange_rate = models.DecimalField(max_digits=29, decimal_places=19)
+    exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
     transaction_date = models.DateField()
     gross_price_per_share = MoneyField(
-        max_digits=19, decimal_places=2, default_currency=None
+        max_digits=12, decimal_places=3, default_currency=None
     )
     total_commission = MoneyField(
-        max_digits=19, decimal_places=2, default_currency=None
+        max_digits=12, decimal_places=3, default_currency=None
     )
     notes = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)

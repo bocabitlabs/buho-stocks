@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from currencies.models import get_currency_details
 from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
 from portfolios.models import Portfolio
 
@@ -22,10 +21,17 @@ class PortfoliosListAPIView(APIView):
         """
         List all the portfolio items for given requested user
         """
-        elements = Portfolio.objects.filter(user=request.user.id)
-        for element in elements:
-            base_currency = get_currency_details(element.base_currency)
-            element.base_currency = base_currency
+        elements = Portfolio.objects.filter(user=request.user.id).all()
+
+        # for element in elements:
+        #     base_currency = get_currency_details(element.base_currency)
+        #     element.base_currency = base_currency
+        #     for company in element.companies.all():
+        #         print(company.name)
+        #         base_currency = get_currency_details(company.base_currency)
+        #         dividends_currency = get_currency_details(company.dividends_currency)
+        #         company.base_currency = base_currency
+        #         company.dividends_currency = dividends_currency
         serializer = PortfolioSerializerGet(
             elements, many=True, context={"request": request}
         )
@@ -72,9 +78,6 @@ class PortfolioDetailAPIView(APIView):
         Retrieve the portfolio item with given portfolio_id
         """
         instance = self.get_object(portfolio_id, request.user.id)
-
-        base_currency = get_currency_details(instance.base_currency)
-        instance.base_currency = base_currency
 
         if not instance:
             return Response(

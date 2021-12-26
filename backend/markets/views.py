@@ -43,7 +43,6 @@ class MarketListAPIView(APIView):
         }
         serializer = MarketSerializer(data=data, context={"request": request})
         if serializer.is_valid():
-            print("Serializer is valid")
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -98,8 +97,8 @@ class MarketDetailAPIView(APIView):
             "description": request.data.get("description"),
             "color": request.data.get("color"),
             "region": request.data.get("region"),
-            "openTime": request.data.get("openTime"),
-            "closeTime": request.data.get("closeTime"),
+            "open_time": request.data.get("open_time"),
+            "close_time": request.data.get("close_time"),
         }
         serializer = MarketSerializer(
             instance=todo_instance,
