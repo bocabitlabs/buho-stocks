@@ -42,6 +42,7 @@ RUN mv ./build/* /app/frontend/
 WORKDIR /usr/src/app
 COPY ./backend /usr/src/app
 
+RUN mkdir /usr/src/media/
 # copy project
 #COPY ./config/config.sample.py /usr/src/backend/config/config.py
 COPY ./data/db.sqlite3.base /usr/src/data/db.sqlite3

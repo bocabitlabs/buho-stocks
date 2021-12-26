@@ -28,6 +28,7 @@ RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src
 RUN pip install --no-cache-dir --upgrade -r /usr/src/requirements.txt
 
+RUN mkdir /usr/src/media/
 # copy project
 COPY ./backend /usr/src/app
 COPY ./data/db.sqlite3.base /usr/src/data/db.sqlite3

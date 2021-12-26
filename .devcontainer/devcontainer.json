@@ -45,7 +45,8 @@
     "esbenp.prettier-vscode",
     "visualstudioexptteam.vscodeintellicode",
     "donjayamanne.python-extension-pack",
-    "njpwerner.autodocstring"
+    "njpwerner.autodocstring",
+    "github.copilot"
   ],
 
   // Use 'forwardPorts' to make a list of ports inside the container available locally.
