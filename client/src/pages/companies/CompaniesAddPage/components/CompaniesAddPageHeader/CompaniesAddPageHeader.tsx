@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { PageHeader } from "antd";
 
@@ -7,7 +7,7 @@ interface Props {
   children: ReactNode;
 }
 
-const CompanyAddPageHeader: FC<Props> = ({ portfolioId, children }: Props) => {
+function CompanyAddPageHeader({ portfolioId, children }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -18,6 +18,6 @@ const CompanyAddPageHeader: FC<Props> = ({ portfolioId, children }: Props) => {
       {children}
     </PageHeader>
   );
-};
+}
 
 export default CompanyAddPageHeader;

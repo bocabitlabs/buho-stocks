@@ -12,12 +12,12 @@ interface Props {
   children: ReactNode;
 }
 
-const CompanyDetailsPageHeader = ({
+function CompanyDetailsPageHeader({
   companyName,
   companyTicker,
   companyLogo,
   children
-}: Props) => {
+}: Props) {
   const { t } = useTranslation();
   const params = useParams();
   const { id, companyId } = params;
@@ -50,6 +50,6 @@ const CompanyDetailsPageHeader = ({
       {children}
     </PageHeader>
   );
-};
+}
 
 export default CompanyDetailsPageHeader;

@@ -5,7 +5,7 @@ interface Props {
   value: string;
 }
 
-export const BuySellLabel = ({ value }: Props) => {
+export function BuySellLabel({ value }: Props) {
   let color = "green";
   if (value === "SELL") {
     color = "volcano";
@@ -15,6 +15,6 @@ export const BuySellLabel = ({ value }: Props) => {
       {value}
     </Tag>
   );
-};
+}
 
 export default BuySellLabel;

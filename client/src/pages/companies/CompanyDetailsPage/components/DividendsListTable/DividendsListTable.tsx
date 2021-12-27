@@ -6,6 +6,7 @@ import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import useFetch from "use-http";
+import NotesRow from "components/NotesRow/NotesRow";
 import { IDividendsTransaction } from "types/dividends-transaction";
 
 export default function DividendsListTable(): ReactElement {
@@ -129,9 +130,7 @@ export default function DividendsListTable(): ReactElement {
       bordered
       dataSource={getData()}
       expandable={{
-        expandedRowRender: (record) => (
-          <p style={{ margin: 0 }}>{record.notes}</p>
-        ),
+        expandedRowRender: NotesRow,
         rowExpandable: (record) =>
           record.notes !== "undefined" && record.notes !== undefined
       }}

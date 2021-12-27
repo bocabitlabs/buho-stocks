@@ -7,6 +7,7 @@ import { Button, Popconfirm, Space, Spin, Table } from "antd";
 import moment from "moment";
 import useFetch from "use-http";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
+import NotesRow from "components/NotesRow/NotesRow";
 import { ISharesTransaction } from "types/shares-transaction";
 
 export default function SharesListTable(): ReactElement {
@@ -140,9 +141,7 @@ export default function SharesListTable(): ReactElement {
       bordered
       dataSource={getData()}
       expandable={{
-        expandedRowRender: (record) => (
-          <p style={{ margin: 0 }}>{record.notes}</p>
-        ),
+        expandedRowRender: NotesRow,
         rowExpandable: (record) =>
           record.notes !== "undefined" && record.notes !== undefined
       }}

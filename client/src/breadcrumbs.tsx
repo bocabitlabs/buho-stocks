@@ -8,7 +8,7 @@ interface IDict {
   [key: string]: string;
 }
 
-const Breadcrumbs: React.FC = () => {
+function Breadcrumbs() {
   const location = useLocation();
   const { id, companyId, transactionId } = useParams();
 
@@ -74,7 +74,7 @@ const Breadcrumbs: React.FC = () => {
       <Breadcrumb style={{ margin: "16px 0" }}>{breadcrumbItems}</Breadcrumb>
     </div>
   );
-};
+}
 
 Breadcrumbs.defaultProps = {
   portfolioName: ""

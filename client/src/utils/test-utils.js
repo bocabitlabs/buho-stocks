@@ -17,9 +17,9 @@ function renderWithRouter(
     history = createMemoryHistory({ initialEntries: [route] })
   } = {}
 ) {
-  const Wrapper = ({ children }) => (
-    <Router history={history}>{children}</Router>
-  );
+  function Wrapper({ children }) {
+    return <Router history={history}>{children}</Router>;
+  }
   return {
     ...render(ui, { wrapper: Wrapper }),
     // adding `history` to the returned utilities to allow us

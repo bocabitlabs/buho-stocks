@@ -10,12 +10,12 @@ interface Props {
   children: ReactNode;
 }
 
-const RightsTransactionAddPageHeader = ({
+function RightsTransactionAddPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
   children
-}: Props) => {
+}: Props) {
   const { t } = useTranslation();
 
   return (
@@ -29,6 +29,6 @@ const RightsTransactionAddPageHeader = ({
       {children}
     </PageHeader>
   );
-};
+}
 
 export default RightsTransactionAddPageHeader;

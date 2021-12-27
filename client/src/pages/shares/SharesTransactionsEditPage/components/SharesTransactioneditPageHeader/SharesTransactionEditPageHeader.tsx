@@ -10,12 +10,12 @@ interface Props {
   children: ReactNode;
 }
 
-const SharesTransactionEditPageHeader = ({
+function SharesTransactionEditPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
   children
-}: Props) => {
+}: Props) {
   const { t } = useTranslation();
 
   return (
@@ -31,6 +31,6 @@ const SharesTransactionEditPageHeader = ({
       {children}
     </PageHeader>
   );
-};
+}
 
 export default SharesTransactionEditPageHeader;

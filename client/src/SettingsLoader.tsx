@@ -1,9 +1,13 @@
-import React, { FC, ReactNode, useContext, useEffect, useRef } from "react";
+import { ReactNode, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "contexts/auth";
 import { SettingsContext } from "contexts/settings";
 import i18n from "i18n";
 
-const SettingsLoader: FC<ReactNode> = ({ children }) => {
+interface Props {
+  children: ReactNode;
+}
+
+function SettingsLoader({ children }: Props) {
   const { settings, get: getSettings } = useContext(SettingsContext);
   const { state: authState } = useContext(AuthContext);
   const cancelRequest = useRef<boolean>(false);
@@ -32,7 +36,7 @@ const SettingsLoader: FC<ReactNode> = ({ children }) => {
     };
   }, [getSettings, authState.isAuthenticated]);
 
-  return <>{children}</>;
-};
+  return children;
+}
 
 export default SettingsLoader;

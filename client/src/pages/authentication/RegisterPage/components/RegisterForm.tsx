@@ -5,7 +5,7 @@ import { Button, Form, Input, PageHeader } from "antd";
 import { IRegistrationData } from "api/api-client";
 import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 
-const RegisterForm = () => {
+function RegisterForm() {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const auth = useLoginActions();
@@ -159,6 +159,6 @@ const RegisterForm = () => {
       </PageHeader>
     </Form>
   );
-};
+}
 
 export default RegisterForm;

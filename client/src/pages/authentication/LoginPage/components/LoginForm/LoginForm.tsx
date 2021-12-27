@@ -6,7 +6,7 @@ import { Button, Form, Input, PageHeader } from "antd";
 import { AuthContext } from "contexts/auth";
 import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 
-export const LoginForm = () => {
+export function LoginForm() {
   const loginActions = useLoginActions();
   const { t } = useTranslation();
   const { state, isWorking, updateIsWorking } = useContext(AuthContext);
@@ -92,6 +92,6 @@ export const LoginForm = () => {
       </PageHeader>
     </Form>
   );
-};
+}
 
 export default LoginForm;

@@ -1,10 +1,14 @@
-import React, { FC, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 import { Button, PageHeader } from "antd";
 
-const SectorsPageHeader: FC<ReactNode> = ({ children }) => {
+interface Props {
+  children: ReactNode;
+}
+
+function SectorsPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   return (
@@ -27,6 +31,6 @@ const SectorsPageHeader: FC<ReactNode> = ({ children }) => {
       {children}
     </PageHeader>
   );
-};
+}
 
 export default SectorsPageHeader;

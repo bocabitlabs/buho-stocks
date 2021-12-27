@@ -120,3 +120,4 @@ config/config.py
 node_modules
 client/node_modules/
 backend/config/config.py
+TOKEN.txt

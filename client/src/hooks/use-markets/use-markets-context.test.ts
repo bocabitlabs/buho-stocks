@@ -42,6 +42,7 @@ jest.mock("react-i18next", () => ({
     return {
       t: (str: string) => str,
       i18n: {
+        // eslint-disable-next-line no-promise-executor-return
         changeLanguage: () => new Promise(() => ({}))
       }
     };

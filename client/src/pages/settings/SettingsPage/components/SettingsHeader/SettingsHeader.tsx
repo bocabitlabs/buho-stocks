@@ -1,8 +1,12 @@
-import React, { FC, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { PageHeader } from "antd";
 
-const SettingsPageHeader: FC<ReactNode> = ({ children }) => {
+interface Props {
+  children: ReactNode;
+}
+
+function SettingsPageHeader({ children }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -10,6 +14,6 @@ const SettingsPageHeader: FC<ReactNode> = ({ children }) => {
       {children}
     </PageHeader>
   );
-};
+}
 
 export default SettingsPageHeader;

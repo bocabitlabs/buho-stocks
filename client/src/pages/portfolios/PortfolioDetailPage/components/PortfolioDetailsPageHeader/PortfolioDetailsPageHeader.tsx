@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useContext } from "react";
+import React, { ReactNode, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -14,12 +14,12 @@ interface Props {
   children: ReactNode;
 }
 
-const PortfolioDetailsPageHeader: FC<Props> = ({
+function PortfolioDetailsPageHeader({
   portfolioName,
   portfolioDescription,
   portfolioCountryCode,
   children
-}: Props) => {
+}: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { createSuccess, createError } = useContext(AlertMessagesContext);
@@ -73,6 +73,6 @@ const PortfolioDetailsPageHeader: FC<Props> = ({
       {children}
     </PageHeader>
   );
-};
+}
 
 export default PortfolioDetailsPageHeader;

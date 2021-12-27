@@ -10,12 +10,12 @@ interface Props {
   children: ReactNode;
 }
 
-const DividendsTransactionAddPageHeader = ({
+function DividendsTransactionAddPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
   children
-}: Props) => {
+}: Props) {
   const { t } = useTranslation();
 
   return (
@@ -29,6 +29,6 @@ const DividendsTransactionAddPageHeader = ({
       {children}
     </PageHeader>
   );
-};
+}
 
 export default DividendsTransactionAddPageHeader;
