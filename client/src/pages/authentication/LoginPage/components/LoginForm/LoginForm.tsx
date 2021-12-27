@@ -6,19 +6,21 @@ import { Button, Form, Input, PageHeader } from "antd";
 import { AuthContext } from "contexts/auth";
 import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 
+interface LocationState {
+  from: any;
+}
+
 export function LoginForm() {
   const loginActions = useLoginActions();
   const { t } = useTranslation();
   const { state, isWorking, updateIsWorking } = useContext(AuthContext);
   const navigate = useNavigate();
-  const location = useLocation();
+  const { state: locationState } = useLocation();
 
-  const from = location.state?.from?.pathname || "/app";
+  const from = (locationState as LocationState)?.from?.pathname || "/app";
 
   React.useEffect(() => {
-    console.log("LoginForm state from useEffect: ", state);
     if (state.isAuthenticated) {
-      console.log("LoginForm state from useEffect is authenticated: ", state);
       navigate(from, { replace: true });
     }
   }, [state, navigate, from]);

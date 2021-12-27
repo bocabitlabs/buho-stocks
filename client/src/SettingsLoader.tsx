@@ -1,4 +1,4 @@
-import { ReactNode, useContext, useEffect, useRef } from "react";
+import React, { ReactNode, useContext, useEffect, useRef } from "react";
 import { AuthContext } from "contexts/auth";
 import { SettingsContext } from "contexts/settings";
 import i18n from "i18n";
@@ -36,7 +36,7 @@ function SettingsLoader({ children }: Props) {
     };
   }, [getSettings, authState.isAuthenticated]);
 
-  return children;
+  return <div>{children}</div>;
 }
 
 export default SettingsLoader;
