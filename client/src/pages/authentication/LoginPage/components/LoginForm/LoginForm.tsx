@@ -86,7 +86,7 @@ export function LoginForm() {
           >
             {t("Sign in")}
           </Button>{" "}
-          {t("Or")} <Link to="/app/register">{t("register now!")}</Link>
+          {t("Or")} <Link to="/app-register">{t("register")}</Link>
         </Form.Item>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
           <Button onClick={onFinish}>Dev login</Button>

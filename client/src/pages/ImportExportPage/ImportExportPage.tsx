@@ -22,7 +22,7 @@ export default function ImportExportPage(): ReactElement {
     setImportAction(e.target.value);
   };
 
-  const onBrokerSelect = (value: string) => {
+  const onBrokerSelect = (value: any) => {
     setSelectedBroker(value);
   };
 

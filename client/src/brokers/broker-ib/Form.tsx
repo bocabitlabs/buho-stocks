@@ -56,7 +56,7 @@ export default function Form(): ReactElement {
     setDefaultImport(e.target.value);
   };
 
-  const onPortfolioSelect = (value: string) => {
+  const onPortfolioSelect = (value: any) => {
     const portfolio = portfolios.find((p) => p.id === +value);
     if (portfolio) {
       setSelectedPortfolio(portfolio);
