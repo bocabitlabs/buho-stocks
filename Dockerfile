@@ -6,6 +6,9 @@ RUN curl -sL https://deb.nodesource.com/setup_14.x  | bash -
 RUN apt-get -y install nodejs
 RUN npm install
 
+VOLUME /usr/src/data
+VOLUME /usr/src/media
+
 RUN npm install --global yarn
 
 # set work directory
@@ -15,7 +18,7 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
-ENV LISTEN_PORT 8080
+ENV LISTEN_PORT 34800
 
 ENV UWSGI_INI /usr/src/uwsgi.ini
 COPY ./uwsgi.ini /usr/src/uwsgi.ini
@@ -46,7 +49,7 @@ RUN mkdir /usr/src/media/
 #COPY ./config/config.sample.py /usr/src/backend/config/config.py
 COPY ./data/db.sqlite3.base /usr/src/data/db.sqlite3
 
-EXPOSE 8080
+EXPOSE 34800
 
 RUN python manage.py collectstatic
 
