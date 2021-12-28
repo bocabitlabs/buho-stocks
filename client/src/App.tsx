@@ -1,5 +1,4 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 import "./App.css";
 import { UserOutlined } from "@ant-design/icons";
@@ -11,22 +10,16 @@ import { Provider } from "use-http";
 import Breadcrumbs from "breadcrumbs";
 import AlertMessages from "components/AlertMessages/AlertMessages";
 import AppSidebar from "components/AppSidebar/AppSidebar";
+import LogoutButton from "components/LogoutButton/LogoutButton";
 import { AlertMessagesContext } from "contexts/alert-messages";
 import { SettingsContext } from "contexts/settings";
 import { useAlertMessagesContext } from "hooks/use-alert-messages/use-alert-messages-context";
-import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 import { useSettingsContext } from "hooks/use-settings/use-settings-context";
 import SettingsLoader from "SettingsLoader";
 
 function App() {
-  const { t } = useTranslation();
-  const loginActions = useLoginActions();
   const settingsContext = useSettingsContext();
   const messagesContext = useAlertMessagesContext();
-
-  const signout = () => {
-    loginActions.signout();
-  };
 
   return (
     <SettingsContext.Provider value={settingsContext}>
@@ -69,9 +62,7 @@ function App() {
                       key="sub1"
                       icon={<UserOutlined />}
                     >
-                      <Menu.Item key="3" onClick={signout}>
-                        {t("Sign out")}
-                      </Menu.Item>
+                      <LogoutButton />
                     </SubMenu>
                   </Menu>
                 </Col>

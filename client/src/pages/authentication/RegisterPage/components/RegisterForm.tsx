@@ -1,14 +1,16 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button, Form, Input, PageHeader } from "antd";
+import useFetch from "use-http";
 import { IRegistrationData } from "api/api-client";
-import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 
 function RegisterForm() {
   const [form] = Form.useForm();
   const { t } = useTranslation();
-  const auth = useLoginActions();
+  const navigate = useNavigate();
+
+  const { post, response } = useFetch("/api/auth");
 
   const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
@@ -28,7 +30,12 @@ function RegisterForm() {
       lastName: values.lastName ? values.lastName : devData.lastName,
       email: values.email ? values.email : devData.email,
     };
-    auth.register(data);
+    await post("register/", data);
+    if (response.ok) {
+      navigate("/app-login");
+    } else {
+      console.error("Unable to register");
+    }
   };
 
   return (

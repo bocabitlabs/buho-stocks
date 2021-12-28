@@ -3,27 +3,27 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, PageHeader } from "antd";
+import useFetch from "use-http";
 import { AuthContext } from "contexts/auth";
-import { useLoginActions } from "hooks/use-login-actions/use-login-actions";
 
 interface LocationState {
   from: any;
 }
 
 export function LoginForm() {
-  const loginActions = useLoginActions();
   const { t } = useTranslation();
-  const { state, isWorking, updateIsWorking } = useContext(AuthContext);
+  const { state: authState } = useContext(AuthContext);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
+  const { post, response } = useFetch("/api/auth");
 
   const from = (locationState as LocationState)?.from?.pathname || "/app";
 
   React.useEffect(() => {
-    if (state.isAuthenticated) {
+    if (authState.isAuthenticated) {
       navigate(from, { replace: true });
     }
-  }, [state, navigate, from]);
+  }, [authState.isAuthenticated, navigate, from]);
 
   const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);
@@ -35,10 +35,12 @@ export function LoginForm() {
     console.log(data);
     const username = values.username ? values.username : data.username;
     const password = values.password ? values.password : data.password;
-    await loginActions.signin(username, password);
-    console.log("isWorking previous: ", isWorking);
-    updateIsWorking();
-    console.log("isWorking after: ", isWorking);
+    await post("api-token-auth/", { username, password });
+    if (response.ok) {
+      navigate(from, { replace: true });
+    } else {
+      console.error("Unable to login");
+    }
   };
 
   return (
