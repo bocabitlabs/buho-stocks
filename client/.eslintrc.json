@@ -4,13 +4,15 @@
     "es2021": true
   },
   "extends": [
+    "plugin:jest/recommended",
+    "plugin:testing-library/react",
     "airbnb",
     "airbnb-typescript",
-    "plugin:react/recommended",
     "plugin:import/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
     "plugin:import/typescript",
+    "plugin:react/recommended",
     "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
@@ -28,11 +30,18 @@
     "jsx-a11y",
     "react-hooks",
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "jest"
   ],
   "rules": {
     "no-console": "off",
-    "prettier/prettier": "error",
+    "prettier/prettier": ["error", {
+      "singleQuote": false,
+      "trailingComma": "all"
+      }
+    ],
+    "quotes": ["error", "double", { "allowTemplateLiterals": true }],
+    "comma-dangle": "off",
     // "no-console": ["warn", { "allow": ["warn", "error"] }],
     "import/order": [
       "error",
