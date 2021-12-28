@@ -112,12 +112,22 @@ WSGI_APPLICATION = "buho_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": config.DATABASE_PATH,
+if(config.DATABASE_TYPE == "sqlite"):
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": config.DATABASE_SQLITE_PATH,
+        }
     }
-}
+elif(config.DATABASE_TYPE == "mysql"):
+    DATABASES = {
+        "default": {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'read_default_file': config.DATABASE_MYSQL_CONFIG_PATH,
+            },
+        }
+    }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # Password validation
