@@ -11,7 +11,7 @@ export default class AuthService {
       const result = await client.makePostRequest(
         this.registerUserEndpoint,
         registrationData,
-        true
+        true,
       );
       return result;
     } catch (error) {
@@ -25,7 +25,7 @@ export default class AuthService {
       const result = await client.makePostRequest(
         this.loginUserEndpoint,
         loginData,
-        true
+        true,
       );
       return result;
     } catch (error) {

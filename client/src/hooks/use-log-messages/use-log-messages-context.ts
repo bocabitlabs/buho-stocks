@@ -4,7 +4,7 @@ import { LogMessagesContextType } from "contexts/log-messages";
 import { ILogMessage } from "types/log-messages";
 
 export function useLogMessagesContext(
-  portfolioId: string
+  portfolioId: string,
 ): LogMessagesContextType {
   const [logMessage, setLogMessage] = useState<ILogMessage | null>(null);
   const [logMessages, setLogMessages] = useState<ILogMessage[] | []>([]);
@@ -12,7 +12,7 @@ export function useLogMessagesContext(
   const getHeaders = useCallback(() => {
     const headers = {
       Accept: "application/json",
-      Authorization: `Token ${localStorage.getItem("token")}`
+      Authorization: `Token ${localStorage.getItem("token")}`,
     };
     return headers;
   }, []);
@@ -21,9 +21,9 @@ export function useLogMessagesContext(
     response,
     error,
     del: deleteRequest,
-    loading: isLoading
+    loading: isLoading,
   } = useFetch(endpoint, {
-    headers: getHeaders()
+    headers: getHeaders(),
   });
 
   const getAll = useCallback(async () => {
@@ -44,7 +44,7 @@ export function useLogMessagesContext(
         console.error(error);
       }
     },
-    [get, response, error]
+    [get, response, error],
   );
 
   const deleteById = useCallback(
@@ -57,7 +57,7 @@ export function useLogMessagesContext(
       }
       return response;
     },
-    [deleteRequest, response, error]
+    [deleteRequest, response, error],
   );
 
   return {
@@ -66,7 +66,7 @@ export function useLogMessagesContext(
     logMessages,
     deleteById,
     getAll,
-    getById
+    getById,
   };
 }
 

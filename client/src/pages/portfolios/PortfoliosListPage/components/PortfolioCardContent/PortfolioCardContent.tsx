@@ -8,7 +8,7 @@ interface Props {
 }
 
 export default function PortfolioCardContent({
-  portfolio
+  portfolio,
 }: Props): ReactElement | null {
   // const { getById: getPortfolioById } = useContext(PortfoliosContext);
   // const [currentPortfolio, setCurrentPortfolio] = useState<IPortfolio | null>(

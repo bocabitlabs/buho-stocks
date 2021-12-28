@@ -9,7 +9,7 @@ import {
   Input,
   InputNumber,
   Row,
-  Spin
+  Spin,
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
@@ -18,7 +18,7 @@ import { AlertMessagesContext } from "contexts/alert-messages";
 import { ICurrency } from "types/currency";
 import {
   IDividendsTransaction,
-  IDividendsTransactionFormFields
+  IDividendsTransactionFormFields,
 } from "types/dividends-transaction";
 import { IExchangeRate } from "types/exchange-rate";
 
@@ -31,17 +31,17 @@ interface IProps {
 export default function DividendsTransactionAddEditForm({
   transactionId,
   companyBaseCurrency,
-  portfolioBaseCurrency
+  portfolioBaseCurrency,
 }: IProps) {
   const [form] = Form.useForm();
   const dateFormat = "YYYY-MM-DD";
   const { id, companyId } = useParams();
   const navigate = useNavigate();
   const [currentTransactionDate, setCurrentTransactionDate] = useState<string>(
-    moment(new Date()).format(dateFormat)
+    moment(new Date()).format(dateFormat),
   );
   const [transaction, setTransaction] = useState<IDividendsTransaction | null>(
-    null
+    null,
   );
   const { createError, createSuccess } = useContext(AlertMessagesContext);
 
@@ -50,16 +50,16 @@ export default function DividendsTransactionAddEditForm({
   const {
     loading: exchangeRateLoading,
     response: exchangeRateResponse,
-    get: getExchangeRate
+    get: getExchangeRate,
   } = useFetch("exchange-rates/");
 
   const { response, get, put, post, cache } = useFetch(
-    `companies/${companyId}/dividends`
+    `companies/${companyId}/dividends`,
   );
 
   const fetchExchangeRate = async () => {
     const initialData = await getExchangeRate(
-      `${companyBaseCurrency.code}/${portfolioBaseCurrency.code}/${currentTransactionDate}/`
+      `${companyBaseCurrency.code}/${portfolioBaseCurrency.code}/${currentTransactionDate}/`,
     );
     if (exchangeRateResponse.ok) {
       setExchangeRate(initialData);
@@ -67,8 +67,8 @@ export default function DividendsTransactionAddEditForm({
       form.setFields([
         {
           name: "exchangeRate",
-          errors: ["Unable to fetch the exchange rates for the given date"]
-        }
+          errors: ["Unable to fetch the exchange rates for the given date"],
+        },
       ]);
     }
   };
@@ -88,7 +88,7 @@ export default function DividendsTransactionAddEditForm({
   useEffect(() => {
     if (exchangeRate) {
       form.setFieldsValue({
-        exchangeRate: exchangeRate.exchangeRate
+        exchangeRate: exchangeRate.exchangeRate,
       });
     }
   }, [exchangeRate, form]);
@@ -99,7 +99,7 @@ export default function DividendsTransactionAddEditForm({
       grossPricePerShare,
       totalCommission,
       exchangeRate: exchangeRateValue,
-      notes
+      notes,
     } = values;
 
     const newTransactionValues: IDividendsTransactionFormFields = {
@@ -113,7 +113,7 @@ export default function DividendsTransactionAddEditForm({
       exchangeRate: +exchangeRateValue,
       company: +companyId!,
       color: "#000",
-      portfolio: +id!
+      portfolio: +id!,
     };
     if (transactionId) {
       await put(`${transactionId}/`, newTransactionValues);
@@ -138,7 +138,7 @@ export default function DividendsTransactionAddEditForm({
 
   const currentTransactionDateChange = (
     value: moment.Moment | null,
-    dateString: string
+    dateString: string,
   ) => {
     setCurrentTransactionDate(dateString);
     console.log(value);
@@ -183,14 +183,14 @@ export default function DividendsTransactionAddEditForm({
         notes: transaction?.notes,
         transactionDate: transaction
           ? moment(transaction.transactionDate)
-          : moment(currentTransactionDate)
+          : moment(currentTransactionDate),
       }}
     >
       <Form.Item
         name="count"
         label={t("Number of shares")}
         rules={[
-          { required: true, message: t("Please input the number of shares") }
+          { required: true, message: t("Please input the number of shares") },
         ]}
       >
         <InputNumber min={0} step={1} style={{ width: "100%" }} />
@@ -201,8 +201,8 @@ export default function DividendsTransactionAddEditForm({
         rules={[
           {
             required: true,
-            message: t("Please input the gross price per share")
-          }
+            message: t("Please input the gross price per share"),
+          },
         ]}
       >
         <InputNumber
@@ -217,7 +217,7 @@ export default function DividendsTransactionAddEditForm({
         name="totalCommission"
         label={t("Total commission")}
         rules={[
-          { required: true, message: t("Please input the total commission") }
+          { required: true, message: t("Please input the total commission") },
         ]}
       >
         <InputNumber
@@ -233,8 +233,8 @@ export default function DividendsTransactionAddEditForm({
         rules={[
           {
             required: true,
-            message: t("Please input the date of the operation")
-          }
+            message: t("Please input the date of the operation"),
+          },
         ]}
       >
         <DatePicker
@@ -249,7 +249,10 @@ export default function DividendsTransactionAddEditForm({
               name="exchangeRate"
               label="Exchange rate"
               rules={[
-                { required: true, message: t("Please input the exchange rate") }
+                {
+                  required: true,
+                  message: t("Please input the exchange rate"),
+                },
               ]}
             >
               <InputNumber
@@ -290,5 +293,5 @@ export default function DividendsTransactionAddEditForm({
 }
 
 DividendsTransactionAddEditForm.defaultProps = {
-  transactionId: null
+  transactionId: null,
 };

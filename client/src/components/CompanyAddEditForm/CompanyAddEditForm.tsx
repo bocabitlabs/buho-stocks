@@ -10,7 +10,7 @@ import {
   Select,
   Spin,
   Switch,
-  Upload
+  Upload,
 } from "antd";
 import useFetch from "use-http";
 import ColorSelector from "components/ColorSelector/ColorSelector";
@@ -28,7 +28,7 @@ interface AddEditFormProps {
 
 function CompanyAddEditForm({
   portfolioId,
-  companyId
+  companyId,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
@@ -45,22 +45,22 @@ function CompanyAddEditForm({
   const [fileName, setFileName] = useState<string | null>(null);
 
   const { response, get, put, post, cache, loading } = useFetch(
-    `portfolios/${portfolioId}/companies`
+    `portfolios/${portfolioId}/companies`,
   );
   const {
     get: getCurrencies,
     response: currenciesResponse,
-    loading: currenciesLoading
+    loading: currenciesLoading,
   } = useFetch("currencies");
   const {
     response: marketsResponse,
     get: getMarkets,
-    loading: marketsLoading
+    loading: marketsLoading,
   } = useFetch("markets");
   const {
     response: sectorsResponse,
     get: getSectors,
-    loading: sectorsLoading
+    loading: sectorsLoading,
   } = useFetch("sectors");
   const navigate = useNavigate();
 
@@ -125,7 +125,7 @@ function CompanyAddEditForm({
       altTickers,
       url,
       broker,
-      isClosed
+      isClosed,
     } = values;
     const newCompany = {
       name,
@@ -142,7 +142,7 @@ function CompanyAddEditForm({
       url,
       broker,
       countryCode,
-      isClosed
+      isClosed,
     };
 
     if (companyId) {
@@ -206,14 +206,17 @@ function CompanyAddEditForm({
         dividendsCurrency: company?.dividendsCurrency.code,
         market: company?.market.id,
         isClosed: company?.isClosed,
-        countryCode: company?.countryCode
+        countryCode: company?.countryCode,
       }}
     >
       <Form.Item
         name="name"
         label={t("Name")}
         rules={[
-          { required: true, message: t("Please input the name of the company") }
+          {
+            required: true,
+            message: t("Please input the name of the company"),
+          },
         ]}
       >
         <Input type="text" />
@@ -364,7 +367,7 @@ function CompanyAddEditForm({
 }
 
 CompanyAddEditForm.defaultProps = {
-  companyId: null
+  companyId: null,
 };
 
 export default CompanyAddEditForm;

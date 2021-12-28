@@ -14,7 +14,7 @@ export default function CompanyInfo({
   companySectorName,
   companySuperSectorName,
   companyDescription,
-  companyCountryCode
+  companyCountryCode,
 }: Props): ReactElement {
   // const { Title } = Typography;
   // const { t } = useTranslation();
@@ -42,5 +42,5 @@ export default function CompanyInfo({
 }
 
 CompanyInfo.defaultProps = {
-  companySuperSectorName: ""
+  companySuperSectorName: "",
 };

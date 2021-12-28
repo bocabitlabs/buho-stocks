@@ -16,7 +16,7 @@ export function useApi() {
       }
       return {};
     },
-    [state.isAuthenticated, state.token]
+    [state.isAuthenticated, state.token],
   );
 
   const handleResponse = useCallback(
@@ -36,7 +36,7 @@ export function useApi() {
         return data;
       });
     },
-    [clearToken, state.token]
+    [clearToken, state.token],
   );
 
   const request = useCallback(
@@ -44,7 +44,7 @@ export function useApi() {
       return (url: string, body?: any) => {
         const requestOptions: any = {
           method,
-          headers: authHeader(url)
+          headers: authHeader(url),
         };
         console.log(requestOptions);
         if (body) {
@@ -58,21 +58,21 @@ export function useApi() {
         return fetch(requestUrl, requestOptions).then(handleResponse);
       };
     },
-    [authHeader, handleResponse]
+    [authHeader, handleResponse],
   );
 
   const get = useCallback(
     (url: string, body?: any) => {
       return request("GET")(url, body);
     },
-    [request]
+    [request],
   );
 
   return {
     get,
     post: request("POST"),
     put: request("PUT"),
-    delete: request("DELETE")
+    delete: request("DELETE"),
   };
 }
 

@@ -11,7 +11,7 @@ export function useMarketsContext(): MarketsContextType {
   const getHeaders = useCallback(() => {
     const headers = {
       Accept: "application/json",
-      Authorization: `Token ${localStorage.getItem("token")}`
+      Authorization: `Token ${localStorage.getItem("token")}`,
     };
     return headers;
   }, []);
@@ -24,9 +24,9 @@ export function useMarketsContext(): MarketsContextType {
     del: deleteRequest,
     error,
     response,
-    loading: isLoading
+    loading: isLoading,
   } = useFetch(endpoint, {
-    headers: getHeaders()
+    headers: getHeaders(),
   });
 
   const getAll = useCallback(async () => {
@@ -49,7 +49,7 @@ export function useMarketsContext(): MarketsContextType {
       }
       return response;
     },
-    [get, response, error]
+    [get, response, error],
   );
 
   const create = useCallback(
@@ -63,7 +63,7 @@ export function useMarketsContext(): MarketsContextType {
       }
       return response;
     },
-    [post, response, error, cache]
+    [post, response, error, cache],
   );
 
   const deleteById = useCallback(
@@ -77,7 +77,7 @@ export function useMarketsContext(): MarketsContextType {
       }
       return response;
     },
-    [deleteRequest, response, error, cache]
+    [deleteRequest, response, error, cache],
   );
 
   const update = useCallback(
@@ -91,7 +91,7 @@ export function useMarketsContext(): MarketsContextType {
       }
       return response;
     },
-    [put, response, error, cache]
+    [put, response, error, cache],
   );
 
   return {
@@ -102,7 +102,7 @@ export function useMarketsContext(): MarketsContextType {
     deleteById,
     getAll,
     getById,
-    update
+    update,
   };
 }
 

@@ -8,7 +8,7 @@ interface IProps {
 }
 
 export default function ImportDataSelector({
-  setAction
+  setAction,
 }: IProps): ReactElement {
   const { t } = useTranslation();
 

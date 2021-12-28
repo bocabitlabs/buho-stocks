@@ -18,7 +18,7 @@ export default function RightsListTable(): ReactElement {
     loading,
     response,
     get,
-    del: deleteTransaction
+    del: deleteTransaction,
   } = useFetch(`companies/${companyId}/rights`);
 
   const confirmDelete = async (recordId: number) => {
@@ -28,7 +28,7 @@ export default function RightsListTable(): ReactElement {
       const removeItem = transactions.filter(
         (transaction: IRightsTransaction) => {
           return transaction.id !== recordId;
-        }
+        },
       );
       setTransactions(removeItem);
     }
@@ -52,7 +52,7 @@ export default function RightsListTable(): ReactElement {
       key: "type",
       render: (text: string) => <BuySellLabel value={text} />,
       sorter: (a: IRightsTransaction, b: IRightsTransaction) =>
-        a.type.localeCompare(b.type)
+        a.type.localeCompare(b.type),
     },
     {
       title: t("Date"),
@@ -60,34 +60,34 @@ export default function RightsListTable(): ReactElement {
       key: "openTime",
       sorter: (a: IRightsTransaction, b: IRightsTransaction) =>
         a.transactionDate.localeCompare(b.transactionDate),
-      render: (text: string) => moment(new Date(text)).format("DD/MM/YYYY")
+      render: (text: string) => moment(new Date(text)).format("DD/MM/YYYY"),
     },
     {
       title: t("Count"),
       dataIndex: "count",
       key: "count",
-      render: (text: string) => text
+      render: (text: string) => text,
     },
     {
       title: t("Gross price per share"),
       dataIndex: "grossPricePerShare",
       key: "grossPricePerShare",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`
+        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
     {
       title: t("Total commission"),
       dataIndex: "totalCommission",
       key: "totalCommission",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.totalCommissionCurrency}`
+        `${(+text).toFixed(2)} ${record.totalCommissionCurrency}`,
     },
     {
       title: t("Total"),
       dataIndex: "transactionTotal",
       key: "transactionTotal",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`
+        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
     {
       title: t("Action"),
@@ -107,8 +107,8 @@ export default function RightsListTable(): ReactElement {
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const getData = () => {
@@ -125,7 +125,7 @@ export default function RightsListTable(): ReactElement {
       transactionTotal:
         +transaction.count * +transaction.grossPricePerShare +
         +transaction.totalCommission,
-      notes: transaction.notes
+      notes: transaction.notes,
     }));
   };
 
@@ -142,7 +142,7 @@ export default function RightsListTable(): ReactElement {
       expandable={{
         expandedRowRender: NotesRow,
         rowExpandable: (record) =>
-          record.notes !== "undefined" && record.notes !== undefined
+          record.notes !== "undefined" && record.notes !== undefined,
       }}
     />
   );

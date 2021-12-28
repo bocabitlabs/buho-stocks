@@ -3,8 +3,8 @@ const brokersList = [
   {
     name: "ING (es)",
     id: "ing_es",
-    importPath: "broker-ing-es"
-  }
+    importPath: "broker-ing-es",
+  },
 ];
 
 export default brokersList;

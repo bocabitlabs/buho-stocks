@@ -35,9 +35,11 @@
   ],
   "rules": {
     "no-console": "off",
-    "prettier/prettier": ["error", {
-      "singleQuote": false,
-      "trailingComma": "all"
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": false,
+        "trailingComma": "all"
       }
     ],
     "quotes": ["error", "double", { "allowTemplateLiterals": true }],

@@ -15,7 +15,7 @@ interface AddEditFormProps {
 }
 
 function MarketAddEditForm({
-  marketId
+  marketId,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
@@ -38,7 +38,7 @@ function MarketAddEditForm({
           description: result.description,
           // region: result.region,
           openTime: moment(result.openTime, "HH:mm"),
-          closeTime: moment(result.closeTime, "HH:mm")
+          closeTime: moment(result.closeTime, "HH:mm"),
         });
       }
     }
@@ -56,7 +56,7 @@ function MarketAddEditForm({
       region,
       color,
       openTime: openTime.format("HH:mm"),
-      closeTime: closeTime.format("HH:mm")
+      closeTime: closeTime.format("HH:mm"),
     };
     if (marketId) {
       const id: number = +marketId;
@@ -101,14 +101,14 @@ function MarketAddEditForm({
         description: market?.description,
         region: market?.region,
         openTime: market ? moment(market?.openTime, "HH:mm") : "",
-        closeTime: market ? moment(market?.closeTime, "HH:mm") : ""
+        closeTime: market ? moment(market?.closeTime, "HH:mm") : "",
       }}
     >
       <Form.Item
         name="name"
         label={t("Name")}
         rules={[
-          { required: true, message: t("Please input the name of the market") }
+          { required: true, message: t("Please input the name of the market") },
         ]}
       >
         <Input type="text" placeholder="NYSE, NASDAQ,..." />
@@ -155,7 +155,7 @@ function MarketAddEditForm({
         name="openTime"
         label={t("Opening time")}
         rules={[
-          { required: true, message: t("Please input the opening time") }
+          { required: true, message: t("Please input the opening time") },
         ]}
       >
         {/* <Input type="text" placeholder="HH:mm" /> */}
@@ -165,7 +165,7 @@ function MarketAddEditForm({
         name="closeTime"
         label={t("Closing time")}
         rules={[
-          { required: true, message: t("Please input the closing time") }
+          { required: true, message: t("Please input the closing time") },
         ]}
       >
         {/* <Input type="time" placeholder="HH:mm" /> */}
@@ -181,7 +181,7 @@ function MarketAddEditForm({
 }
 
 MarketAddEditForm.defaultProps = {
-  marketId: null
+  marketId: null,
 };
 
 export default MarketAddEditForm;

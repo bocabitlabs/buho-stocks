@@ -9,7 +9,7 @@ function SettingsForm(): ReactElement | null {
   const {
     isLoading,
     settings,
-    update: updateSettings
+    update: updateSettings,
   } = useContext(SettingsContext);
   const { t, i18n } = useTranslation();
 
@@ -17,7 +17,7 @@ function SettingsForm(): ReactElement | null {
     const {
       // companyDisplayMode,
       // companySortBy,
-      language
+      language,
       // mainPortfolio,
       // portfolioDisplayMode,
       // portfolioSortBy
@@ -28,7 +28,7 @@ function SettingsForm(): ReactElement | null {
       companySortBy: "TODO",
       mainPortfolio: "TODO",
       portfolioDisplayMode: "TODO",
-      portfolioSortBy: "TODO"
+      portfolioSortBy: "TODO",
     };
     if (settings) {
       updateSettings(settings.id, newSettings);
@@ -48,7 +48,7 @@ function SettingsForm(): ReactElement | null {
       initialValues={{
         // companyDisplayMode: settings.companyDisplayMode,
         // companySortBy: settings.companySortBy,
-        language: settings?.language
+        language: settings?.language,
         // mainPortfolio: settings.mainPortfolio,
         // portfolioDisplayMode: settings.portfolioDisplayMode,
         // portfolioSortBy: settings.portfolioSortBy

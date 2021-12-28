@@ -16,17 +16,17 @@ export default function Form(): ReactElement {
   const {
     loading: loadingPortfolios,
     get: getPortfolios,
-    response: responsePortfolios
+    response: responsePortfolios,
   } = useFetch("portfolios");
 
   const [selectedPortfolio, setSelectedPortfolio] = useState<IPortfolio | null>(
-    null
+    null,
   );
   const { t } = useTranslation();
 
   const options1 = [
     { label: "Import Shares/Rights", value: "shares" },
-    { label: "Import Dividends", value: "dividends" }
+    { label: "Import Dividends", value: "dividends" },
   ];
 
   useEffect(() => {

@@ -14,7 +14,7 @@ function SharesTransactionAddPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
 
@@ -23,7 +23,7 @@ function SharesTransactionAddPageHeader({
       className="site-page-header"
       title={`${t("Add a new shares to")} ${companyName} (${companyTicker})`}
       tags={[
-        <CountryFlag code={companyCountryCode} key={companyCountryCode} />
+        <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
       ]}
     >
       {children}

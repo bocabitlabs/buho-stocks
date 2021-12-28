@@ -26,20 +26,20 @@ export default function CurrenciesListTable() {
       dataIndex: "name",
       key: "name",
       render: (text: string) => <strong>{text}</strong>,
-      sorter: (a: ICurrency, b: ICurrency) => a.name.localeCompare(b.name)
+      sorter: (a: ICurrency, b: ICurrency) => a.name.localeCompare(b.name),
     },
     {
       title: t("Code"),
       dataIndex: "code",
       key: "code",
-      sorter: (a: ICurrency, b: ICurrency) => a.code.localeCompare(b.code)
+      sorter: (a: ICurrency, b: ICurrency) => a.code.localeCompare(b.code),
     },
     {
       title: t("Symbol"),
       dataIndex: "symbol",
       key: "symbol",
       render: (text: string) => text,
-      sorter: (a: ICurrency, b: ICurrency) => a.symbol.localeCompare(b.symbol)
+      sorter: (a: ICurrency, b: ICurrency) => a.symbol.localeCompare(b.symbol),
     },
     {
       title: t("Countries"),
@@ -47,8 +47,8 @@ export default function CurrenciesListTable() {
       key: "countries",
       render: (text: string[]) => text.join(", "),
       sorter: (a: ICurrency, b: ICurrency) =>
-        a.countries.localeCompare(b.countries)
-    }
+        a.countries.localeCompare(b.countries),
+    },
   ];
 
   const getData = () => {
@@ -58,7 +58,7 @@ export default function CurrenciesListTable() {
       name: currency.name,
       code: currency.code,
       countries: currency.countries,
-      symbol: currency.symbol
+      symbol: currency.symbol,
     }));
   };
 

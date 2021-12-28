@@ -10,7 +10,7 @@ export const serializeMarket = (data: any) => {
     openTime: data.open_time,
     closeTime: data.close_time,
     dateCreated: data.date_created,
-    lastUpdated: data.last_updated
+    lastUpdated: data.last_updated,
   };
   return serializedData;
 };

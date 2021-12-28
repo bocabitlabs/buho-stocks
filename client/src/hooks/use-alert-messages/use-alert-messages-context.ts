@@ -2,7 +2,7 @@ import { useCallback, useState } from "react";
 import { AlertMessagesContextType } from "contexts/alert-messages";
 import {
   IAlertMessageFormFields,
-  IAlertMessageType
+  IAlertMessageType,
 } from "types/alert-message";
 
 export function useAlertMessagesContext(): AlertMessagesContextType {
@@ -12,35 +12,35 @@ export function useAlertMessagesContext(): AlertMessagesContextType {
     (newValues: IAlertMessageFormFields) => {
       setMessages([...messages, { ...newValues, id: messages.length }]);
     },
-    [messages]
+    [messages],
   );
 
   const createSuccess = useCallback(
     (text: string) => {
       create({ text, type: IAlertMessageType.Success });
     },
-    [create]
+    [create],
   );
 
   const createError = useCallback(
     (text: string) => {
       create({ text, type: IAlertMessageType.Error });
     },
-    [create]
+    [create],
   );
 
   const createInfo = useCallback(
     (text: string) => {
       create({ text, type: IAlertMessageType.Info });
     },
-    [create]
+    [create],
   );
 
   const createWarning = useCallback(
     (text: string) => {
       create({ text, type: IAlertMessageType.Warning });
     },
-    [create]
+    [create],
   );
 
   const deleteById = useCallback(
@@ -55,7 +55,7 @@ export function useAlertMessagesContext(): AlertMessagesContextType {
 
       setMessages(newMessages);
     },
-    [messages]
+    [messages],
   );
 
   return {
@@ -65,7 +65,7 @@ export function useAlertMessagesContext(): AlertMessagesContextType {
     createError,
     createInfo,
     createWarning,
-    deleteById
+    deleteById,
   };
 }
 

@@ -36,13 +36,13 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
         <svg height="20" width="20">
           <circle cx="10" cy="10" r="10" fill={text} />
         </svg>
-      )
+      ),
     },
     {
       title: t("Ticker"),
       dataIndex: "ticker",
       key: "ticker",
-      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker)
+      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker),
     },
     {
       title: t("Name"),
@@ -51,14 +51,14 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       render: (text: string, record: ICompany) => (
         <Link to={`companies/${record.id}`}>{text}</Link>
       ),
-      sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name)
+      sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name),
     },
     {
       title: t("Description"),
       dataIndex: "description",
       key: "description",
       sorter: (a: ICompany, b: ICompany) =>
-        a.description.localeCompare(b.description)
+        a.description.localeCompare(b.description),
     },
     {
       title: t("Action"),
@@ -78,8 +78,8 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const getData = () => {
@@ -90,7 +90,7 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       ticker: element.ticker,
       description: element.description,
       color: element.color,
-      portfolio: element.portfolio
+      portfolio: element.portfolio,
     }));
   };
 

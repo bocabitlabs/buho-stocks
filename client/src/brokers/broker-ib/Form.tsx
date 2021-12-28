@@ -12,14 +12,14 @@ export default function Form(): ReactElement {
   const sharesTableData = {
     headers: ["Operaciones", "Trades"],
     subHeaders: ["Data"],
-    filters: ["Acciones", "Stocks"]
+    filters: ["Acciones", "Stocks"],
   };
 
   const dividendsTableData = {
     headers: ["Dividendos", "Dividends"],
     taxHeaders: ["Retención de impuestos", "Withholding Tax"],
     subHeaders: ["Data"],
-    notAllowedFilters: ["Total", ""]
+    notAllowedFilters: ["Total", ""],
   };
 
   const [data, setData] = useState([]);
@@ -29,17 +29,17 @@ export default function Form(): ReactElement {
   const {
     loading: loadingPortfolios,
     get: getPortfolios,
-    response: responsePortfolios
+    response: responsePortfolios,
   } = useFetch("portfolios");
 
   const [selectedPortfolio, setSelectedPortfolio] = useState<IPortfolio | null>(
-    null
+    null,
   );
   const { t } = useTranslation();
 
   const options1 = [
     { label: "Import Shares/Rights", value: "shares" },
-    { label: "Import Dividends", value: "dividends" }
+    { label: "Import Dividends", value: "dividends" },
   ];
 
   useEffect(() => {
@@ -98,12 +98,12 @@ export default function Form(): ReactElement {
       const commissions = getCommissionsForElement(
         element.data[4],
         element.data[3],
-        commissionsArray
+        commissionsArray,
       );
       filteredDataWithCommissions[index].commissions = commissions;
       console.debug(
         `Filtered data element ${index}: `,
-        filteredDataWithCommissions[index]
+        filteredDataWithCommissions[index],
       );
     });
     setData(filteredDataWithCommissions);

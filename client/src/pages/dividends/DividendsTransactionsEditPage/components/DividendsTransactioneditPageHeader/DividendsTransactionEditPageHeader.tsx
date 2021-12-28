@@ -14,7 +14,7 @@ function DividendsTransactionEditPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
 
@@ -22,10 +22,10 @@ function DividendsTransactionEditPageHeader({
     <PageHeader
       className="site-page-header"
       title={`${t(
-        "Edit dividends transaction for"
+        "Edit dividends transaction for",
       )} ${companyName} (${companyTicker})`}
       tags={[
-        <CountryFlag code={companyCountryCode} key={companyCountryCode} />
+        <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
       ]}
     >
       {children}

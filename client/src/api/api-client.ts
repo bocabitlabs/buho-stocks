@@ -31,7 +31,7 @@ export class ApiClient {
     const storedToken = localStorage.getItem("token");
     const headers: HttpRequestHeader = {
       "Content-Type": "application/json",
-      Accept: "application/json"
+      Accept: "application/json",
     };
     if (authenticated) {
       headers.Authorization = `Token ${storedToken}`;
@@ -47,7 +47,7 @@ export class ApiClient {
     const response = await fetch(path, {
       method: "GET",
       headers: this.getHeaders(authenticated),
-      signal
+      signal,
     });
     // Wait 2 seconds to abort both requests
     setTimeout(() => controller.abort(), 2000);
@@ -67,7 +67,7 @@ export class ApiClient {
       method: "POST",
       headers: this.getHeaders(authenticated),
       body: JSON.stringify(data),
-      signal
+      signal,
     });
     // Wait 2 seconds to abort both requests
     setTimeout(() => controller.abort(), 2000);
@@ -82,7 +82,7 @@ export class ApiClient {
     path: string,
     id: number,
     data: any,
-    authenticated = false
+    authenticated = false,
   ) => {
     const controller = new AbortController();
     const { signal } = controller;
@@ -92,7 +92,7 @@ export class ApiClient {
       method: "PUT",
       headers: this.getHeaders(authenticated),
       body: JSON.stringify(data),
-      signal
+      signal,
     });
     // Wait 2 seconds to abort both requests
     setTimeout(() => controller.abort(), 2000);
@@ -106,7 +106,7 @@ export class ApiClient {
   makeDeleteRequest = async (
     path: string,
     id: number,
-    authenticated = false
+    authenticated = false,
   ) => {
     const controller = new AbortController();
     const { signal } = controller;
@@ -115,7 +115,7 @@ export class ApiClient {
     const response = await fetch(`${path + id}/`, {
       method: "DELETE",
       headers: this.getHeaders(authenticated),
-      signal
+      signal,
     });
     // Wait 2 seconds to abort both requests
     setTimeout(() => controller.abort(), 2000);

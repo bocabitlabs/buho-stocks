@@ -25,5 +25,5 @@ export default function SectorsEditPage({ isSuper }: IProps) {
   );
 }
 SectorsEditPage.defaultProps = {
-  isSuper: false
+  isSuper: false,
 };

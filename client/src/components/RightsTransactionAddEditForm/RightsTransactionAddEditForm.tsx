@@ -10,7 +10,7 @@ import {
   InputNumber,
   Row,
   Select,
-  Spin
+  Spin,
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
@@ -20,7 +20,7 @@ import { ICurrency } from "types/currency";
 import { IExchangeRate } from "types/exchange-rate";
 import {
   IRightsTransaction,
-  IRightsTransactionFormFields
+  IRightsTransactionFormFields,
 } from "types/rights-transaction";
 
 interface IProps {
@@ -32,17 +32,17 @@ interface IProps {
 export default function RightsTransactionAddEditForm({
   transactionId,
   companyBaseCurrency,
-  portfolioBaseCurrency
+  portfolioBaseCurrency,
 }: IProps) {
   const [form] = Form.useForm();
   const dateFormat = "YYYY-MM-DD";
   const { id, companyId } = useParams();
   const navigate = useNavigate();
   const [currentTransactionDate, setCurrentTransactionDate] = useState<string>(
-    moment(new Date()).format(dateFormat)
+    moment(new Date()).format(dateFormat),
   );
   const [transaction, setTransaction] = useState<IRightsTransaction | null>(
-    null
+    null,
   );
   const { createError, createSuccess } = useContext(AlertMessagesContext);
 
@@ -51,16 +51,16 @@ export default function RightsTransactionAddEditForm({
   const {
     loading: exchangeRateLoading,
     response: exchangeRateResponse,
-    get: getExchangeRate
+    get: getExchangeRate,
   } = useFetch("exchange-rates/");
 
   const { response, get, put, post, cache } = useFetch(
-    `companies/${companyId}/rights`
+    `companies/${companyId}/rights`,
   );
 
   const fetchExchangeRate = async () => {
     const initialData = await getExchangeRate(
-      `${companyBaseCurrency.code}/${portfolioBaseCurrency.code}/${currentTransactionDate}/`
+      `${companyBaseCurrency.code}/${portfolioBaseCurrency.code}/${currentTransactionDate}/`,
     );
     if (exchangeRateResponse.ok) {
       setExchangeRate(initialData);
@@ -68,8 +68,8 @@ export default function RightsTransactionAddEditForm({
       form.setFields([
         {
           name: "exchangeRate",
-          errors: ["Unable to fetch the exchange rates for the given date"]
-        }
+          errors: ["Unable to fetch the exchange rates for the given date"],
+        },
       ]);
     }
   };
@@ -89,7 +89,7 @@ export default function RightsTransactionAddEditForm({
   useEffect(() => {
     if (exchangeRate) {
       form.setFieldsValue({
-        exchangeRate: exchangeRate.exchangeRate
+        exchangeRate: exchangeRate.exchangeRate,
       });
     }
   }, [exchangeRate, form]);
@@ -101,7 +101,7 @@ export default function RightsTransactionAddEditForm({
       type,
       totalCommission,
       exchangeRate: exchangeRateValue,
-      notes
+      notes,
     } = values;
 
     const newTransactionValues: IRightsTransactionFormFields = {
@@ -116,7 +116,7 @@ export default function RightsTransactionAddEditForm({
       exchangeRate: +exchangeRateValue,
       company: +companyId!,
       color: "#000",
-      portfolio: +id!
+      portfolio: +id!,
     };
     if (transactionId) {
       await put(`${transactionId}/`, newTransactionValues);
@@ -141,7 +141,7 @@ export default function RightsTransactionAddEditForm({
 
   const currentTransactionDateChange = (
     value: moment.Moment | null,
-    dateString: string
+    dateString: string,
   ) => {
     setCurrentTransactionDate(dateString);
     console.log(value);
@@ -187,14 +187,14 @@ export default function RightsTransactionAddEditForm({
         transactionDate: transaction
           ? moment(transaction.transactionDate)
           : moment(currentTransactionDate),
-        type: transaction ? transaction.type : "BUY"
+        type: transaction ? transaction.type : "BUY",
       }}
     >
       <Form.Item
         name="count"
         label={t("Number of shares")}
         rules={[
-          { required: true, message: t("Please input the number of shares") }
+          { required: true, message: t("Please input the number of shares") },
         ]}
       >
         <InputNumber min={0} step={1} style={{ width: "100%" }} />
@@ -205,8 +205,8 @@ export default function RightsTransactionAddEditForm({
         rules={[
           {
             required: true,
-            message: t("Please input the gross price per share")
-          }
+            message: t("Please input the gross price per share"),
+          },
         ]}
       >
         <InputNumber
@@ -220,7 +220,10 @@ export default function RightsTransactionAddEditForm({
         name="type"
         label={t("Operation's type")}
         rules={[
-          { required: true, message: t("Please input the type of transaction") }
+          {
+            required: true,
+            message: t("Please input the type of transaction"),
+          },
         ]}
       >
         <Select placeholder={t("Select an option")}>
@@ -232,7 +235,7 @@ export default function RightsTransactionAddEditForm({
         name="totalCommission"
         label={t("Total commission")}
         rules={[
-          { required: true, message: t("Please input the total commission") }
+          { required: true, message: t("Please input the total commission") },
         ]}
       >
         <InputNumber
@@ -248,8 +251,8 @@ export default function RightsTransactionAddEditForm({
         rules={[
           {
             required: true,
-            message: t("Please input the date of the operation")
-          }
+            message: t("Please input the date of the operation"),
+          },
         ]}
       >
         <DatePicker
@@ -264,7 +267,10 @@ export default function RightsTransactionAddEditForm({
               name="exchangeRate"
               label="Exchange rate"
               rules={[
-                { required: true, message: t("Please input the exchange rate") }
+                {
+                  required: true,
+                  message: t("Please input the exchange rate"),
+                },
               ]}
             >
               <InputNumber
@@ -305,5 +311,5 @@ export default function RightsTransactionAddEditForm({
 }
 
 RightsTransactionAddEditForm.defaultProps = {
-  transactionId: null
+  transactionId: null,
 };

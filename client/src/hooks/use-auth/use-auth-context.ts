@@ -15,8 +15,8 @@ export function useAuthContext(): AuthContextType {
     },
     {
       isAuthenticated: !!localStorage.getItem("token"),
-      token: localStorage.getItem("token")
-    }
+      token: localStorage.getItem("token"),
+    },
   );
 
   const authenticate = useCallback((newToken: string) => {
@@ -48,7 +48,7 @@ export function useAuthContext(): AuthContextType {
     authenticate,
     clearToken,
     prueba,
-    updateIsWorking
+    updateIsWorking,
   };
 }
 

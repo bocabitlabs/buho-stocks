@@ -16,7 +16,7 @@ function CompanyDetailsPageHeader({
   companyName,
   companyTicker,
   companyLogo,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
   const params = useParams();
@@ -44,7 +44,7 @@ function CompanyDetailsPageHeader({
           <Button icon={<DeleteOutlined />} danger>
             {t("Delete")}
           </Button>
-        </Popconfirm>
+        </Popconfirm>,
       ]}
     >
       {children}

@@ -17,7 +17,7 @@ export default function DividendsListTable(): ReactElement {
     loading,
     response,
     get,
-    del: deleteTransaction
+    del: deleteTransaction,
   } = useFetch(`companies/${companyId}/dividends`);
 
   const confirmDelete = async (recordId: number) => {
@@ -27,7 +27,7 @@ export default function DividendsListTable(): ReactElement {
       const removeItem = transactions.filter(
         (transaction: IDividendsTransaction) => {
           return transaction.id !== recordId;
-        }
+        },
       );
       setTransactions(removeItem);
     }
@@ -51,34 +51,34 @@ export default function DividendsListTable(): ReactElement {
       key: "openTime",
       sorter: (a: IDividendsTransaction, b: IDividendsTransaction) =>
         a.transactionDate.localeCompare(b.transactionDate),
-      render: (text: string) => moment(new Date(text)).format("DD/MM/YYYY")
+      render: (text: string) => moment(new Date(text)).format("DD/MM/YYYY"),
     },
     {
       title: t("Count"),
       dataIndex: "count",
       key: "count",
-      render: (text: string) => text
+      render: (text: string) => text,
     },
     {
       title: t("Gross price per share"),
       dataIndex: "grossPricePerShare",
       key: "grossPricePerShare",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`
+        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
     {
       title: t("Total commission"),
       dataIndex: "totalCommission",
       key: "totalCommission",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.totalCommissionCurrency}`
+        `${(+text).toFixed(2)} ${record.totalCommissionCurrency}`,
     },
     {
       title: t("Total"),
       dataIndex: "transactionTotal",
       key: "transactionTotal",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`
+        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
     {
       title: t("Action"),
@@ -98,8 +98,8 @@ export default function DividendsListTable(): ReactElement {
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const getData = () => {
@@ -115,7 +115,7 @@ export default function DividendsListTable(): ReactElement {
       transactionTotal:
         +transaction.count * +transaction.grossPricePerShare -
         +transaction.totalCommission,
-      notes: transaction.notes
+      notes: transaction.notes,
     }));
   };
 
@@ -132,7 +132,7 @@ export default function DividendsListTable(): ReactElement {
       expandable={{
         expandedRowRender: NotesRow,
         rowExpandable: (record) =>
-          record.notes !== "undefined" && record.notes !== undefined
+          record.notes !== "undefined" && record.notes !== undefined,
       }}
     />
   );

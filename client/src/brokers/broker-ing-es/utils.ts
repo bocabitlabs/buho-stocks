@@ -15,12 +15,12 @@ const normalizeAndRemoveAccents = (inputString: string) => {
 
 export const getCompanyFromTransaction = (
   name: string,
-  portfolio: IPortfolio
+  portfolio: IPortfolio,
 ): ICompany | undefined => {
   const found = portfolio.companies.find((element) =>
     normalizeAndRemoveAccents(element.name)
       .toLowerCase()
-      .includes(normalizeAndRemoveAccents(name).toLowerCase())
+      .includes(normalizeAndRemoveAccents(name).toLowerCase()),
   );
   if (found) {
     return found;
@@ -31,7 +31,7 @@ export const getCompanyFromTransaction = (
 export const getTotalAmountInCompanyCurrency = (
   initialTotal: number,
   company: ICompany,
-  transactionDate: Moment
+  transactionDate: Moment,
 ) => {
   const INGDefaultCurrency = "EUR";
   const totalInCompanyCurrency = initialTotal;
@@ -54,7 +54,7 @@ export const getTotalAmountInCompanyCurrency = (
 export const getPriceInCompanyCurrency = (
   initialPrice: number,
   company: ICompany,
-  transactionDate: Moment
+  transactionDate: Moment,
 ) => {
   const INGDefaultCurrency = "EUR";
   if (company && company.baseCurrency.code !== INGDefaultCurrency) {
@@ -113,7 +113,7 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
     transactionDate,
     count,
     price,
-    transactionType: transactionType as TransactionType
+    transactionType: transactionType as TransactionType,
   };
   console.log("result", result);
 
@@ -146,7 +146,7 @@ export function formatINGRowForDividends(inputData: string[]): FormattedINGRow {
     total,
     transactionDate,
     count,
-    price
+    price,
   };
 }
 

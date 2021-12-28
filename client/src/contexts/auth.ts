@@ -23,7 +23,7 @@ export const authDefaultValue: AuthContextType = {
   clearToken: () => undefined,
   authenticate: (): null => null,
   prueba: () => null,
-  updateIsWorking: () => "pepe"
+  updateIsWorking: () => "pepe",
 };
 
 export const AuthContext = createContext<AuthContextType>(authDefaultValue);

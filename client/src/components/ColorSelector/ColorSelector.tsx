@@ -10,7 +10,7 @@ interface Props {
 
 export default function ColorSelector({
   color,
-  handleColorChange
+  handleColorChange,
 }: Props): ReactElement {
   const [showAll, setShowAll] = useState(false);
 

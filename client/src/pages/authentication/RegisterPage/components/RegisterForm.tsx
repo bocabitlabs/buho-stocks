@@ -18,7 +18,7 @@ function RegisterForm() {
       password2: "ABCD12345!",
       firstName: "John",
       lastName: "Doe",
-      email: "johndoe@fakeemail.com"
+      email: "johndoe@fakeemail.com",
     };
     const data: IRegistrationData = {
       username: values.username ? values.username : devData.username,
@@ -26,7 +26,7 @@ function RegisterForm() {
       password2: values.password2 ? values.password2 : devData.password2,
       firstName: values.firstName ? values.firstName : devData.firstName,
       lastName: values.lastName ? values.lastName : devData.lastName,
-      email: values.email ? values.email : devData.email
+      email: values.email ? values.email : devData.email,
     };
     auth.register(data);
   };
@@ -52,8 +52,8 @@ function RegisterForm() {
             {
               required: true,
               message: "Please input your username!",
-              whitespace: true
-            }
+              whitespace: true,
+            },
           ]}
         >
           <Input />
@@ -65,12 +65,12 @@ function RegisterForm() {
           rules={[
             {
               type: "email",
-              message: t("The input is not valid E-mail")
+              message: t("The input is not valid E-mail"),
             },
             {
               required: true,
-              message: t("Please input your E-mail")
-            }
+              message: t("Please input your E-mail"),
+            },
           ]}
         >
           <Input />
@@ -82,8 +82,8 @@ function RegisterForm() {
           rules={[
             {
               required: true,
-              message: t("Please input your password")
-            }
+              message: t("Please input your password"),
+            },
           ]}
           hasFeedback
         >
@@ -98,7 +98,7 @@ function RegisterForm() {
           rules={[
             {
               required: true,
-              message: t("Please confirm your password")
+              message: t("Please confirm your password"),
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
@@ -107,11 +107,11 @@ function RegisterForm() {
                 }
                 return Promise.reject(
                   new Error(
-                    t("The two passwords that you entered do not match")
-                  )
+                    t("The two passwords that you entered do not match"),
+                  ),
                 );
-              }
-            })
+              },
+            }),
           ]}
         >
           <Input.Password />
@@ -125,8 +125,8 @@ function RegisterForm() {
             {
               required: true,
               message: t("Please input your first name"),
-              whitespace: true
-            }
+              whitespace: true,
+            },
           ]}
         >
           <Input />
@@ -140,8 +140,8 @@ function RegisterForm() {
             {
               required: true,
               message: t("Please input your last name"),
-              whitespace: true
-            }
+              whitespace: true,
+            },
           ]}
         >
           <Input />

@@ -9,7 +9,7 @@ import {
   InputNumber,
   Row,
   Select,
-  Typography
+  Typography,
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
@@ -25,7 +25,7 @@ interface IProps {
 
 export default function IBDividendsImportForm({
   inputData,
-  portfolio
+  portfolio,
 }: IProps): ReactElement {
   const [form] = Form.useForm();
 
@@ -34,7 +34,7 @@ export default function IBDividendsImportForm({
     transactionTotal: 5,
     commissionIndex: 5,
     currency: 2,
-    transactionDate: 3
+    transactionDate: 3,
   };
 
   const notes = inputData.data[indexes.notes];
@@ -49,7 +49,7 @@ export default function IBDividendsImportForm({
   // const initialCompanyTicker = inputData[5];
   // const initialCount = +inputData[7];
   const initialTransactionDate = moment(
-    inputData.data[indexes.transactionDate]
+    inputData.data[indexes.transactionDate],
   );
   // const initialGrossPricePerShare = +inputData[8];
   // const initialCommission = +inputData[11];
@@ -84,23 +84,23 @@ export default function IBDividendsImportForm({
   const { t } = useTranslation();
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     portfolio.companies.find(
-      (element) => element.ticker === initialCompanyTicker
-    )
+      (element) => element.ticker === initialCompanyTicker,
+    ),
   );
   const {
     loading: exchangeRateLoading,
     get: getExchangeRate,
-    response: exchangeRateResponse
+    response: exchangeRateResponse,
   } = useFetch("exchange-rates");
   const {
     loading: dividendsLoading,
     post: postDividendsTransaction,
-    response: dividendsResponse
+    response: dividendsResponse,
   } = useFetch(`companies/${selectedCompany?.id}/dividends`);
 
   const onCompanyChange = (value: string) => {
     const tempCompany = portfolio.companies.find(
-      (element) => element.ticker === value
+      (element) => element.ticker === value,
     );
     if (tempCompany) {
       setSelectedCompany(tempCompany);
@@ -137,10 +137,10 @@ export default function IBDividendsImportForm({
       transactionDate,
       color: "#0066cc",
       notes: `Imported from IB CSV on ${moment(new Date()).format(
-        "YYYY-MM-DD HH:mm:ss"
+        "YYYY-MM-DD HH:mm:ss",
       )}. ${notes}`,
       company,
-      portfolio: portfolio.id
+      portfolio: portfolio.id,
     };
     console.debug(transaction);
     await postDividendsTransaction("/", transaction);
@@ -156,19 +156,19 @@ export default function IBDividendsImportForm({
       const newExchangeRate = await getExchangeRate(
         `${selectedCompany?.baseCurrency.code}/${
           portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`
+        }/${form.getFieldValue("transactionDate")}`,
       );
       if (exchangeRateResponse.ok) {
         console.log(newExchangeRate);
         form.setFieldsValue({
-          exchangeRate: newExchangeRate.exchangeRate
+          exchangeRate: newExchangeRate.exchangeRate,
         });
       } else {
         form.setFields([
           {
             name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"]
-          }
+            errors: ["Unable to fetch the exchange rates for the given date"],
+          },
         ]);
       }
     }
@@ -184,7 +184,7 @@ export default function IBDividendsImportForm({
         grossPricePerShare: initialGrossPricePerShare,
         count: initialCount,
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
-        company: selectedCompany ? selectedCompany.id : undefined
+        company: selectedCompany ? selectedCompany.id : undefined,
       }}
     >
       <Row>
@@ -268,8 +268,8 @@ export default function IBDividendsImportForm({
                 rules={[
                   {
                     required: true,
-                    message: t("Please input the exchange rate")
-                  }
+                    message: t("Please input the exchange rate"),
+                  },
                 ]}
               >
                 <InputNumber

@@ -20,7 +20,7 @@ export const fewColorsScale = [
   material.orange["500"],
   material.deepOrange["500"],
   material.brown["500"],
-  material.blueGrey["500"]
+  material.blueGrey["500"],
 ];
 
 const fewColors = [
@@ -42,7 +42,7 @@ const fewColors = [
   material.deepOrange["500"],
   material.brown["500"],
   material.blueGrey["500"],
-  material.pink["500"]
+  material.pink["500"],
 ];
 
 export const allColors = [
@@ -141,7 +141,7 @@ export const allColors = [
   material.blueGrey["500"],
   material.blueGrey["300"],
   material.blueGrey["100"],
-  ["#000000", "#525252", "#969696", "#D9D9D9", "#FFFFFF"]
+  ["#000000", "#525252", "#969696", "#D9D9D9", "#FFFFFF"],
 ];
 
 export default fewColors;

@@ -10,7 +10,7 @@ export function useLoginActions(): LoginActionsHookType {
   const {
     clearToken,
     authenticate,
-    prueba: pruebaAuth
+    prueba: pruebaAuth,
   } = useContext(AuthContext);
   const navigate = useNavigate();
   const endpoint = "/auth/";
@@ -18,7 +18,7 @@ export function useLoginActions(): LoginActionsHookType {
   const getHeaders = useCallback(() => {
     const headers = {
       Accept: "application/json",
-      Authorization: `Token ${localStorage.getItem("token")}`
+      Authorization: `Token ${localStorage.getItem("token")}`,
     };
     return headers;
   }, []);
@@ -26,16 +26,16 @@ export function useLoginActions(): LoginActionsHookType {
     response,
     post,
     error,
-    loading: isLoading
+    loading: isLoading,
   } = useFetch(endpoint, {
-    headers: getHeaders()
+    headers: getHeaders(),
   });
 
   const loginUser = useCallback(
     async ({ username, password }: ILoginData): Promise<any> => {
       const responseValues = await post("api-token-auth/", {
         username,
-        password
+        password,
       });
       if (response.ok) {
         return responseValues;
@@ -44,7 +44,7 @@ export function useLoginActions(): LoginActionsHookType {
 
       return response;
     },
-    [post, error, response]
+    [post, error, response],
   );
 
   const registerUser = useCallback(
@@ -57,14 +57,14 @@ export function useLoginActions(): LoginActionsHookType {
 
       return response;
     },
-    [post, error, response]
+    [post, error, response],
   );
 
   const signin = useCallback(
     async (username: string, password: string) => {
       const data = {
         username,
-        password
+        password,
       };
       const values = await loginUser(data);
       if (response.ok) {
@@ -73,7 +73,7 @@ export function useLoginActions(): LoginActionsHookType {
       }
       return false;
     },
-    [loginUser, authenticate, response.ok]
+    [loginUser, authenticate, response.ok],
   );
 
   const register = useCallback(
@@ -81,7 +81,7 @@ export function useLoginActions(): LoginActionsHookType {
       await registerUser(data);
       return response;
     },
-    [registerUser, response]
+    [registerUser, response],
   );
 
   const signout = useCallback(() => {
@@ -102,7 +102,7 @@ export function useLoginActions(): LoginActionsHookType {
     register,
     signin,
     signout,
-    prueba
+    prueba,
   };
 }
 

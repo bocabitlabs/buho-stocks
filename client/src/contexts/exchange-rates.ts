@@ -7,7 +7,7 @@ export type ExchangeRatesContextType = {
   get: (
     fromCode: string,
     toCode: string,
-    exchangeDate: string
+    exchangeDate: string,
   ) => Promise<any> | undefined;
 };
 
@@ -15,7 +15,7 @@ export const defaultValue: ExchangeRatesContextType = {
   isLoading: false,
   exchangeRate: null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  get: (fromCode: string, toCode: string, exchangeDate: string) => undefined
+  get: (fromCode: string, toCode: string, exchangeDate: string) => undefined,
 };
 
 export const ExchangeRatesContext =

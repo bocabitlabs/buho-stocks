@@ -24,7 +24,7 @@ export const defaultValue: AlertMessagesContextType = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   createWarning: (newValues: any) => undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  deleteById: (id: number) => undefined
+  deleteById: (id: number) => undefined,
 };
 
 export const AlertMessagesContext =

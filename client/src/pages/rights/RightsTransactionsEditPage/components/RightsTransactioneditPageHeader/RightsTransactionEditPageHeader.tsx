@@ -14,7 +14,7 @@ function RightsTransactionEditPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
 
@@ -22,10 +22,10 @@ function RightsTransactionEditPageHeader({
     <PageHeader
       className="site-page-header"
       title={`${t(
-        "Edit rights transaction for"
+        "Edit rights transaction for",
       )} ${companyName} (${companyTicker})`}
       tags={[
-        <CountryFlag code={companyCountryCode} key={companyCountryCode} />
+        <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
       ]}
     >
       {children}

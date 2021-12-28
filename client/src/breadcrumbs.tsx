@@ -36,7 +36,7 @@ function Breadcrumbs() {
     "/app/profile": "Profile",
     "/app/sectors": "Sectors",
     "/app/sectors/add": "Add sector",
-    "/app/sectors/:id": `Edit`
+    "/app/sectors/:id": `Edit`,
   };
 
   // const pathSnippets = location.pathname.split("/").filter((i) => i);
@@ -52,7 +52,7 @@ function Breadcrumbs() {
           extraBreadcrumbItems.push(
             <Breadcrumb.Item key={url}>
               <Link to={url}>{breadcrumbNameMap[item]}</Link>
-            </Breadcrumb.Item>
+            </Breadcrumb.Item>,
           );
         }
 
@@ -67,7 +67,7 @@ function Breadcrumbs() {
       <Link to="/app/home">
         <HomeOutlined />
       </Link>
-    </Breadcrumb.Item>
+    </Breadcrumb.Item>,
   ].concat(extraBreadcrumbItems);
   return (
     <div className="demo">
@@ -77,7 +77,7 @@ function Breadcrumbs() {
 }
 
 Breadcrumbs.defaultProps = {
-  portfolioName: ""
+  portfolioName: "",
 };
 
 export default Breadcrumbs;

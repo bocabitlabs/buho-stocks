@@ -1,6 +1,6 @@
 import React, {
   ReactElement,
-  useState
+  useState,
   //  useContext, useState
 } from "react";
 import { useTranslation } from "react-i18next";
@@ -13,7 +13,7 @@ import {
   Input,
   Button,
   Select,
-  InputNumber
+  InputNumber,
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
@@ -29,7 +29,7 @@ interface IProps {
 
 export default function IBTradesImportForm({
   inputData,
-  portfolio
+  portfolio,
 }: IProps): ReactElement {
   const initialCompanyCurrency = inputData[4];
   const initialCompanyTicker = inputData[5];
@@ -46,23 +46,23 @@ export default function IBTradesImportForm({
   const { t } = useTranslation();
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     portfolio.companies.find(
-      (element) => element.ticker === initialCompanyTicker
-    )
+      (element) => element.ticker === initialCompanyTicker,
+    ),
   );
   const {
     loading: exchangeRateLoading,
     get: getExchangeRate,
-    response: exchangeRateResponse
+    response: exchangeRateResponse,
   } = useFetch("exchange-rates");
   const {
     loading: sharesLoading,
     post: postSharesTransaction,
-    response: sharesResponse
+    response: sharesResponse,
   } = useFetch(`companies/${selectedCompany?.id}/shares`);
 
   const onCompanyChange = (value: string) => {
     const tempCompany = portfolio.companies.find(
-      (element) => element.ticker === value
+      (element) => element.ticker === value,
     );
     if (tempCompany) {
       setSelectedCompany(tempCompany);
@@ -99,11 +99,11 @@ export default function IBTradesImportForm({
       transactionDate,
       color: "#0066cc",
       notes: `Imported from IB CSV on ${moment(new Date()).format(
-        "YYYY-MM-DD HH:mm:ss"
+        "YYYY-MM-DD HH:mm:ss",
       )}`,
       company,
       portfolio: portfolio.id,
-      type: "BUY"
+      type: "BUY",
     };
     console.debug(transaction);
     await postSharesTransaction("/", transaction);
@@ -119,19 +119,19 @@ export default function IBTradesImportForm({
       const newExchangeRate = await getExchangeRate(
         `${selectedCompany?.baseCurrency.code}/${
           portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`
+        }/${form.getFieldValue("transactionDate")}`,
       );
       if (exchangeRateResponse.ok) {
         console.log(newExchangeRate);
         form.setFieldsValue({
-          exchangeRate: newExchangeRate.exchangeRate
+          exchangeRate: newExchangeRate.exchangeRate,
         });
       } else {
         form.setFields([
           {
             name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"]
-          }
+            errors: ["Unable to fetch the exchange rates for the given date"],
+          },
         ]);
       }
     }
@@ -146,7 +146,7 @@ export default function IBTradesImportForm({
         grossPricePerShare: initialGrossPricePerShare,
         count: initialCount,
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
-        company: selectedCompany ? selectedCompany.id : undefined
+        company: selectedCompany ? selectedCompany.id : undefined,
       }}
     >
       <Row>
@@ -224,8 +224,8 @@ export default function IBTradesImportForm({
                 rules={[
                   {
                     required: true,
-                    message: t("Please input the exchange rate")
-                  }
+                    message: t("Please input the exchange rate"),
+                  },
                 ]}
               >
                 <InputNumber

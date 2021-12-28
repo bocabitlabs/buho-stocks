@@ -22,7 +22,7 @@ export const defaultValue: LogMessagesContextType = {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getById: (marketId: number) => undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  deleteById: (id: number) => undefined
+  deleteById: (id: number) => undefined,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   // update: (id: number, newValues: ILogMessageFormFields) => undefined
 };

@@ -14,7 +14,7 @@ function SharesTransactionEditPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
 
@@ -22,10 +22,10 @@ function SharesTransactionEditPageHeader({
     <PageHeader
       className="site-page-header"
       title={`${t(
-        "Edit sares transaction for"
+        "Edit sares transaction for",
       )} ${companyName} (${companyTicker})`}
       tags={[
-        <CountryFlag code={companyCountryCode} key={companyCountryCode} />
+        <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
       ]}
     >
       {children}

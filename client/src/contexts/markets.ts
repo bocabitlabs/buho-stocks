@@ -25,7 +25,7 @@ export const marketsDefaultValue: MarketsContextType = {
   deleteById: (id: number) => Promise.resolve(),
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   update: (settingsId: number, newValues: IMarketFormFields) =>
-    Promise.resolve()
+    Promise.resolve(),
 };
 
 export const MarketsContext =

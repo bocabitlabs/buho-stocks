@@ -6,11 +6,11 @@
 export const getCommissionsForElement = (
   elementDescription: string,
   transactionDate: string,
-  commissionsArray: any
+  commissionsArray: any,
 ) => {
   const nameWithISINMatch = elementDescription.match(/(\w)+\s?\(\w+\)/g);
   console.debug(
-    `Name with ISIN: ${nameWithISINMatch}. Date: ${transactionDate}`
+    `Name with ISIN: ${nameWithISINMatch}. Date: ${transactionDate}`,
   );
   if (nameWithISINMatch && nameWithISINMatch.length > 0) {
     const nameWithISIN = nameWithISINMatch[0];

@@ -9,7 +9,7 @@ export function useExchangeRatesContext(): ExchangeRatesContextType {
   const getHeaders = useCallback(() => {
     const headers = {
       Accept: "application/json",
-      Authorization: `Token ${localStorage.getItem("token")}`
+      Authorization: `Token ${localStorage.getItem("token")}`,
     };
     return headers;
   }, []);
@@ -17,15 +17,15 @@ export function useExchangeRatesContext(): ExchangeRatesContextType {
     get: getRequest,
     response,
     error,
-    loading: isLoading
+    loading: isLoading,
   } = useFetch(endpoint, {
-    headers: getHeaders()
+    headers: getHeaders(),
   });
 
   const get = useCallback(
     async (fromCode: string, toCode: string, echangeDate: string) => {
       const responseValues = await getRequest(
-        `${fromCode}/${toCode}/${echangeDate}/`
+        `${fromCode}/${toCode}/${echangeDate}/`,
       );
       if (response.ok) {
         setExchangeRate(responseValues);
@@ -35,13 +35,13 @@ export function useExchangeRatesContext(): ExchangeRatesContextType {
 
       return response;
     },
-    [getRequest, setExchangeRate, error, response]
+    [getRequest, setExchangeRate, error, response],
   );
 
   return {
     isLoading,
     exchangeRate,
-    get
+    get,
   };
 }
 

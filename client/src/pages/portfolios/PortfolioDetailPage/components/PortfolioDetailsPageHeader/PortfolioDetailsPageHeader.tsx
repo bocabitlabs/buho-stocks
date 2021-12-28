@@ -18,7 +18,7 @@ function PortfolioDetailsPageHeader({
   portfolioName,
   portfolioDescription,
   portfolioCountryCode,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -44,7 +44,7 @@ function PortfolioDetailsPageHeader({
       title={portfolioName}
       subTitle={portfolioDescription}
       tags={[
-        <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />
+        <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
       ]}
       extra={[
         <Button
@@ -67,7 +67,7 @@ function PortfolioDetailsPageHeader({
           <Button icon={<DeleteOutlined />} danger>
             {t("Delete")}
           </Button>
-        </Popconfirm>
+        </Popconfirm>,
       ]}
     >
       {children}

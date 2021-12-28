@@ -12,7 +12,7 @@ export function useSettingsContext(): SettingsContextType {
   const getHeaders = useCallback(() => {
     const headers = {
       Accept: "application/json",
-      Authorization: `Token ${localStorage.getItem("token")}`
+      Authorization: `Token ${localStorage.getItem("token")}`,
     };
     return headers;
   }, []);
@@ -23,9 +23,9 @@ export function useSettingsContext(): SettingsContextType {
     response,
     error,
     loading: isLoading,
-    cache
+    cache,
   } = useFetch(endpoint, {
-    headers: getHeaders()
+    headers: getHeaders(),
   });
 
   const get = useCallback(async () => {
@@ -42,7 +42,7 @@ export function useSettingsContext(): SettingsContextType {
     async (settingsId: number, newValues: ISettingsFormFields) => {
       const responseValues = await put({
         settingsId,
-        newValues
+        newValues,
       });
 
       if (response.ok) {
@@ -53,7 +53,7 @@ export function useSettingsContext(): SettingsContextType {
       }
       return response;
     },
-    [put, response, error, cache]
+    [put, response, error, cache],
   );
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export function useSettingsContext(): SettingsContextType {
     isLoading,
     settings,
     get,
-    update
+    update,
   };
 }
 

@@ -14,7 +14,7 @@ interface AddEditFormProps {
 }
 
 function PortfolioAddEditForm({
-  portfolioId
+  portfolioId,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
@@ -27,7 +27,7 @@ function PortfolioAddEditForm({
   const {
     get: getCurrencies,
     response: currenciesResponse,
-    loading: currenciesLoading
+    loading: currenciesLoading,
   } = useFetch("currencies/");
   const navigate = useNavigate();
 
@@ -68,7 +68,7 @@ function PortfolioAddEditForm({
       description,
       baseCurrency: baseCurrencyId,
       hideClosedCompanies,
-      countryCode: country
+      countryCode: country,
     };
     console.log(newPortfolio);
 
@@ -116,7 +116,7 @@ function PortfolioAddEditForm({
         name: portfolio?.name,
         description: portfolio?.description,
         hideClosedCompanies: portfolio?.hideClosedCompanies,
-        baseCurrencyId: portfolio?.baseCurrency
+        baseCurrencyId: portfolio?.baseCurrency,
       }}
     >
       <Form.Item
@@ -125,8 +125,8 @@ function PortfolioAddEditForm({
         rules={[
           {
             required: true,
-            message: t("Please input the name of the portfolio")
-          }
+            message: t("Please input the name of the portfolio"),
+          },
         ]}
       >
         <Input type="text" />
@@ -200,7 +200,7 @@ function PortfolioAddEditForm({
 }
 
 PortfolioAddEditForm.defaultProps = {
-  portfolioId: null
+  portfolioId: null,
 };
 
 export default PortfolioAddEditForm;

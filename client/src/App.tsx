@@ -35,8 +35,8 @@ function App() {
         options={{
           headers: {
             Accept: "application/json",
-            Authorization: `Token ${localStorage.getItem("token")}`
-          }
+            Authorization: `Token ${localStorage.getItem("token")}`,
+          },
         }}
       >
         <SettingsLoader>
@@ -47,7 +47,7 @@ function App() {
                 zIndex: 1,
                 width: "100%",
                 backgroundColor: "#fff",
-                padding: "0 20px"
+                padding: "0 20px",
               }}
             >
               <Row justify="space-between">

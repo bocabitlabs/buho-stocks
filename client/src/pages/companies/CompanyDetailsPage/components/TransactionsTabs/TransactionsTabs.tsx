@@ -18,7 +18,7 @@ export default function TransactionsTabs(): ReactElement {
       onChange={(activeKey: string) => {
         navigate({
           pathname: window.location.pathname,
-          search: `?tab=${activeKey}`
+          search: `?tab=${activeKey}`,
         });
       }}
     >

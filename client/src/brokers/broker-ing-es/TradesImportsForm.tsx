@@ -10,7 +10,7 @@ import {
   Select,
   Typography,
   Checkbox,
-  InputNumber
+  InputNumber,
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
@@ -18,7 +18,7 @@ import useFetch from "use-http";
 import {
   formatINGRowForShares,
   // getCommission,
-  getCompanyFromTransaction
+  getCompanyFromTransaction,
 } from "./utils";
 import { ICompany } from "types/company";
 import { ICurrency } from "types/currency";
@@ -32,7 +32,7 @@ interface IProps {
 
 export default function TradesImportForm({
   inputData,
-  portfolio
+  portfolio,
 }: IProps): ReactElement {
   const { t } = useTranslation();
   const [form] = Form.useForm();
@@ -44,31 +44,31 @@ export default function TradesImportForm({
     transactionDate: initialTransactionDate,
     count: initialCount,
     price,
-    transactionType
+    transactionType,
   } = formatINGRowForShares(inputData);
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
-    getCompanyFromTransaction(companyName, portfolio)
+    getCompanyFromTransaction(companyName, portfolio),
   );
   const [currencies, setCurrencies] = useState<ICurrency[]>([]);
   const {
     loading: sharesLoading,
     post: postSharesTransaction,
-    response: sharesResponse
+    response: sharesResponse,
   } = useFetch(`companies/${selectedCompany?.id}/shares`);
   const {
     loading: rightsLoading,
     post: postRightsTransaction,
-    response: rightsResponse
+    response: rightsResponse,
   } = useFetch(`companies/${selectedCompany?.id}/rights`);
   const {
     loading: currenciesLoading,
     get: getCurrencies,
-    response: currenciesResponse
+    response: currenciesResponse,
   } = useFetch(`currencies`);
   const {
     loading: exchangeRateLoading,
     get: getExchangeRate,
-    response: exchangeRateResponse
+    response: exchangeRateResponse,
   } = useFetch("exchange-rates");
 
   console.log(inputData);
@@ -89,7 +89,7 @@ export default function TradesImportForm({
     console.log("total", total);
     setSelectedCompany(company);
     form.setFieldsValue({
-      currency: company?.baseCurrency.code
+      currency: company?.baseCurrency.code,
     });
   };
 
@@ -100,19 +100,19 @@ export default function TradesImportForm({
       const newExchangeRate = await getExchangeRate(
         `${selectedCompany?.baseCurrency.code}/${
           portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`
+        }/${form.getFieldValue("transactionDate")}`,
       );
       if (exchangeRateResponse.ok) {
         console.log(newExchangeRate);
         form.setFieldsValue({
-          exchangeRate: newExchangeRate.exchangeRate
+          exchangeRate: newExchangeRate.exchangeRate,
         });
       } else {
         form.setFields([
           {
             name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"]
-          }
+            errors: ["Unable to fetch the exchange rates for the given date"],
+          },
         ]);
       }
     }
@@ -130,7 +130,7 @@ export default function TradesImportForm({
       company,
       transactionDate,
       grossPricePerShare,
-      isRightsTransaction
+      isRightsTransaction,
     } = values;
 
     let exchangeRateValue = 1;
@@ -153,11 +153,11 @@ export default function TradesImportForm({
       transactionDate,
       color: "#0066cc",
       notes: `Imported from ING-es CSV on ${moment(new Date()).format(
-        "YYYY-MM-DD HH:mm:ss"
+        "YYYY-MM-DD HH:mm:ss",
       )}`,
       company,
       portfolio: portfolio.id,
-      type: "BUY"
+      type: "BUY",
     };
     if (isRightsTransaction) {
       await postRightsTransaction("/", transaction);
@@ -177,26 +177,26 @@ export default function TradesImportForm({
     if (selectedCompany && portfolio) {
       if (selectedCompany?.baseCurrency.code === "EUR") {
         form.setFieldsValue({
-          commissionInCompanyCurrency: total - price * initialCount
+          commissionInCompanyCurrency: total - price * initialCount,
         });
       } else {
         const newExchangeRate = await getExchangeRate(
           `EUR/${selectedCompany?.baseCurrency.code}/${form.getFieldValue(
-            "transactionDate"
-          )}`
+            "transactionDate",
+          )}`,
         );
         if (exchangeRateResponse.ok) {
           console.log(newExchangeRate);
           form.setFieldsValue({
             commissionInCompanyCurrency:
-              newExchangeRate.exchangeRate * total - price * initialCount
+              newExchangeRate.exchangeRate * total - price * initialCount,
           });
         } else {
           form.setFields([
             {
               name: "commissionInCompanyCurrency",
-              errors: ["Unable to fetch the exchange rates for the given date"]
-            }
+              errors: ["Unable to fetch the exchange rates for the given date"],
+            },
           ]);
         }
       }
@@ -215,7 +215,7 @@ export default function TradesImportForm({
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
         currency: selectedCompany ? selectedCompany.baseCurrency.code : "",
         transactionType,
-        company: selectedCompany?.name
+        company: selectedCompany?.name,
       }}
     >
       <Row>
@@ -229,7 +229,7 @@ export default function TradesImportForm({
             name="count"
             label={t("Count")}
             rules={[
-              { required: true, message: t("Please input the shares count") }
+              { required: true, message: t("Please input the shares count") },
             ]}
             help={`Received: ${inputData[6]}`}
           >
@@ -268,8 +268,8 @@ export default function TradesImportForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the exchange rate")
-              }
+                message: t("Please input the exchange rate"),
+              },
             ]}
           >
             <InputNumber
@@ -301,7 +301,7 @@ export default function TradesImportForm({
             name="currency"
             label={t("Currency")}
             rules={[
-              { required: true, message: t("Please input the currency") }
+              { required: true, message: t("Please input the currency") },
             ]}
           >
             <Select placeholder={t("Currency")} loading={currenciesLoading}>
@@ -328,7 +328,7 @@ export default function TradesImportForm({
             name="transactionType"
             label={t("Type")}
             rules={[
-              { required: true, message: "Please input the transaction type" }
+              { required: true, message: "Please input the transaction type" },
             ]}
           >
             <Select placeholder={t("Type")}>
@@ -351,8 +351,8 @@ export default function TradesImportForm({
                 rules={[
                   {
                     required: true,
-                    message: t("Please input the exchange rate")
-                  }
+                    message: t("Please input the exchange rate"),
+                  },
                 ]}
               >
                 <InputNumber

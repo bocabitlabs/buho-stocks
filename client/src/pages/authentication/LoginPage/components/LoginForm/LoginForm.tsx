@@ -30,7 +30,7 @@ export function LoginForm() {
 
     const data = {
       username: "pepe",
-      password: "ABCD12345!"
+      password: "ABCD12345!",
     };
     console.log(data);
     const username = values.username ? values.username : data.username;
@@ -58,7 +58,7 @@ export function LoginForm() {
           name="username"
           label={t("Username")}
           rules={[
-            { required: true, message: t("Please input your Username!") }
+            { required: true, message: t("Please input your Username!") },
           ]}
         >
           <Input

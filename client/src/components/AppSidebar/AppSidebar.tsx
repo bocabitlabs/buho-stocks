@@ -7,7 +7,7 @@ import {
   DollarCircleOutlined,
   HomeOutlined,
   ImportOutlined,
-  SettingOutlined
+  SettingOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import getRoute, { HOME_ROUTE } from "routes";
@@ -24,34 +24,34 @@ const navLinks: RoutePathProps[] = [
     key: "0",
     path: getRoute(HOME_ROUTE),
     text: "Home",
-    icon: <HomeOutlined />
+    icon: <HomeOutlined />,
   },
   { key: "2", path: "/app/markets", text: "Markets", icon: <BankOutlined /> },
   {
     key: "3",
     path: "/app/currencies",
     text: "Currencies",
-    icon: <DollarCircleOutlined />
+    icon: <DollarCircleOutlined />,
   },
   {
     key: "4",
     path: "/app/sectors",
     text: "Sectors",
-    icon: <ClusterOutlined />
+    icon: <ClusterOutlined />,
   },
   {
     key: "5",
     path: "/app/import-export",
     text: "Import & Export",
-    icon: <ImportOutlined />
+    icon: <ImportOutlined />,
   },
 
   {
     key: "6",
     path: "/app/settings",
     text: "Settings",
-    icon: <SettingOutlined />
-  }
+    icon: <SettingOutlined />,
+  },
 ];
 
 export default function AppSidebar(): ReactElement {
@@ -60,7 +60,7 @@ export default function AppSidebar(): ReactElement {
   const navigate = useNavigate();
 
   const [selectedKey, setSelectedKey] = useState(
-    navLinks.find((item) => location.pathname.startsWith(item.path))?.key || ""
+    navLinks.find((item) => location.pathname.startsWith(item.path))?.key || "",
   );
 
   const onClickMenu = (item: any) => {

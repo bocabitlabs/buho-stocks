@@ -2,7 +2,7 @@ export enum IAlertMessageType {
   Success = "success",
   Info = "info",
   Warning = "warning",
-  Error = "error"
+  Error = "error",
 }
 
 export interface IAlertMessageFormFields {

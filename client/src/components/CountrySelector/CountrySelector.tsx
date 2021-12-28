@@ -11,7 +11,7 @@ interface Props {
 
 export default function CountrySelector({
   handleChange,
-  initialValue
+  initialValue,
 }: Props): ReactElement {
   const { t } = useTranslation();
 
@@ -54,5 +54,5 @@ export default function CountrySelector({
 }
 
 CountrySelector.defaultProps = {
-  initialValue: ""
+  initialValue: "",
 };

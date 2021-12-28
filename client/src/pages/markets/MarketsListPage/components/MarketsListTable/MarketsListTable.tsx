@@ -43,35 +43,35 @@ export default function MarketsListTable() {
         <svg height="20" width="20">
           <circle cx="10" cy="10" r="10" fill={text} />
         </svg>
-      )
+      ),
     },
     {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
       render: (text: string) => <strong>{text}</strong>,
-      sorter: (a: IMarket, b: IMarket) => a.name.localeCompare(b.name)
+      sorter: (a: IMarket, b: IMarket) => a.name.localeCompare(b.name),
     },
     {
       title: t("Description"),
       dataIndex: "description",
       key: "description",
       sorter: (a: IMarket, b: IMarket) =>
-        a.description.localeCompare(b.description)
+        a.description.localeCompare(b.description),
     },
     {
       title: t("Region"),
       dataIndex: "region",
       key: "region",
       render: (text: string) => <CountryFlag code={text} />,
-      sorter: (a: IMarket, b: IMarket) => a.region.localeCompare(b.region)
+      sorter: (a: IMarket, b: IMarket) => a.region.localeCompare(b.region),
     },
     {
       title: t("Opening time"),
       dataIndex: "openTime",
       key: "openTime",
       sorter: (a: IMarket, b: IMarket) => a.openTime.localeCompare(b.openTime),
-      render: (text: string) => moment(text, "HH:mm").format("HH:mm")
+      render: (text: string) => moment(text, "HH:mm").format("HH:mm"),
     },
     {
       title: t("Closing time"),
@@ -79,7 +79,7 @@ export default function MarketsListTable() {
       key: "closeTime",
       sorter: (a: IMarket, b: IMarket) =>
         a.closeTime.localeCompare(b.closeTime),
-      render: (text: string) => moment(text, "HH:mm").format("HH:mm")
+      render: (text: string) => moment(text, "HH:mm").format("HH:mm"),
     },
     {
       title: t("Action"),
@@ -99,8 +99,8 @@ export default function MarketsListTable() {
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const getData = () => {
@@ -112,7 +112,7 @@ export default function MarketsListTable() {
       region: market.region,
       openTime: market.openTime,
       closeTime: market.closeTime,
-      color: market.color
+      color: market.color,
     }));
   };
 

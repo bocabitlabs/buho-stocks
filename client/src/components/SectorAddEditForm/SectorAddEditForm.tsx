@@ -14,7 +14,7 @@ interface AddEditFormProps {
 
 function SectorAddEditForm({
   sectorId,
-  isSuper
+  isSuper,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
@@ -28,7 +28,7 @@ function SectorAddEditForm({
     post: postSuperSector,
     put: putSuperSector,
     response: superSectorsResponse,
-    cache: superSectorCache
+    cache: superSectorCache,
   } = useFetch("super/");
   const navigate = useNavigate();
 
@@ -42,7 +42,7 @@ function SectorAddEditForm({
           setSector(result);
           setColor(result.color);
           form.setFieldsValue({
-            name: result.name
+            name: result.name,
           });
         }
       } else {
@@ -53,7 +53,7 @@ function SectorAddEditForm({
           form.setFieldsValue({
             name: result.name,
             isSuperSector: result.isSuperSector,
-            superSectorId: result.superSector?.id
+            superSectorId: result.superSector?.id,
           });
         }
       }
@@ -76,7 +76,7 @@ function SectorAddEditForm({
     form,
     getSuperSectors,
     superSectorsResponse,
-    isSuper
+    isSuper,
   ]);
 
   const handleSuperSectorSubmit = async (newSector: any) => {
@@ -122,7 +122,7 @@ function SectorAddEditForm({
       name,
       color,
       superSector: superSectorId,
-      isSuperSector
+      isSuperSector,
     };
 
     if (isSuper) {
@@ -148,14 +148,14 @@ function SectorAddEditForm({
       initialValues={{
         name: sectorId ? sector?.name : "",
         isSuperSector: sectorId ? sector?.isSuperSector : "",
-        superSectorId: sectorId ? sector?.superSector?.id : ""
+        superSectorId: sectorId ? sector?.superSector?.id : "",
       }}
     >
       <Form.Item
         name="name"
         label={t("Name")}
         rules={[
-          { required: true, message: t("Please input the name of the sector") }
+          { required: true, message: t("Please input the name of the sector") },
         ]}
       >
         <Input type="text" placeholder="REIT, Banks, Semiconductors,..." />
@@ -221,7 +221,7 @@ function SectorAddEditForm({
 }
 SectorAddEditForm.defaultProps = {
   sectorId: null,
-  isSuper: false
+  isSuper: false,
 };
 
 export default SectorAddEditForm;

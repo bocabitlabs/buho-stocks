@@ -13,7 +13,7 @@ export const settingsDefaultValue: SettingsContextType = {
   settings: null,
   get: () => null,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update: (settingsId: number, newValues: ISettingsFormFields) => undefined
+  update: (settingsId: number, newValues: ISettingsFormFields) => undefined,
 };
 
 export const SettingsContext =

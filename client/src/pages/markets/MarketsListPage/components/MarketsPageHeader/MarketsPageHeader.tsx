@@ -24,7 +24,7 @@ function MarketsPageHeader({ children }: Props) {
           }}
         >
           {t("Add market")}
-        </Button>
+        </Button>,
       ]}
     >
       {children}

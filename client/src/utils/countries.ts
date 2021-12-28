@@ -2,63 +2,63 @@ const countries: any = {
   ca: {
     key: "ca",
     name: "Canada",
-    code: "ca"
+    code: "ca",
   },
   cn: {
     key: "cn",
     name: "China",
-    code: "cn"
+    code: "cn",
   },
   fr: {
     key: "fr",
     name: "France",
-    code: "fr"
+    code: "fr",
   },
   de: {
     key: "de",
     name: "Germany",
-    code: "de"
+    code: "de",
   },
   eu: {
     key: "eu",
     name: "European Union",
-    code: "eu"
+    code: "eu",
   },
   it: {
     key: "it",
     name: "Italy",
-    code: "it"
+    code: "it",
   },
   jp: {
     key: "jp",
     name: "Japan",
-    code: "jp"
+    code: "jp",
   },
   nl: {
     key: "nl",
     name: "Netherlands",
-    code: "nl"
+    code: "nl",
   },
   es: {
     key: "es",
     name: "Spain",
-    code: "es"
+    code: "es",
   },
   ch: {
     key: "ch",
     name: "Switzerland",
-    code: "ch"
+    code: "ch",
   },
   gb: {
     key: "gb",
     name: "United Kingdom",
-    code: "gb"
+    code: "gb",
   },
   us: {
     key: "us",
     name: "United States",
-    code: "us"
-  }
+    code: "us",
+  },
 };
 
 export default countries;

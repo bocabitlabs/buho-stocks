@@ -16,7 +16,7 @@ function CompanyEditPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
-  children
+  children,
 }: Props) {
   const { t } = useTranslation();
 
@@ -33,7 +33,7 @@ function CompanyEditPageHeader({
       className="site-page-header"
       title={`${companyName} - ${companyTicker} - (#${companyId})`}
       tags={[
-        <CountryFlag code={companyCountryCode} key={companyCountryCode} />
+        <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
       ]}
       extra={[
         <Popconfirm
@@ -46,7 +46,7 @@ function CompanyEditPageHeader({
           <Button icon={<DeleteOutlined />} danger>
             {t("Delete")}
           </Button>
-        </Popconfirm>
+        </Popconfirm>,
       ]}
     >
       {children}

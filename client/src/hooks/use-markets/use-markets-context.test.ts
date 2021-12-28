@@ -8,7 +8,7 @@ const marketFormProps: IMarketFormFields = {
   region: "USA",
   openTime: "14:00",
   closeTime: "20:00",
-  description: "description"
+  description: "description",
 };
 
 const returnAllExample: IMarket[] = [
@@ -21,7 +21,7 @@ const returnAllExample: IMarket[] = [
     closeTime: "20:00",
     description: "description",
     dateCreated: "2020-01-01",
-    lastUpdated: "2020-01-01"
+    lastUpdated: "2020-01-01",
   },
   {
     id: 2,
@@ -32,8 +32,8 @@ const returnAllExample: IMarket[] = [
     closeTime: "20:00",
     description: "description",
     dateCreated: "2020-01-01",
-    lastUpdated: "2020-01-01"
-  }
+    lastUpdated: "2020-01-01",
+  },
 ];
 
 jest.mock("react-i18next", () => ({
@@ -43,10 +43,10 @@ jest.mock("react-i18next", () => ({
       t: (str: string) => str,
       i18n: {
         // eslint-disable-next-line no-promise-executor-return
-        changeLanguage: () => new Promise(() => ({}))
-      }
+        changeLanguage: () => new Promise(() => ({})),
+      },
     };
-  }
+  },
 }));
 
 const mockedGetValue = jest.fn();
@@ -59,14 +59,14 @@ jest.mock("hooks/use-api/use-api-hook", () => ({
     get: async () => mockedGetValue,
     post: mockedPostValue,
     put: mockedPutValue,
-    delete: mockedDeleteValue
-  })
+    delete: mockedDeleteValue,
+  }),
 }));
 
 jest.mock("react-router", () => ({
   useHistory: () => ({
-    push: jest.fn()
-  })
+    push: jest.fn(),
+  }),
 }));
 
 describe("useMarketsContext tests", () => {

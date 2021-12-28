@@ -24,7 +24,7 @@ function PortfoliosPageHeader({ children }: Props) {
           }}
         >
           {t("Add portfolio")}
-        </Button>
+        </Button>,
       ]}
     >
       {children}

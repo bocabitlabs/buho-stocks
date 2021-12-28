@@ -25,7 +25,7 @@ function SectorsPageHeader({ children }: Props) {
           }}
         >
           {t("Add sector")}
-        </Button>
+        </Button>,
       ]}
     >
       {children}

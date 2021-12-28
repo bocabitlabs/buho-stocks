@@ -46,26 +46,26 @@ export default function SuperSectorsTable() {
         <svg height="20" width="20">
           <circle cx="10" cy="10" r="10" fill={text} />
         </svg>
-      )
+      ),
     },
     {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
       render: (text: string) => <strong>{text}</strong>,
-      sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name)
+      sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name),
     },
     {
       title: t("Super sector"),
       dataIndex: "superSector",
       key: "superSector",
-      render: (text: string) => text
+      render: (text: string) => text,
     },
     {
       title: t("Is super sector"),
       dataIndex: "isSuperSector",
       key: "isSuperSector",
-      render: (text: string) => text
+      render: (text: string) => text,
     },
     {
       title: t("Action"),
@@ -85,8 +85,8 @@ export default function SuperSectorsTable() {
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
-      )
-    }
+      ),
+    },
   ];
 
   const getData = () => {
@@ -96,7 +96,7 @@ export default function SuperSectorsTable() {
       name: element.name,
       color: element.color,
       isSuperSector: element.isSuperSector,
-      superSector: element.superSector
+      superSector: element.superSector,
     }));
   };
 

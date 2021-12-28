@@ -10,7 +10,7 @@ interface IProps {
 
 export default function ImportExportSelector({
   action,
-  setAction
+  setAction,
 }: IProps): ReactElement {
   const { t } = useTranslation();
   console.log(action);
