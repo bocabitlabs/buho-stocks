@@ -12,7 +12,7 @@ docker build . --tag buho-backend-docker
 ```
 
 ```bash
-docker run --publish 8000:8000 --name buho-backend buho-backend-docker
+docker run --publish 34800:34800 buho-stocks
 ```
 
 ```bash
