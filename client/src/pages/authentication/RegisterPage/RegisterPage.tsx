@@ -3,6 +3,7 @@ import { Navigate } from "react-router-dom";
 import { Col, Layout, Row } from "antd";
 import { Content, Footer } from "antd/lib/layout/layout";
 import RegisterForm from "./components/RegisterForm";
+import AlertMessages from "components/AlertMessages/AlertMessages";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import getRoute, { HOME_ROUTE } from "routes";
 
@@ -19,6 +20,7 @@ export default function RegisterPage(): ReactElement {
         <Col span={12} offset={6}>
           <Content style={{ padding: "40px 50px" }}>
             <div className="site-layout-content">
+              <AlertMessages />
               <RegisterForm />
             </div>
           </Content>

@@ -11,15 +11,12 @@ import Breadcrumbs from "breadcrumbs";
 import AlertMessages from "components/AlertMessages/AlertMessages";
 import AppSidebar from "components/AppSidebar/AppSidebar";
 import LogoutButton from "components/LogoutButton/LogoutButton";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { SettingsContext } from "contexts/settings";
-import { useAlertMessagesContext } from "hooks/use-alert-messages/use-alert-messages-context";
 import { useSettingsContext } from "hooks/use-settings/use-settings-context";
 import SettingsLoader from "SettingsLoader";
 
 function App() {
   const settingsContext = useSettingsContext();
-  const messagesContext = useAlertMessagesContext();
 
   return (
     <SettingsContext.Provider value={settingsContext}>
@@ -76,15 +73,13 @@ function App() {
               <Col span={17}>
                 <Content className="site-layout">
                   <Breadcrumbs />
-                  <AlertMessagesContext.Provider value={messagesContext}>
-                    <AlertMessages />
-                    <div
-                      className="site-layout-background"
-                      style={{ minHeight: 380 }}
-                    >
-                      <Outlet />
-                    </div>
-                  </AlertMessagesContext.Provider>
+                  <AlertMessages />
+                  <div
+                    className="site-layout-background"
+                    style={{ minHeight: 380 }}
+                  >
+                    <Outlet />
+                  </div>
                 </Content>
               </Col>
             </Row>

@@ -1,19 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Form, Input, PageHeader } from "antd";
 import useFetch from "use-http";
 import { IRegistrationData } from "api/api-client";
+import { AlertMessagesContext } from "contexts/alert-messages";
 
 function RegisterForm() {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
-
   const { post, response } = useFetch("/auth");
+  const { createError, createSuccess } = useContext(AlertMessagesContext);
 
   const onFinish = async (values: any) => {
-    console.log("Received values of form: ", values);
     const devData = {
       username: "pepe",
       password: "ABCD12345!",
@@ -32,8 +32,10 @@ function RegisterForm() {
     };
     await post("register/", data);
     if (response.ok) {
+      createSuccess(t("Registration successful"));
       navigate("/app-login");
     } else {
+      createError(t("Registration failed"));
       console.error("Unable to register");
     }
   };
