@@ -22,21 +22,20 @@ function SectorAddEditForm({
   const { createSuccess, createError } = useContext(AlertMessagesContext);
   const [sector, setSector] = useState<ISector | null>(null);
   const [superSectors, setSuperSectors] = useState<ISector[] | []>([]);
-  const { loading, response, get, post, put, cache } = useFetch();
+  const { loading, response, get, post, put, cache } = useFetch("sectors");
   const {
     get: getSuperSectors,
     post: postSuperSector,
     put: putSuperSector,
     response: superSectorsResponse,
     cache: superSectorCache,
-  } = useFetch("super/");
+  } = useFetch("sectors/super");
   const navigate = useNavigate();
 
   useEffect(() => {
     async function fetchSector() {
       let result;
       if (isSuper) {
-        console.log("Getting super sector");
         result = await getSuperSectors(`${sectorId}/`);
         if (superSectorsResponse.ok) {
           setSector(result);

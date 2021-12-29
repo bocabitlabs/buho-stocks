@@ -13,7 +13,7 @@ export default function SectorsTable() {
 
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
-  const { loading, response, get, del: deleteSector } = useFetch();
+  const { loading, response, get, del: deleteSector } = useFetch("sectors");
 
   const confirmDelete = async (recordId: number) => {
     console.log(recordId);

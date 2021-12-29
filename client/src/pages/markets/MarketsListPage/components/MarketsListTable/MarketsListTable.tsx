@@ -12,7 +12,7 @@ import { IMarket } from "types/market";
 
 export default function MarketsListTable() {
   const [markets, setMarkets] = useState([]);
-  const { loading, response, get, del: deleteMarket } = useFetch("markets/");
+  const { loading, response, get, del: deleteMarket } = useFetch("markets");
   const { t } = useTranslation();
 
   const confirmDelete = async (recordId: number) => {

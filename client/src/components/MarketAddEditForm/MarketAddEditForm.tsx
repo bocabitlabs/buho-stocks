@@ -24,7 +24,7 @@ function MarketAddEditForm({
   const navigate = useNavigate();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
   const [market, setMarket] = useState<IMarket | null>(null);
-  const { response, get, post, put } = useFetch("markets/");
+  const { response, get, post, put } = useFetch("markets");
 
   useEffect(() => {
     async function fetchMarket() {
