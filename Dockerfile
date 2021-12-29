@@ -38,6 +38,7 @@ COPY ./client /usr/src/client
 RUN yarn
 
 RUN yarn build
+RUN rm -rf /usr/src/client/node_modules/
 RUN mkdir /app/frontend/
 RUN mv ./build/* /app/frontend/
 
