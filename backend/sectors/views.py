@@ -48,7 +48,7 @@ class SectorListAPIView(APIView):
             "super_sector": request.data.get("super_sector"),
         }
         print(data)
-        serializer = SectorSerializer(data=data)
+        serializer = SectorSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -83,7 +83,7 @@ class SectorDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = SectorSerializerGet(todo_instance)
+        serializer = SectorSerializerGet(todo_instance, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
@@ -103,7 +103,7 @@ class SectorDetailAPIView(APIView):
             "color": request.data.get("color"),
             "super_sector": request.data.get("super_sector"),
         }
-        serializer = SectorSerializer(instance=todo_instance, data=data, partial=True)
+        serializer = SectorSerializer(instance=todo_instance, data=data, partial=True, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -140,7 +140,7 @@ class SuperSectorListAPIView(APIView):
         List all the market items for given requested user
         """
         sectors = SuperSector.objects.filter(user=request.user.id)
-        serializer = SuperSectorSerializer(sectors, many=True)
+        serializer = SuperSectorSerializer(sectors, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
@@ -153,7 +153,7 @@ class SuperSectorListAPIView(APIView):
             "name": request.data.get("name"),
             "color": request.data.get("color"),
         }
-        serializer = SuperSectorSerializer(data=data)
+        serializer = SuperSectorSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             print("Serializer is valid")
             serializer.save(user=self.request.user)
@@ -192,7 +192,7 @@ class SuperSectorDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = SuperSectorSerializer(todo_instance)
+        serializer = SuperSectorSerializer(todo_instance, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
@@ -209,7 +209,7 @@ class SuperSectorDetailAPIView(APIView):
             )
         data = {"name": request.data.get("name"), "color": request.data.get("color")}
         serializer = SuperSectorSerializer(
-            instance=todo_instance, data=data, partial=True
+            instance=todo_instance, data=data, partial=True, context={"request": request}
         )
         if serializer.is_valid():
             serializer.save()
