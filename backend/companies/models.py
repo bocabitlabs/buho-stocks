@@ -37,7 +37,7 @@ class Company(models.Model):
     portfolio = models.ForeignKey(
         Portfolio, on_delete=models.CASCADE, related_name="companies"
     )
-    logo = models.ImageField(upload_to = user_directory_path, blank=True)
+    logo = models.ImageField(upload_to = user_directory_path, blank=True, null=True)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
