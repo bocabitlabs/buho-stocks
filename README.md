@@ -2,17 +2,14 @@
 
 [![Django CI](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg)](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml) [![React CI](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg)](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml)
 
+
+## User
+
+
+
 ```bash
 python3 -m venv ./env
 source ./env/bin/activate
-```
-
-```bash
-docker build . --tag buho-backend-docker
-```
-
-```bash
-docker run --publish 34800:34800 buho-stocks
 ```
 
 ```bash
