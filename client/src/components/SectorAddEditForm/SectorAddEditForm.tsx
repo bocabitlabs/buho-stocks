@@ -58,16 +58,17 @@ function SectorAddEditForm({
       }
     }
     async function fetchSuperSectors() {
-      const result = await getSuperSectors();
-      if (response.ok) {
+      const result = await getSuperSectors("/");
+      if (superSectorsResponse.ok) {
         setSuperSectors(result);
+        console.log("Super sectors: ", result);
       }
     }
 
     if (sectorId) {
       fetchSector();
-      fetchSuperSectors();
     }
+    fetchSuperSectors();
   }, [
     sectorId,
     get,
@@ -124,7 +125,7 @@ function SectorAddEditForm({
       isSuperSector,
     };
 
-    if (isSuper) {
+    if (isSuperSector || isSuper) {
       await handleSuperSectorSubmit(newSector);
     } else {
       await handleSectorSubmit(newSector);

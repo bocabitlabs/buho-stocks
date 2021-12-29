@@ -96,7 +96,7 @@ export default function SectorsTable() {
       name: element.name,
       color: element.color,
       isSuperSector: element.isSuperSector,
-      superSector: element.superSector,
+      superSector: element.superSector?.name,
     }));
   };
 
