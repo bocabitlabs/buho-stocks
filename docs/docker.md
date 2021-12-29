@@ -18,3 +18,11 @@ docker login docker.io --username bocabitlabs
 ```
 docker push bocabitlabs/buho-stocks:0.0.1-alpha
 ```
+
+## Problems
+
+### No space left on device
+
+```
+docker system prune
+```

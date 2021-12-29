@@ -28,7 +28,7 @@ export default function MarketsListTable() {
 
   useEffect(() => {
     async function loadInitialMarkets() {
-      const initialTodos = await get();
+      const initialTodos = await get("/");
       if (response.ok) setMarkets(initialTodos);
     }
     loadInitialMarkets();

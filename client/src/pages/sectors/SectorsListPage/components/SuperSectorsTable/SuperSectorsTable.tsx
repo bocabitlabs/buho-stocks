@@ -36,7 +36,7 @@ export default function SuperSectorsTable() {
 
   useEffect(() => {
     async function loadInitialSectors() {
-      const initialTodos = await get();
+      const initialTodos = await get("/");
       if (response.ok) setSectors(initialTodos);
     }
     loadInitialSectors();
