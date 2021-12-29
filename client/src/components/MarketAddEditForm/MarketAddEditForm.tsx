@@ -28,7 +28,7 @@ function MarketAddEditForm({
 
   useEffect(() => {
     async function fetchMarket() {
-      const result = await get(marketId);
+      const result = await get(`${marketId}/`);
       if (response.ok) {
         setMarket(result);
         setColor(result.color);
@@ -68,7 +68,7 @@ function MarketAddEditForm({
         navigate(-1);
       }
     } else {
-      await post(newMarket);
+      await post("/", newMarket);
       if (!response.ok) {
         createError(t("Cannot create market"));
       } else {

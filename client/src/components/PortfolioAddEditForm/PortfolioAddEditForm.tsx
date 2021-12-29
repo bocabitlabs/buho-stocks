@@ -83,7 +83,7 @@ function PortfolioAddEditForm({
         navigate(-1);
       }
     } else {
-      await post(newPortfolio);
+      await post("/", newPortfolio);
       if (!response.ok) {
         createError(t("Cannot create portfolio"));
       } else {

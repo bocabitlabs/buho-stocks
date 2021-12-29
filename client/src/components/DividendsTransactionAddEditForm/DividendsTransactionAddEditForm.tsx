@@ -125,7 +125,7 @@ export default function DividendsTransactionAddEditForm({
         navigate(-1);
       }
     } else {
-      await post(newTransactionValues);
+      await post("/", newTransactionValues);
       if (!response.ok) {
         createError(t("Cannot create transaction"));
       } else {

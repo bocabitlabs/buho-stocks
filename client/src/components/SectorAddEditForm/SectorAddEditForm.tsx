@@ -85,7 +85,7 @@ function SectorAddEditForm({
       await putSuperSector(`${id}/`, newSector);
     } else {
       actionType = "create";
-      await postSuperSector(newSector);
+      await postSuperSector("/", newSector);
     }
     if (!superSectorsResponse.ok) {
       createError(`Cannot ${actionType} super sector`);
@@ -103,7 +103,7 @@ function SectorAddEditForm({
       const id: number = +sectorId;
       await put(`${id}/`, newSector);
     } else {
-      await post(newSector);
+      await post("/", newSector);
       actionType = "create";
     }
     if (!response.ok) {
