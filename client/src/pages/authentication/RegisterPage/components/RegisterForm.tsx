@@ -10,7 +10,7 @@ function RegisterForm() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { post, response } = useFetch("/api/auth");
+  const { post, response } = useFetch("/auth");
 
   const onFinish = async (values: any) => {
     console.log("Received values of form: ", values);

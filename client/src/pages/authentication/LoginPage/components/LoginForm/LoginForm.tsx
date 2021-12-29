@@ -15,7 +15,7 @@ export function LoginForm() {
   const { state: authState } = useContext(AuthContext);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
-  const { post, response } = useFetch("/api/auth");
+  const { post, response } = useFetch("/auth");
 
   const from = (locationState as LocationState)?.from?.pathname || "/app";
 
