@@ -31,11 +31,11 @@ export default function ImportExportPage(): ReactElement {
 
   const options1 = [
     { label: "Import", value: "import" },
-    { label: "Export", value: "export" },
+    { label: "Export", value: "export", disabled: true },
   ];
 
   const options2 = [
-    { label: "Import from App", value: "import-app" },
+    { label: "Import from App", value: "import-app", disabled: true },
     { label: "Import from Broker", value: "import-broker" },
   ];
 
