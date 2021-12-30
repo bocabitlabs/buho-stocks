@@ -20,7 +20,7 @@ function PortfoliosPageHeader({ children }: Props) {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => {
-            navigate("add");
+            navigate("/app/portfolios/add");
           }}
         >
           {t("Add portfolio")}
