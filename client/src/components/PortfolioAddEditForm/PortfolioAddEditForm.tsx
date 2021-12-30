@@ -18,28 +18,30 @@ function PortfolioAddEditForm({
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
-  const [country, setCountry] = useState("");
+  const [countryCode, setCountryCode] = useState("");
   const { createSuccess, createError } = useContext(AlertMessagesContext);
   const [portfolio, setPortfolio] = useState<IPortfolio | null>(null);
   const [currencies, setCurrencies] = useState<ICurrency[]>([]);
   const { t } = useTranslation();
-  const { get, post, put, response, loading, cache } = useFetch("portfolios/");
+  const { get, post, put, response, loading, cache } = useFetch("portfolios");
   const {
     get: getCurrencies,
     response: currenciesResponse,
     loading: currenciesLoading,
-  } = useFetch("currencies/");
+  } = useFetch("currencies");
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
-      const result = await get(portfolioId);
+      const result = await get(`${portfolioId}/`);
       if (response.ok) {
         setPortfolio(result);
+        setColor(result.color);
+        setCountryCode(result.countryCode);
       }
     };
     const fetchCurrencies = async () => {
-      const result = await getCurrencies();
+      const result = await getCurrencies("/");
       if (currenciesResponse.ok) {
         setCurrencies(result);
       }
@@ -51,15 +53,6 @@ function PortfolioAddEditForm({
     fetchCurrencies();
   }, [portfolioId, get, getCurrencies, response, currenciesResponse]);
 
-  useEffect(() => {
-    if (portfolioId) {
-      if (portfolio) {
-        setColor(portfolio.color);
-        setCountry(portfolio.countryCode);
-      }
-    }
-  }, [portfolioId, portfolio]);
-
   const handleSubmit = async (values: any) => {
     const { name, description, baseCurrencyId, hideClosedCompanies } = values;
     const newPortfolio = {
@@ -67,10 +60,9 @@ function PortfolioAddEditForm({
       color,
       description,
       baseCurrency: baseCurrencyId,
-      hideClosedCompanies,
-      countryCode: country,
+      hideClosedCompanies: !!hideClosedCompanies,
+      countryCode,
     };
-    console.log(newPortfolio);
 
     if (portfolioId) {
       const id: number = +portfolioId;
@@ -99,8 +91,7 @@ function PortfolioAddEditForm({
   };
 
   const handleCountryChange = (newValue: string) => {
-    console.debug(newValue);
-    setCountry(newValue);
+    setCountryCode(newValue);
   };
 
   if (loading) {
@@ -117,6 +108,7 @@ function PortfolioAddEditForm({
         description: portfolio?.description,
         hideClosedCompanies: portfolio?.hideClosedCompanies,
         baseCurrencyId: portfolio?.baseCurrency,
+        countryCode: portfolio?.countryCode,
       }}
     >
       <Form.Item
@@ -174,10 +166,10 @@ function PortfolioAddEditForm({
             ))}
         </Select>
       </Form.Item>
-      <Form.Item name="country" label={t("Country")}>
+      <Form.Item name="countryCode" label={t("Country")}>
         <CountrySelector
           handleChange={handleCountryChange}
-          initialValue={portfolio?.countryCode}
+          initialValue={countryCode}
         />
       </Form.Item>
       <Form.Item
