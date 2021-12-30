@@ -39,6 +39,7 @@ export default function Form(): ReactElement {
   }, [getPortfolios, responsePortfolios]);
 
   const importDividendsChange = (e: any) => {
+    setData([]);
     setDefaultImport(e.target.value);
   };
 
