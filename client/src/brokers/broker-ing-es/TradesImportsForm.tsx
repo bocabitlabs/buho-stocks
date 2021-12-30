@@ -71,9 +71,6 @@ export default function TradesImportForm({
     response: exchangeRateResponse,
   } = useFetch("exchange-rates");
 
-  console.log(inputData);
-  console.log(portfolio);
-
   useEffect(() => {
     const fetchCurrencies = async () => {
       const results = await getCurrencies();

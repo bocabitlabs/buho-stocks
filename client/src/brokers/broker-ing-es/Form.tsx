@@ -10,7 +10,6 @@ import { IPortfolio } from "types/portfolio";
 
 export default function Form(): ReactElement {
   const [data, setData] = useState([]);
-  const [uploaded, setUploaded] = useState(false);
   const [defaultImport, setDefaultImport] = useState("shares");
   const [portfolios, setPortfolios] = useState<IPortfolio[]>([]);
   const {
@@ -47,11 +46,12 @@ export default function Form(): ReactElement {
     const portfolio = portfolios.find((p) => p.id === +value);
     if (portfolio) {
       setSelectedPortfolio(portfolio);
+      setData([]);
     }
   };
 
   const handleSharesFileLoad = (fileData: any) => {
-    setUploaded(true);
+    setData([]);
     const dateRegex =
       /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
 
@@ -65,7 +65,7 @@ export default function Form(): ReactElement {
   };
 
   const handleDividendsFileLoad = (fileData: any) => {
-    console.debug("handleDividendsFileLoad...");
+    setData([]);
     const dateRegex =
       /^(0?[1-9]|[12][0-9]|3[01])[/-](0?[1-9]|1[012])[/-]\d{4}$/;
 
@@ -75,7 +75,6 @@ export default function Form(): ReactElement {
         dividendsTransactionTypes.includes(element.data[1])
       );
     });
-    setUploaded(true);
     setData(filteredData);
   };
 
@@ -129,7 +128,6 @@ export default function Form(): ReactElement {
               )}
             </CSVReader>
           )}
-          {JSON.stringify(uploaded)}
           {defaultImport === "shares" && data.length > 0 && selectedPortfolio && (
             <div>
               <Typography.Title level={4}>

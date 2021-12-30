@@ -18,7 +18,6 @@ export default function ImportExportPage(): ReactElement {
   };
 
   const onChange2 = (e: any) => {
-    console.log("radio4 checked", e.target.value);
     setImportAction(e.target.value);
   };
 

@@ -23,7 +23,6 @@ export default function Form(): ReactElement {
   };
 
   const [data, setData] = useState([]);
-  const [uploaded, setUploaded] = useState(false);
   const [defaultImport, setDefaultImport] = useState("shares");
   const [portfolios, setPortfolios] = useState<IPortfolio[]>([]);
   const {
@@ -60,11 +59,12 @@ export default function Form(): ReactElement {
     const portfolio = portfolios.find((p) => p.id === +value);
     if (portfolio) {
       setSelectedPortfolio(portfolio);
+      setData([]);
     }
   };
 
   const handleSharesFileLoad = (fileData: any) => {
-    setUploaded(true);
+    setData([]);
     const filteredData = fileData.filter((element: any) => {
       return (
         sharesTableData.headers.includes(element.data[0]) &&
@@ -76,8 +76,7 @@ export default function Form(): ReactElement {
   };
 
   const handleDividendsFileLoad = (fileData: any) => {
-    console.debug("handleDividendsFileLoad...");
-    setUploaded(true);
+    setData([]);
     const filteredData = fileData.filter((element: any) => {
       return (
         dividendsTableData.headers.includes(element.data[0]) &&
@@ -93,7 +92,6 @@ export default function Form(): ReactElement {
     });
     console.debug("commissionsArray: ", commissionsArray);
     const filteredDataWithCommissions = filteredData;
-    console.log(filteredDataWithCommissions);
     filteredData.forEach((element: any, index: number) => {
       const commissions = getCommissionsForElement(
         element.data[4],
@@ -162,7 +160,6 @@ export default function Form(): ReactElement {
               )}
             </CSVReader>
           )}
-          {JSON.stringify(uploaded)}
           {defaultImport === "shares" && data.length > 0 && selectedPortfolio && (
             <div>
               <Typography.Title level={4}>

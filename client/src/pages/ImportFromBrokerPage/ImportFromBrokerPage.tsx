@@ -17,7 +17,6 @@ export default function ImportFromBrokerPage(): ReactElement {
 
   return (
     <ImportFromBrokerPageHeader>
-      {JSON.stringify(broker)}
       <Suspense fallback={<Spin />}>
         <ImportForm />
       </Suspense>
