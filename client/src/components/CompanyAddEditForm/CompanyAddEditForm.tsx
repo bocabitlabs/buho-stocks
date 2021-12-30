@@ -172,7 +172,6 @@ function CompanyAddEditForm({
   };
 
   const handleCountryChange = (newValue: string) => {
-    console.debug(newValue);
     setCountryCode(newValue);
   };
 

@@ -24,7 +24,7 @@ function MarketAddEditForm({
   const navigate = useNavigate();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
   const [market, setMarket] = useState<IMarket | null>(null);
-  const { response, get, post, put } = useFetch("markets");
+  const { response, get, post, put, cache } = useFetch("markets");
 
   useEffect(() => {
     async function fetchMarket() {
@@ -64,6 +64,7 @@ function MarketAddEditForm({
       if (!response.ok) {
         createError(t("Cannot update market"));
       } else {
+        cache.clear();
         createSuccess(t("Market has been updated"));
         navigate(-1);
       }
@@ -72,6 +73,7 @@ function MarketAddEditForm({
       if (!response.ok) {
         createError(t("Cannot create market"));
       } else {
+        cache.clear();
         createSuccess(t("Market created"));
         navigate(-1);
       }
