@@ -30,7 +30,7 @@ class CompanySerializer(serializers.ModelSerializer):
     dividends_transactions = UserFilteredPrimaryKeyRelatedField(
         many=True, read_only=True
     )
-    logo = Base64ImageField(max_length=None, use_url=True)
+    logo = Base64ImageField(max_length=None, use_url=True, allow_null = True, required=False)
 
     class Meta:
         model = Company

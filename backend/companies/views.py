@@ -52,14 +52,15 @@ class CompaniesListAPIView(APIView):
             "country_code": request.data.get("country_code"),
             "broker": request.data.get("broker"),
             "url": request.data.get("url"),
-            "logo": request.data.get("logo"),
             "base_currency": request.data.get("base_currency"),
             "dividends_currency": request.data.get("dividends_currency"),
             "sector": request.data.get("sector"),
             "market": request.data.get("market"),
             "portfolio": portfolio_id,
         }
-        print(request.data.get("logo"))
+        if request.data.get("logo"):
+            data["logo"] = request.data.get("logo")
+
         serializer = CompanySerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save(user=self.request.user)
@@ -127,14 +128,14 @@ class CompanyDetailAPIView(APIView):
             "country_code": request.data.get("country_code"),
             "broker": request.data.get("broker"),
             "url": request.data.get("url"),
-            "logo": request.data.get("logo"),
             "currency": request.data.get("currency"),
             "dividends_currency": request.data.get("dividends_currency"),
             "sector": request.data.get("sector"),
             "market": request.data.get("market"),
             "portfolio": request.data.get("portfolio"),
         }
-        print(request.data.get("logo"))
+        if request.data.get("logo"):
+            data["logo"] = request.data.get("logo")
         serializer = CompanySerializer(
             instance=instance, data=data, partial=True, context={"request": request}
         )
