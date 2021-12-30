@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Table } from "antd";
+import { Avatar, Button, Popconfirm, Space, Table } from "antd";
 import useFetch from "use-http";
 import { ICompany } from "types/company";
 
@@ -30,13 +30,9 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
   const columns: any = [
     {
       title: "",
-      dataIndex: "color",
-      key: "color",
-      render: (text: string) => (
-        <svg height="20" width="20">
-          <circle cx="10" cy="10" r="10" fill={text} />
-        </svg>
-      ),
+      dataIndex: "logo",
+      key: "logo",
+      render: (text: string) => <Avatar src={text} />,
     },
     {
       title: t("Ticker"),
@@ -91,6 +87,7 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       description: element.description,
       color: element.color,
       portfolio: element.portfolio,
+      logo: element.logo,
     }));
   };
 
