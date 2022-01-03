@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
-import os
 from pathlib import Path
 from config import config
 
@@ -113,14 +112,13 @@ WSGI_APPLICATION = "buho_backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-if(config.DATABASE_TYPE == "sqlite"):
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": config.DATABASE_SQLITE_PATH,
-        }
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": config.DATABASE_SQLITE_PATH,
     }
-elif(config.DATABASE_TYPE == "mysql"):
+}
+if config.DATABASE_TYPE == "mysql":
     DATABASES = {
         "default": {
             'ENGINE': 'django.db.backends.mysql',

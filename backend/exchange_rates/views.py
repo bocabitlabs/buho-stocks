@@ -10,9 +10,9 @@ from drf_yasg.utils import swagger_auto_schema
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from forex_python.converter import RatesNotAvailableError
-
 from exchange_rates.utils import get_exchange_rates_from_api
+
+from forex_python.converter import RatesNotAvailableError
 
 
 class ExchangeRateListAPIView(APIView):
@@ -90,9 +90,10 @@ class ExchangeRateDetailAPIView(APIView):
                         {"res": "Exchange rate does not exists"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-            except RatesNotAvailableError as e:
+            except RatesNotAvailableError as error:
                 return Response(
-                    {"error": True, "message": str(e)}, status=status.HTTP_404_NOT_FOUND
+                    {"error": True, "message": str(error)},
+                    status=status.HTTP_404_NOT_FOUND,
                 )
         else:
             serializer = ExchangeRateSerializer(todo_instance)

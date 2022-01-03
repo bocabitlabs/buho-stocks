@@ -1,8 +1,8 @@
 import datetime
+import time
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
 from stock_prices.services.service_base import StockPriceServiceBase
-import time
 
 
 class StockPricesApi:
