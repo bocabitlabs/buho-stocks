@@ -129,11 +129,15 @@ export default function DividendsImportForm({
     if (formattedCommission < 0) {
       formattedCommission *= -1;
     }
+    const grossPriceInNumber = (+grossPricePerShare).toFixed(3);
+    const commissionInNumber = (+formattedCommission).toFixed(3);
+
+    console.log(typeof grossPriceInNumber);
     const transaction: IDividendsTransactionFormFields = {
       count,
-      grossPricePerShare: grossPricePerShare.toFixed(3),
+      grossPricePerShare: +grossPriceInNumber,
       grossPricePerShareCurrency: selectedCompany.baseCurrency.code,
-      totalCommission: formattedCommission.toFixed(3),
+      totalCommission: +commissionInNumber,
       totalCommissionCurrency: selectedCompany.baseCurrency.code,
       exchangeRate: exchangeRateValue,
       transactionDate,
