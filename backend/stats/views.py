@@ -111,6 +111,8 @@ class PortfolioStatsYearsAPIView(APIView):
             )
             first_year = transactions.order_by("transaction_date").first()
             print(f"first_year: {first_year}")
+            if not first_year:
+                return None
             return first_year.transaction_date.year
         except Company.DoesNotExist:
             print("No transactions found")
