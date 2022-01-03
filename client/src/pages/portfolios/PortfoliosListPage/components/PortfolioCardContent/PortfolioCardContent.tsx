@@ -1,7 +1,10 @@
-import React, { ReactElement } from "react";
-import { Card } from "antd";
+import React, { ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
+import { Card, Spin, Statistic, Typography } from "antd";
+import useFetch from "use-http";
+import CountryFlag from "components/CountryFlag/CountryFlag";
 import { IPortfolio } from "types/portfolio";
-// import { StringUtils } from "utils/string-utils";
 
 interface Props {
   portfolio: IPortfolio;
@@ -10,61 +13,61 @@ interface Props {
 export default function PortfolioCardContent({
   portfolio,
 }: Props): ReactElement | null {
-  // const { getById: getPortfolioById } = useContext(PortfoliosContext);
-  // const [currentPortfolio, setCurrentPortfolio] = useState<IPortfolio | null>(
-  //   null
-  // );
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
+  const [stats, setStats] = useState<any | null>(null);
+  const {
+    response,
+    get,
+    loading: loadingStats,
+  } = useFetch(`stats/portfolio/${portfolio.id}`);
 
-  // useEffect(() => {
-  //   const result = getPortfolioById(portfolioId);
-  //   setCurrentPortfolio(result);
-  // }, [portfolioId, getPortfolioById]);
-
-  // if (currentPortfolio === null) {
-  //   return null;
-  // }
-
-  // const portfolioValue = currentPortfolio.value.getPortfolioValue(true);
-  // const portfolioReturn = currentPortfolio.returns.getReturnWithDividends(true);
-  // const portfolioReturnPercentage =
-  //   currentPortfolio.returns.getReturnWithDividendsPercentage(true);
-
-  // let positive: BaseType = "success";
-  // if (portfolioReturn < 0) {
-  //   positive = "danger";
-  // }
-  // if (portfolioReturn === 0) {
-  //   positive = "secondary";
-  // }
-  // const formattedReturn = StringUtils.getAmountWithSymbol(
-  //   portfolioReturn,
-  //   2,
-  //   currentPortfolio.currencySymbol
-  // );
-  // const formattedReturnPercentage = StringUtils.getAmountWithSymbol(
-  //   portfolioReturnPercentage,
-  //   2,
-  //   "%"
-  // );
+  useEffect(() => {
+    async function loadInitialStats() {
+      const initialData = await get(`/all/`);
+      if (response.ok) {
+        setStats(initialData);
+      }
+    }
+    loadInitialStats();
+  }, [response.ok, get]);
 
   return (
     <Card
       title={portfolio.name}
       hoverable
-      // extra={<CountryFlag code={currentPortfolio.currencyCountryCode} />}
+      extra={<CountryFlag code={portfolio.baseCurrency.code} />}
     >
-      {/* {currentPortfolio.companies.length} {t("companies")} */}
-      {/* <Statistic
-        value={portfolioValue}
-        suffix={currentPortfolio.currencySymbol}
-        precision={2}
-      />
-      <Typography.Text type={positive}>{formattedReturn}</Typography.Text>{" "}
+      {portfolio.companies.length} {t("companies")}
+      {loadingStats ? (
+        <Spin />
+      ) : (
+        <Statistic
+          value={stats?.portfolioValue}
+          valueStyle={{
+            color: stats?.portfolioValueIsDown ? "#cf1322" : "",
+          }}
+          prefix={
+            stats?.portfolioValueIsDown ? (
+              <ArrowDownOutlined />
+            ) : (
+              <ArrowUpOutlined />
+            )
+          }
+          precision={2}
+          suffix={stats?.portfolioCurrency}
+        />
+      )}
+      <Typography.Text
+        type={stats?.returnWithDividends < 0 ? "danger" : "success"}
+      >
+        {stats?.returnWithDividends.toFixed(2)} {stats?.portfolioCurrency}
+      </Typography.Text>{" "}
       {" / "}
-      <Typography.Text type={positive}>
-        {formattedReturnPercentage}
-      </Typography.Text> */}
+      <Typography.Text
+        type={stats?.returnWithDividendsPercent < 0 ? "danger" : "success"}
+      >
+        {stats?.returnWithDividendsPercent.toFixed(2)}%
+      </Typography.Text>
     </Card>
   );
 }

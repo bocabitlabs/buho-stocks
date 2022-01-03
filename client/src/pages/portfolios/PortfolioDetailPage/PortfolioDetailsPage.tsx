@@ -4,6 +4,7 @@ import { Spin } from "antd";
 import useFetch from "use-http";
 import CompaniesList from "./components/CompaniesList/CompaniesList";
 import PortfolioDetailsPageHeader from "./components/PortfolioDetailsPageHeader/PortfolioDetailsPageHeader";
+import Stats from "./components/Stats/Stats";
 import { IPortfolio } from "types/portfolio";
 
 export default function PortfolioDetailsPage() {
@@ -27,6 +28,7 @@ export default function PortfolioDetailsPage() {
       portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
+      <Stats id={id} />
       <CompaniesList companies={portfolio ? portfolio.companies : []} />
     </PortfolioDetailsPageHeader>
   );

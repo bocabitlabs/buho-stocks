@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import { Spin } from "antd";
 import useFetch from "use-http";
 import CompanyDetailsPageHeader from "./components/CompanyDetailsPageHeader/CompanyDetailsPageHeader";
+import CompanyExtraInfo from "./components/CompanyExtraInfo/CompanyExtraInfo";
 import CompanyInfo from "./components/CompanyInfo/CompanyInfo";
+import Stats from "./components/Stats/Stats";
 import TransactionsTabs from "./components/TransactionsTabs/TransactionsTabs";
 import { ICompany } from "types/company";
 
@@ -32,10 +34,11 @@ export default function CompanyDetailsPage(): ReactElement {
       <CompanyInfo
         companySectorName={company.sector.name}
         companySuperSectorName={company.sector.superSector?.name}
-        companyDescription={company.description}
         companyCountryCode={company.countryCode}
       />
+      <Stats companyId={companyId} />
       <TransactionsTabs />
+      <CompanyExtraInfo companyDescription={company.description} />
     </CompanyDetailsPageHeader>
   );
 }

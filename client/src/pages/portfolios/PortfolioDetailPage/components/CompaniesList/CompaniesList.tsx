@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table } from "antd";
 import useFetch from "use-http";
+import CountryFlag from "components/CountryFlag/CountryFlag";
 import { ICompany } from "types/company";
 
 interface IProps {
@@ -50,11 +51,12 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name),
     },
     {
-      title: t("Description"),
-      dataIndex: "description",
-      key: "description",
+      title: t("Country"),
+      dataIndex: "countryCode",
+      key: "countryCode",
+      render: (text: string) => <CountryFlag code={text} />,
       sorter: (a: ICompany, b: ICompany) =>
-        a.description.localeCompare(b.description),
+        a.countryCode.localeCompare(b.countryCode),
     },
     {
       title: t("Action"),
@@ -88,8 +90,11 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       color: element.color,
       portfolio: element.portfolio,
       logo: element.logo,
+      countryCode: element.countryCode,
     }));
   };
 
-  return <Table columns={columns} dataSource={getData()} />;
+  return (
+    <Table columns={columns} dataSource={getData()} style={{ marginTop: 16 }} />
+  );
 }
