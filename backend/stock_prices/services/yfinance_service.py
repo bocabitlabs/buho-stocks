@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 import yfinance
 from stock_prices.services.service_base import StockPriceServiceBase
 
@@ -8,6 +9,7 @@ class YFinanceStockPricesService(StockPriceServiceBase):
         pass
 
     def get_current_data(self, ticker: str):
+        time.sleep(2)
         company = yfinance.Ticker(ticker)
         company_info = company.info
 
@@ -20,12 +22,17 @@ class YFinanceStockPricesService(StockPriceServiceBase):
         }
 
     def get_historical_data(self, ticker: str, start_date: str, end_date: str):
+        prices = []
+        print(f"Get current data for {ticker} from {start_date} to {end_date}")
         company = yfinance.Ticker(ticker)
+        time.sleep(2)
         company_info = self.get_current_data(ticker)
-        result = company.history(start=start_date, end=end_date, period="1d")
+        print(f"Get historical data for {ticker} from {start_date} to {end_date}")
+        time.sleep(2)
+        result = company.history(start=start_date, end=end_date, period="1d", timeout=10)
+        print(result)
         # print(type(result))
         # print(result)
-        prices = []
         for col, row in result.iterrows():
             # result += max(row.B, row.C)
             # print(element)
