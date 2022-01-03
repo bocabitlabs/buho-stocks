@@ -4,5 +4,5 @@ class StockPriceServiceBase:
         raise NotImplementedError
 
     @classmethod
-    def get_historical_data(self, ticker: str, from_date: str, to_date: str) -> dict:
+    def get_historical_data(self, ticker: str, start_date: str, end_date: str) -> dict:
         raise NotImplementedError
