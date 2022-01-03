@@ -54,11 +54,13 @@ export default function TradesImportForm({
     loading: sharesLoading,
     post: postSharesTransaction,
     response: sharesResponse,
+    cache,
   } = useFetch(`companies/${selectedCompany?.id}/shares`);
   const {
     loading: rightsLoading,
     post: postRightsTransaction,
     response: rightsResponse,
+    cache: rightsCache,
   } = useFetch(`companies/${selectedCompany?.id}/rights`);
   const {
     loading: currenciesLoading,
@@ -160,11 +162,13 @@ export default function TradesImportForm({
       await postRightsTransaction("/", transaction);
       if (rightsResponse.ok) {
         setFormSent(true);
+        rightsCache.clear();
       }
     } else {
       await postSharesTransaction("/", transaction);
       if (sharesResponse.ok) {
         setFormSent(true);
+        cache.clear();
       }
     }
   };
