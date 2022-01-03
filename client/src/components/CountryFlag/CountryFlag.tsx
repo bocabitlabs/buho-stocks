@@ -6,5 +6,5 @@ interface Props {
 }
 
 export default function CountryFlag({ code }: Props): ReactElement | null {
-  return <span>{getUnicodeFlagIcon(code)}</span>;
+  return <span style={{ fontSize: 30 }}>{getUnicodeFlagIcon(code)}</span>;
 }
