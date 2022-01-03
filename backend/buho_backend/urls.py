@@ -51,6 +51,7 @@ urlpatterns = [
     path("api/v1/portfolios/", include("portfolios.urls")),
     path("api/v1/sectors/", include("sectors.urls")),
     path("api/v1/settings/", include("settings.urls")),
+    path("api/v1/stats/", include("stats.urls")),
     path("auth/", include("auth.urls"), name="authentication"),
     url(
         r"^swagger(?P<format>\.json|\.yaml)$",

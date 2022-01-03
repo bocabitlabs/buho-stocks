@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "sectors",
     "settings",
     "shares_transactions",
+    "stats",
     "stock_prices",
 ]
 
