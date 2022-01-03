@@ -7,8 +7,11 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from companies.models import Company
+from stock_prices.api import StockPricesApi
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
+from stock_prices.services.yfinance_service import YFinanceStockPricesService
 
 
 class StockPricesListAPIView(APIView):
@@ -128,19 +131,12 @@ class StockPricesYearAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, year, position, user_id):
-        prices = StockPrice.objects.filter(
-            company=company_id, transaction_date__year=year, user=user_id
-        )
+        company = Company.objects.get(id=company_id, user=user_id)
+        yfinance = YFinanceStockPricesService()
+        api = StockPricesApi(yfinance)
+        data = api.get_last_data_from_year(company.ticker, year)
+        return data
 
-        try:
-            price_return = None
-            if position == "last":
-                price_return = prices.last()
-            elif position == "first":
-                price_return = prices.first()
-            return price_return
-        except StockPrice.DoesNotExist:
-            return None
 
     # 3. Retrieve
     @swagger_auto_schema(tags=["company_stock_prices"])
