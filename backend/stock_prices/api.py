@@ -1,5 +1,4 @@
 import datetime
-import time
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
 from stock_prices.services.service_base import StockPriceServiceBase
@@ -66,7 +65,6 @@ class StockPricesApi:
 
         if prices_length < minimum_values:
             print("No historical data found locally. Searching remote.")
-            time.sleep(1000)
             prices = self.stock_prices_service.get_historical_data(
                 ticker, from_date, to_date
             )
