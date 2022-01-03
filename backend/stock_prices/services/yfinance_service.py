@@ -13,7 +13,7 @@ class YFinanceStockPricesService(StockPriceServiceBase):
 
         return {
             "company_name": company_info["shortName"],
-            "price": company_info["regularMarketPrice"],
+            "price": round(company_info["regularMarketPrice"], 3),
             "price_currency": company_info["currency"],
             "ticker": ticker,
             "transaction_date": datetime.now().strftime("%Y-%m-%d"),
@@ -33,7 +33,7 @@ class YFinanceStockPricesService(StockPriceServiceBase):
             print(row["Close"])
             data = {
                 "company_name": company_info["company_name"],
-                "price": row["Close"],
+                "price": round(row["Close"], 3),
                 "price_currency": company_info["price_currency"],
                 "ticker": ticker,
                 "transaction_date": col.to_pydatetime().strftime("%Y-%m-%d"),
