@@ -2,6 +2,7 @@ import datetime
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
 from stock_prices.services.service_base import StockPriceServiceBase
+import time
 
 
 class StockPricesApi:
@@ -64,7 +65,8 @@ class StockPricesApi:
             minimum_values = delta.days / 2 - 1
 
         if prices_length < minimum_values:
-            print("No historical data found locally")
+            print("No historical data found locally. Searching remote.")
+            time.sleep(1000)
             prices = self.stock_prices_service.get_historical_data(
                 ticker, from_date, to_date
             )
@@ -72,7 +74,7 @@ class StockPricesApi:
             for price in prices:
                 serializer = StockPriceSerializer(data=price)
                 if serializer.is_valid():
-                    serialized_date = serializer.data.get("transaction_date", "unknown")
+                    serialized_date = price.get("transaction_date", "unknown")
                     print(f"{ticker}-{serialized_date}. Saving element.")
                     serializer.save()
                 else:
@@ -80,7 +82,7 @@ class StockPricesApi:
                     print(
                         f"{ticker} - {serialized_date}. Error on price :{serializer.errors}"
                     )
-
+            serializer = StockPriceSerializer(instance=prices, many=True)
             return serializer.data
         else:
             serializer = StockPriceSerializer(instance=prices, many=True)
@@ -101,4 +103,15 @@ class StockPricesApi:
     def get_last_data_from_year(self, ticker: str, year: int) -> dict:
         from_date = f"{year}-12-01"
         to_date = f"{year}-12-31"
-        return self.get_historical_data(ticker, from_date, to_date, minimum_values=1)
+        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1)
+        if len(results) > 0:
+            return results[-1]
+
+    def get_last_data_from_last_month(self, ticker: str) -> dict:
+        from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime(
+            "%Y-%m-%d"
+        )
+        to_date = datetime.date.today().strftime("%Y-%m-%d")
+        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1)
+        if len(results) > 0:
+            return results[-1]
