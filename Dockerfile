@@ -31,11 +31,12 @@ COPY ./prestart.sh /app/prestart.sh
 RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src
 RUN pip install --no-cache-dir --upgrade -r /usr/src/requirements.txt
-COPY ./client/package.json /usr/src/client/package.json
-COPY ./client/yarn.lock /usr/src/client/yarn.lock
-RUN yarn
+
 
 WORKDIR /usr/src/client
+COPY ./client/package.json /usr/src/client/package.json
+COPY ./client/yarn.lock /usr/src/client/yarn.lock
+RUN yarn --production --pure-lockfile
 COPY ./client /usr/src/client
 
 RUN yarn build
