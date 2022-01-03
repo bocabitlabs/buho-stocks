@@ -24,6 +24,7 @@ function Breadcrumbs() {
     "/app/markets/:id/edit": `Edit`,
     "/app/portfolios/add": `Add portfolio`,
     "/app/portfolios/:id": `Portfolio ${id}`,
+    "/app/portfolios/:id/log": `Transactions log`,
     "/app/portfolios/:id/companies/add": `Add company`,
     "/app/portfolios/:id/companies/:companyId": `Company ${companyId}`,
     "/app/portfolios/:id/companies/:companyId/edit": `Edit ${companyId}`,

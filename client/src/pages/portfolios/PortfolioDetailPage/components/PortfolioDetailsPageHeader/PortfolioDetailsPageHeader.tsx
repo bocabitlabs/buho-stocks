@@ -1,7 +1,11 @@
 import React, { ReactNode, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  DeleteOutlined,
+  PlusOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Spin } from "antd";
 import useFetch from "use-http";
 import CountryFlag from "components/CountryFlag/CountryFlag";
@@ -47,6 +51,14 @@ function PortfolioDetailsPageHeader({
         <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
       ]}
       extra={[
+        <Button
+          key="company-view-logs"
+          icon={<UnorderedListOutlined />}
+          onClick={() => {
+            navigate(`log`);
+          }}
+          title={t("View company logs")}
+        />,
         <Button
           type="primary"
           key="company-add-header"

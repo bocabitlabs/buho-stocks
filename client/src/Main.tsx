@@ -24,6 +24,7 @@ import MarketsPages from "pages/markets/MarketsPages/MarketsPages";
 import PortfolioDetailsPage from "pages/portfolios/PortfolioDetailPage/PortfolioDetailsPage";
 import PortfoliosAddPage from "pages/portfolios/PortfoliosAddPage/PortfoliosAddPage";
 import PortfoliosListPage from "pages/portfolios/PortfoliosListPage/PortfoliosListPage";
+import PortfolioTransactionsLogPage from "pages/portfolios/PortfolioTransactionsLogPage/PortfolioTransactionsLogPage";
 import RightsTransactionsAddPage from "pages/rights/RightsTransactionsAddPage/RightsTransactionsAddPage";
 import RightsTransactionsEditPage from "pages/rights/RightsTransactionsEditPage/RightsTransactionsEditPage";
 import SectorsAddPage from "pages/sectors/SectorsAddPage/SectorsAddpage";
@@ -72,6 +73,10 @@ export default function Main(): ReactElement {
               </Route>
               <Route path="portfolios/add/*" element={<PortfoliosAddPage />} />
               <Route path="portfolios/:id" element={<PortfolioDetailsPage />} />
+              <Route
+                path="portfolios/:id/log/*"
+                element={<PortfolioTransactionsLogPage />}
+              />
               <Route
                 path="portfolios/:id/companies/add/*"
                 element={<CompaniesAddPage />}
