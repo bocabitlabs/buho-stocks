@@ -10,33 +10,9 @@ from drf_yasg.utils import swagger_auto_schema
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from forex_python.converter import CurrencyRates, RatesNotAvailableError
+from forex_python.converter import RatesNotAvailableError
 
-
-def get_exchange_rates_from_api(exchange_from, exchange_to, exchange_date):
-    print("Call the exchange API")
-    print(f"From: {exchange_from} To: {exchange_to} Date: {exchange_date}")
-
-    c = CurrencyRates()
-    rates = c.get_rates(exchange_from, exchange_date)
-    desired_exchange = None
-    for key in rates:
-        data = {
-            "exchange_from": exchange_from,
-            "exchange_to": key,
-            "exchange_date": exchange_date,
-            "exchange_rate": round(rates[key], 3),
-        }
-        serializer = ExchangeRateSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            if key == exchange_to:
-                desired_exchange = serializer
-        else:
-            print(serializer)
-            print("Serializer is not valid")
-            print(serializer.errors)
-    return desired_exchange
+from exchange_rates.utils import get_exchange_rates_from_api
 
 
 class ExchangeRateListAPIView(APIView):
@@ -87,7 +63,7 @@ class ExchangeRateDetailAPIView(APIView):
     ]
     # permission_classes = [IsAuthenticated]
 
-    def get_object(self, exchange_from, exchange_to, exchange_date, user_id):
+    def get_object(self, exchange_from, exchange_to, exchange_date):
         try:
             return ExchangeRate.objects.get(
                 exchange_from=exchange_from,
@@ -103,9 +79,7 @@ class ExchangeRateDetailAPIView(APIView):
         """
         Retrieve the market item with given exchange_name
         """
-        todo_instance = self.get_object(
-            exchange_from, exchange_to, exchange_date, request.user.id
-        )
+        todo_instance = self.get_object(exchange_from, exchange_to, exchange_date)
         if not todo_instance:
             try:
                 serializer = get_exchange_rates_from_api(
@@ -117,7 +91,9 @@ class ExchangeRateDetailAPIView(APIView):
                         status=status.HTTP_400_BAD_REQUEST,
                     )
             except RatesNotAvailableError as e:
-                return Response({"error": True, "message": str(e)}, status=status.HTTP_404_NOT_FOUND)
+                return Response(
+                    {"error": True, "message": str(e)}, status=status.HTTP_404_NOT_FOUND
+                )
         else:
             serializer = ExchangeRateSerializer(todo_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -128,9 +104,7 @@ class ExchangeRateDetailAPIView(APIView):
         """
         Update the market item with given market_id
         """
-        todo_instance = self.get_object(
-            exchange_from, exchange_to, exchange_date, request.user.id
-        )
+        todo_instance = self.get_object(exchange_from, exchange_to, exchange_date)
         if not todo_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
@@ -155,9 +129,7 @@ class ExchangeRateDetailAPIView(APIView):
     def delete(
         self, request, exchange_from, exchange_to, exchange_date, *args, **kwargs
     ):
-        market_instance = self.get_object(
-            exchange_from, exchange_to, exchange_date, request.user.id
-        )
+        market_instance = self.get_object(exchange_from, exchange_to, exchange_date)
         if not market_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
