@@ -22,7 +22,6 @@ export default function DividendsListTable(): ReactElement {
   } = useFetch(`companies/${companyId}/dividends`);
 
   const confirmDelete = async (recordId: number) => {
-    console.log(recordId);
     await deleteTransaction(`${recordId}/`);
     if (response.ok) {
       const removeItem = transactions.filter(
@@ -87,7 +86,7 @@ export default function DividendsListTable(): ReactElement {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`shares/${record.id}/`}>
+          <Link to={`dividends/${record.id}/`}>
             <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm

@@ -96,7 +96,7 @@ export default function RightsListTable(): ReactElement {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`shares/${record.id}/`}>
+          <Link to={`rights/${record.id}/`}>
             <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm
