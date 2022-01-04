@@ -53,17 +53,20 @@ export default function IBTradesImportForm({
     loading: exchangeRateLoading,
     get: getExchangeRate,
     response: exchangeRateResponse,
+    cache: exchangeRateCache,
   } = useFetch("exchange-rates");
   const {
     loading: sharesLoading,
     post: postSharesTransaction,
     response: sharesResponse,
+    cache: sharesCache,
   } = useFetch(`companies/${selectedCompany?.id}/shares`);
 
   const onCompanyChange = (value: string) => {
-    const tempCompany = portfolio.companies.find(
-      (element) => element.ticker === value,
-    );
+    const tempCompany = portfolio.companies.find((element) => {
+      console.log(element.id, value);
+      return element.id === +value;
+    });
     if (tempCompany) {
       setSelectedCompany(tempCompany);
     }
@@ -72,6 +75,7 @@ export default function IBTradesImportForm({
   const onFinish = async (values: any) => {
     console.log("Success:", values);
     if (!selectedCompany) {
+      console.error("No company selected");
       return;
     }
 
@@ -109,6 +113,7 @@ export default function IBTradesImportForm({
     await postSharesTransaction("/", transaction);
     if (sharesResponse.ok) {
       setFormSent(true);
+      sharesCache.clear();
     }
   };
 
@@ -119,13 +124,14 @@ export default function IBTradesImportForm({
       const newExchangeRate = await getExchangeRate(
         `${selectedCompany?.baseCurrency.code}/${
           portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`,
+        }/${form.getFieldValue("transactionDate")}/`,
       );
       if (exchangeRateResponse.ok) {
         console.log(newExchangeRate);
         form.setFieldsValue({
           exchangeRate: newExchangeRate.exchangeRate,
         });
+        exchangeRateCache.clear();
       } else {
         form.setFields([
           {
