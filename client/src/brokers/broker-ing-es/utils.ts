@@ -4,7 +4,10 @@ import { FormattedINGRow, TransactionType } from "./types";
 import { ICompany } from "types/company";
 import { IPortfolio } from "types/portfolio";
 
-export const sharesTransactionTypes = ["COMPRA", "VENTA", "ALTA POR CANJE"];
+export const sharesBuyTransactionTypes = ["COMPRA", "ALTA POR CANJE"];
+export const sharesTransactionTypes = ["VENTA"].concat(
+  sharesBuyTransactionTypes,
+);
 export const dividendsTransactionTypes = ["DIVIDENDO"];
 
 const normalizeAndRemoveAccents = (inputString: string) => {
@@ -103,7 +106,7 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
   const price = +inputData[7];
   const total = +inputData[9].replace("'", "");
 
-  transactionType = sharesTransactionTypes.includes(transactionType)
+  transactionType = sharesBuyTransactionTypes.includes(transactionType)
     ? "BUY"
     : "SELL";
 

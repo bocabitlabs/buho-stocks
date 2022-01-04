@@ -130,6 +130,7 @@ export default function TradesImportForm({
       transactionDate,
       grossPricePerShare,
       isRightsTransaction,
+      transactionType: formTransactionType,
     } = values;
 
     let exchangeRateValue = 1;
@@ -156,7 +157,7 @@ export default function TradesImportForm({
       )}`,
       company,
       portfolio: portfolio.id,
-      type: "BUY",
+      type: formTransactionType,
     };
     if (isRightsTransaction) {
       await postRightsTransaction("/", transaction);

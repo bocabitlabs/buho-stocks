@@ -7,6 +7,7 @@ import { Content, Footer, Header } from "antd/lib/layout/layout";
 import SubMenu from "antd/lib/menu/SubMenu";
 import Title from "antd/lib/typography/Title";
 import { Provider } from "use-http";
+import packageJson from "../package.json";
 import Breadcrumbs from "breadcrumbs";
 import AlertMessages from "components/AlertMessages/AlertMessages";
 import AppSidebar from "components/AppSidebar/AppSidebar";
@@ -83,7 +84,9 @@ function App() {
                 </Content>
               </Col>
             </Row>
-            <Footer style={{ textAlign: "center" }}>Bocabitlabs ©2021</Footer>
+            <Footer style={{ textAlign: "center" }}>
+              Buho Stocks {packageJson.version} - Bocabitlabs ©2021
+            </Footer>
           </Layout>
         </SettingsLoader>
       </Provider>
