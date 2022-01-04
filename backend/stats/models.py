@@ -99,7 +99,7 @@ class CompanyStats:
                 exchange_rate = item.exchange_rate
             total += (
                 item.gross_price_per_share.amount * exchange_rate * item.count
-                + item.total_commission.amount * exchange_rate
+                - item.total_commission.amount * exchange_rate
             )
         return total
 
@@ -110,14 +110,17 @@ class CompanyStats:
             query = query.all()
         else:
             query = query.filter(transaction_date__year=self.year)
+        print(f"Found {query.count()} dividends")
         for item in query:
             exchange_rate = 1
             if self.use_currency == "portfolio":
                 exchange_rate = item.exchange_rate
+            print(f"{item.gross_price_per_share.amount} * {exchange_rate} * {item.count}")
             total += (
                 item.gross_price_per_share.amount * exchange_rate * item.count
-                + item.total_commission.amount * exchange_rate
+                - item.total_commission.amount * exchange_rate
             )
+            print(f"Total: {total}")
         return total
 
     def get_accumulated_dividends_until_year(self):

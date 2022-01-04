@@ -64,7 +64,6 @@ def get_all_currencies():
         "ZAR",
     ]
     currency_codes.sort()
-    print(currency_codes)
     for currency_code in currency_codes:
         new_currency = get_currency_details(currency_code)
         if new_currency:
