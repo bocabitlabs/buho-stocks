@@ -11,8 +11,6 @@ export const sharesTransactionTypes = ["VENTA"].concat(
 export const dividendsTransactionTypes = ["DIVIDENDO"];
 
 const normalizeAndRemoveAccents = (inputString: string) => {
-  console.log("normalizeAndRemoveAccents");
-  console.log("Normalizing: ", inputString);
   return inputString.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
@@ -137,7 +135,6 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
  * @returns
  */
 export function formatINGRowForDividends(inputData: string[]): FormattedINGRow {
-  console.log("formatINGRowForDividends", inputData);
   const transactionDate = moment(inputData[0], "DD/MM/YYYY");
   const companyName = inputData[3];
   const count = +inputData[6];
