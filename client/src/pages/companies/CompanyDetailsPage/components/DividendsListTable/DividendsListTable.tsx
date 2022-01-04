@@ -18,6 +18,7 @@ export default function DividendsListTable(): ReactElement {
     response,
     get,
     del: deleteTransaction,
+    cache,
   } = useFetch(`companies/${companyId}/dividends`);
 
   const confirmDelete = async (recordId: number) => {
@@ -30,6 +31,7 @@ export default function DividendsListTable(): ReactElement {
         },
       );
       setTransactions(removeItem);
+      cache.clear();
     }
   };
 

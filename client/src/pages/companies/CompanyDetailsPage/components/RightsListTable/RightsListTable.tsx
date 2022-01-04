@@ -19,6 +19,7 @@ export default function RightsListTable(): ReactElement {
     response,
     get,
     del: deleteTransaction,
+    cache,
   } = useFetch(`companies/${companyId}/rights`);
 
   const confirmDelete = async (recordId: number) => {
@@ -31,6 +32,7 @@ export default function RightsListTable(): ReactElement {
         },
       );
       setTransactions(removeItem);
+      cache.clear();
     }
   };
 

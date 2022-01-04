@@ -15,7 +15,7 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
   const { t } = useTranslation();
   const { id } = useParams();
   const [companies, setCompanies] = useState(companiesProp);
-  const { response, del: deleteCompany } = useFetch("portfolios");
+  const { response, del: deleteCompany, cache } = useFetch("portfolios");
 
   const confirmDelete = async (recordId: number) => {
     console.log(`${id}/companies/${recordId}/`);
@@ -25,6 +25,7 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
         return market.id !== recordId;
       });
       setCompanies(removeItem);
+      cache.clear();
     }
   };
 

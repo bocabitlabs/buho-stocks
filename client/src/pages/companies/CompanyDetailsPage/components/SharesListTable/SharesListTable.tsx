@@ -19,6 +19,7 @@ export default function SharesListTable(): ReactElement {
     response,
     get,
     del: deleteTransaction,
+    cache,
   } = useFetch(`companies/${companyId}/shares`);
 
   const confirmDelete = async (recordId: number) => {
@@ -32,6 +33,7 @@ export default function SharesListTable(): ReactElement {
         },
       );
       setTransactions(removeItem);
+      cache.clear();
     }
   };
 
