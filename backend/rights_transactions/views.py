@@ -115,7 +115,7 @@ class RightsTransactionDetailAPIView(APIView):
         """
         Update the company item with given company_id
         """
-        instance = self.get_object(transaction_id, company_id, request.user.id)
+        instance = self.get_object(company_id, transaction_id, request.user.id)
         if not instance:
             return Response(
                 {"res": f"Object with transaction id {transaction_id} does not exists"},
@@ -150,7 +150,7 @@ class RightsTransactionDetailAPIView(APIView):
         """
         Delete the company item with given transaction id
         """
-        instance = self.get_object(transaction_id, company_id, request.user.id)
+        instance = self.get_object(company_id, transaction_id, request.user.id)
         if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},
