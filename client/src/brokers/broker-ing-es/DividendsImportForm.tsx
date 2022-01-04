@@ -63,7 +63,7 @@ export default function DividendsImportForm({
 
   useEffect(() => {
     const fetchCurrencies = async () => {
-      const results = await getCurrencies();
+      const results = await getCurrencies("/");
       if (currenciesResponse.ok) {
         setCurrencies(results);
       }
@@ -87,7 +87,7 @@ export default function DividendsImportForm({
       const newExchangeRate = await getExchangeRate(
         `${selectedCompany?.baseCurrency.code}/${
           portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`,
+        }/${form.getFieldValue("transactionDate")}/`,
       );
       if (exchangeRateResponse.ok) {
         console.log(newExchangeRate);
@@ -156,6 +156,13 @@ export default function DividendsImportForm({
 
   const getPriceInCompanyCurrency = useCallback(async () => {
     setPriceLoading(true);
+    console.debug("getting price in company currency");
+    form.setFields([
+      {
+        name: "grossPricePerShare",
+        errors: undefined,
+      },
+    ]);
     if (selectedCompany && portfolio) {
       if (selectedCompany?.dividendsCurrency.code === "EUR") {
         form.setFieldsValue({
@@ -163,10 +170,11 @@ export default function DividendsImportForm({
         });
         console.log(`${total} - ${price * initialCount}`);
       } else {
+        console.debug("getting exchange rate from API");
         const newExchangeRate = await getExchangeRate(
           `EUR/${selectedCompany?.baseCurrency.code}/${form.getFieldValue(
             "transactionDate",
-          )}`,
+          )}/`,
         );
         console.log(newExchangeRate);
         if (exchangeRateResponse.ok) {
@@ -211,7 +219,7 @@ export default function DividendsImportForm({
         const newExchangeRate = await getExchangeRate(
           `EUR/${selectedCompany?.baseCurrency.code}/${form.getFieldValue(
             "transactionDate",
-          )}`,
+          )}/`,
         );
         if (exchangeRateResponse.ok) {
           console.log(newExchangeRate);
