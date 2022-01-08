@@ -1,8 +1,10 @@
 import datetime
+import logging
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
 from stock_prices.services.service_base import StockPriceServiceBase
 
+logger = logging.getLogger("buho_backend")
 
 class StockPricesApi:
     def __init__(
@@ -64,7 +66,7 @@ class StockPricesApi:
             minimum_values = delta.days / 2 - 1
 
         if prices_length < minimum_values:
-            print("No historical data found locally. Searching remote.")
+            logger.debug("No historical data found locally. Searching remote.")
             prices = self.stock_prices_service.get_historical_data(
                 ticker, from_date, to_date
             )

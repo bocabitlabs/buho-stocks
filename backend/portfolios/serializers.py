@@ -31,8 +31,6 @@ class PortfolioSerializerGet(PortfolioSerializer):
     companies = CompanySerializerGet(many=True, read_only=True)
 
     def get_base_currency(self, obj):
-        print("get_base_currency portfolio")
-        print("obj.base_currency:", obj.base_currency)
         return get_currency_details(
             obj.base_currency
         )  # access the price of the product associated with the order_unit object
