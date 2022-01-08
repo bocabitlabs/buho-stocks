@@ -21,7 +21,7 @@ class LogMessage(models.Model):
     MESSAGE_TYPE_ADD_PRICE = "ADD_PRICE"
     MESSAGE_TYPE_DELETE_PRICE = "DELETE_PRICE"
 
-    message_text = models.CharField(max_length=200)
+    message_text = models.CharField(max_length=400)
     message_type = models.CharField(max_length=100)
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
