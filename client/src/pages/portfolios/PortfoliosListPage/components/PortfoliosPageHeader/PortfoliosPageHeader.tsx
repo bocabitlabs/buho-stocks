@@ -10,10 +10,17 @@ interface Props {
 function PortfoliosPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const routes = [
+    {
+      path: "/app/home",
+      breadcrumbName: "Home",
+    },
+  ];
   return (
     <PageHeader
       className="site-page-header"
       title={t("Portfolios")}
+      breadcrumb={{ routes }}
       extra={[
         <Button
           key="add-button"

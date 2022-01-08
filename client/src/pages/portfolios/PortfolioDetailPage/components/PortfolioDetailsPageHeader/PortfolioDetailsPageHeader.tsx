@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Spin } from "antd";
 import useFetch from "use-http";
+import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { AlertMessagesContext } from "contexts/alert-messages";
 
@@ -29,6 +30,12 @@ function PortfolioDetailsPageHeader({
   const { createSuccess, createError } = useContext(AlertMessagesContext);
   const { response, del: deletePortfolio } = useFetch("portfolios/");
   const { id } = useParams();
+  const routes = [
+    {
+      path: `/app/portfolios/${id}`,
+      breadcrumbName: portfolioName,
+    },
+  ];
   const confirmDelete = async () => {
     await deletePortfolio(`${id}/`);
     if (response.ok) {
@@ -47,6 +54,8 @@ function PortfolioDetailsPageHeader({
       className="site-page-header"
       title={portfolioName}
       subTitle={portfolioDescription}
+      breadcrumb={{ routes }}
+      breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
       ]}

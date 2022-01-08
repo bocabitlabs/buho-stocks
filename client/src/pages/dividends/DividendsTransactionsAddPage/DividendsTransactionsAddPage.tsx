@@ -35,6 +35,7 @@ export default function DividendsTransactionsAddPage(): ReactElement {
       companyName={company.name}
       companyTicker={company.ticker}
       companyCountryCode={company.countryCode}
+      portfolioName={company.portfolio.name}
     >
       <DividendsTransactionAddEditForm
         companyBaseCurrency={company.baseCurrency}

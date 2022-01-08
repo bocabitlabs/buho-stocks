@@ -62,12 +62,6 @@ export default function SectorsTable() {
       render: (text: string) => text,
     },
     {
-      title: t("Is super sector"),
-      dataIndex: "isSuperSector",
-      key: "isSuperSector",
-      render: (text: string) => text,
-    },
-    {
       title: t("Action"),
       key: "action",
       render: (text: string, record: any) => (
@@ -95,7 +89,6 @@ export default function SectorsTable() {
       key: element.id,
       name: element.name,
       color: element.color,
-      isSuperSector: element.isSuperSector,
       superSector: element.superSector?.name,
     }));
   };

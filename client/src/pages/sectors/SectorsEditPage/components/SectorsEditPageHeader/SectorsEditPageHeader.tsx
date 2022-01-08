@@ -1,27 +1,31 @@
 import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 import { PageHeader } from "antd";
 import breadCrumbRender from "breadcrumbs";
 
 interface Props {
+  sectorName: string;
   children: ReactNode;
 }
-function MarketsAddPageHeader({ children }: Props) {
+function SectorsEditPageHeader({ sectorName, children }: Props) {
   const { t } = useTranslation();
+  const { id } = useParams();
   const routes = [
     {
-      path: `/app/markets`,
-      breadcrumbName: t("Markets"),
+      path: `/app/sectors`,
+      breadcrumbName: t("Sectors"),
     },
     {
-      path: `/app/markets/add`,
-      breadcrumbName: "Add market",
+      path: `/app/sectors/${id}`,
+      breadcrumbName: `${t("Edit")} ${sectorName}`,
     },
   ];
+
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Add market")}
+      title={t("Edit sector")}
       breadcrumb={{ routes }}
       breadcrumbRender={breadCrumbRender}
     >
@@ -30,4 +34,4 @@ function MarketsAddPageHeader({ children }: Props) {
   );
 }
 
-export default MarketsAddPageHeader;
+export default SectorsEditPageHeader;

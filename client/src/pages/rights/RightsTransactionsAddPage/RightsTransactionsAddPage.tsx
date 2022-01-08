@@ -35,6 +35,7 @@ export default function RightsTransactionsAddPage(): ReactElement {
       companyName={company.name}
       companyTicker={company.ticker}
       companyCountryCode={company.countryCode}
+      portfolioName={company.portfolio.name}
     >
       <SharesTransactionAddEditForm
         companyBaseCurrency={company.baseCurrency}

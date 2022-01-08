@@ -65,7 +65,11 @@ export default function Stats({ companyId }: Props): ReactElement {
       }
       if (response.ok) {
         setStats(initialData);
-        setStockPrice(initialData.stockPrice);
+        setStockPrice({
+          price: initialData.stockPriceValue,
+          priceCurrency: initialData.stockPriceCurrency,
+          transactionDate: initialData.stockPriceTransactionDate,
+        });
       }
     }
     loadInitialStats();
@@ -78,10 +82,12 @@ export default function Stats({ companyId }: Props): ReactElement {
         setFirstYear(initialData);
         const currentYear = new Date().getFullYear();
         const newYears = [];
-        for (let index = +currentYear; index >= +firstYear; index -= 1) {
-          newYears.push(index);
+        if (firstYear != null) {
+          for (let index = +currentYear; index >= +firstYear; index -= 1) {
+            newYears.push(index);
+          }
+          setYears(newYears);
         }
-        setYears(newYears);
       }
     }
     loadInitialStats();
@@ -135,6 +141,9 @@ export default function Stats({ companyId }: Props): ReactElement {
             precision={2}
             suffix={stats?.portfolioCurrency}
           />
+          <Typography.Text type="secondary">
+            Accum. {stats?.accumulatedDividends} {stats?.portfolioCurrency}
+          </Typography.Text>
         </Col>
         <Col span={6}>
           <Statistic
@@ -143,13 +152,6 @@ export default function Stats({ companyId }: Props): ReactElement {
             valueStyle={{
               color: stats?.portfolioValueIsDown ? "#cf1322" : "",
             }}
-            prefix={
-              stats?.portfolioValueIsDown ? (
-                <ArrowDownOutlined />
-              ) : (
-                <ArrowUpOutlined />
-              )
-            }
             precision={2}
             suffix={stats?.portfolioCurrency}
           />
@@ -174,7 +176,7 @@ export default function Stats({ companyId }: Props): ReactElement {
           <Typography.Text
             type={stats?.returnPercent < 0 ? "danger" : "success"}
           >
-            {stats?.returnPercent.toFixed(2)}%
+            {stats?.returnPercent}%
           </Typography.Text>
         </Col>
         <Col span={6}>
@@ -197,7 +199,7 @@ export default function Stats({ companyId }: Props): ReactElement {
           <Typography.Text
             type={stats?.returnWithDividendsPercent < 0 ? "danger" : "success"}
           >
-            {stats?.returnWithDividendsPercent.toFixed(2)}%
+            {stats?.returnWithDividendsPercent}%
           </Typography.Text>
         </Col>
         <Col span={6}>

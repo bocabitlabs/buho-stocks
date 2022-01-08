@@ -30,6 +30,7 @@ export default function CompanyEditPage(): ReactElement {
       companyName={company.name}
       companyTicker={company.ticker}
       companyCountryCode={company.countryCode}
+      portfolioName={company.portfolio.name}
     >
       <CompanyAddEditForm
         portfolioId={portfolioIdString}

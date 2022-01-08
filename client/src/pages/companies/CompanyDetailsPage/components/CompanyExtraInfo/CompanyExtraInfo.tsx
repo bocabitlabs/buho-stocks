@@ -13,7 +13,7 @@ export default function CompanyInfo({
   const { t } = useTranslation();
   return (
     <Typography.Paragraph style={{ paddingTop: 16 }}>
-      <Typography.Title level={5}>{t("Company description")}</Typography.Title>
+      <Typography.Title level={5}>{t("About the company")}</Typography.Title>
       <Typography.Paragraph>
         {companyDescription !== "undefined" &&
         companyDescription !== undefined ? (

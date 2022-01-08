@@ -43,16 +43,6 @@ export default function PortfolioCardContent({
       ) : (
         <Statistic
           value={stats?.portfolioValue}
-          valueStyle={{
-            color: stats?.portfolioValueIsDown ? "#cf1322" : "",
-          }}
-          prefix={
-            stats?.portfolioValueIsDown ? (
-              <ArrowDownOutlined />
-            ) : (
-              <ArrowUpOutlined />
-            )
-          }
           precision={2}
           suffix={stats?.portfolioCurrency}
         />
@@ -60,6 +50,11 @@ export default function PortfolioCardContent({
       <Typography.Text
         type={stats?.returnWithDividends < 0 ? "danger" : "success"}
       >
+        {stats?.portfolioValueIsDown ? (
+          <ArrowDownOutlined />
+        ) : (
+          <ArrowUpOutlined />
+        )}
         {stats?.returnWithDividends.toFixed(2)} {stats?.portfolioCurrency}
       </Typography.Text>{" "}
       {" / "}

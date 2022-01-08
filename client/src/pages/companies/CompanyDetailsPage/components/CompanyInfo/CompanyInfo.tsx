@@ -1,27 +1,33 @@
 import React, { ReactElement } from "react";
-import { Typography } from "antd";
-import CountryFlag from "components/CountryFlag/CountryFlag";
+import {
+  BankOutlined,
+  ClusterOutlined,
+  DollarCircleOutlined,
+} from "@ant-design/icons";
+import { Badge, Tag, Typography } from "antd";
 
 interface Props {
   companySectorName: string;
   companySuperSectorName?: string;
-  companyCountryCode: string;
+  marketName: string;
+  currencySymbol: string;
+  dividendsCurrencySymbol: string;
 }
 
 export default function CompanyInfo({
   companySectorName,
   companySuperSectorName,
-  companyCountryCode,
+  marketName,
+  currencySymbol,
+  dividendsCurrencySymbol,
 }: Props): ReactElement {
   return (
     <Typography.Paragraph>
-      <Typography.Title level={5}>
-        {companyCountryCode && (
-          <CountryFlag code={companyCountryCode} key={companyCountryCode} />
-        )}{" "}
-        {companySectorName}{" "}
-        {companySuperSectorName ? `- ${companySuperSectorName}` : ""}
-      </Typography.Title>
+      <Badge count={<ClusterOutlined />} /> <Tag>{companySectorName} </Tag>{" "}
+      {companySuperSectorName ? <Tag>{companySuperSectorName}</Tag> : null}{" "}
+      <Badge count={<BankOutlined />} /> <Tag>{marketName}</Tag>{" "}
+      <Badge count={<DollarCircleOutlined />} /> <Tag>{currencySymbol}</Tag>{" "}
+      <Tag>{dividendsCurrencySymbol}</Tag>
     </Typography.Paragraph>
   );
 }

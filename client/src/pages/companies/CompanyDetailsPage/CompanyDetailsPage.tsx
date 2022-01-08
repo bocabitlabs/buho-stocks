@@ -30,11 +30,15 @@ export default function CompanyDetailsPage(): ReactElement {
       companyName={company.name}
       companyTicker={company.ticker}
       companyLogo={company.logo}
+      companyCountryCode={company.countryCode}
+      portfolioName={company.portfolio.name}
     >
       <CompanyInfo
         companySectorName={company.sector.name}
         companySuperSectorName={company.sector.superSector?.name}
-        companyCountryCode={company.countryCode}
+        marketName={company.market.name}
+        currencySymbol={company.baseCurrency.symbol}
+        dividendsCurrencySymbol={company.dividendsCurrency.symbol}
       />
       <Stats companyId={companyId} />
       <TransactionsTabs />

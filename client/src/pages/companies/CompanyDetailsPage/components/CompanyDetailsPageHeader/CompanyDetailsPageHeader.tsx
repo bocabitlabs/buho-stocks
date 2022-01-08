@@ -4,11 +4,15 @@ import { useParams } from "react-router-dom";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm } from "antd";
 import useFetch from "use-http";
+import breadCrumbRender from "breadcrumbs";
+import CountryFlag from "components/CountryFlag/CountryFlag";
 
 interface Props {
   companyName: string;
   companyTicker: string;
   companyLogo: string;
+  companyCountryCode: string;
+  portfolioName: string;
   children: ReactNode;
 }
 
@@ -16,12 +20,24 @@ function CompanyDetailsPageHeader({
   companyName,
   companyTicker,
   companyLogo,
+  companyCountryCode,
+  portfolioName,
   children,
 }: Props) {
   const { t } = useTranslation();
-  const params = useParams();
-  const { id, companyId } = params;
+  const { id, companyId } = useParams();
   const companyIdString: string = companyId!;
+
+  const routes = [
+    {
+      path: `/app/portfolios/${id}`,
+      breadcrumbName: portfolioName || "Loading...",
+    },
+    {
+      path: `/app/portfolios/${id}/companies/${companyId}`,
+      breadcrumbName: companyName || "Loading...",
+    },
+  ];
   const { del: deleteCompany } = useFetch(`portfolios/${id}/companies`);
 
   function confirmDelete() {
@@ -31,8 +47,14 @@ function CompanyDetailsPageHeader({
   return (
     <PageHeader
       className="site-page-header"
-      title={`${companyName} (${companyTicker})`}
+      title={companyName}
+      subTitle={companyTicker}
       avatar={{ src: companyLogo }}
+      breadcrumb={{ routes }}
+      breadcrumbRender={breadCrumbRender}
+      tags={[
+        <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
+      ]}
       extra={[
         <Popconfirm
           key="portfolio-delete-header"
@@ -41,9 +63,7 @@ function CompanyDetailsPageHeader({
           okText={t("Yes")}
           cancelText={t("No")}
         >
-          <Button icon={<DeleteOutlined />} danger>
-            {t("Delete")}
-          </Button>
+          <Button icon={<DeleteOutlined />} type="text" danger />
         </Popconfirm>,
       ]}
     >

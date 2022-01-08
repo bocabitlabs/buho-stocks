@@ -61,18 +61,6 @@ export default function SuperSectorsTable() {
       sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name),
     },
     {
-      title: t("Super sector"),
-      dataIndex: "superSector",
-      key: "superSector",
-      render: (text: string) => text,
-    },
-    {
-      title: t("Is super sector"),
-      dataIndex: "isSuperSector",
-      key: "isSuperSector",
-      render: (text: string) => text,
-    },
-    {
       title: t("Action"),
       key: "action",
       render: (text: string, record: any) => (

@@ -1,20 +1,37 @@
 import React, { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
 import { PageHeader, Spin } from "antd";
+import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 
 interface Props {
   portfolioName: string;
-  portfolioDescription: string;
   portfolioCountryCode: string;
   children: ReactNode;
 }
 
 function PortfolioDetailsPageHeader({
   portfolioName,
-  portfolioDescription,
   portfolioCountryCode,
   children,
 }: Props) {
+  const { id } = useParams();
+  const { t } = useTranslation();
+  const routes = [
+    {
+      path: "/app/home",
+      breadcrumbName: "Home",
+    },
+    {
+      path: `/app/portfolios/${id}`,
+      breadcrumbName: portfolioName,
+    },
+    {
+      path: `/app/portfolios/${id}/log`,
+      breadcrumbName: t("Log"),
+    },
+  ];
   if (!portfolioName) {
     return <Spin />;
   }
@@ -22,7 +39,9 @@ function PortfolioDetailsPageHeader({
     <PageHeader
       className="site-page-header"
       title={portfolioName}
-      subTitle={portfolioDescription}
+      subTitle={t("Portfolio transactions log")}
+      breadcrumb={{ routes }}
+      breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
       ]}

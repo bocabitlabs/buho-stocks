@@ -1,14 +1,15 @@
 import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { DeleteOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm } from "antd";
+import { PageHeader } from "antd";
+import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 
 interface Props {
   companyName: string;
   companyTicker: string;
   companyCountryCode: string;
+  portfolioName: string;
   children: ReactNode;
 }
 
@@ -16,37 +17,35 @@ function CompanyEditPageHeader({
   companyName,
   companyTicker,
   companyCountryCode,
+  portfolioName,
   children,
 }: Props) {
   const { t } = useTranslation();
-
-  const params = useParams();
-  const { companyId } = params;
-  // const companyIdString: string = companyId!;
-
-  function confirmDelete() {
-    // deleteCompanyById(+companyIdString);
-  }
+  const { companyId, id } = useParams();
+  const routes = [
+    {
+      path: `/app/portfolios/${id}`,
+      breadcrumbName: portfolioName,
+    },
+    {
+      path: `/app/portfolios/${id}/companies/${companyId}`,
+      breadcrumbName: companyName,
+    },
+    {
+      path: `/app/portfolios/${id}/companies/${companyId}/edit`,
+      breadcrumbName: `${t("Edit")}`,
+    },
+  ];
 
   return (
     <PageHeader
       className="site-page-header"
-      title={`${companyName} - ${companyTicker} - (#${companyId})`}
+      title={`Edit ${companyName}`}
+      subTitle={`${companyTicker}`}
+      breadcrumb={{ routes }}
+      breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
-      ]}
-      extra={[
-        <Popconfirm
-          key="portfolio-delete-header"
-          title="Delete this company?"
-          onConfirm={() => confirmDelete()}
-          okText={t("Yes")}
-          cancelText={t("No")}
-        >
-          <Button icon={<DeleteOutlined />} danger>
-            {t("Delete")}
-          </Button>
-        </Popconfirm>,
       ]}
     >
       {children}

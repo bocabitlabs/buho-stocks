@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Button, Popconfirm, Space, Table } from "antd";
+import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
 import useFetch from "use-http";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { ICompany } from "types/company";
@@ -37,19 +37,33 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       render: (text: string) => <Avatar src={text} />,
     },
     {
-      title: t("Ticker"),
-      dataIndex: "ticker",
-      key: "ticker",
-      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker),
-    },
-    {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
       render: (text: string, record: ICompany) => (
-        <Link to={`companies/${record.id}`}>{text}</Link>
+        <>
+          <Link to={`companies/${record.id}`}>{text}</Link>
+          {record.sector !== null && (
+            <>
+              <br />
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: "0.8em" }}
+                title={record.sector.name}
+              >
+                {t(record.sector.name)}
+              </Typography.Text>
+            </>
+          )}
+        </>
       ),
       sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name),
+    },
+    {
+      title: t("Ticker"),
+      dataIndex: "ticker",
+      key: "ticker",
+      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker),
     },
     {
       title: t("Country"),
@@ -58,6 +72,12 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       render: (text: string) => <CountryFlag code={text} />,
       sorter: (a: ICompany, b: ICompany) =>
         a.countryCode.localeCompare(b.countryCode),
+    },
+    {
+      title: t("Broker"),
+      dataIndex: "broker",
+      key: "broker",
+      sorter: (a: ICompany, b: ICompany) => a.broker.localeCompare(b.broker),
     },
     {
       title: t("Action"),
@@ -92,6 +112,8 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       portfolio: element.portfolio,
       logo: element.logo,
       countryCode: element.countryCode,
+      sector: element.sector,
+      broker: element.broker,
     }));
   };
 

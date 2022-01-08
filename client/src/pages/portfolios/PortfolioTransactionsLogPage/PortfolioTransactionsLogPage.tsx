@@ -24,7 +24,6 @@ export default function PortfolioDetailsPage() {
   return (
     <PortfolioTransactionsLogPageHeader
       portfolioName={portfolio.name}
-      portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
       <LogMessagesList />
