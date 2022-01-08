@@ -18,6 +18,9 @@ code {
   padding: 24px;
   background: #fff;
 }
+.site-main-content {
+  width: 100%;
+}
 #components-layout-demo-top .logo {
   float: left;
   width: 120px;
