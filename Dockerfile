@@ -48,12 +48,14 @@ WORKDIR /usr/src/app
 COPY ./backend /usr/src/app
 
 RUN mkdir /usr/src/media/
+RUN mkdir /usr/src/logs/
 # copy project
-#COPY ./config/config.sample.py /usr/src/backend/config/config.py
+COPY ./backend/config/config.sample.py /usr/src/app/config/config.py
 COPY ./data/db.sqlite3.base /usr/src/data/db.sqlite3
 
 EXPOSE 34800
 
 RUN python manage.py collectstatic
-
 RUN sed -i -e "s/REPLACE_SECRET_KEY/$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')/g" /usr/src/app/config/config.py
+
+

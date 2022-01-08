@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = config.ALLOWED_HOSTS
 
@@ -121,9 +121,9 @@ DATABASES = {
 if config.DATABASE_TYPE == "mysql":
     DATABASES = {
         "default": {
-            'ENGINE': 'django.db.backends.mysql',
-            'OPTIONS': {
-                'read_default_file': config.DATABASE_MYSQL_CONFIG_PATH,
+            "ENGINE": "django.db.backends.mysql",
+            "OPTIONS": {
+                "read_default_file": config.DATABASE_MYSQL_CONFIG_PATH,
             },
         }
     }
@@ -153,7 +153,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = config.TIME_ZONE
 
 USE_I18N = True
 
@@ -176,4 +176,37 @@ SWAGGER_SETTINGS = {
         "Basic": {"type": "basic"},
         "Token": {"type": "apiKey", "name": "Authorization", "in": "header"},
     }
+}
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "file": {
+            "format": "{levelname} | {asctime} | {module}:{lineno} | {process:d} | {thread:d} | {message}",
+            "style": "{",
+        },
+        "console": {
+            "format": "{levelname} | {asctime} | {message} | {pathname}:{lineno} | {module} | {funcName}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "console"},
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "file",
+            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
+            "backupCount": 10,
+            "filename": config.LOGS_ROOT + "debug.log",
+        },
+    },
+    "loggers": {
+        "buho_backend": {
+            "handlers": ["file", "console"],
+            "level": config.LOG_LEVEL,
+            "propagate": True,
+        },
+    },
 }
