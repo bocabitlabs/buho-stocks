@@ -3,7 +3,7 @@ from django.db import models
 
 # Create your models here.
 class Market(models.Model):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     description = models.TextField()
     color = models.CharField(max_length=200)
     region = models.CharField(max_length=200)
@@ -17,3 +17,6 @@ class Market(models.Model):
 
     def __str___(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']

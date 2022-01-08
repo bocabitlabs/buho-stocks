@@ -10,7 +10,7 @@ class SectorBase(models.Model):
     class Meta:
         abstract = True
 
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
     color = models.CharField(max_length=200)
 
     date_created = models.DateTimeField(auto_now_add=True)
@@ -21,14 +21,19 @@ class SectorBase(models.Model):
 
 class SuperSector(SectorBase):
     """Super sector model class"""
+    class Meta:
+        ordering = ['name']
 
 
 class Sector(SectorBase):
     """Sector model class"""
 
     super_sector = models.ForeignKey(
-        SuperSector, on_delete=models.CASCADE, related_name="sectors", null=True
+        SuperSector, on_delete=models.SET_NULL, related_name="sectors", null=True
     )
 
     def __str___(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
