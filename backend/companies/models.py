@@ -43,3 +43,6 @@ class Company(models.Model):
 
     def __str___(self):
         return self.name
+
+    class Meta:
+        ordering = ['name']
