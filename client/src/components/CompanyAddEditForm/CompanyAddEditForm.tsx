@@ -13,7 +13,6 @@ import {
   Upload,
 } from "antd";
 import useFetch from "use-http";
-import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import { AlertMessagesContext } from "contexts/alert-messages";
 import { ICompany } from "types/company";
@@ -31,7 +30,6 @@ function CompanyAddEditForm({
   companyId,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
-  const [color, setColor] = useState("#607d8b");
   const [countryCode, setCountryCode] = useState("");
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
@@ -99,14 +97,6 @@ function CompanyAddEditForm({
     loadInitialSectors();
   }, [sectorsResponse.ok, getSectors]);
 
-  useEffect(() => {
-    if (companyId) {
-      if (company) {
-        setColor(company.color);
-      }
-    }
-  }, [companyId, company]);
-
   const getBase64 = (img: any, callback: any) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -129,7 +119,7 @@ function CompanyAddEditForm({
     } = values;
     const newCompany = {
       name,
-      color,
+      color: "#2196F3",
       description,
       baseCurrency,
       dividendsCurrency,
@@ -165,10 +155,6 @@ function CompanyAddEditForm({
         navigate(-1);
       }
     }
-  };
-
-  const handleColorChange = (newColor: any) => {
-    setColor(newColor.hex);
   };
 
   const handleCountryChange = (newValue: string) => {
@@ -225,31 +211,6 @@ function CompanyAddEditForm({
       </Form.Item>
       <Form.Item name="altTickers" label={t("Altnernative tickers")}>
         <Input type="text" />
-      </Form.Item>
-      <Form.Item
-        label={
-          <div>
-            {t("Color")}:{" "}
-            <svg
-              width="35"
-              height="35"
-              viewBox="0 0 35 35"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <rect
-                x="10"
-                y="10"
-                width="25"
-                height="25"
-                rx="5"
-                ry="5"
-                fill={color}
-              />
-            </svg>
-          </div>
-        }
-      >
-        <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
       <Form.Item name="logo" label="Company Logo">
         <Upload
@@ -346,14 +307,14 @@ function CompanyAddEditForm({
       <Form.Item name="url" label={t("URL")}>
         <Input type="text" />
       </Form.Item>
-      <Form.Item name="description" label={t("Description")}>
-        <Input type="text" />
-      </Form.Item>
       <Form.Item name="countryCode" label={t("Country")}>
         <CountrySelector
           handleChange={handleCountryChange}
           initialValue={countryCode}
         />
+      </Form.Item>
+      <Form.Item name="description" label={t("Description")}>
+        <Input.TextArea rows={4} />
       </Form.Item>
 
       <Form.Item>
