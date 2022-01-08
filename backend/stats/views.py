@@ -10,8 +10,9 @@ from drf_yasg.utils import swagger_auto_schema
 from companies.models import Company
 from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
+from stats.serializers import CompanyStatsForYearSerializer
 
-from stats.models import CompanyStats, PortfolioStats
+from stats.utils import CompanyStatsUtils, PortfolioStatsUtils, CompanyUtils
 
 
 class CompanyStatsAPIView(APIView):
@@ -20,9 +21,9 @@ class CompanyStatsAPIView(APIView):
 
     def get_object(self, company_id, year, user_id):
         try:
-            company_stats = CompanyStats(company_id, user_id, year=year)
-            stats = company_stats.get_stats_for_year()
-            return stats
+            company_stats = CompanyStatsUtils(company_id, user_id, year=year)
+            instance = company_stats.get_stats_for_year()
+            return instance
         except Company.DoesNotExist:
             return None
 
@@ -32,14 +33,14 @@ class CompanyStatsAPIView(APIView):
         """
         Retrieve the company item with given company_id
         """
-        stats = self.get_object(company_id, year, request.user.id)
-        if not stats:
+        instance = self.get_object(company_id, year, request.user.id)
+        if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        return Response(stats, status=status.HTTP_200_OK)
+        serializer = CompanyStatsForYearSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PortfolioStatsAPIView(APIView):
@@ -48,7 +49,7 @@ class PortfolioStatsAPIView(APIView):
 
     def get_object(self, portfolio_id, year, user_id):
         try:
-            company_stats = PortfolioStats(portfolio_id, user_id, year=year)
+            company_stats = PortfolioStatsUtils(portfolio_id, user_id, year=year)
             stats = company_stats.get_stats_for_year()
             return stats
         except Portfolio.DoesNotExist:
@@ -76,11 +77,7 @@ class CompanyStatsYearsAPIView(APIView):
 
     def get_object(self, company_id, user_id):
         try:
-            company = Company.objects.get(id=company_id, user=user_id)
-            first_year = company.shares_transactions.order_by(
-                "transaction_date"
-            ).first()
-            return first_year.transaction_date.year
+            return CompanyUtils().get_company_first_year(company_id, user_id)
         except Company.DoesNotExist:
             return None
 
