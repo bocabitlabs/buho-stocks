@@ -1,23 +1,21 @@
-import React from "react";
+import React, { Suspense, useContext } from "react";
 import { Outlet } from "react-router-dom";
 import "./App.css";
-import { UserOutlined } from "@ant-design/icons";
-import { Col, Layout, Menu, Row } from "antd";
-import { Content, Footer, Header } from "antd/lib/layout/layout";
-import SubMenu from "antd/lib/menu/SubMenu";
-import Title from "antd/lib/typography/Title";
+import { Avatar, Layout, Spin, Typography } from "antd";
+import { Content, Header } from "antd/lib/layout/layout";
 import { Provider } from "use-http";
-import packageJson from "../package.json";
-import Breadcrumbs from "breadcrumbs";
 import AlertMessages from "components/AlertMessages/AlertMessages";
 import AppSidebar from "components/AppSidebar/AppSidebar";
-import LogoutButton from "components/LogoutButton/LogoutButton";
+// import PageFooter from "components/PageFooter/PageFooter";
+import PageFooter from "components/PageFooter/PageFooter";
+import { AlertMessagesContext } from "contexts/alert-messages";
 import { SettingsContext } from "contexts/settings";
 import { useSettingsContext } from "hooks/use-settings/use-settings-context";
 import SettingsLoader from "SettingsLoader";
 
 function App() {
   const settingsContext = useSettingsContext();
+  const { createError } = useContext(AlertMessagesContext);
 
   return (
     <SettingsContext.Provider value={settingsContext}>
@@ -28,65 +26,49 @@ function App() {
             Accept: "application/json",
             Authorization: `Token ${localStorage.getItem("token")}`,
           },
+          onError: ({ error }) => {
+            createError(`Unable to connect to the API: ${error}`);
+          },
         }}
       >
         <SettingsLoader>
           <Layout>
-            <Header
-              style={{
-                position: "fixed",
-                zIndex: 1,
-                width: "100%",
-                backgroundColor: "#fff",
-                padding: "0 20px",
-              }}
-            >
-              <Row justify="space-between">
-                <Col span={10}>
-                  <span style={{ float: "left" }}>
-                    <Title style={{ fontSize: 30, lineHeight: "inherit" }}>
-                      Buho Stocks
-                    </Title>
-                  </span>
-                </Col>
-                <Col span={2} offset={10} style={{ textAlign: "right" }}>
-                  <Menu
-                    theme="light"
-                    mode="horizontal"
-                    defaultSelectedKeys={["1"]}
-                  >
-                    <SubMenu
-                      style={{ position: "absolute", top: 0, right: 0 }}
-                      key="sub1"
-                      icon={<UserOutlined />}
-                    >
-                      <LogoutButton />
-                    </SubMenu>
-                  </Menu>
-                </Col>
-              </Row>
-            </Header>
-            <Row style={{ marginTop: 64 }} justify="space-around">
-              <Col span={6}>
-                <AppSidebar />
-              </Col>
-
-              <Col span={17}>
-                <Content className="site-layout">
-                  <Breadcrumbs />
-                  <AlertMessages />
-                  <div
-                    className="site-layout-background"
-                    style={{ minHeight: 380 }}
-                  >
+            <AppSidebar />
+            <div className="site-main-content">
+              <Header
+                className="site-layout-sub-header-background"
+                style={{
+                  zIndex: 1,
+                  width: "100%",
+                  backgroundColor: "#fff",
+                  padding: "0 20px",
+                  height: 60,
+                  display: "block",
+                }}
+              >
+                <Typography.Title
+                  style={{ fontSize: 30, lineHeight: "inherit" }}
+                >
+                  <Avatar src="/icons/android-icon-72x72.png" />
+                  Buho Stocks
+                </Typography.Title>
+              </Header>
+              <Content
+                className="site-layout"
+                style={{ margin: "24px 16px 0" }}
+              >
+                <AlertMessages />
+                <div
+                  className="site-layout-background"
+                  style={{ minHeight: 380 }}
+                >
+                  <Suspense fallback={<Spin />}>
                     <Outlet />
-                  </div>
-                </Content>
-              </Col>
-            </Row>
-            <Footer style={{ textAlign: "center" }}>
-              Buho Stocks {packageJson.version} - Bocabitlabs ©2021
-            </Footer>
+                  </Suspense>
+                </div>
+              </Content>
+              <PageFooter />
+            </div>
           </Layout>
         </SettingsLoader>
       </Provider>

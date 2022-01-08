@@ -6,10 +6,13 @@ import {
   ClusterOutlined,
   DollarCircleOutlined,
   HomeOutlined,
-  ImportOutlined,
   SettingOutlined,
+  SyncOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Layout, Menu } from "antd";
+import SubMenu from "antd/lib/menu/SubMenu";
+import LogoutButton from "components/LogoutButton/LogoutButton";
 import getRoute, { HOME_ROUTE } from "routes";
 
 interface RoutePathProps {
@@ -43,9 +46,8 @@ const navLinks: RoutePathProps[] = [
     key: "5",
     path: "/app/import-export",
     text: "Import & Export",
-    icon: <ImportOutlined />,
+    icon: <SyncOutlined />,
   },
-
   {
     key: "6",
     path: "/app/settings",
@@ -76,18 +78,33 @@ export default function AppSidebar(): ReactElement {
   }, [location]);
 
   return (
-    <Menu
+    <Layout.Sider
       theme="light"
-      mode="inline"
-      onClick={onClickMenu}
-      selectedKeys={[selectedKey]}
-      style={{ marginTop: 20 }}
+      breakpoint="lg"
+      collapsedWidth="0"
+      onBreakpoint={(broken) => {
+        console.log(broken);
+      }}
+      onCollapse={(collapsed, type) => {
+        console.log(collapsed, type);
+      }}
     >
-      {navLinks.map((item) => (
-        <Menu.Item key={item.key} icon={item.icon}>
-          {t(item.text)}
-        </Menu.Item>
-      ))}
-    </Menu>
+      <Menu
+        theme="light"
+        mode="inline"
+        onClick={onClickMenu}
+        selectedKeys={[selectedKey]}
+        style={{ marginTop: 20 }}
+      >
+        {navLinks.map((item) => (
+          <Menu.Item key={item.key} icon={item.icon}>
+            {t(item.text)}
+          </Menu.Item>
+        ))}
+        <SubMenu key="sub1" icon={<UserOutlined />} title="Account">
+          <LogoutButton />
+        </SubMenu>
+      </Menu>
+    </Layout.Sider>
   );
 }
