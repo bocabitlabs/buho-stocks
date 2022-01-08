@@ -220,8 +220,7 @@ export default function IBTradesImportForm({
             <Input placeholder="Date" />
           </Form.Item>
         </Col>
-        {selectedCompany?.dividendsCurrency.code !==
-          portfolio.baseCurrency.code && (
+        {selectedCompany?.baseCurrency.code !== portfolio.baseCurrency.code && (
           <>
             <Col span={6}>
               <Form.Item
@@ -249,7 +248,7 @@ export default function IBTradesImportForm({
                   disabled={initialTransactionDate === null || !selectedCompany}
                   onClick={fetchExchangeRate}
                   loading={exchangeRateLoading}
-                  title={`${selectedCompany?.dividendsCurrency.code} to ${portfolio.baseCurrency.code}`}
+                  title={`${selectedCompany?.baseCurrency.code} to ${portfolio.baseCurrency.code}`}
                 >
                   {t("Get exchange rate")}
                 </Button>

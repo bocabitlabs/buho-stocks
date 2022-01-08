@@ -91,16 +91,18 @@ export default function IBDividendsImportForm({
     loading: exchangeRateLoading,
     get: getExchangeRate,
     response: exchangeRateResponse,
+    cache: exchangeRateCache,
   } = useFetch("exchange-rates");
   const {
     loading: dividendsLoading,
     post: postDividendsTransaction,
     response: dividendsResponse,
+    cache: dividendsCache,
   } = useFetch(`companies/${selectedCompany?.id}/dividends`);
 
   const onCompanyChange = (value: string) => {
     const tempCompany = portfolio.companies.find(
-      (element) => element.ticker === value,
+      (element) => element.id === +value,
     );
     if (tempCompany) {
       setSelectedCompany(tempCompany);
@@ -110,6 +112,7 @@ export default function IBDividendsImportForm({
   const onFinish = async (values: any) => {
     console.log("Success:", values);
     if (!selectedCompany) {
+      console.log("No company selected");
       return;
     }
 
@@ -117,7 +120,9 @@ export default function IBDividendsImportForm({
       values;
 
     let exchangeRateValue = 1;
-    if (selectedCompany.baseCurrency.code === portfolio.baseCurrency.code) {
+    if (
+      selectedCompany.dividendsCurrency.code === portfolio.baseCurrency.code
+    ) {
       exchangeRateValue = 1;
     } else {
       exchangeRateValue = values.exchangeRate;
@@ -130,9 +135,9 @@ export default function IBDividendsImportForm({
     const transaction: IDividendsTransactionFormFields = {
       count,
       grossPricePerShare: grossPricePerShare.toFixed(3),
-      grossPricePerShareCurrency: selectedCompany.baseCurrency.code,
+      grossPricePerShareCurrency: selectedCompany.dividendsCurrency.code,
       totalCommission: formattedCommission.toFixed(3),
-      totalCommissionCurrency: selectedCompany.baseCurrency.code,
+      totalCommissionCurrency: selectedCompany.dividendsCurrency.code,
       exchangeRate: exchangeRateValue,
       transactionDate,
       color: "#0066cc",
@@ -146,20 +151,29 @@ export default function IBDividendsImportForm({
     await postDividendsTransaction("/", transaction);
     if (dividendsResponse.ok) {
       setFormSent(true);
+      dividendsCache.clear();
     }
   };
 
   const fetchExchangeRate = async () => {
     console.log("fetching exchange rate");
     console.log(form.getFieldValue("transactionDate"));
+    form.setFields([
+      {
+        name: "exchangeRate",
+        errors: undefined,
+      },
+    ]);
     if (selectedCompany && portfolio) {
+      console.debug(`fetching exchange rate for ${selectedCompany.ticker}`);
+      exchangeRateCache.clear();
       const newExchangeRate = await getExchangeRate(
-        `${selectedCompany?.baseCurrency.code}/${
+        `${selectedCompany?.dividendsCurrency.code}/${
           portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`,
+        }/${form.getFieldValue("transactionDate")}/`,
       );
       if (exchangeRateResponse.ok) {
-        console.log(newExchangeRate);
+        console.debug(newExchangeRate);
         form.setFieldsValue({
           exchangeRate: newExchangeRate.exchangeRate,
         });
@@ -171,6 +185,8 @@ export default function IBDividendsImportForm({
           },
         ]);
       }
+    } else {
+      console.error(`No company selected`);
     }
   };
 
