@@ -1,6 +1,7 @@
 import React, { ReactElement, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { LogoutOutlined } from "@ant-design/icons";
 import { Menu } from "antd";
 import { AuthContext } from "contexts/auth";
 
@@ -15,7 +16,7 @@ export default function LogoutButton(): ReactElement {
     navigate("/app-login");
   };
   return (
-    <Menu.Item key="3" onClick={signout}>
+    <Menu.Item key="3" onClick={signout} icon={<LogoutOutlined />}>
       {t("Sign out")}
     </Menu.Item>
   );
