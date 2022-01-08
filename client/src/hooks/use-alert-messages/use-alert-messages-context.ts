@@ -8,12 +8,12 @@ import {
 export function useAlertMessagesContext(): AlertMessagesContextType {
   const [messages, setMessages] = useState<any[] | []>([]);
 
-  const create = useCallback(
-    (newValues: IAlertMessageFormFields) => {
-      setMessages([...messages, { ...newValues, id: messages.length }]);
-    },
-    [messages],
-  );
+  const create = useCallback((newValues: IAlertMessageFormFields) => {
+    setMessages((oldArray) => [
+      ...oldArray,
+      { ...newValues, id: oldArray.length },
+    ]);
+  }, []);
 
   const createSuccess = useCallback(
     (text: string) => {
