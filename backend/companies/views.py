@@ -26,11 +26,6 @@ class CompaniesListAPIView(APIView):
         List all the portfolio items for given requested user
         """
         elements = Company.objects.filter(user=request.user.id, portfolio=portfolio_id)
-        # for element in elements:
-        #     base_currency = get_currency_details(element.base_currency)
-        #     dividends_currency = get_currency_details(element.dividends_currency)
-        #     element.base_currency = base_currency
-        #     element.dividends_currency = dividends_currency
 
         serializer = CompanySerializerGet(
             elements, many=True, context={"request": request}

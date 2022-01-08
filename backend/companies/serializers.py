@@ -7,9 +7,10 @@ from currencies.models import get_currency_details
 from dividends_transactions.serializers import DividendsTransactionSerializer
 from portfolios.models import Portfolio
 from companies.models import Company
+from portfolios.serializers_lite import PortfolioSerializerLite
 from rights_transactions.serializers import RightsTransactionSerializer
 from sectors.models import Sector
-from sectors.serializers import SectorSerializer
+from sectors.serializers import SectorSerializerGet
 from markets.models import Market
 from markets.serializers import MarketSerializer
 from shares_transactions.serializers import SharesTransactionSerializer
@@ -73,21 +74,18 @@ class CompanySerializerGet(CompanySerializer):
     dividends_currency = SerializerMethodField()
 
     market = MarketSerializer(many=False, read_only=True)
-    sector = SectorSerializer(many=False, read_only=True)
+    sector = SectorSerializerGet(many=False, read_only=True)
     shares_transactions = SharesTransactionSerializer(many=True, read_only=True)
     rights_transactions = RightsTransactionSerializer(many=True, read_only=True)
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
+    portfolio = PortfolioSerializerLite(many=False, read_only=True)
 
     def get_base_currency(self, obj):
-        print("get_base_currency company")
-
         return get_currency_details(
             obj.base_currency
         )  # access the price of the product associated with the order_unit object
 
     def get_dividends_currency(self, obj):
-        print("get_dividends_currency company")
-
         return get_currency_details(
             obj.dividends_currency
         )  # access the price of the product associated with the order_unit object
