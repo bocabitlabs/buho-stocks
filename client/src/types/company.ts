@@ -1,6 +1,7 @@
 import { ICurrency } from "./currency";
 import { IDividendsTransaction } from "./dividends-transaction";
 import { IMarket } from "./market";
+import { IPortfolioLite } from "./portfolio-lite";
 import { IRightsTransaction } from "./rights-transaction";
 import { ISector } from "./sector";
 import { ISharesTransaction } from "./shares-transaction";
@@ -32,7 +33,7 @@ export interface ICompany extends ICompanyBase {
   dividendsCurrency: ICurrency;
   sector: ISector;
   market: IMarket;
-  portfolio: number;
+  portfolio: IPortfolioLite;
   sharesTransactions: ISharesTransaction[];
   rightsTransactions: IRightsTransaction[];
   dividendsTransactions: IDividendsTransaction[];
