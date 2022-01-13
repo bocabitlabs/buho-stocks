@@ -16,7 +16,6 @@ export default function MarketsListTable() {
   const { t } = useTranslation();
 
   const confirmDelete = async (recordId: number) => {
-    console.log(recordId);
     await deleteMarket(`${recordId}/`);
     if (response.ok) {
       const removeItem = markets.filter((market: IMarket) => {

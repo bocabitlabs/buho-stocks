@@ -21,7 +21,6 @@ export default function SuperSectorsTable() {
   } = useFetch("sectors/super");
 
   const confirmDelete = async (recordId: number) => {
-    console.log(recordId);
     await deleteSector(`${recordId}/`);
     if (response.ok) {
       createSuccess(t("Sector deleted successfully"));

@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
@@ -23,8 +23,6 @@ export default function SharesListTable(): ReactElement {
   } = useFetch(`companies/${companyId}/shares`);
 
   const confirmDelete = async (recordId: number) => {
-    console.log(recordId);
-    // deleteMarketById(recordId);
     await deleteTransaction(`${recordId}/`);
     if (response.ok) {
       const removeItem = transactions.filter(
@@ -37,12 +35,17 @@ export default function SharesListTable(): ReactElement {
     }
   };
 
+  const mounted = useRef(false);
   useEffect(() => {
     async function loadInitialShares() {
-      const initialTransactions = await get();
-      if (response.ok) setTransactions(initialTransactions);
+      const initialTransactions = await get("/");
+      if (response.ok) {
+        setTransactions(initialTransactions);
+      }
     }
-    loadInitialShares();
+    if (!mounted.current) {
+      loadInitialShares();
+    }
   }, [response.ok, get]);
 
   if (loading) {
@@ -142,6 +145,7 @@ export default function SharesListTable(): ReactElement {
       columns={columns}
       bordered
       dataSource={getData()}
+      scroll={{ x: 800 }}
       expandable={{
         expandedRowRender: NotesRow,
         rowExpandable: (record) =>

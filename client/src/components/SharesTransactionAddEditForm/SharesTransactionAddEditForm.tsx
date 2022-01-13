@@ -144,7 +144,6 @@ export default function SharesTransactionAddEditForm({
     dateString: string,
   ) => {
     setCurrentTransactionDate(dateString);
-    console.log(value);
   };
 
   // const updateFieldsForING = () => {

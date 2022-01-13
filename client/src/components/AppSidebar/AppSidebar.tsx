@@ -78,17 +78,7 @@ export default function AppSidebar(): ReactElement {
   }, [location]);
 
   return (
-    <Layout.Sider
-      theme="light"
-      breakpoint="lg"
-      collapsedWidth="0"
-      onBreakpoint={(broken) => {
-        console.log(broken);
-      }}
-      onCollapse={(collapsed, type) => {
-        console.log(collapsed, type);
-      }}
-    >
+    <Layout.Sider theme="light" breakpoint="lg" collapsedWidth="0">
       <Menu
         theme="light"
         mode="inline"

@@ -21,7 +21,6 @@ export function useSettingsContext(): SettingsContextType {
     get: apiGet,
     put,
     response,
-    error,
     loading: isLoading,
     cache,
   } = useFetch(endpoint, {
@@ -32,11 +31,9 @@ export function useSettingsContext(): SettingsContextType {
     const responseValues = await apiGet();
     if (response.ok) {
       setSettings(responseValues);
-    } else {
-      console.error(error);
     }
     return response;
-  }, [apiGet, response, error]);
+  }, [apiGet, response]);
 
   const update = useCallback(
     async (settingsId: number, newValues: ISettingsFormFields) => {
@@ -48,21 +45,16 @@ export function useSettingsContext(): SettingsContextType {
       if (response.ok) {
         setSettings(responseValues);
         cache.clear();
-      } else {
-        console.error(error);
       }
       return response;
     },
-    [put, response, error, cache],
+    [put, response, cache],
   );
 
   useEffect(() => {
     if (cancelRequest.current) return undefined;
     if (authState.isAuthenticated) {
       get();
-      console.log("user is authenticated. Will get settings");
-    } else {
-      console.log("User is not logged in. Not getting settings");
     }
     return () => {
       cancelRequest.current = true;

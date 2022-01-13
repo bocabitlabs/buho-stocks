@@ -141,7 +141,6 @@ export default function DividendsTransactionAddEditForm({
     dateString: string,
   ) => {
     setCurrentTransactionDate(dateString);
-    console.log(value);
   };
 
   // const updateFieldsForING = () => {

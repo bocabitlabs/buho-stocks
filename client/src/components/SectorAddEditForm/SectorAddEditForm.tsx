@@ -61,7 +61,6 @@ function SectorAddEditForm({
       const result = await getSuperSectors("/");
       if (superSectorsResponse.ok) {
         setSuperSectors(result);
-        console.log("Super sectors: ", result);
       }
     }
 

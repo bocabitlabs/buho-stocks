@@ -11,7 +11,7 @@ export default function PortfolioList(): ReactElement {
 
   useEffect(() => {
     const fetchPortfolios = async () => {
-      const results = await get();
+      const results = await get("/");
       if (response.ok) {
         setPortfolios(results);
       }

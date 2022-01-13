@@ -163,7 +163,6 @@ function CompanyAddEditForm({
 
   const handleUpload = ({ fileList: newFileList }: any) => {
     setFileList(newFileList);
-    console.log(newFileList[0]);
     setFileName(newFileList[0].name);
     getBase64(newFileList[0].originFileObj, (imageUrl: any) => {
       setBas64File(imageUrl);

@@ -4,16 +4,13 @@ import { DownloadOutlined, UploadOutlined } from "@ant-design/icons";
 import { Button, Divider } from "antd";
 
 interface IProps {
-  action: string | null;
   setAction: (action: string | null) => void;
 }
 
 export default function ImportExportSelector({
-  action,
   setAction,
 }: IProps): ReactElement {
   const { t } = useTranslation();
-  console.log(action);
   return (
     <div>
       <Button

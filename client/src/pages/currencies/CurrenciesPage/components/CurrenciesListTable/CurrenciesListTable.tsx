@@ -11,7 +11,7 @@ export default function CurrenciesListTable() {
 
   useEffect(() => {
     const fetchCurrencies = async () => {
-      const results = await get();
+      const results = await get("/");
       if (response.ok) {
         setCurrencies(results);
       }

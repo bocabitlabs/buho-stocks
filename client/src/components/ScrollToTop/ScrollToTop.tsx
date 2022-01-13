@@ -5,7 +5,6 @@ export default function ScrollToTop() {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    console.log(`scroll to top: ${pathname}`);
     window.scrollTo(0, 0);
   }, [pathname]);
 

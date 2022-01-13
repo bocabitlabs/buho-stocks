@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import React, { ReactElement, useEffect, useState } from "react";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Col, Form, Row, Select, Spin, Statistic, Typography } from "antd";
@@ -53,6 +54,11 @@ export default function Stats({ id }: Props): ReactElement {
   if (!stats) {
     return <Spin />;
   }
+  const columnProps = {
+    xs: { span: 12 },
+    lg: { span: 6 },
+  };
+
   return (
     <div style={{ marginTop: 16 }}>
       <Form layout="inline">
@@ -72,7 +78,7 @@ export default function Stats({ id }: Props): ReactElement {
         </Select>
       </Form>
       <Row gutter={24} style={{ marginTop: 16 }}>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Invested"
             value={stats?.invested}
@@ -80,7 +86,7 @@ export default function Stats({ id }: Props): ReactElement {
             suffix={stats?.portfolioCurrency}
           />
         </Col>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Accum. Investment"
             value={stats?.accumulatedInvestment}
@@ -88,7 +94,7 @@ export default function Stats({ id }: Props): ReactElement {
             suffix={stats?.portfolioCurrency}
           />
         </Col>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Dividends"
             value={stats?.dividends}
@@ -96,7 +102,7 @@ export default function Stats({ id }: Props): ReactElement {
             suffix={stats?.portfolioCurrency}
           />
         </Col>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Accum. Dividends"
             value={stats?.accumulatedDividends}
@@ -104,7 +110,7 @@ export default function Stats({ id }: Props): ReactElement {
             suffix={stats?.portfolioCurrency}
           />
         </Col>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Portfolio Value"
             value={stats?.portfolioValue}
@@ -122,7 +128,7 @@ export default function Stats({ id }: Props): ReactElement {
             suffix={stats?.portfolioCurrency}
           />
         </Col>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Return"
             value={stats?.returnValue}
@@ -145,7 +151,7 @@ export default function Stats({ id }: Props): ReactElement {
             {stats?.returnPercent.toFixed(2)}%
           </Typography.Text>
         </Col>
-        <Col span={6}>
+        <Col {...columnProps}>
           <Statistic
             title="Return with Div."
             value={stats?.returnWithDividends}

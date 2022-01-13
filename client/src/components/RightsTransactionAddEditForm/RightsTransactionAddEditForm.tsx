@@ -144,7 +144,6 @@ export default function RightsTransactionAddEditForm({
     dateString: string,
   ) => {
     setCurrentTransactionDate(dateString);
-    console.log(value);
   };
 
   // const updateFieldsForING = () => {

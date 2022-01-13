@@ -16,7 +16,6 @@ export default function SectorsTable() {
   const { loading, response, get, del: deleteSector } = useFetch("sectors");
 
   const confirmDelete = async (recordId: number) => {
-    console.log(recordId);
     await deleteSector(`${recordId}/`);
     if (response.ok) {
       createSuccess(t("Sector deleted successfully"));

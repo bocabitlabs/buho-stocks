@@ -13,7 +13,6 @@ export default function ImportExportPage(): ReactElement {
   const { t } = useTranslation();
 
   const onChange1 = (e: any) => {
-    console.log("radio4 checked", e.target.value);
     setAction(e.target.value);
   };
 

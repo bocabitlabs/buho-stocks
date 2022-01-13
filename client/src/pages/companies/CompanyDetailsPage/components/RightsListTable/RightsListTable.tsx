@@ -23,7 +23,6 @@ export default function RightsListTable(): ReactElement {
   } = useFetch(`companies/${companyId}/rights`);
 
   const confirmDelete = async (recordId: number) => {
-    console.log(recordId);
     await deleteTransaction(`${recordId}/`);
     if (response.ok) {
       const removeItem = transactions.filter(
@@ -38,8 +37,10 @@ export default function RightsListTable(): ReactElement {
 
   useEffect(() => {
     async function loadInitialShares() {
-      const initialTransactions = await get();
-      if (response.ok) setTransactions(initialTransactions);
+      const initialTransactions = await get("/");
+      if (response.ok) {
+        setTransactions(initialTransactions);
+      }
     }
     loadInitialShares();
   }, [response.ok, get]);
@@ -141,6 +142,7 @@ export default function RightsListTable(): ReactElement {
       columns={columns}
       bordered
       dataSource={getData()}
+      scroll={{ x: 800 }}
       expandable={{
         expandedRowRender: NotesRow,
         rowExpandable: (record) =>

@@ -21,6 +21,7 @@ import MarketsAddPage from "pages/markets/MarketsAddPage/MarketsAddPage";
 import MarketsEditPage from "pages/markets/MarketsEditPage/MarketsEditPage";
 import MarketsListPage from "pages/markets/MarketsListPage/MarketsListPage";
 import MarketsPages from "pages/markets/MarketsPages/MarketsPages";
+import PortfolioChartsPage from "pages/portfolios/PorfolioChartsPage/PortfolioChartsPage";
 import PortfolioDetailsPage from "pages/portfolios/PortfolioDetailPage/PortfolioDetailsPage";
 import PortfoliosAddPage from "pages/portfolios/PortfoliosAddPage/PortfoliosAddPage";
 import PortfoliosListPage from "pages/portfolios/PortfoliosListPage/PortfoliosListPage";
@@ -76,6 +77,10 @@ export default function Main(): ReactElement {
               <Route
                 path="portfolios/:id/log/*"
                 element={<PortfolioTransactionsLogPage />}
+              />
+              <Route
+                path="portfolios/:id/charts/*"
+                element={<PortfolioChartsPage />}
               />
               <Route
                 path="portfolios/:id/companies/add/*"

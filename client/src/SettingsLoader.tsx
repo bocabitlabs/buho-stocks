@@ -1,6 +1,5 @@
-import React, { ReactNode, useContext, useEffect, useRef } from "react";
-import { AuthContext } from "contexts/auth";
-import { SettingsContext } from "contexts/settings";
+import React, { ReactNode, useEffect } from "react";
+import useFetch from "use-http";
 import i18n from "i18n";
 
 interface Props {
@@ -8,33 +7,17 @@ interface Props {
 }
 
 function SettingsLoader({ children }: Props) {
-  const { settings, get: getSettings } = useContext(SettingsContext);
-  const { state: authState } = useContext(AuthContext);
-  const cancelRequest = useRef<boolean>(false);
+  const { get: getSettings, response } = useFetch("settings");
 
   useEffect(() => {
-    if (cancelRequest.current) return undefined;
-
-    console.debug("Loading default language");
-    i18n.changeLanguage(settings?.language);
-    return () => {
-      console.log("Cancelling request");
-      cancelRequest.current = true;
-    };
-  }, [settings]);
-
-  useEffect(() => {
-    if (cancelRequest.current) return undefined;
-
-    if (authState.isAuthenticated) {
-      console.debug("Loading app settings");
-      getSettings();
+    async function loadInitialSettings() {
+      const initialData = await getSettings(`/`);
+      if (response.ok) {
+        i18n.changeLanguage(initialData?.language);
+      }
     }
-    return () => {
-      console.log("Cancelling request");
-      cancelRequest.current = true;
-    };
-  }, [getSettings, authState.isAuthenticated]);
+    loadInitialSettings();
+  }, [response.ok, getSettings]);
 
   return <div>{children}</div>;
 }

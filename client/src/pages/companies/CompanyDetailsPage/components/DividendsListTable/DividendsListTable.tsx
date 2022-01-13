@@ -36,8 +36,10 @@ export default function DividendsListTable(): ReactElement {
 
   useEffect(() => {
     async function loadInitialShares() {
-      const initialTransactions = await get();
-      if (response.ok) setTransactions(initialTransactions);
+      const initialTransactions = await get("/");
+      if (response.ok) {
+        setTransactions(initialTransactions);
+      }
     }
     loadInitialShares();
   }, [response.ok, get]);
@@ -130,6 +132,7 @@ export default function DividendsListTable(): ReactElement {
       columns={columns}
       bordered
       dataSource={getData()}
+      scroll={{ x: 800 }}
       expandable={{
         expandedRowRender: NotesRow,
         rowExpandable: (record) =>

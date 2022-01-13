@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   DeleteOutlined,
+  LineChartOutlined,
   PlusOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
@@ -66,7 +67,15 @@ function PortfolioDetailsPageHeader({
           onClick={() => {
             navigate(`log`);
           }}
-          title={t("View company logs")}
+          title={t("View portfolio logs")}
+        />,
+        <Button
+          key="company-view-charts"
+          icon={<LineChartOutlined />}
+          onClick={() => {
+            navigate(`charts`);
+          }}
+          title={t("View portfolio charts")}
         />,
         <Button
           type="primary"

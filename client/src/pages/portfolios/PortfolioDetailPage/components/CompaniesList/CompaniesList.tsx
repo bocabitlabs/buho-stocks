@@ -18,7 +18,6 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
   const { response, del: deleteCompany, cache } = useFetch("portfolios");
 
   const confirmDelete = async (recordId: number) => {
-    console.log(`${id}/companies/${recordId}/`);
     await deleteCompany(`${id}/companies/${recordId}/`);
     if (response.ok) {
       const removeItem = companies.filter((market: ICompany) => {
@@ -42,7 +41,7 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       key: "name",
       render: (text: string, record: ICompany) => (
         <>
-          <Link to={`companies/${record.id}`}>{text}</Link>
+          <Link to={`companies/${record.id}`}>{text}</Link> ({record.ticker})
           {record.sector !== null && (
             <>
               <br />
@@ -60,24 +59,44 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name),
     },
     {
-      title: t("Ticker"),
-      dataIndex: "ticker",
-      key: "ticker",
-      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker),
-    },
-    {
       title: t("Country"),
       dataIndex: "countryCode",
       key: "countryCode",
       render: (text: string) => <CountryFlag code={text} />,
       sorter: (a: ICompany, b: ICompany) =>
         a.countryCode.localeCompare(b.countryCode),
+      responsive: ["md"],
     },
     {
       title: t("Broker"),
       dataIndex: "broker",
       key: "broker",
       sorter: (a: ICompany, b: ICompany) => a.broker.localeCompare(b.broker),
+      responsive: ["md"],
+    },
+    {
+      title: t("Invested"),
+      dataIndex: "invested",
+      key: "invested",
+      render: (text: string, record: any) =>
+        `${(+text).toFixed(2)} ${record.portfolioCurrency}`,
+      sorter: (a: any, b: any) => +a.invested - +b.invested,
+    },
+    {
+      title: t("Portfolio value"),
+      dataIndex: "portfolioValue",
+      key: "portfolioValue",
+      render: (text: string, record: any) =>
+        `${(+text).toFixed(2)} ${record.portfolioCurrency}`,
+      sorter: (a: any, b: any) => +a.portfolioValue - +b.portfolioValue,
+    },
+    {
+      title: t("Return w.d. %"),
+      dataIndex: "returnWithDividendsPercent",
+      key: "returnWithDividendsPercent",
+      render: (text: string) => `${(+text).toFixed(2)} %`,
+      sorter: (a: any, b: any) =>
+        +a.returnWithDividendsPercent - +b.returnWithDividendsPercent,
     },
     {
       title: t("Action"),
@@ -114,10 +133,23 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       countryCode: element.countryCode,
       sector: element.sector,
       broker: element.broker,
+      invested: element.stats.find((stat: any) => stat.year > 2050).invested,
+      portfolioValue: element.stats.find((stat: any) => stat.year > 2050)
+        .portfolioValue,
+      returnWithDividendsPercent: element.stats.find(
+        (stat: any) => stat.year > 2050,
+      ).returnWithDividendsPercent,
+      portfolioCurrency: element.stats.find((stat: any) => stat.year > 2050)
+        .portfolioCurrency,
     }));
   };
 
   return (
-    <Table columns={columns} dataSource={getData()} style={{ marginTop: 16 }} />
+    <Table
+      columns={columns}
+      dataSource={getData()}
+      scroll={{ x: 800 }}
+      style={{ marginTop: 16 }}
+    />
   );
 }

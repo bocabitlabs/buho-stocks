@@ -10,7 +10,6 @@ interface Props {
 export default function CustomBreadCrumbs({
   breadCrumbs,
 }: Props): ReactElement {
-  console.log(breadCrumbs);
   return (
     <div>
       <Breadcrumb.Item key="home">

@@ -1,9 +1,19 @@
 // @ts-ignore
 import * as material from "material-colors";
 
+export function hexToRgb(hex, opacity = 1) {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (result) {
+    const r = parseInt(result[1], 16);
+    const g = parseInt(result[2], 16);
+    const b = parseInt(result[3], 16);
+    return `rgba(${r},${g},${b}, ${opacity})`; // return 23,14,45 -> reformat if needed
+  }
+  return null;
+}
+
 export const fewColorsScale = [
   material.red["500"],
-  material.pink["500"],
   material.pink["500"],
   material.purple["500"],
   material.deepPurple["500"],
