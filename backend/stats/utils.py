@@ -1,6 +1,10 @@
 import datetime
 from decimal import Decimal
+from itertools import groupby
 import logging
+from django.db.models import Sum
+from django.db import models
+from django.db.models import Func
 from django.contrib.auth.models import User
 from forex_python.converter import RatesNotAvailableError
 from django.utils import timezone
@@ -10,19 +14,29 @@ from exchange_rates.models import ExchangeRate
 from exchange_rates.utils import get_exchange_rates_from_api
 from stats.models import CompanyStatsForYear
 from stock_prices.api import StockPricesApi
-from stock_prices.services.yfinance_service import YFinanceStockPricesService
+from stock_prices.services.custom_yfinance_service import CustomYFinanceService
 from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
+from dividends_transactions.models import DividendsTransaction
 
 logger = logging.getLogger("buho_backend")
 
 
+class Month(Func):
+    function = "EXTRACT"
+    template = "%(function)s(MONTH from %(expressions)s)"
+    output_field = models.IntegerField()
+
+
 class CompanyStatsUtils:
-    def __init__(self, company_id, user_id, year="all", use_currency="portfolio"):
+    def __init__(
+        self, company_id, user_id, year="all", use_currency="portfolio", force=False
+    ):
         self.company = Company.objects.get(id=company_id, user=user_id)
         self.year = year
         self.use_currency = use_currency
         self.user_id = user_id
+        self.force = force
 
     def get_shares_count(self):
         total = 0
@@ -201,8 +215,8 @@ class CompanyStatsUtils:
         return Decimal(price) * shares_count * Decimal(exchange_rate_value)
 
     def _get_stock_price(self):
-        yfinance = YFinanceStockPricesService()
-        api = StockPricesApi(yfinance)
+        api_service = CustomYFinanceService()
+        api = StockPricesApi(api_service)
         if self.year == "all":
             stock_price = api.get_last_data_from_last_month(self.company.ticker)
         else:
@@ -215,6 +229,7 @@ class CompanyStatsUtils:
             if not first_year or first_year > int(self.year):
                 return None
             stock_price = api.get_last_data_from_year(self.company.ticker, self.year)
+            logger.debug(f"Stock price: {stock_price}")
         return stock_price
 
     def get_return_with_dividends(
@@ -239,17 +254,18 @@ class CompanyStatsUtils:
         year_for_all = 9999
         temp_year = year_for_all if self.year == "all" else self.year
 
-        if CompanyStatsForYear.objects.filter(
-            company=self.company, year=temp_year
-        ).exists():
-            company_stats_for_year = CompanyStatsForYear.objects.get(
+        if not self.force:
+            if CompanyStatsForYear.objects.filter(
                 company=self.company, year=temp_year
-            )
-            if (
-                company_stats_for_year.date_created
-                > timezone.now() - timezone.timedelta(days=30)
-            ):
-                return company_stats_for_year
+            ).exists():
+                company_stats_for_year = CompanyStatsForYear.objects.get(
+                    company=self.company, year=temp_year
+                )
+                if (
+                    company_stats_for_year.date_created
+                    > timezone.now() - timezone.timedelta(days=30)
+                ):
+                    return company_stats_for_year
 
         shares_count = self.get_shares_count()
         total_invested = self.get_total_invested()
@@ -275,8 +291,12 @@ class CompanyStatsUtils:
             "accumulated_investment": accumulated_investment,
             "accumulated_dividends": accumulated_dividends,
             "stock_price_value": stock_price["price"] if stock_price else 0,
-            "stock_price_currency": stock_price["price_currency"] if stock_price else "",
-            "stock_price_transaction_date": stock_price["transaction_date"] if stock_price else f"{self.year}-01-01",
+            "stock_price_currency": stock_price["price_currency"]
+            if stock_price
+            else "",
+            "stock_price_transaction_date": stock_price["transaction_date"]
+            if stock_price
+            else f"{self.year}-01-01",
             "portfolio_value": portfolio_value,
             "portfolio_value_is_down": portfolio_value < accumulated_investment,
             "return_value": return_value,
@@ -306,11 +326,14 @@ class CompanyStatsUtils:
 
 
 class PortfolioStatsUtils:
-    def __init__(self, portfolio_id, user_id, year="all", use_currency="portfolio"):
+    def __init__(
+        self, portfolio_id, user_id, year="all", use_currency="portfolio", force=False
+    ):
         self.portfolio = Portfolio.objects.get(id=portfolio_id, user=user_id)
         self.year = year
         self.use_currency = use_currency
         self.user_id = user_id
+        self.force = force
 
     def _get_total_invested_in_rights(self):
         total = 0
@@ -457,8 +480,8 @@ class PortfolioStatsUtils:
                 company.id, self.user_id, self.year, use_currency=self.use_currency
             )
             shares_count = company_stats.get_shares_count()
-            yfinance = YFinanceStockPricesService()
-            api = StockPricesApi(yfinance)
+            api_service = CustomYFinanceService()
+            api = StockPricesApi(api_service)
             if self.year == "all":
                 stock_price = api.get_last_data_from_last_month(company.ticker)
             else:
@@ -498,7 +521,9 @@ class PortfolioStatsUtils:
         }
 
         for company in self.portfolio.companies.all():
-            company_stats = CompanyStatsUtils(company.id, self.user_id, year=self.year)
+            company_stats = CompanyStatsUtils(
+                company.id, self.user_id, year=self.year, force=self.force
+            )
             instance = company_stats.get_stats_for_year()
             data["invested"] += instance.invested
             data["dividends"] += instance.dividends
@@ -506,11 +531,6 @@ class PortfolioStatsUtils:
             data["accumulatedDividends"] += instance.accumulated_dividends
             data["portfolioValue"] += instance.portfolio_value
 
-        # total_invested = self.get_total_invested()
-        # dividends = self.get_dividends()
-        # accumulated_investment = self.get_accumulated_investment_until_year()
-        # accumulated_dividends = self.get_accumulated_dividends_until_year()
-        # portfolio_value = self.get_portfolio_value()
         data["returnValue"] = self.get_return(
             data["portfolioValue"], data["accumulatedInvestment"]
         )
@@ -529,25 +549,120 @@ class PortfolioStatsUtils:
             data["portfolioValueIsDown"] = True
 
         return data
-        # return {
-        #     "invested": total_invested,
-        #     "dividends": dividends,
-        #     "portfolioCurrency": self.portfolio.base_currency,
-        #     "accumulatedInvestment": accumulated_investment,
-        #     "accumulatedDividends": accumulated_dividends,
-        #     "portfolioValue": portfolio_value,
-        #     "portfolioValueIsDown": portfolio_value < accumulated_investment,
-        #     "returnValue": return_value,
-        #     "returnPercent": return_percent,
-        #     "returnWithDividends": return_with_dividends,
-        #     "returnWithDividendsPercent": return_with_dividends_percent,
-        # }
 
+    def get_stats_for_year_by_company(self):
+
+        results = []
+
+        for company in self.portfolio.companies.all():
+            company_stats = CompanyStatsUtils(
+                company.id, self.user_id, year=self.year, force=self.force
+            )
+            instance = company_stats.get_stats_for_year()
+            results.append(instance)
+
+        logger.debug(f"{results}")
+        return results
+
+    def get_portfolio_first_year(self):
+        transactions = SharesTransaction.objects.filter(
+            company__portfolio=self.portfolio.id, user=self.user_id
+        )
+        first_year = transactions.order_by("transaction_date").first()
+        if not first_year:
+            return None
+        return_value = {"year": first_year.transaction_date.year}
+        return return_value
+
+    def get_all_years_stats(self):
+        years_result = []
+        years_array = []
+        first_year = self.get_portfolio_first_year()
+        # Get years between year and current year
+        if first_year:
+            first_year = first_year["year"]
+            years_array = range(int(first_year), datetime.datetime.now().year + 1)
+
+        for year in years_array:
+            data = {
+                "year": year,
+                "invested": 0,
+                "dividends": 0,
+                "portfolioCurrency": self.portfolio.base_currency,
+                "accumulatedInvestment": 0,
+                "accumulatedDividends": 0,
+                "portfolioValue": 0,
+            }
+
+            for company in self.portfolio.companies.all():
+                company_stats = CompanyStatsUtils(company.id, self.user_id, year=year)
+                instance = company_stats.get_stats_for_year()
+                data["invested"] += instance.invested
+                data["dividends"] += instance.dividends
+                data["accumulatedInvestment"] += instance.accumulated_investment
+                data["accumulatedDividends"] += instance.accumulated_dividends
+                data["portfolioValue"] += instance.portfolio_value
+
+            data["returnValue"] = self.get_return(
+                data["portfolioValue"], data["accumulatedInvestment"]
+            )
+            data["returnPercent"] = self.get_return_percent(
+                data["returnValue"], data["accumulatedInvestment"]
+            )
+            data["return_with_dividends"] = self.get_return_with_dividends(
+                data["portfolioValue"],
+                data["accumulatedDividends"],
+                data["accumulatedInvestment"],
+            )
+            data["return_with_dividends_percent"] = self.get_return_percent(
+                data["return_with_dividends"], data["accumulatedInvestment"]
+            )
+            if data["portfolioValue"] < data["accumulatedInvestment"]:
+                data["portfolioValueIsDown"] = True
+            years_result.append(data)
+
+        return years_result
+
+    def get_dividends_for_year_monthly(self, year=None):
+        logger.debug(f"Get dividends for year {year}")
+        if year == None:
+            year = self.year
+        transactions = (
+            DividendsTransaction.objects.filter(company__portfolio=self.portfolio, transaction_date__year=year)
+            .only("transaction_date", "gross_price_per_share", "gross_price_per_share_currency", "exchange_rate", "count")
+            .order_by("transaction_date")
+        )
+        logger.debug(f"{transactions}")
+        summary = {
+            k: sum((x.count * x.exchange_rate * x.gross_price_per_share.amount) for x in g)
+            for k, g in groupby(transactions, key=lambda i: i.transaction_date.month)
+        }
+        return summary
+
+    def get_dividends_for_all_years_monthly(self):
+        logger.debug(f"Get dividends for all years monthly")
+        years = {}
+        first_year = PortfolioUtils().get_portfolio_first_year(self.portfolio, self.user_id)
+
+        # Iterate all years until today
+        for year in range(first_year, datetime.datetime.now().year + 1):
+            years[year] = self.get_dividends_for_year_monthly(year)
+        return years
 
 class CompanyUtils:
     def get_company_first_year(self, company_id, user_id):
         query = SharesTransaction.objects.filter(
             company_id=company_id, user=user_id
+        ).order_by("transaction_date")
+        if query.exists():
+            return query[0].transaction_date.year
+        return None
+
+
+class PortfolioUtils:
+    def get_portfolio_first_year(self, portfolio_id, user_id):
+        query = SharesTransaction.objects.filter(
+            company__portfolio=portfolio_id, user=user_id
         ).order_by("transaction_date")
         if query.exists():
             return query[0].transaction_date.year

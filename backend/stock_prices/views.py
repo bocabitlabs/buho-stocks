@@ -3,6 +3,7 @@ from rest_framework.authentication import (
     SessionAuthentication,
     TokenAuthentication,
 )
+import logging
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -11,8 +12,9 @@ from companies.models import Company
 from stock_prices.api import StockPricesApi
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
-from stock_prices.services.yfinance_service import YFinanceStockPricesService
+from stock_prices.services.custom_yfinance_service import CustomYFinanceService
 
+logger = logging.getLogger("buho_backend")
 
 class StockPricesListAPIView(APIView):
     """Get all the shares transactions from a user's company"""
@@ -29,27 +31,6 @@ class StockPricesListAPIView(APIView):
         elements = StockPrice.objects.filter(user=request.user.id, company=company_id)
         serializer = StockPriceSerializer(elements, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 2. Create
-    @swagger_auto_schema(
-        tags=["company_stock_prices"], request_body=StockPriceSerializer
-    )
-    def post(self, request, company_id, *args, **kwargs):
-        """
-        Create a shares transaction with given data
-        """
-        data = {
-            "exchange_rate": request.data.get("exchange_rate"),
-            "transaction_date": request.data.get("transaction_date"),
-            "price": request.data.get("price"),
-            "company": company_id,
-        }
-        serializer = StockPriceSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class StockPricesDetailAPIView(APIView):
@@ -82,47 +63,6 @@ class StockPricesDetailAPIView(APIView):
         serializer = StockPriceSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # 4. Update
-    @swagger_auto_schema(
-        tags=["company_stock_prices"], request_body=StockPriceSerializer
-    )
-    def put(self, request, company_id, transaction_date, *args, **kwargs):
-        """
-        Update the company item with given company_id
-        """
-        instance = self.get_object(company_id, transaction_date, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        data = {
-            "exchange_rate": request.data.get("exchange_rate"),
-            "transaction_date": request.data.get("transaction_date"),
-            "price": request.data.get("price"),
-            "company": company_id,
-        }
-        serializer = StockPriceSerializer(instance=instance, data=data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # 5. Delete
-    @swagger_auto_schema(tags=["company_stock_prices"])
-    def delete(self, request, company_id, transaction_date, *args, **kwargs):
-        """
-        Delete the company item with given transaction id
-        """
-        market_instance = self.get_object(company_id, transaction_date, request.user.id)
-        if not market_instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        market_instance.delete()
-        return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)
-
 
 class StockPricesYearAPIView(APIView):
     """Operations for a single Shares Transaction"""
@@ -130,10 +70,10 @@ class StockPricesYearAPIView(APIView):
     authentication_classes = [SessionAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, company_id, year, position, user_id):
+    def get_object(self, company_id, year, user_id):
         company = Company.objects.get(id=company_id, user=user_id)
-        yfinance = YFinanceStockPricesService()
-        api = StockPricesApi(yfinance)
+        api_service = CustomYFinanceService()
+        api = StockPricesApi(api_service)
         data = api.get_last_data_from_year(company.ticker, year)
         return data
 
@@ -147,7 +87,39 @@ class StockPricesYearAPIView(APIView):
         - position: first|last
 
         """
-        instance = self.get_object(company_id, year, position, request.user.id)
+        instance = self.get_object(company_id, year, request.user.id)
+        if not instance:
+            return Response(
+                {"res": "Object with transaction id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        serializer = StockPriceSerializer(instance)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StockPricesYearForceAPIView(APIView):
+    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, company_id, year, user_id):
+        company = Company.objects.get(id=company_id, user=user_id)
+        api_service = CustomYFinanceService()
+        api = StockPricesApi(api_service, force=True)
+        data = api.get_last_data_from_year(company.ticker, year)
+        return data
+
+
+    # 3. Retrieve
+    @swagger_auto_schema(tags=["company_stock_prices"])
+    def get(self, request, company_id, year, position, *args, **kwargs):
+        """
+        Get the first or last stock price of a company for a given year
+
+        - position: first|last
+
+        """
+        instance = self.get_object(company_id, year, request.user.id)
         if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},

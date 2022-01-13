@@ -37,4 +37,8 @@ urlpatterns = [
         "<int:company_id>/stock-prices/<int:year>/<str:position>/",
         stock_prices_views.StockPricesYearAPIView.as_view(),
     ),
+    path(
+        "<int:company_id>/stock-prices/<int:year>/<str:position>/force/",
+        stock_prices_views.StockPricesYearForceAPIView.as_view(),
+    ),
 ]

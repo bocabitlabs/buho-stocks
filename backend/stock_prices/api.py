@@ -6,15 +6,17 @@ from stock_prices.services.service_base import StockPriceServiceBase
 
 logger = logging.getLogger("buho_backend")
 
+
 class StockPricesApi:
     def __init__(
         self,
         stock_prices_service: StockPriceServiceBase,
+        force=False,
     ):
         self.stock_prices_service = stock_prices_service
+        self.force = force
 
-    # def get_current_price(self, stock_symbol):
-    #     return self.stock_prices_service.get_stock_prices(stock_symbol)
+        logger.debug(f"StockPricesApi initialized with force={self.force}")
 
     def get_current_data(self, ticker):
 
@@ -39,7 +41,13 @@ class StockPricesApi:
             return serializer.data
 
     def get_historical_data(
-        self, ticker: str, from_date: str, to_date: str, minimum_values: int = None
+        self,
+        ticker: str,
+        from_date: str,
+        to_date: str,
+        minimum_values: int = None,
+        only_api=False,
+        dry_run=False,
     ) -> dict:
         """Get the historical prices for a given ticker and range of dates.
 
@@ -52,34 +60,57 @@ class StockPricesApi:
         Returns:
             dict: [description]
         """
-        prices = StockPrice.objects.filter(
-            ticker=ticker, transaction_date__range=[from_date, to_date]
+        logger.debug(
+            f"Getting historical data for {ticker} from {from_date} to {to_date} ( force={self.force} only_api={only_api}, dry_run={dry_run} )"
         )
+        if only_api or self.force:
+            prices_length = 0
+        else:
+            prices = StockPrice.objects.filter(
+                ticker=ticker, transaction_date__range=[from_date, to_date]
+            )
 
-        from_datetime = datetime.date.fromisoformat(from_date)
-        to_datetime = datetime.date.fromisoformat(to_date)
+            from_datetime = datetime.date.fromisoformat(from_date)
+            to_datetime = datetime.date.fromisoformat(to_date)
 
-        delta = to_datetime - from_datetime
-        prices_length = len(prices)
+            delta = to_datetime - from_datetime
+            prices_length = len(prices)
 
-        if minimum_values is None:
-            minimum_values = delta.days / 2 - 1
-
+            if minimum_values is None:
+                minimum_values = delta.days / 2 - 1
+        logger.debug(
+            f"Prices length: {prices_length} vs minimum values: {minimum_values}"
+        )
         if prices_length < minimum_values:
-            logger.debug("No historical data found locally. Searching remote.")
+            if self.force:
+                logger.debug("Force is true. Searching remote.")
+            else:
+                logger.debug("No historical data found locally. Searching remote.")
             prices = self.stock_prices_service.get_historical_data(
                 ticker, from_date, to_date
             )
-
+            logger.debug(f"Found prices in remote: {len(prices)}")
             for price in prices:
-                serializer = StockPriceSerializer(data=price)
-                if serializer.is_valid():
-                    serialized_date = price.get("transaction_date", "unknown")
-                    print(f"{ticker}-{serialized_date}. Saving element.")
-                    serializer.save()
+                serialized_date = price.get("transaction_date", "unknown")
+                try:
+                    price_instance = StockPrice.objects.get(
+                        ticker=ticker, transaction_date=serialized_date
+                    )
+                except StockPrice.DoesNotExist:
+                    price_instance = None
+                if price_instance is not None:
+                    serializer = StockPriceSerializer(price_instance, data=price)
                 else:
-                    serialized_date = serializer.data.get("transaction_date", "unknown")
-                    print(
+                    serializer = StockPriceSerializer(data=price)
+
+                if serializer.is_valid():
+                    if not dry_run:
+                        logger.info(f"{ticker}-{serialized_date}. Saving element.")
+                        serializer.save()
+                    else:
+                        logger.debug(f"Dry run. Not saving element.")
+                else:
+                    logger.debug(
                         f"{ticker} - {serialized_date}. Error on price :{serializer.errors}"
                     )
             serializer = StockPriceSerializer(instance=prices, many=True)
@@ -101,8 +132,18 @@ class StockPricesApi:
         return self.get_historical_data(ticker, from_date, to_date)
 
     def get_last_data_from_year(self, ticker: str, year: int) -> dict:
-        from_date = f"{year}-12-01"
-        to_date = f"{year}-12-31"
+        todays_date = datetime.date.today()
+        logger.debug(f"Todays date: {todays_date.year} {type(todays_date.year)} vs year: {year} ({type(year)})")
+        if todays_date.year == int(year):
+            # Get today minus 15 days
+            from_date = (todays_date - datetime.timedelta(days=15)).strftime(
+                "%Y-%m-%d"
+            )
+            to_date = todays_date.strftime("%Y-%m-%d")
+        else:
+            from_date = f"{year}-12-01"
+            to_date = f"{year}-12-31"
+        logger.debug(f"{ticker}: Getting last data from {from_date} to {to_date}")
         results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1)
         if len(results) > 0:
             return results[-1]

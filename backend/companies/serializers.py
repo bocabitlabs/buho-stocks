@@ -16,6 +16,8 @@ from markets.serializers import MarketSerializer
 from shares_transactions.serializers import SharesTransactionSerializer
 from drf_extra_fields.fields import Base64ImageField
 
+from stats.serializers import CompanyStatsForYearSerializer
+
 class CompanySerializer(serializers.ModelSerializer):
     sector = UserFilteredPrimaryKeyRelatedField(
         queryset=Sector.objects, many=False, read_only=False
@@ -32,6 +34,8 @@ class CompanySerializer(serializers.ModelSerializer):
         many=True, read_only=True
     )
     logo = Base64ImageField(max_length=None, use_url=True, allow_null = True, required=False)
+    stats = CompanyStatsForYearSerializer(many=True, read_only=True)
+
 
     class Meta:
         model = Company
@@ -54,6 +58,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "shares_transactions",
             "ticker",
             "url",
+            "stats",
             "date_created",
             "last_updated",
         ]
