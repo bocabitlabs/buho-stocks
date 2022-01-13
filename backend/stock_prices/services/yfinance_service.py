@@ -30,13 +30,10 @@ class YFinanceStockPricesService(StockPriceServiceBase):
 
     def get_historical_data(self, ticker: str, start_date: str, end_date: str):
         prices = []
-        logger.debug(f"Get current data for {ticker} from {start_date} to {end_date}")
+        logger.debug(f"Get historical data for {ticker} from {start_date} to {end_date}")
         company = yfinance.Ticker(ticker)
         time.sleep(2)
         company_info = self.get_current_data(ticker)
-        logger.debug(
-            f"Get historical data for {ticker} from {start_date} to {end_date}"
-        )
         time.sleep(2)
         result = company.history(
             start=start_date, end=end_date, period="1d", timeout=10
@@ -48,6 +45,8 @@ class YFinanceStockPricesService(StockPriceServiceBase):
             # result += max(row.B, row.C)
             # print(element)
             # print(col)
+            logger.debug(col)
+            logger.debug(row)
             try:
                 price = round(row["Close"], 3)
                 if company_info["price_currency"] == "GBP":
