@@ -14,14 +14,12 @@ export default function StatsContent({
 }: Props): ReactElement {
   const columnProps = {
     xs: { span: 12 },
-    lg: { span: 6 },
+    md: { span: 6 },
+    style: { marginBottom: "16px" },
   };
 
   return (
     <Row gutter={24}>
-      <Col {...columnProps}>
-        <Statistic title="Shares" value={stats?.sharesCount} />
-      </Col>
       <Col {...columnProps}>
         <Statistic
           title="Invested"
@@ -29,6 +27,9 @@ export default function StatsContent({
           precision={2}
           suffix={stats?.portfolioCurrency}
         />
+        <Typography.Text type="secondary">
+          {stats?.sharesCount} shares
+        </Typography.Text>
       </Col>
       <Col {...columnProps}>
         <Statistic
@@ -51,6 +52,14 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
+          title="Dividends Yield"
+          value={stats?.dividendsYield ? stats.dividendsYield : 0}
+          precision={2}
+          suffix="%"
+        />
+      </Col>
+      <Col {...columnProps}>
+        <Statistic
           title="Portfolio Value"
           value={stats?.portfolioValue}
           valueStyle={{
@@ -68,12 +77,10 @@ export default function StatsContent({
           valueStyle={{
             color: stats?.returnValue < 0 ? "#cf1322" : "",
           }}
-          prefix={
-            stats?.returnValue < 0 ? <ArrowDownOutlined /> : <ArrowUpOutlined />
-          }
           suffix={stats?.portfolioCurrency}
         />
         <Typography.Text type={stats?.returnPercent < 0 ? "danger" : "success"}>
+          {stats?.returnValue < 0 ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
           {stats?.returnPercent ? Number(stats.returnPercent).toFixed(2) : ""}%
         </Typography.Text>
       </Col>
@@ -85,18 +92,16 @@ export default function StatsContent({
           valueStyle={{
             color: stats?.returnWithDividends < 0 ? "#cf1322" : "",
           }}
-          prefix={
-            stats?.returnWithDividends < 0 ? (
-              <ArrowDownOutlined />
-            ) : (
-              <ArrowUpOutlined />
-            )
-          }
           suffix={stats?.portfolioCurrency}
         />
         <Typography.Text
           type={stats?.returnWithDividendsPercent < 0 ? "danger" : "success"}
         >
+          {stats?.returnWithDividends < 0 ? (
+            <ArrowDownOutlined />
+          ) : (
+            <ArrowUpOutlined />
+          )}
           {stats?.returnWithDividendsPercent
             ? Number(stats.returnWithDividendsPercent).toFixed(2)
             : ""}

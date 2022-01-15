@@ -9,25 +9,11 @@ logger = logging.getLogger("buho_backend")
 
 # Create your models here.
 class CompanyStatsForYear(models.Model):
-    """
-    "sharesCount": shares_count,
-    "invested": total_invested,
-    "dividends": dividends,
-    "portfolioCurrency": self.company.portfolio.base_currency,
-    "accumulatedInvestment": accumulated_investment,
-    "accumulatedDividends": accumulated_dividends,
-    "stockPrice": stock_price,
-    "portfolioValue": portfolio_value,
-    "portfolioValueIsDown": portfolio_value < accumulated_investment,
-    "returnValue": return_value,
-    "returnPercent": return_percent,
-    "returnWithDividends": return_with_dividends,
-    "returnWithDividendsPercent": return_with_dividends_percent,
-    """
     year = models.IntegerField()
     shares_count = models.IntegerField()
     invested = models.DecimalField(max_digits=12, decimal_places=3)
     dividends = models.DecimalField(max_digits=12, decimal_places=3)
+    dividends_yield = models.DecimalField(max_digits=12, decimal_places=3, null=True)
     portfolio_currency = models.CharField(max_length=200)
     accumulated_investment = models.DecimalField(max_digits=12, decimal_places=3)
     accumulated_dividends = models.DecimalField(max_digits=12, decimal_places=3)

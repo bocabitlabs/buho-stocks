@@ -29,6 +29,7 @@ class CompanyStatsForYearSerializer(serializers.ModelSerializer):
             "shares_count",
             "invested",
             "dividends",
+            "dividends_yield",
             "portfolio_currency",
             "accumulated_investment",
             "accumulated_dividends",
