@@ -36,6 +36,7 @@ export default function CompanyDetailsPage(): ReactElement {
       companyLogo={company.logo}
       companyCountryCode={company.countryCode}
       portfolioName={company.portfolio.name}
+      companyUrl={company.url}
     >
       <CompanyInfo
         companySectorName={company.sector.name}
