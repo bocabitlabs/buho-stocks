@@ -2,9 +2,6 @@ import datetime
 from decimal import Decimal
 from itertools import groupby
 import logging
-from django.db.models import Sum
-from django.db import models
-from django.db.models import Func
 from django.contrib.auth.models import User
 from forex_python.converter import RatesNotAvailableError
 from django.utils import timezone
@@ -20,12 +17,6 @@ from shares_transactions.models import SharesTransaction
 from dividends_transactions.models import DividendsTransaction
 
 logger = logging.getLogger("buho_backend")
-
-
-class Month(Func):
-    function = "EXTRACT"
-    template = "%(function)s(MONTH from %(expressions)s)"
-    output_field = models.IntegerField()
 
 
 class CompanyStatsUtils:
@@ -209,9 +200,6 @@ class CompanyStatsUtils:
         else:
             price = stock_price["price"]
             exchange_rate_value = self._get_exchange_rate_for_stock_price(stock_price)
-        # logger.debug(
-        #     f"stock_price: {stock_price['price']} - E.R: {exchange_rate_value}"
-        # )
         return Decimal(price) * shares_count * Decimal(exchange_rate_value)
 
     def _get_stock_price(self):
@@ -249,6 +237,11 @@ class CompanyStatsUtils:
             return total_return / total_invested * 100
         return 0
 
+    def get_dividends_yield(self, dividends, portfolio_value):
+        if portfolio_value != 0:
+            return dividends / portfolio_value * 100 if portfolio_value else 0
+        return 0
+
     def get_stats_for_year(self):
 
         year_for_all = 9999
@@ -282,6 +275,7 @@ class CompanyStatsUtils:
         return_with_dividends_percent = self.get_return_percent(
             return_with_dividends, accumulated_investment
         )
+        dividends_yield = self.get_dividends_yield(dividends, portfolio_value)
 
         results = {
             "shares_count": shares_count,
@@ -300,6 +294,7 @@ class CompanyStatsUtils:
             "portfolio_value": portfolio_value,
             "portfolio_value_is_down": portfolio_value < accumulated_investment,
             "return_value": return_value,
+            "dividends_yield": dividends_yield,
             "return_percent": return_percent,
             "return_with_dividends": return_with_dividends,
             "return_with_dividends_percent": return_with_dividends_percent,
@@ -469,6 +464,9 @@ class PortfolioStatsUtils:
         total = 0
         logger.debug("Get portfolio value")
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             first_year = CompanyUtils().get_company_first_year(company.id, company.user)
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
             if self.year != "all":
@@ -514,6 +512,7 @@ class PortfolioStatsUtils:
         data = {
             "invested": 0,
             "dividends": 0,
+            "dividendsYield": 0,
             "portfolioCurrency": self.portfolio.base_currency,
             "accumulatedInvestment": 0,
             "accumulatedDividends": 0,
@@ -521,6 +520,9 @@ class PortfolioStatsUtils:
         }
 
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             company_stats = CompanyStatsUtils(
                 company.id, self.user_id, year=self.year, force=self.force
             )
@@ -548,6 +550,10 @@ class PortfolioStatsUtils:
         if data["portfolioValue"] < data["accumulatedInvestment"]:
             data["portfolioValueIsDown"] = True
 
+        data["dividendsYield"] = self.get_dividends_yield(
+                data["dividends"], data["portfolioValue"]
+            )
+
         return data
 
     def get_stats_for_year_by_company(self):
@@ -574,6 +580,11 @@ class PortfolioStatsUtils:
         return_value = {"year": first_year.transaction_date.year}
         return return_value
 
+    def get_dividends_yield(self, dividends, portfolio_value):
+        if portfolio_value != 0:
+            return dividends / portfolio_value * 100 if portfolio_value else 0
+        return 0
+
     def get_all_years_stats(self):
         years_result = []
         years_array = []
@@ -592,6 +603,7 @@ class PortfolioStatsUtils:
                 "accumulatedInvestment": 0,
                 "accumulatedDividends": 0,
                 "portfolioValue": 0,
+                "dividendsYield": 0,
             }
 
             for company in self.portfolio.companies.all():
@@ -619,6 +631,11 @@ class PortfolioStatsUtils:
             )
             if data["portfolioValue"] < data["accumulatedInvestment"]:
                 data["portfolioValueIsDown"] = True
+
+            data["dividendsYield"] = self.get_dividends_yield(
+                data["dividends"], data["portfolioValue"]
+            )
+
             years_result.append(data)
 
         return years_result
@@ -632,7 +649,6 @@ class PortfolioStatsUtils:
             .only("transaction_date", "gross_price_per_share", "gross_price_per_share_currency", "exchange_rate", "count")
             .order_by("transaction_date")
         )
-        logger.debug(f"{transactions}")
         summary = {
             k: sum((x.count * x.exchange_rate * x.gross_price_per_share.amount) for x in g)
             for k, g in groupby(transactions, key=lambda i: i.transaction_date.month)
