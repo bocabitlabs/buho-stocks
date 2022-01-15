@@ -33,6 +33,24 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
+          title="Portfolio Value"
+          value={stats?.portfolioValue}
+          valueStyle={{
+            color: stats?.portfolioValueIsDown ? "#cf1322" : "",
+          }}
+          prefix={
+            stats?.portfolioValueIsDown ? (
+              <ArrowDownOutlined />
+            ) : (
+              <ArrowUpOutlined />
+            )
+          }
+          precision={2}
+          suffix={stats?.portfolioCurrency}
+        />
+      </Col>
+      <Col {...columnProps}>
+        <Statistic
           title="Dividends"
           value={stats?.dividends}
           precision={2}
@@ -49,20 +67,10 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Portfolio Value"
-          value={stats?.portfolioValue}
-          valueStyle={{
-            color: stats?.portfolioValueIsDown ? "#cf1322" : "",
-          }}
-          prefix={
-            stats?.portfolioValueIsDown ? (
-              <ArrowDownOutlined />
-            ) : (
-              <ArrowUpOutlined />
-            )
-          }
+          title="Dividends yield"
+          value={stats?.dividendsYield}
           precision={2}
-          suffix={stats?.portfolioCurrency}
+          suffix="%"
         />
       </Col>
       <Col {...columnProps}>
