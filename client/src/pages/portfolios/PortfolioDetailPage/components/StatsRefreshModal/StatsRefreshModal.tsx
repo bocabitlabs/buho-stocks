@@ -41,12 +41,14 @@ export default function StatsRefreshModal({
     get: getPrice,
     loading: loadingPrice,
     response: priceResponse,
+    cache: priceCache,
   } = useFetch(`companies`);
   const {
     response,
     get: getStats,
     loading: loadingStats,
-  } = useFetch(`stats`, { cachePolicy: CachePolicies.NO_CACHE });
+    cache,
+  } = useFetch(`stats`);
 
   useEffect(() => {
     async function loadInitialPortfolio() {
@@ -69,6 +71,7 @@ export default function StatsRefreshModal({
 
   const getStatsForced = useCallback(
     async (companyId: string) => {
+      cache.clear();
       setUpdateMessage(`Updating stats for company #${companyId}`);
       await getStats(`/${companyId}/${selectedYear}/force/`);
       if (response.ok) {
@@ -85,11 +88,12 @@ export default function StatsRefreshModal({
   );
 
   const getStockPrice = useCallback(
-    async (companyId) => {
+    async (companyId: string) => {
       let tempYear = selectedYear;
       if (selectedYear === "all") {
         tempYear = new Date().getFullYear().toString();
       }
+      priceCache.clear();
       setUpdateMessage(`Updating price for company #${companyId}`);
       await getPrice(`/${companyId}/stock-prices/${tempYear}/last/force/`);
       if (priceResponse.ok) {
@@ -102,20 +106,24 @@ export default function StatsRefreshModal({
         );
       }
     },
-    [getPrice, priceResponse.ok, selectedYear],
+    [getPrice, priceCache, priceResponse.ok, selectedYear],
   );
 
   const updatePortfolioStatsForced = useCallback(async () => {
+    cache.clear();
     setUpdateMessage(
-      `Price updated for portfolio #${id} and year ${selectedYear}`,
+      `Updating stats for portfolio #${id} and year ${selectedYear}`,
     );
     const updatedStats = await getStats(
       `portfolio/${id}/${selectedYear}/force/`,
     );
     if (response.ok) {
       setStats(updatedStats);
+      setUpdateMessage(
+        `Stats updated for portfolio #${id} and year ${selectedYear}`,
+      );
     }
-  }, [getStats, id, response.ok, selectedYear, setStats]);
+  }, [cache, getStats, id, response.ok, selectedYear, setStats]);
 
   const handleOk = async () => {
     setConfirmLoading(true);
