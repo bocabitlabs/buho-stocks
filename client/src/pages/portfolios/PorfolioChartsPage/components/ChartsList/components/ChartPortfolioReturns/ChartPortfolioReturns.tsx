@@ -55,27 +55,6 @@ export default function ChartPortfolioReturns(): ReactElement {
             backgroundColor: "rgba(53, 162, 235, 0.5)",
             yAxisID: "y",
           },
-          {
-            label: "Portfolio value",
-            data: [],
-            borderColor: "rgb(69, 214, 161)",
-            backgroundColor: "rgba(69, 214, 161, 0.5)",
-            yAxisID: "y1",
-          },
-          {
-            label: "Portfolio value w.d.",
-            data: [],
-            borderColor: "rgb(96, 2, 238)",
-            backgroundColor: "rgba(96, 2, 238, 0.5)",
-            yAxisID: "y1",
-          },
-          {
-            label: "Invested",
-            data: [],
-            borderColor: "rgb(245,131,39)",
-            backgroundColor: "rgba(245,131,39, 0.5)",
-            yAxisID: "y1",
-          },
         ],
       };
     }
@@ -89,9 +68,6 @@ export default function ChartPortfolioReturns(): ReactElement {
           const newYears: any = [];
           const returnsPercent: any = [];
           const returnsWithDividendsPercent: any = [];
-          const portfolioValue: any = [];
-          const portfolioValueWithDividends: any = [];
-          const invested: any = [];
 
           initialData.sort((a: any, b: any) => {
             if (a.year > b.year) {
@@ -113,19 +89,11 @@ export default function ChartPortfolioReturns(): ReactElement {
               returnsWithDividendsPercent.push(
                 Number(year.returnWithDividendsPercent),
               );
-              portfolioValue.push(Number(year.portfolioValue));
-              invested.push(Number(year.invested));
-              portfolioValueWithDividends.push(
-                Number(year.portfolioValue) + Number(year.returnWithDividends),
-              );
             }
           });
           chartData.labels = newYears;
           chartData.datasets[0].data = returnsPercent;
           chartData.datasets[1].data = returnsWithDividendsPercent;
-          chartData.datasets[2].data = portfolioValue;
-          chartData.datasets[3].data = portfolioValueWithDividends;
-          chartData.datasets[4].data = invested;
 
           setData(chartData);
           // setIsDataSet(true);
