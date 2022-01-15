@@ -59,13 +59,16 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name),
     },
     {
-      title: t("Country"),
-      dataIndex: "countryCode",
-      key: "countryCode",
-      render: (text: string) => <CountryFlag code={text} />,
-      sorter: (a: ICompany, b: ICompany) =>
-        a.countryCode.localeCompare(b.countryCode),
-      responsive: ["md"],
+      title: t("Ticker"),
+      dataIndex: "ticker",
+      key: "ticker",
+      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker),
+    },
+    {
+      title: t("Shares"),
+      dataIndex: "sharesCount",
+      key: "sharesCount",
+      sorter: (a: any, b: any) => +a.sharesCount - +b.sharesCount,
     },
     {
       title: t("Broker"),
@@ -99,6 +102,13 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
         +a.returnWithDividendsPercent - +b.returnWithDividendsPercent,
     },
     {
+      title: t("Dividends yield"),
+      dataIndex: "dividendsYield",
+      key: "dividendsYield",
+      render: (text: string) => `${(+text).toFixed(2)} %`,
+      sorter: (a: any, b: any) => +a.dividendsYield - +b.dividendsYield,
+    },
+    {
       title: t("Action"),
       key: "action",
       render: (text: string, record: any) => (
@@ -126,20 +136,24 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       key: element.id,
       name: element.name,
       ticker: element.ticker,
+      sharesCount: element.stats.find((stat: any) => stat.year > 3000)
+        .sharesCount,
       description: element.description,
+      dividendsYield: element.stats.find((stat: any) => stat.year > 3000)
+        .dividendsYield,
       color: element.color,
       portfolio: element.portfolio,
       logo: element.logo,
       countryCode: element.countryCode,
       sector: element.sector,
       broker: element.broker,
-      invested: element.stats.find((stat: any) => stat.year > 2050).invested,
-      portfolioValue: element.stats.find((stat: any) => stat.year > 2050)
+      invested: element.stats.find((stat: any) => stat.year > 3000).invested,
+      portfolioValue: element.stats.find((stat: any) => stat.year > 3000)
         .portfolioValue,
       returnWithDividendsPercent: element.stats.find(
-        (stat: any) => stat.year > 2050,
+        (stat: any) => stat.year > 3000,
       ).returnWithDividendsPercent,
-      portfolioCurrency: element.stats.find((stat: any) => stat.year > 2050)
+      portfolioCurrency: element.stats.find((stat: any) => stat.year > 3000)
         .portfolioCurrency,
     }));
   };
