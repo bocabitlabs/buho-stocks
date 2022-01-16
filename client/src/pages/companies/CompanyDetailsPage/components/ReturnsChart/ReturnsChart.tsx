@@ -59,7 +59,6 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
           year.year !== "all" &&
           year.year !== 9999
         ) {
-          console.log(year);
           newYears.push(year.year);
           returnsPercent.push(Number(year.returnPercent));
           returnsWithDividendsPercent.push(

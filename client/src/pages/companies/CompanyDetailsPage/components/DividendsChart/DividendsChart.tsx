@@ -59,7 +59,6 @@ export default function DividendsChart({ stats }: Props): ReactElement {
           year.year !== "all" &&
           year.year !== 9999
         ) {
-          console.log(year);
           newYears.push(year.year);
           dividends.push(Number(year.dividends));
           accumulatedDividends.push(Number(year.accumulatedDividends));

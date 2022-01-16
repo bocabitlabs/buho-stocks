@@ -1,40 +1,27 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Spin, Table } from "antd";
-import useFetch from "use-http";
+import { Button, Popconfirm, Space, Table } from "antd";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import { useDeleteSector, useSectors } from "hooks/use-sectors/use-sectors";
 import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector } from "types/sector";
 
 export default function SectorsTable() {
-  const [sectors, setSectors] = useState([]);
-
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
-  const { loading, response, get, del: deleteSector } = useFetch("sectors");
+  const { status, data, error, isFetching } = useSectors();
+  const { mutateAsync: deleteSector } = useDeleteSector();
 
   const confirmDelete = async (recordId: number) => {
-    await deleteSector(`${recordId}/`);
-    if (response.ok) {
+    try {
+      await deleteSector(recordId);
       createSuccess(t("Sector deleted successfully"));
-      const removeItem = sectors.filter((market: ISector) => {
-        return market.id !== recordId;
-      });
-      setSectors(removeItem);
-    } else {
-      createError(t("Error deleting sector"));
+    } catch (err) {
+      createError(t(`Error deleting sector: ${err}`));
     }
   };
-
-  useEffect(() => {
-    async function loadInitialSectors() {
-      const initialTodos = await get("/");
-      if (response.ok) setSectors(initialTodos);
-    }
-    loadInitialSectors();
-  }, [response.ok, get]);
 
   const columns: any = [
     {
@@ -83,7 +70,7 @@ export default function SectorsTable() {
   ];
 
   const getData = () => {
-    return sectors.map((element: ISector) => ({
+    return data.map((element: ISector) => ({
       id: element.id,
       key: element.id,
       name: element.name,
@@ -92,8 +79,16 @@ export default function SectorsTable() {
     }));
   };
 
-  if (loading && !sectors.length) {
-    return <Spin />;
+  if (isFetching) {
+    return <div>{isFetching ? <div>Fetching data...</div> : <div />}</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching the data from the API</div>;
+  }
+
+  if (status === "loading") {
+    return <div>Loading</div>;
   }
 
   return <Table columns={columns} dataSource={getData()} />;
