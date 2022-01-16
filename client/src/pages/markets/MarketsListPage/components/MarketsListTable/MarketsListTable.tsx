@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Spin, Table } from "antd";
+import { Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import useFetch from "use-http";
 import CountryFlag from "components/CountryFlag/CountryFlag";
+import { useMarkets } from "hooks/use-markets/use-markets";
 import getRoute, { MARKETS_ROUTE } from "routes";
 import { IMarket } from "types/market";
 
 export default function MarketsListTable() {
   const [markets, setMarkets] = useState([]);
-  const { loading, response, get, del: deleteMarket } = useFetch("markets");
+  const { response, del: deleteMarket } = useFetch("markets");
   const { t } = useTranslation();
+  const { status, data, error, isFetching } = useMarkets();
 
   const confirmDelete = async (recordId: number) => {
     await deleteMarket(`${recordId}/`);
@@ -24,14 +26,6 @@ export default function MarketsListTable() {
       setMarkets(removeItem);
     }
   };
-
-  useEffect(() => {
-    async function loadInitialMarkets() {
-      const initialTodos = await get("/");
-      if (response.ok) setMarkets(initialTodos);
-    }
-    loadInitialMarkets();
-  }, [response.ok, get]);
 
   const columns: any = [
     {
@@ -103,7 +97,7 @@ export default function MarketsListTable() {
   ];
 
   const getData = () => {
-    return markets.map((market: IMarket) => ({
+    return data.map((market: IMarket) => ({
       id: market.id,
       key: market.id,
       name: market.name,
@@ -115,8 +109,16 @@ export default function MarketsListTable() {
     }));
   };
 
-  if (loading && !markets) {
-    return <Spin />;
+  if (isFetching) {
+    return <div>{isFetching ? <div>Fetching data...</div> : <div />}</div>;
+  }
+
+  if (error) {
+    return <div>Error fetching the data from the API</div>;
+  }
+
+  if (status === "loading") {
+    return <div>Loading</div>;
   }
 
   return <Table columns={columns} dataSource={getData()} />;

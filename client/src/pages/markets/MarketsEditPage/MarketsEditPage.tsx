@@ -1,40 +1,32 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { Col, Row, Spin } from "antd";
-import useFetch from "use-http";
 import MarketsEditPageHeader from "./components/MarketsEditPageHeader/MarketsEditPageHeader";
 import MarketAddEditForm from "components/MarketAddEditForm/MarketAddEditForm";
-import { IMarket } from "types/market";
+import { useMarket } from "hooks/use-markets/use-markets";
 
 export default function MarketsEditPage() {
   const { id } = useParams();
-  const marketIdString: string = id!;
-  const [market, setMarket] = useState<IMarket | null>(null);
-  const { response, get } = useFetch(
-    "markets",
-    {
-      suspense: true,
-    },
-    [],
-  );
+  const marketIdString: number = +id!;
+  const { data, error, isFetching } = useMarket(marketIdString);
 
-  useEffect(() => {
-    async function loadInitialMarket() {
-      const initialData = await get(`${id}/`);
-      if (response.ok) setMarket(initialData);
-    }
-    loadInitialMarket();
-  }, [response.ok, get, id]);
+  if (isFetching) {
+    return (
+      <div>
+        <Spin /> Loading de market...
+      </div>
+    );
+  }
 
-  if (!market) {
-    return <Spin />;
+  if (error) {
+    <div>Error fetching the data</div>;
   }
 
   return (
-    <MarketsEditPageHeader marketName={market.name}>
+    <MarketsEditPageHeader marketName={data.name}>
       <Row>
         <Col>
-          <MarketAddEditForm marketId={marketIdString} />
+          <MarketAddEditForm market={data} />
         </Col>
         <Col />
       </Row>

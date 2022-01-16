@@ -16,12 +16,13 @@ export interface ILoginData {
   password: string;
 }
 
-// export interface IApiResponse {
-//   error: boolean;
-//   result: any;
-//   statusCode: number;
-// }
-
 export interface IApiResponse {
   [key: string]: string;
 }
+
+export const axiosOptionsWithAuth = {
+  headers: {
+    Accept: "application/json",
+    Authorization: `Token ${localStorage.getItem("token")}`,
+  },
+};

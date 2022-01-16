@@ -1,24 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, Table } from "antd";
-import useFetch from "use-http";
+import { Table } from "antd";
+import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import { ICurrency } from "types/currency";
 
 export default function CurrenciesListTable() {
-  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
   const { t } = useTranslation();
-  const { response, loading, get } = useFetch("currencies");
-
-  useEffect(() => {
-    const fetchCurrencies = async () => {
-      const results = await get("/");
-      if (response.ok) {
-        setCurrencies(results);
-      }
-    };
-
-    fetchCurrencies();
-  }, [get, response.ok]);
+  const { status, data, error, isFetching } = useCurrencies();
 
   const columns: any = [
     {
@@ -52,7 +40,7 @@ export default function CurrenciesListTable() {
   ];
 
   const getData = () => {
-    return currencies.map((currency: ICurrency) => ({
+    return data.map((currency: ICurrency) => ({
       id: currency.code,
       key: currency.code,
       name: currency.name,
@@ -62,9 +50,21 @@ export default function CurrenciesListTable() {
     }));
   };
 
-  if (loading) {
-    return <Spin />;
+  if (isFetching) {
+    return <div>{isFetching ? <div>Fetching data...</div> : <div />}</div>;
   }
 
-  return <Table columns={columns} dataSource={getData()} />;
+  if (error) {
+    return <div>Error fetching the data from the API</div>;
+  }
+
+  if (status === "loading") {
+    return <div>Loading</div>;
+  }
+
+  return (
+    <div>
+      <Table columns={columns} dataSource={getData()} />
+    </div>
+  );
 }

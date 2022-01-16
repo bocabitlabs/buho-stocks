@@ -1,52 +1,35 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, Spin, TimePicker } from "antd";
+import { Button, Form, Input, TimePicker } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import { useAddMarket, useUpdateMarket } from "hooks/use-markets/use-markets";
 import { IMarket } from "types/market";
 
 interface AddEditFormProps {
-  marketId?: string;
+  market?: IMarket;
 }
 
-function MarketAddEditForm({
-  marketId,
-}: AddEditFormProps): ReactElement | null {
+function MarketAddEditForm({ market }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
-  const [color, setColor] = useState("#607d8b");
-  const [region, setRegion] = useState("");
+  const [color, setColor] = useState(market ? market.color : "#607d8b");
+  const [region, setRegion] = useState(market ? market.region : "");
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
-  const [market, setMarket] = useState<IMarket | null>(null);
-  const { response, get, post, put, cache } = useFetch("markets");
+  const { mutateAsync: createMarketAsync } = useAddMarket();
+  const { mutateAsync: updatedMarketAsync } = useUpdateMarket();
 
   useEffect(() => {
-    async function fetchMarket() {
-      const result = await get(`${marketId}/`);
-      if (response.ok) {
-        setMarket(result);
-        setColor(result.color);
-        setRegion(result.region);
-        form.setFieldsValue({
-          name: result.name,
-          description: result.description,
-          // region: result.region,
-          openTime: moment(result.openTime, "HH:mm"),
-          closeTime: moment(result.closeTime, "HH:mm"),
-        });
-      }
+    if (color && region) {
+      setColor(color);
+      setRegion(region);
     }
-
-    if (marketId) {
-      fetchMarket();
-    }
-  }, [marketId, get, response.ok, form]);
+  }, [color, region]);
 
   const handleSubmit = async (values: any) => {
     const { name, description, openTime, closeTime } = values;
@@ -58,24 +41,21 @@ function MarketAddEditForm({
       openTime: openTime.format("HH:mm"),
       closeTime: closeTime.format("HH:mm"),
     };
-    if (marketId) {
-      const id: number = +marketId;
-      await put(`${id}/`, newMarket);
-      if (!response.ok) {
-        createError(t("Cannot update market"));
-      } else {
-        cache.clear();
+    if (market) {
+      try {
+        await updatedMarketAsync({ marketId: market.id, newMarket });
         createSuccess(t("Market has been updated"));
         navigate(-1);
+      } catch (error) {
+        createError(t("Cannot update market"));
       }
     } else {
-      await post("/", newMarket);
-      if (!response.ok) {
-        createError(t("Cannot create market"));
-      } else {
-        cache.clear();
+      try {
+        await createMarketAsync(newMarket);
         createSuccess(t("Market created"));
         navigate(-1);
+      } catch (error) {
+        createError(t(`Cannot create market: ${error}`));
       }
     }
   };
@@ -88,10 +68,6 @@ function MarketAddEditForm({
     console.debug(code);
     setRegion(code);
   };
-
-  if (marketId && !market) {
-    return <Spin />;
-  }
 
   return (
     <Form
@@ -175,7 +151,7 @@ function MarketAddEditForm({
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          {marketId ? t("Update market") : t("Add market")}
+          {market ? t("Update market") : t("Add market")}
         </Button>
       </Form.Item>
     </Form>
@@ -183,7 +159,7 @@ function MarketAddEditForm({
 }
 
 MarketAddEditForm.defaultProps = {
-  marketId: null,
+  market: null,
 };
 
 export default MarketAddEditForm;
