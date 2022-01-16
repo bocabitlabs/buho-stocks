@@ -6,10 +6,13 @@ import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
 
 interface Props {
   companyId: string | undefined;
+  firstYear: number | null;
 }
 
-export default function YearSelector({ companyId }: Props): ReactElement {
-  const [firstYear, setFirstYear] = useState<any | null>(null);
+export default function YearSelector({
+  companyId,
+  firstYear,
+}: Props): ReactElement {
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
   const [years, setYears] = useState<number[]>([]);
   const [stats, setStats] = useState<any | null>(null);
@@ -20,9 +23,6 @@ export default function YearSelector({ companyId }: Props): ReactElement {
     get,
     loading: loadingStats,
   } = useFetch(`stats/${companyId}`);
-  const { response: yearResponse, get: getFirstYear } = useFetch(
-    `stats/company-first-year/${companyId}`,
-  );
 
   const handleYearChange = (value: string) => {
     setSelectedYear(value);
@@ -45,21 +45,17 @@ export default function YearSelector({ companyId }: Props): ReactElement {
 
   useEffect(() => {
     async function loadInitialStats() {
-      const initialData = await getFirstYear("/");
-      if (yearResponse.ok) {
-        setFirstYear(initialData.year);
-        const currentYear = new Date().getFullYear();
-        const newYears: number[] = [];
-        if (firstYear != null) {
-          for (let index = +currentYear; index >= +firstYear; index -= 1) {
-            newYears.push(index);
-          }
-          setYears(newYears);
+      const currentYear = new Date().getFullYear();
+      const newYears: number[] = [];
+      if (firstYear != null) {
+        for (let index = +currentYear; index >= +firstYear; index -= 1) {
+          newYears.push(index);
         }
+        setYears(newYears);
       }
     }
     loadInitialStats();
-  }, [yearResponse.ok, getFirstYear, firstYear]);
+  }, [firstYear]);
 
   return (
     <div>

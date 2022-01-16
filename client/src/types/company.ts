@@ -40,6 +40,7 @@ export interface ICompany extends ICompanyBase {
   dateCreated: string;
   lastUpdated: string;
   stats: any;
+  firstYear: number;
 }
 
 export interface ICompanyRouteParams {

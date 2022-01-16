@@ -16,6 +16,7 @@ export interface IPortfolioFormFields extends IPortfolioBase {
 export interface IPortfolio extends IPortfolioBase {
   id: number;
   baseCurrency: ICurrency;
+  firstYear: number;
   companies: ICompany[];
   dateCreated: string;
   lastUpdated: string;

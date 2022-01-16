@@ -14,6 +14,7 @@ from sectors.serializers import SectorSerializerGet
 from markets.models import Market
 from markets.serializers import MarketSerializer
 from shares_transactions.serializers import SharesTransactionSerializer
+from shares_transactions.models import SharesTransaction
 from drf_extra_fields.fields import Base64ImageField
 
 from stats.serializers import CompanyStatsForYearSerializer
@@ -84,6 +85,7 @@ class CompanySerializerGet(CompanySerializer):
     rights_transactions = RightsTransactionSerializer(many=True, read_only=True)
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
     portfolio = PortfolioSerializerLite(many=False, read_only=True)
+    first_year = serializers.SerializerMethodField()
 
     def get_base_currency(self, obj):
         return get_currency_details(
@@ -99,3 +101,38 @@ class CompanySerializerGet(CompanySerializer):
         request = self.context.get('request')
         photo_url = obj.fingerprint.url
         return request.build_absolute_uri(photo_url)
+
+    def get_first_year(self, obj):
+        query = SharesTransaction.objects.filter(
+            company_id=obj.id, user=obj.user
+        ).order_by("transaction_date")
+        if query.exists():
+            return query[0].transaction_date.year
+        return None
+
+    class Meta:
+        model = Company
+        fields = [
+            "id",
+            "alt_tickers",
+            "base_currency",
+            "broker",
+            "color",
+            "country_code",
+            "description",
+            "dividends_currency",
+            "dividends_transactions",
+            "logo",
+            "market",
+            "name",
+            "portfolio",
+            "rights_transactions",
+            "sector",
+            "shares_transactions",
+            "ticker",
+            "url",
+            "stats",
+            "date_created",
+            "last_updated",
+            "first_year",
+        ]

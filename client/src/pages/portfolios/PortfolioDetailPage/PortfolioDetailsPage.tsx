@@ -14,7 +14,9 @@ export default function PortfolioDetailsPage() {
   useEffect(() => {
     async function loadInitialPortfolio() {
       const initialPortfolio = await get(`${id}/`);
-      if (response.ok) setPortfolio(initialPortfolio);
+      if (response.ok) {
+        setPortfolio(initialPortfolio);
+      }
     }
     loadInitialPortfolio();
   }, [response.ok, get, id]);
@@ -28,7 +30,7 @@ export default function PortfolioDetailsPage() {
       portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
-      <YearSelector id={id} />
+      <YearSelector id={id} firstYear={portfolio.firstYear} />
       <CompaniesList companies={portfolio ? portfolio.companies : []} />
     </PortfolioDetailsPageHeader>
   );

@@ -5,7 +5,7 @@ from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from currencies.models import get_currency_details
 from portfolios.models import Portfolio
 from companies.serializers import CompanySerializerGet
-
+from shares_transactions.models import SharesTransaction
 
 class PortfolioSerializer(serializers.ModelSerializer):
     companies = UserFilteredPrimaryKeyRelatedField(many=True, read_only=True)
@@ -29,8 +29,33 @@ class PortfolioSerializer(serializers.ModelSerializer):
 class PortfolioSerializerGet(PortfolioSerializer):
     base_currency = SerializerMethodField()
     companies = CompanySerializerGet(many=True, read_only=True)
+    first_year = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Portfolio
+        fields = [
+            "id",
+            "name",
+            "description",
+            "color",
+            "country_code",
+            "date_created",
+            "first_year",
+            "last_updated",
+            "hide_closed_companies",
+            "base_currency",
+            "companies",
+        ]
 
     def get_base_currency(self, obj):
         return get_currency_details(
             obj.base_currency
         )  # access the price of the product associated with the order_unit object
+
+    def get_first_year(self, obj):
+        query = SharesTransaction.objects.filter(
+            company__portfolio=obj.id, user=obj.user
+        ).order_by("transaction_date")
+        if query.exists():
+            return query[0].transaction_date.year
+        return None
