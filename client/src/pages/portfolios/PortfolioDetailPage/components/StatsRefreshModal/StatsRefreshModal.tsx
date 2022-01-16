@@ -84,7 +84,7 @@ export default function StatsRefreshModal({
         );
       }
     },
-    [getStats, response.ok, selectedYear],
+    [getStats, response.ok, selectedYear, cache],
   );
 
   const getStockPrice = useCallback(

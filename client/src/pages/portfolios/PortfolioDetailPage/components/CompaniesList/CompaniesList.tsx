@@ -4,7 +4,6 @@ import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
 import useFetch from "use-http";
-import CountryFlag from "components/CountryFlag/CountryFlag";
 import { ICompany } from "types/company";
 
 interface IProps {
