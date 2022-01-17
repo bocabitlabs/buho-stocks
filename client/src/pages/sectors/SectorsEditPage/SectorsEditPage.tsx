@@ -7,20 +7,14 @@ import SectorsEditPageHeader from "./components/SectorsEditPageHeader/SectorsEdi
 import SectorAddEditForm from "components/SectorAddEditForm/SectorAddEditForm";
 import { useSector } from "hooks/use-sectors/use-sectors";
 
-interface IProps {
-  isSuper?: boolean;
-}
-
-export default function SectorsEditPage({ isSuper }: IProps) {
+export default function SectorsEditPage() {
   const params = useParams();
   const { id } = params;
   const idString: number = +id!;
   const { data, error, isFetching } = useSector(idString);
 
   if (isFetching) {
-    return (
-      <div>Loading the sector with super {JSON.stringify(isSuper)}...</div>
-    );
+    return <div>Loading the sector...</div>;
   }
 
   if (error) {

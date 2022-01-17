@@ -8,7 +8,7 @@ interface Props {
   sectorName: string;
   children: ReactNode;
 }
-function SectorsEditPageHeader({ sectorName, children }: Props) {
+function SuperSectorsEditPageHeader({ sectorName, children }: Props) {
   const { t } = useTranslation();
   const { id } = useParams();
   const routes = [
@@ -34,4 +34,4 @@ function SectorsEditPageHeader({ sectorName, children }: Props) {
   );
 }
 
-export default SectorsEditPageHeader;
+export default SuperSectorsEditPageHeader;
