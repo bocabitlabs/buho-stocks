@@ -35,6 +35,18 @@ function SectorsPageHeader({ children }: Props) {
         >
           {t("Add sector")}
         </Button>,
+        [
+          <Button
+            key="add-super-button"
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => {
+              navigate("super/add");
+            }}
+          >
+            {t("Add super sector")}
+          </Button>,
+        ],
       ]}
     >
       {children}

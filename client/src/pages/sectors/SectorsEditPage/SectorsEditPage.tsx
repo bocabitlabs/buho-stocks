@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
-import { Col, Row, Spin } from "antd";
-import useFetch from "use-http";
+// import { Col, Row, Spin } from "antd";
+import { Col, Row } from "antd";
 import SectorsEditPageHeader from "./components/SectorsEditPageHeader/SectorsEditPageHeader";
+// import SectorAddEditForm from "components/SectorAddEditForm/SectorAddEditForm";
 import SectorAddEditForm from "components/SectorAddEditForm/SectorAddEditForm";
-import { ISector } from "types/sector";
+import { useSector } from "hooks/use-sectors/use-sectors";
 
 interface IProps {
   isSuper?: boolean;
@@ -13,32 +14,24 @@ interface IProps {
 export default function SectorsEditPage({ isSuper }: IProps) {
   const params = useParams();
   const { id } = params;
-  const [sector, setSector] = useState<ISector | null>(null);
-  const { response, get } = useFetch(
-    "sectors",
-    {
-      suspense: true,
-    },
-    [],
-  );
+  const idString: number = +id!;
+  const { data, error, isFetching } = useSector(idString);
 
-  useEffect(() => {
-    async function loadInitialSector() {
-      const initialData = await get(`${id}/`);
-      if (response.ok) setSector(initialData);
-    }
-    loadInitialSector();
-  }, [response.ok, get, id]);
+  if (isFetching) {
+    return (
+      <div>Loading the sector with super {JSON.stringify(isSuper)}...</div>
+    );
+  }
 
-  if (!sector) {
-    return <Spin />;
+  if (error) {
+    return <div>Error fetching the sectors</div>;
   }
 
   return (
-    <SectorsEditPageHeader sectorName={sector.name}>
+    <SectorsEditPageHeader sectorName={data.name}>
       <Row>
         <Col>
-          <SectorAddEditForm sectorId={id} isSuper={isSuper} />
+          <SectorAddEditForm sector={data} isSuper />
         </Col>
         <Col />
       </Row>

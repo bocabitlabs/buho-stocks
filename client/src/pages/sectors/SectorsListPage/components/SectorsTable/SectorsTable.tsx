@@ -56,8 +56,8 @@ export default function SectorsTable() {
             <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm
-            key={`market-delete-${record.key}`}
-            title={`Delete market ${record.name}?`}
+            key={`sector-delete-${record.key}`}
+            title={`Delete sector ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
             okText="Yes"
             cancelText="No"

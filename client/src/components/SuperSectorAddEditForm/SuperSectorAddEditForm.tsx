@@ -1,58 +1,57 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, Select, Switch } from "antd";
+import { Button, Form, Input } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import { AlertMessagesContext } from "contexts/alert-messages";
-import { useAddSector, useUpdateSector } from "hooks/use-sectors/use-sectors";
-import { useSuperSectors } from "hooks/use-sectors/use-super-sectors";
+import {
+  useAddSuperSector,
+  useUpdateSuperSector,
+} from "hooks/use-sectors/use-super-sectors";
 import { ISector } from "types/sector";
 
 interface AddEditFormProps {
   sector?: ISector;
-  isSuper?: boolean;
 }
 
-function SectorAddEditForm({ sector, isSuper }: AddEditFormProps) {
+function SuperSectorAddEditForm({ sector }: AddEditFormProps) {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
   const { t } = useTranslation();
   const { createSuccess, createError } = useContext(AlertMessagesContext);
   const navigate = useNavigate();
 
-  const { data: superSectors } = useSuperSectors();
+  const { mutateAsync: createSuperSectorAsync } = useAddSuperSector();
+  const { mutateAsync: updateSuperSectorAsync } = useUpdateSuperSector();
 
-  const { mutateAsync: createSectorAsync } = useAddSector();
-  const { mutateAsync: updateSectorAsync } = useUpdateSector();
+  useEffect(() => {
+    if (sector) {
+      setColor(sector.color);
+      //     // form.setFieldsValue({
+      //     //   name: sector.name,
+      //     //   isSuperSector: sector.isSuperSector,
+      //     //   superSectorId: sector.superSector?.id,
+      //     // });
+      //   }
 
-  // useEffect(() => {
-  //   if (sector) {
-  //     setColor(sector.color);
-  //     // form.setFieldsValue({
-  //     //   name: sector.name,
-  //     //   isSuperSector: sector.isSuperSector,
-  //     //   superSectorId: sector.superSector?.id,
-  //     // });
-  //   }
+      //   // if (isSuper) {
+      //   //   result = await getSuperSectors(`${sectorId}/`);
+      //   //   if (superSectorsResponse.ok) {
+      //   //     setColor(result.color);
+      //   //     form.setFieldsValue({
+      //   //       name: result.name,
+      //   //     });
+      //   //   }
+    }
+  }, [sector]);
 
-  //   // if (isSuper) {
-  //   //   result = await getSuperSectors(`${sectorId}/`);
-  //   //   if (superSectorsResponse.ok) {
-  //   //     setColor(result.color);
-  //   //     form.setFieldsValue({
-  //   //       name: result.name,
-  //   //     });
-  //   //   }
-  //   // }
-  // }, [sector]);
-
-  const handleSectorSubmit = async (newSector: any) => {
+  const handleSuperSectorSubmit = async (newSector: any) => {
     let actionType = "update";
     try {
       if (sector) {
-        updateSectorAsync({ sectorId: sector.id, newSector });
+        updateSuperSectorAsync({ sectorId: sector.id, newSector });
       } else {
-        createSectorAsync(newSector);
+        createSuperSectorAsync(newSector);
         actionType = "create";
       }
       createSuccess(`Sector has been ${actionType}d`);
@@ -70,8 +69,7 @@ function SectorAddEditForm({ sector, isSuper }: AddEditFormProps) {
       superSector: superSectorId,
       isSuperSector,
     };
-
-    await handleSectorSubmit(newSector);
+    await handleSuperSectorSubmit(newSector);
   };
 
   const handleColorChange = (newColor: any) => {
@@ -122,43 +120,16 @@ function SectorAddEditForm({ sector, isSuper }: AddEditFormProps) {
       >
         <ColorSelector color={color} handleColorChange={handleColorChange} />
       </Form.Item>
-      {!isSuper && (
-        <Form.Item name="superSectorId" label={t("Super sector")}>
-          <Select placeholder={t("Select its super sector")} allowClear>
-            {superSectors &&
-              superSectors.map((sectorItem: ISector) => (
-                <Select.Option
-                  value={sectorItem.id}
-                  key={`sector-${sectorItem.id}-${sectorItem.id}`}
-                >
-                  {sectorItem.name}
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
-      )}
-      {!isSuper && !sector && (
-        <Form.Item
-          label={t("Is a super sector")}
-          name="isSuperSector"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
-      )}
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          {sector
-            ? t(`Update ${sector.isSuperSector ? "super" : ""} sector`)
-            : t("Add sector")}
+          {sector ? t(`Update super sector`) : t("Add super sector")}
         </Button>
       </Form.Item>
     </Form>
   );
 }
-SectorAddEditForm.defaultProps = {
+SuperSectorAddEditForm.defaultProps = {
   sector: null,
-  isSuper: false,
 };
 
-export default SectorAddEditForm;
+export default SuperSectorAddEditForm;

@@ -32,6 +32,8 @@ import SectorsAddPage from "pages/sectors/SectorsAddPage/SectorsAddpage";
 import SectorsEditPage from "pages/sectors/SectorsEditPage/SectorsEditPage";
 import SectorsListPage from "pages/sectors/SectorsListPage/SectorsListPage";
 import SectorsPages from "pages/sectors/SectorsPages/SectorsPages";
+import SuperSectorsAddPage from "pages/sectors/SuperSectorsAddPage/SuperSectorsAddpage";
+import SuperSectorsEditPage from "pages/sectors/SuperSectorsEditPage/SuperSectorsEditPage";
 import SettingsPage from "pages/settings/SettingsPage/SettingsPage";
 import SharesTransactionsAddPage from "pages/shares/SharesTransactionsAddPage/SharesTransactionsAddPage";
 import SharesTransactionsEditPage from "pages/shares/SharesTransactionsEditPage/SharesTransactionsEditPage";
@@ -123,7 +125,8 @@ export default function Main(): ReactElement {
                 <Route path="" element={<SectorsListPage />} />
                 <Route path="add/*" element={<SectorsAddPage />} />
                 <Route path=":id" element={<SectorsEditPage />} />
-                <Route path="super/:id" element={<SectorsEditPage isSuper />} />
+                <Route path="super/add/*" element={<SuperSectorsAddPage />} />
+                <Route path="super/:id" element={<SuperSectorsEditPage />} />
               </Route>
             </Route>
           </Routes>

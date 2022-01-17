@@ -4,15 +4,18 @@ import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
 import { AlertMessagesContext } from "contexts/alert-messages";
-import { useSectors, useDeleteSector } from "hooks/use-sectors/use-sectors";
+import {
+  useSuperSectors,
+  useDeleteSuperSector,
+} from "hooks/use-sectors/use-super-sectors";
 import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector } from "types/sector";
 
 export default function SuperSectorsTable() {
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
-  const { status, data, error, isFetching } = useSectors(true);
-  const { mutateAsync: deleteSector } = useDeleteSector(true);
+  const { status, data, error, isFetching } = useSuperSectors();
+  const { mutateAsync: deleteSector } = useDeleteSuperSector();
 
   const confirmDelete = async (recordId: number) => {
     try {
@@ -51,7 +54,7 @@ export default function SuperSectorsTable() {
           </Link>
           <Popconfirm
             key={`market-delete-${record.key}`}
-            title={`Delete market ${record.name}?`}
+            title={`Delete super sector ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
             okText="Yes"
             cancelText="No"
