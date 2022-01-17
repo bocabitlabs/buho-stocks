@@ -7,10 +7,9 @@ import { Content, Header } from "antd/lib/layout/layout";
 import { Provider } from "use-http";
 import AlertMessages from "components/AlertMessages/AlertMessages";
 import AppSidebar from "components/AppSidebar/AppSidebar";
-// import PageFooter from "components/PageFooter/PageFooter";
 import PageFooter from "components/PageFooter/PageFooter";
 import { AlertMessagesContext } from "contexts/alert-messages";
-import SettingsLoader from "SettingsLoader";
+import LanguageLoader from "LanguageLoader";
 
 const queryClient = new QueryClient();
 
@@ -31,44 +30,38 @@ function App() {
       }}
     >
       <QueryClientProvider client={queryClient}>
-        <SettingsLoader>
-          <Layout>
-            <AppSidebar />
-            <div className="site-main-content">
-              <Header
-                className="site-layout-sub-header-background"
-                style={{
-                  zIndex: 1,
-                  width: "100%",
-                  backgroundColor: "#fff",
-                  padding: "0 20px",
-                  height: 60,
-                  display: "block",
-                }}
+        <Layout>
+          <LanguageLoader />
+          <AppSidebar />
+          <div className="site-main-content">
+            <Header
+              className="site-layout-sub-header-background"
+              style={{
+                zIndex: 1,
+                width: "100%",
+                backgroundColor: "#fff",
+                padding: "0 20px",
+                height: 60,
+                display: "block",
+              }}
+            >
+              <Typography.Title style={{ fontSize: 30, lineHeight: "inherit" }}>
+                <Avatar src="/icons/android-icon-72x72.png" />
+                Buho Stocks
+              </Typography.Title>
+            </Header>
+            <Content className="site-layout" style={{ margin: "24px 16px 0" }}>
+              <AlertMessages />
+              <div
+                className="site-layout-background"
+                style={{ minHeight: 380 }}
               >
-                <Typography.Title
-                  style={{ fontSize: 30, lineHeight: "inherit" }}
-                >
-                  <Avatar src="/icons/android-icon-72x72.png" />
-                  Buho Stocks
-                </Typography.Title>
-              </Header>
-              <Content
-                className="site-layout"
-                style={{ margin: "24px 16px 0" }}
-              >
-                <AlertMessages />
-                <div
-                  className="site-layout-background"
-                  style={{ minHeight: 380 }}
-                >
-                  <Outlet />
-                </div>
-              </Content>
-              <PageFooter />
-            </div>
-          </Layout>
-        </SettingsLoader>
+                <Outlet />
+              </div>
+            </Content>
+            <PageFooter />
+          </div>
+        </Layout>
       </QueryClientProvider>
     </Provider>
   );

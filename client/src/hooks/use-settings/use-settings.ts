@@ -28,8 +28,8 @@ export const useUpdateSettings = () => {
   );
 };
 
-export function useSettings() {
-  return useQuery("settings", fetchSettings);
+export function useSettings(options = {}) {
+  return useQuery("settings", fetchSettings, options);
 }
 
 export default useSettings;
