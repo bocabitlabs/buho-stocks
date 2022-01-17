@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import { axiosOptionsWithAuth } from "api/api-client";
+import { getAxiosOptionsWithAuth } from "api/api-client";
 import { IMarketFormFields } from "types/market";
 
 interface UpdateMarketMutationProps {
@@ -9,7 +9,10 @@ interface UpdateMarketMutationProps {
 }
 
 export const fetchMarkets = async () => {
-  const { data } = await axios.get("/api/v1/markets/", axiosOptionsWithAuth);
+  const { data } = await axios.get(
+    "/api/v1/markets/",
+    getAxiosOptionsWithAuth(),
+  );
   return data;
 };
 
@@ -19,7 +22,7 @@ export const fetchMarket = async (marketId: number | undefined) => {
   }
   const { data } = await axios.get(
     `/api/v1/markets/${marketId}/`,
-    axiosOptionsWithAuth,
+    getAxiosOptionsWithAuth(),
   );
   return data;
 };
@@ -29,7 +32,7 @@ export const useAddMarket = () => {
 
   return useMutation(
     (newMarket: IMarketFormFields) =>
-      axios.post("/api/v1/markets/", newMarket, axiosOptionsWithAuth),
+      axios.post("/api/v1/markets/", newMarket, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         // refetch the markets
@@ -44,7 +47,7 @@ export const useDeleteMarket = () => {
 
   return useMutation(
     (id: number) =>
-      axios.delete(`/api/v1/markets/${id}/`, axiosOptionsWithAuth),
+      axios.delete(`/api/v1/markets/${id}/`, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         // refetch the markets
@@ -62,7 +65,7 @@ export const useUpdateMarket = () => {
       axios.put(
         `/api/v1/markets/${marketId}/`,
         newMarket,
-        axiosOptionsWithAuth,
+        getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: () => {

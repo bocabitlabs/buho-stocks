@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import { axiosOptionsWithAuth } from "api/api-client";
+import { getAxiosOptionsWithAuth } from "api/api-client";
 import { ISectorFormFields } from "types/sector";
 
 interface UpdateSectorMutationProps {
@@ -10,7 +10,7 @@ interface UpdateSectorMutationProps {
 
 export const fetchSectors = async () => {
   const apiUrl = "/api/v1/sectors/";
-  const { data } = await axios.get(apiUrl, axiosOptionsWithAuth);
+  const { data } = await axios.get(apiUrl, getAxiosOptionsWithAuth());
   return data;
 };
 
@@ -21,7 +21,7 @@ export const fetchSector = async (sectorId: number | undefined) => {
   const apiUrl = "/api/v1/sectors/";
   const { data } = await axios.get(
     `${apiUrl}${sectorId}/`,
-    axiosOptionsWithAuth,
+    getAxiosOptionsWithAuth(),
   );
   return data;
 };
@@ -33,7 +33,7 @@ export const useAddSector = () => {
 
   return useMutation(
     (newSector: ISectorFormFields) =>
-      axios.post(apiUrl, newSector, axiosOptionsWithAuth),
+      axios.post(apiUrl, newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         queryClient.invalidateQueries([cacheKey]);
@@ -48,7 +48,7 @@ export const useDeleteSector = () => {
   const apiUrl = "/api/v1/sectors/";
 
   return useMutation(
-    (id: number) => axios.delete(`${apiUrl}${id}/`, axiosOptionsWithAuth),
+    (id: number) => axios.delete(`${apiUrl}${id}/`, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         queryClient.invalidateQueries([cacheKey]);
@@ -64,7 +64,7 @@ export const useUpdateSector = () => {
 
   return useMutation(
     ({ sectorId, newSector }: UpdateSectorMutationProps) =>
-      axios.put(`${apiUrl}${sectorId}/`, newSector, axiosOptionsWithAuth),
+      axios.put(`${apiUrl}${sectorId}/`, newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         queryClient.invalidateQueries([cacheKey]);

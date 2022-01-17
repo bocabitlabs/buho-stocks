@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from "react";
+import { useCallback, useReducer } from "react";
 import { AuthContextType } from "contexts/auth";
 
 interface MyState {
@@ -7,7 +7,6 @@ interface MyState {
 }
 
 export function useAuthContext(): AuthContextType {
-  const [isWorking, setIsWorking] = useState(false);
   const [state, setState] = useReducer(
     // eslint-disable-next-line @typescript-eslint/no-shadow
     (state: MyState, newState: Partial<MyState>) => {
@@ -32,23 +31,10 @@ export function useAuthContext(): AuthContextType {
     }
   }, [state.isAuthenticated]);
 
-  const prueba = useCallback(() => {
-    console.debug("useAuth: Calling prueba");
-    setState({ isAuthenticated: false, token: null });
-  }, []);
-
-  const updateIsWorking = useCallback(() => {
-    console.debug("useAuth: Calling updateIsWorking");
-    setIsWorking(true);
-  }, []);
-
   return {
     state,
-    isWorking,
     authenticate,
     clearToken,
-    prueba,
-    updateIsWorking,
   };
 }
 

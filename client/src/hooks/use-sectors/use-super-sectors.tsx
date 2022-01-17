@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import axios from "axios";
-import { axiosOptionsWithAuth } from "api/api-client";
+import { getAxiosOptionsWithAuth } from "api/api-client";
 import { ISectorFormFields } from "types/sector";
 
 interface UpdateSectorMutationProps {
@@ -10,7 +10,7 @@ interface UpdateSectorMutationProps {
 
 export const fetchSuperSectors = async () => {
   const apiUrl = "/api/v1/sectors/super/";
-  const { data } = await axios.get(apiUrl, axiosOptionsWithAuth);
+  const { data } = await axios.get(apiUrl, getAxiosOptionsWithAuth());
   return data;
 };
 
@@ -21,7 +21,7 @@ export const fetchSuperSector = async (sectorId: number | undefined) => {
   const apiUrl = "/api/v1/sectors/super/";
   const { data } = await axios.get(
     `${apiUrl}${sectorId}/`,
-    axiosOptionsWithAuth,
+    getAxiosOptionsWithAuth(),
   );
   return data;
 };
@@ -32,7 +32,7 @@ export const useAddSuperSector = () => {
 
   return useMutation(
     (newSector: ISectorFormFields) =>
-      axios.post(apiUrl, newSector, axiosOptionsWithAuth),
+      axios.post(apiUrl, newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["superSectors"]);
@@ -46,7 +46,7 @@ export const useDeleteSuperSector = () => {
   const apiUrl = "/api/v1/sectors/super/";
 
   return useMutation(
-    (id: number) => axios.delete(`${apiUrl}${id}/`, axiosOptionsWithAuth),
+    (id: number) => axios.delete(`${apiUrl}${id}/`, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["superSectors"]);
@@ -61,7 +61,7 @@ export const useUpdateSuperSector = () => {
 
   return useMutation(
     ({ sectorId, newSector }: UpdateSectorMutationProps) =>
-      axios.put(`${apiUrl}${sectorId}/`, newSector, axiosOptionsWithAuth),
+      axios.put(`${apiUrl}${sectorId}/`, newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["superSectors"]);

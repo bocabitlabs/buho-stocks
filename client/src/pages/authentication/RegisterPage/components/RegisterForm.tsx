@@ -2,16 +2,26 @@ import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { Button, Form, Input, PageHeader } from "antd";
-import useFetch from "use-http";
 import { IRegistrationData } from "api/api-client";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import { useRegisterUser } from "hooks/use-auth/use-auth";
 
 function RegisterForm() {
   const [form] = Form.useForm();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { post, response } = useFetch("/auth");
   const { createError, createSuccess } = useContext(AlertMessagesContext);
+  const { mutate: registerUser } = useRegisterUser({
+    onSuccess: (response: any) => {
+      if (response) {
+        createSuccess(t("Registration successful"));
+        navigate("/app-login");
+      }
+    },
+    onError: (error: any) => {
+      createError(t(`Login failed: ${error}`));
+    },
+  });
 
   const onFinish = async (values: any) => {
     const devData = {
@@ -30,14 +40,7 @@ function RegisterForm() {
       lastName: values.lastName ? values.lastName : devData.lastName,
       email: values.email ? values.email : devData.email,
     };
-    await post("register/", data);
-    if (response.ok) {
-      createSuccess(t("Registration successful"));
-      navigate("/app-login");
-    } else {
-      createError(t("Registration failed"));
-      console.error("Unable to register");
-    }
+    registerUser(data);
   };
 
   return (

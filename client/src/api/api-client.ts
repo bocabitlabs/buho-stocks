@@ -20,9 +20,9 @@ export interface IApiResponse {
   [key: string]: string;
 }
 
-export const axiosOptionsWithAuth = {
+export const getAxiosOptionsWithAuth = () => ({
   headers: {
     Accept: "application/json",
     Authorization: `Token ${localStorage.getItem("token")}`,
   },
-};
+});

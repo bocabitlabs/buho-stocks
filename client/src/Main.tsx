@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import { QueryClient, QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import App from "App";
 import RequireAuth from "components/RequireAuth/RequireAuth";
@@ -39,6 +40,8 @@ import SharesTransactionsAddPage from "pages/shares/SharesTransactionsAddPage/Sh
 import SharesTransactionsEditPage from "pages/shares/SharesTransactionsEditPage/SharesTransactionsEditPage";
 import getRoute, { HOME_ROUTE } from "routes";
 
+const queryClient = new QueryClient();
+
 export default function Main(): ReactElement {
   const authContext = useAuthContext();
   const messagesContext = useAlertMessagesContext();
@@ -46,91 +49,104 @@ export default function Main(): ReactElement {
   return (
     <AuthContext.Provider value={authContext}>
       <AlertMessagesContext.Provider value={messagesContext}>
-        <BrowserRouter>
-          <ScrollToTop />
-
-          <Routes>
-            <Route path="app-login" element={<LoginPage />} />
-            <Route path="app-register" element={<RegisterPage />} />
-            <Route path="/" element={<Navigate to={getRoute(HOME_ROUTE)} />} />
-            <Route
-              path="app"
-              element={
-                <RequireAuth>
-                  <App />
-                </RequireAuth>
-              }
-            >
-              <Route path="" element={<Navigate to={getRoute(HOME_ROUTE)} />} />
-              <Route path="currencies" element={<CurrenciesPage />} />
-              <Route path="home" element={<PortfoliosListPage />} />
-              <Route path="import-export" element={<ImportExportPage />} />
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <ScrollToTop />
+            <Routes>
+              <Route path="app-login" element={<LoginPage />} />
+              <Route path="app-register" element={<RegisterPage />} />
               <Route
-                path="import/:brokerId"
-                element={<ImportFromBrokerPage />}
+                path="/"
+                element={<Navigate to={getRoute(HOME_ROUTE)} />}
               />
-              <Route path="markets" element={<MarketsPages />}>
-                <Route path="" element={<MarketsListPage />} />
-                <Route path="add/*" element={<MarketsAddPage />} />
-                <Route path=":id" element={<MarketsEditPage />} />
+              <Route
+                path="app"
+                element={
+                  <RequireAuth>
+                    <App />
+                  </RequireAuth>
+                }
+              >
+                <Route
+                  path=""
+                  element={<Navigate to={getRoute(HOME_ROUTE)} />}
+                />
+                <Route path="currencies" element={<CurrenciesPage />} />
+                <Route path="home" element={<PortfoliosListPage />} />
+                <Route path="import-export" element={<ImportExportPage />} />
+                <Route
+                  path="import/:brokerId"
+                  element={<ImportFromBrokerPage />}
+                />
+                <Route path="markets" element={<MarketsPages />}>
+                  <Route path="" element={<MarketsListPage />} />
+                  <Route path="add/*" element={<MarketsAddPage />} />
+                  <Route path=":id" element={<MarketsEditPage />} />
+                </Route>
+                <Route
+                  path="portfolios/add/*"
+                  element={<PortfoliosAddPage />}
+                />
+                <Route
+                  path="portfolios/:id"
+                  element={<PortfolioDetailsPage />}
+                />
+                <Route
+                  path="portfolios/:id/log/*"
+                  element={<PortfolioTransactionsLogPage />}
+                />
+                <Route
+                  path="portfolios/:id/charts/*"
+                  element={<PortfolioChartsPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/add/*"
+                  element={<CompaniesAddPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId"
+                  element={<CompanyDetailsPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/edit"
+                  element={<CompanyEditPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/shares/add/*"
+                  element={<SharesTransactionsAddPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/shares/:transactionId"
+                  element={<SharesTransactionsEditPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/rights/add/*"
+                  element={<RightsTransactionsAddPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/rights/:transactionId"
+                  element={<RightsTransactionsEditPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/dividends/add/*"
+                  element={<DividendsTransactionsAddPage />}
+                />
+                <Route
+                  path="portfolios/:id/companies/:companyId/dividends/:transactionId"
+                  element={<DividendsTransactionsEditPage />}
+                />
+                <Route path="settings" element={<SettingsPage />} />
+                <Route path="sectors" element={<SectorsPages />}>
+                  <Route path="" element={<SectorsListPage />} />
+                  <Route path="add/*" element={<SectorsAddPage />} />
+                  <Route path=":id" element={<SectorsEditPage />} />
+                  <Route path="super/add/*" element={<SuperSectorsAddPage />} />
+                  <Route path="super/:id" element={<SuperSectorsEditPage />} />
+                </Route>
               </Route>
-              <Route path="portfolios/add/*" element={<PortfoliosAddPage />} />
-              <Route path="portfolios/:id" element={<PortfolioDetailsPage />} />
-              <Route
-                path="portfolios/:id/log/*"
-                element={<PortfolioTransactionsLogPage />}
-              />
-              <Route
-                path="portfolios/:id/charts/*"
-                element={<PortfolioChartsPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/add/*"
-                element={<CompaniesAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId"
-                element={<CompanyDetailsPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/edit"
-                element={<CompanyEditPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/shares/add/*"
-                element={<SharesTransactionsAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/shares/:transactionId"
-                element={<SharesTransactionsEditPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/rights/add/*"
-                element={<RightsTransactionsAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/rights/:transactionId"
-                element={<RightsTransactionsEditPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/dividends/add/*"
-                element={<DividendsTransactionsAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/dividends/:transactionId"
-                element={<DividendsTransactionsEditPage />}
-              />
-              <Route path="settings" element={<SettingsPage />} />
-              <Route path="sectors" element={<SectorsPages />}>
-                <Route path="" element={<SectorsListPage />} />
-                <Route path="add/*" element={<SectorsAddPage />} />
-                <Route path=":id" element={<SectorsEditPage />} />
-                <Route path="super/add/*" element={<SuperSectorsAddPage />} />
-                <Route path="super/:id" element={<SuperSectorsEditPage />} />
-              </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
+        </QueryClientProvider>
       </AlertMessagesContext.Provider>
     </AuthContext.Provider>
   );

@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, PageHeader } from "antd";
-import useFetch from "use-http";
 import { AlertMessagesContext } from "contexts/alert-messages";
 import { AuthContext } from "contexts/auth";
+import { useLoginUser } from "hooks/use-auth/use-auth";
 
 interface LocationState {
   from: any;
@@ -13,12 +13,24 @@ interface LocationState {
 
 export function LoginForm() {
   const { t } = useTranslation();
-  const { state: authState, authenticate } = useContext(AuthContext);
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
-  const { post, response } = useFetch("/auth");
+  const { state: authState, authenticate } = useContext(AuthContext);
   const { createError, createSuccess } = useContext(AlertMessagesContext);
   const from = (locationState as LocationState)?.from?.pathname || "/app";
+
+  const { mutate: loginUser } = useLoginUser({
+    onSuccess: (response: any) => {
+      if (response) {
+        authenticate(response.data.token);
+        createSuccess(t("Login successful"));
+        navigate("/app/home");
+      }
+    },
+    onError: (error: any) => {
+      createError(t(`Login failed: ${error}`));
+    },
+  });
 
   React.useEffect(() => {
     if (authState.isAuthenticated) {
@@ -27,21 +39,13 @@ export function LoginForm() {
   }, [authState.isAuthenticated, navigate, from]);
 
   const onFinish = async (values: any) => {
-    const data = {
+    const testData = {
       username: "pepe",
       password: "ABCD12345!",
     };
-    const username = values.username ? values.username : data.username;
-    const password = values.password ? values.password : data.password;
-    const result = await post("api-token-auth/", { username, password });
-    if (response.ok) {
-      createSuccess(t("Login successful"));
-      authenticate(result.token);
-      navigate("/app/home");
-    } else {
-      createError(t("Login failed"));
-      console.error("Unable to login");
-    }
+    const username = values.username ? values.username : testData.username;
+    const password = values.password ? values.password : testData.password;
+    loginUser({ username, password });
   };
 
   return (
