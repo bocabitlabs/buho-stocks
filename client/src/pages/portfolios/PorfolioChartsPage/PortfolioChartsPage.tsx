@@ -27,7 +27,7 @@ export default function PortfolioChartsPage() {
       portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
-      <ChartsList />
+      <ChartsList firstYear={portfolio.firstYear} />
     </PortfolioChartsPageHeader>
   );
 }
