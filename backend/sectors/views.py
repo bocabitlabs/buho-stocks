@@ -1,7 +1,6 @@
 # from django.contrib.auth.models import User, Group
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -20,7 +19,6 @@ class SectorListAPIView(APIView):
     # add permission to check if user is authenticated
     # permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [
-        BasicAuthentication,
         TokenAuthentication,
     ]
     permission_classes = [IsAuthenticated]
@@ -58,7 +56,7 @@ class SectorListAPIView(APIView):
 
 class SectorDetailAPIView(APIView):
     # add permission to check if user is authenticated
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, todo_id, user_id):
@@ -103,7 +101,12 @@ class SectorDetailAPIView(APIView):
             "color": request.data.get("color"),
             "super_sector": request.data.get("super_sector"),
         }
-        serializer = SectorSerializer(instance=todo_instance, data=data, partial=True, context={"request": request})
+        serializer = SectorSerializer(
+            instance=todo_instance,
+            data=data,
+            partial=True,
+            context={"request": request},
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -128,7 +131,6 @@ class SectorDetailAPIView(APIView):
 class SuperSectorListAPIView(APIView):
     # add permission to check if user is authenticated
     authentication_classes = [
-        BasicAuthentication,
         TokenAuthentication,
     ]
     permission_classes = [IsAuthenticated]
@@ -140,7 +142,9 @@ class SuperSectorListAPIView(APIView):
         List all the market items for given requested user
         """
         sectors = SuperSector.objects.filter(user=request.user.id)
-        serializer = SuperSectorSerializer(sectors, many=True, context={"request": request})
+        serializer = SuperSectorSerializer(
+            sectors, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 2. Create
@@ -165,7 +169,6 @@ class SuperSectorListAPIView(APIView):
 class SuperSectorDetailAPIView(APIView):
     # add permission to check if user is authenticated
     authentication_classes = [
-        BasicAuthentication,
         TokenAuthentication,
     ]
     permission_classes = [IsAuthenticated]
@@ -209,7 +212,10 @@ class SuperSectorDetailAPIView(APIView):
             )
         data = {"name": request.data.get("name"), "color": request.data.get("color")}
         serializer = SuperSectorSerializer(
-            instance=todo_instance, data=data, partial=True, context={"request": request}
+            instance=todo_instance,
+            data=data,
+            partial=True,
+            context={"request": request},
         )
         if serializer.is_valid():
             serializer.save()

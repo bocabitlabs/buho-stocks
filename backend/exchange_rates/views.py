@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -19,7 +18,6 @@ class ExchangeRateListAPIView(APIView):
     """Get all the exchange rates from a user"""
 
     authentication_classes = [
-        BasicAuthentication,
         TokenAuthentication,
     ]
     permission_classes = [IsAuthenticated]
@@ -58,7 +56,6 @@ class ExchangeRateDetailAPIView(APIView):
     """Operations for a single Exchange rate"""
 
     authentication_classes = [
-        BasicAuthentication,
         TokenAuthentication,
     ]
     # permission_classes = [IsAuthenticated]

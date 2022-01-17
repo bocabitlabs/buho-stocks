@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -14,7 +13,7 @@ from markets.models import Market
 class MarketListAPIView(APIView):
     """Get all the markets from a user"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -52,7 +51,7 @@ class MarketListAPIView(APIView):
 class MarketDetailAPIView(APIView):
     """Operations for a single Market"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, market_id, user_id):

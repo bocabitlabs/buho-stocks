@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +15,7 @@ from portfolios.models import Portfolio
 class CompaniesListAPIView(APIView):
     """Get all the companies from a user's portfolio"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -73,7 +72,7 @@ class CompaniesListAPIView(APIView):
 class CompanyDetailAPIView(APIView):
     """Operations for a single Company"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, company_id, user_id):

@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +15,7 @@ from log_messages.models import LogMessage
 class DividendsTransactionsListAPIView(APIView):
     """Get all the shares transactions from a user's company"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -76,7 +75,7 @@ class DividendsTransactionsListAPIView(APIView):
 class DividendsTransactionDetailAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, transaction_id, company_id, user_id):

@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -16,7 +15,7 @@ from rights_transactions.serializers import RightsTransactionSerializer
 class RightsTransactionsListAPIView(APIView):
     """Get all the shares transactions from a user's company"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -75,7 +74,7 @@ class RightsTransactionsListAPIView(APIView):
 class RightsTransactionDetailAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, transaction_id, user_id):

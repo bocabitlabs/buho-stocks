@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.authentication import BasicAuthentication, TokenAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -11,7 +11,7 @@ from settings.serializers import UserSettingsSerializer
 
 
 class UserSettingsListAPIView(APIView):
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     # test
     # 1. List all
@@ -27,7 +27,7 @@ class UserSettingsListAPIView(APIView):
 
 class UserSettingsDetailAPIView(APIView):
     # add permission to check if user is authenticated
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, todo_id, user_id):

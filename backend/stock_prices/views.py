@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    SessionAuthentication,
     TokenAuthentication,
 )
 import logging
@@ -19,7 +18,7 @@ logger = logging.getLogger("buho_backend")
 class StockPricesListAPIView(APIView):
     """Get all the shares transactions from a user's company"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -36,7 +35,7 @@ class StockPricesListAPIView(APIView):
 class StockPricesDetailAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, transaction_date, user_id):
@@ -67,7 +66,7 @@ class StockPricesDetailAPIView(APIView):
 class StockPricesYearAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, year, user_id):
@@ -99,7 +98,7 @@ class StockPricesYearAPIView(APIView):
 
 
 class StockPricesYearForceAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, year, user_id):

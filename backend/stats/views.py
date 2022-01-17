@@ -1,7 +1,6 @@
 import logging
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    SessionAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -18,7 +17,7 @@ from stats.utils import CompanyStatsUtils, PortfolioStatsUtils, CompanyUtils
 logger =logging.getLogger("buho_backend")
 
 class CompanyStatsAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, year, user_id):
@@ -46,7 +45,7 @@ class CompanyStatsAPIView(APIView):
 
 
 class CompanyStatsForceAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, year, user_id):
@@ -76,7 +75,7 @@ class CompanyStatsForceAPIView(APIView):
 
 
 class PortfolioStatsAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, year, user_id):
@@ -107,7 +106,7 @@ class PortfolioStatsAPIView(APIView):
 
 
 class PortfolioStatsForceAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, year, user_id):
@@ -137,7 +136,7 @@ class PortfolioStatsForceAPIView(APIView):
 
 
 class PortfolioStatsByCompanyAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, year, user_id):
@@ -168,7 +167,7 @@ class PortfolioStatsByCompanyAPIView(APIView):
 
 
 class PortfolioDividendStatsMonthlyAPIView(APIView):
-    authentication_classes = [SessionAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, year, user_id):

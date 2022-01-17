@@ -1,6 +1,5 @@
 from rest_framework.response import Response
 from rest_framework.authentication import (
-    BasicAuthentication,
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
@@ -12,7 +11,7 @@ from log_messages.serializers import LogMessageSerializer
 
 
 class LogMessageListAPIView(APIView):
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -43,7 +42,7 @@ class LogMessageListAPIView(APIView):
 
 
 class LogMessageDetailAPIView(APIView):
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, message_id, user_id):
