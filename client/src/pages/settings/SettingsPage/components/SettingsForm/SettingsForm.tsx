@@ -1,16 +1,16 @@
-import React, { ReactElement, useContext } from "react";
+import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Select, Spin } from "antd";
-import { SettingsContext } from "contexts/settings";
+import { Button, Form, Select } from "antd";
+import {
+  useSettings,
+  useUpdateSettings,
+} from "hooks/use-settings/use-settings";
 import { ISettingsFormFields } from "types/settings";
 
 function SettingsForm(): ReactElement | null {
   const [form] = Form.useForm();
-  const {
-    isLoading,
-    settings,
-    update: updateSettings,
-  } = useContext(SettingsContext);
+  const { isFetching, data, error } = useSettings();
+  const { mutateAsync: updateSettingsAsync } = useUpdateSettings();
   const { t, i18n } = useTranslation();
 
   const handleUpdate = async (values: any) => {
@@ -30,14 +30,18 @@ function SettingsForm(): ReactElement | null {
       portfolioDisplayMode: "TODO",
       portfolioSortBy: "TODO",
     };
-    if (settings) {
-      updateSettings(settings.id, newSettings);
+    if (data) {
+      updateSettingsAsync({ id: data.id, newSettings });
       i18n.changeLanguage(newSettings.language);
     }
   };
 
-  if (isLoading || !settings) {
-    return <Spin />;
+  if (isFetching) {
+    return <div>Fetching settings...</div>;
+  }
+
+  if (error) {
+    return <div>Unable to fetch settings.</div>;
   }
 
   return (
@@ -48,13 +52,12 @@ function SettingsForm(): ReactElement | null {
       initialValues={{
         // companyDisplayMode: settings.companyDisplayMode,
         // companySortBy: settings.companySortBy,
-        language: settings?.language,
+        language: data?.language,
         // mainPortfolio: settings.mainPortfolio,
         // portfolioDisplayMode: settings.portfolioDisplayMode,
         // portfolioSortBy: settings.portfolioSortBy
       }}
     >
-      {JSON.stringify(settings)}
       <Form.Item name="language" label={t("Language")}>
         <Select placeholder={t("Select a language")}>
           <Select.Option value="en" key="en">
