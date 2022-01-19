@@ -16,8 +16,9 @@ from markets.serializers import MarketSerializer
 from shares_transactions.serializers import SharesTransactionSerializer
 from shares_transactions.models import SharesTransaction
 from drf_extra_fields.fields import Base64ImageField
-
+from stats.models import CompanyStatsForYear
 from stats.serializers import CompanyStatsForYearSerializer
+
 
 class CompanySerializer(serializers.ModelSerializer):
     sector = UserFilteredPrimaryKeyRelatedField(
@@ -29,13 +30,10 @@ class CompanySerializer(serializers.ModelSerializer):
     portfolio = UserFilteredPrimaryKeyRelatedField(
         queryset=Portfolio.objects, many=False, read_only=False
     )
-    shares_transactions = UserFilteredPrimaryKeyRelatedField(many=True, read_only=True)
-    rights_transactions = UserFilteredPrimaryKeyRelatedField(many=True, read_only=True)
-    dividends_transactions = UserFilteredPrimaryKeyRelatedField(
-        many=True, read_only=True
-    )
+
     logo = Base64ImageField(max_length=None, use_url=True, allow_null = True, required=False)
-    stats = CompanyStatsForYearSerializer(many=True, read_only=True)
+    all_stats = serializers.SerializerMethodField()
+    last_transaction_month = serializers.SerializerMethodField()
 
 
     class Meta:
@@ -48,20 +46,21 @@ class CompanySerializer(serializers.ModelSerializer):
             "color",
             "country_code",
             "description",
-            "dividends_currency",
+            # "dividends_currency",
             "dividends_transactions",
             "logo",
             "market",
             "name",
             "portfolio",
-            "rights_transactions",
+            # "rights_transactions",
             "sector",
-            "shares_transactions",
+            # "shares_transactions",
             "ticker",
             "url",
-            "stats",
+            "all_stats",
             "date_created",
             "last_updated",
+            "last_transaction_month",
         ]
 
     def validate(self, attrs):
@@ -73,6 +72,23 @@ class CompanySerializer(serializers.ModelSerializer):
         validate_ownership(self.context, portfolio, Portfolio)
         validate_ownership(self.context, sector, Sector)
         return attrs
+
+    def get_all_stats(self, obj):
+        query = CompanyStatsForYear.objects.filter(
+            company=obj.id, user=obj.user, year=9999
+        )
+        if query.exists():
+            serializer = CompanyStatsForYearSerializer(query[0])
+            return serializer.data
+        return None
+
+    def get_last_transaction_month(self, obj):
+        query = SharesTransaction.objects.filter(
+            company_id=obj.id, user=obj.user
+        ).order_by("transaction_date")
+        if query.exists():
+            return f"{query[len(query)-1].transaction_date.year}-{query[len(query)-1].transaction_date.month}"
+        return None
 
 
 class CompanySerializerGet(CompanySerializer):
@@ -86,6 +102,9 @@ class CompanySerializerGet(CompanySerializer):
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
     portfolio = PortfolioSerializerLite(many=False, read_only=True)
     first_year = serializers.SerializerMethodField()
+    last_transaction_month = serializers.SerializerMethodField()
+    stats = CompanyStatsForYearSerializer(many=True, read_only=True)
+
 
     def get_base_currency(self, obj):
         return get_currency_details(
@@ -108,6 +127,14 @@ class CompanySerializerGet(CompanySerializer):
         ).order_by("transaction_date")
         if query.exists():
             return query[0].transaction_date.year
+        return None
+
+    def get_last_transaction_month(self, obj):
+        query = SharesTransaction.objects.filter(
+            company_id=obj.id, user=obj.user
+        ).order_by("transaction_date")
+        if query.exists():
+            return f"{query[len(query)-1].transaction_date.year}-{query[len(query)-1].transaction_date.month}"
         return None
 
     class Meta:
@@ -135,4 +162,5 @@ class CompanySerializerGet(CompanySerializer):
             "date_created",
             "last_updated",
             "first_year",
+            "last_transaction_month",
         ]

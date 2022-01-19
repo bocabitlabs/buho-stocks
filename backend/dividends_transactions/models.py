@@ -7,3 +7,5 @@ class DividendsTransaction(Transaction):
     company = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="dividends_transactions"
     )
+    class Meta:
+        ordering = ['-transaction_date']

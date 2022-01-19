@@ -96,8 +96,6 @@ class SharesTransactionDetailAPIView(APIView):
         """
         Retrieve the company item with given company_id
         """
-        print(company_id)
-        print(transaction_id)
         instance = self.get_object(company_id, transaction_id, request.user.id)
         if not instance:
             return Response(

@@ -39,3 +39,6 @@ class SharesTransaction(Transaction):
 
     def __str___(self):
         return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"
+
+    class Meta:
+        ordering = ['-transaction_date']

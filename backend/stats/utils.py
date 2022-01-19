@@ -9,7 +9,7 @@ from buho_backend.transaction_types import TransactionType
 from companies.models import Company
 from exchange_rates.models import ExchangeRate
 from exchange_rates.utils import get_exchange_rates_from_api
-from stats.models import CompanyStatsForYear
+from stats.models import CompanyStatsForYear, PortfolioStatsForYear
 from stock_prices.api import StockPricesApi
 from stock_prices.services.custom_yfinance_service import CustomYFinanceService
 from portfolios.models import Portfolio
@@ -509,14 +509,25 @@ class PortfolioStatsUtils:
 
     def get_stats_for_year(self):
 
+        year_for_all = 9999
+        temp_year = year_for_all if self.year == "all" else self.year
+
+        if PortfolioStatsForYear.objects.filter(
+            portfolio=self.portfolio, year=temp_year
+        ).exists():
+            results = PortfolioStatsForYear.objects.get(
+                portfolio=self.portfolio, year=temp_year
+            )
+            return results
+
         data = {
             "invested": 0,
             "dividends": 0,
-            "dividendsYield": 0,
-            "portfolioCurrency": self.portfolio.base_currency,
-            "accumulatedInvestment": 0,
-            "accumulatedDividends": 0,
-            "portfolioValue": 0,
+            "dividends_yield": 0,
+            "portfolio_currency": self.portfolio.base_currency,
+            "accumulated_investment": 0,
+            "accumulated_dividends": 0,
+            "portfolio_value": 0,
         }
 
         for company in self.portfolio.companies.all():
@@ -529,30 +540,38 @@ class PortfolioStatsUtils:
             instance = company_stats.get_stats_for_year()
             data["invested"] += instance.invested
             data["dividends"] += instance.dividends
-            data["accumulatedInvestment"] += instance.accumulated_investment
-            data["accumulatedDividends"] += instance.accumulated_dividends
-            data["portfolioValue"] += instance.portfolio_value
+            data["accumulated_investment"] += instance.accumulated_investment
+            data["accumulated_dividends"] += instance.accumulated_dividends
+            data["portfolio_value"] += instance.portfolio_value
 
-        data["returnValue"] = self.get_return(
-            data["portfolioValue"], data["accumulatedInvestment"]
+        data["return_value"] = self.get_return(
+            data["portfolio_value"], data["accumulated_investment"]
         )
-        data["returnPercent"] = self.get_return_percent(
-            data["returnValue"], data["accumulatedInvestment"]
+        data["return_percent"] = self.get_return_percent(
+            data["return_value"], data["accumulated_investment"]
         )
         data["return_with_dividends"] = self.get_return_with_dividends(
-            data["portfolioValue"],
-            data["accumulatedDividends"],
-            data["accumulatedInvestment"],
+            data["portfolio_value"],
+            data["accumulated_dividends"],
+            data["accumulated_investment"],
         )
         data["return_with_dividends_percent"] = self.get_return_percent(
-            data["return_with_dividends"], data["accumulatedInvestment"]
+            data["return_with_dividends"], data["accumulated_investment"]
         )
-        if data["portfolioValue"] < data["accumulatedInvestment"]:
+        if data["portfolio_value"] < data["accumulated_investment"]:
             data["portfolioValueIsDown"] = True
 
-        data["dividendsYield"] = self.get_dividends_yield(
-                data["dividends"], data["portfolioValue"]
-            )
+        data["dividends_yield"] = self.get_dividends_yield(
+            data["dividends"], data["portfolio_value"]
+        )
+
+        # Create a new CompanyStatsForYear
+        data = PortfolioStatsForYear.objects.create(
+            user=User.objects.get(id=self.user_id),
+            portfolio=self.portfolio,
+            year=temp_year,
+            **data,
+        )
 
         return data
 
@@ -645,12 +664,22 @@ class PortfolioStatsUtils:
         if year == None:
             year = self.year
         transactions = (
-            DividendsTransaction.objects.filter(company__portfolio=self.portfolio, transaction_date__year=year)
-            .only("transaction_date", "gross_price_per_share", "gross_price_per_share_currency", "exchange_rate", "count")
+            DividendsTransaction.objects.filter(
+                company__portfolio=self.portfolio, transaction_date__year=year
+            )
+            .only(
+                "transaction_date",
+                "gross_price_per_share",
+                "gross_price_per_share_currency",
+                "exchange_rate",
+                "count",
+            )
             .order_by("transaction_date")
         )
         summary = {
-            k: sum((x.count * x.exchange_rate * x.gross_price_per_share.amount) for x in g)
+            k: sum(
+                (x.count * x.exchange_rate * x.gross_price_per_share.amount) for x in g
+            )
             for k, g in groupby(transactions, key=lambda i: i.transaction_date.month)
         }
         return summary
@@ -658,12 +687,15 @@ class PortfolioStatsUtils:
     def get_dividends_for_all_years_monthly(self):
         logger.debug(f"Get dividends for all years monthly")
         years = {}
-        first_year = PortfolioUtils().get_portfolio_first_year(self.portfolio, self.user_id)
+        first_year = PortfolioUtils().get_portfolio_first_year(
+            self.portfolio, self.user_id
+        )
 
         # Iterate all years until today
         for year in range(first_year, datetime.datetime.now().year + 1):
             years[year] = self.get_dividends_for_year_monthly(year)
         return years
+
 
 class CompanyUtils:
     def get_company_first_year(self, company_id, user_id):

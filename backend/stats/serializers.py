@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from companies.serializers_lite import CompanySerializerLite
-from stats.models import CompanyStatsForYear
+from stats.models import CompanyStatsForYear, PortfolioStatsForYear
 
 
 class CompanyStatsForYearSerializer(serializers.ModelSerializer):
@@ -38,6 +38,26 @@ class CompanyStatsForYearSerializer(serializers.ModelSerializer):
             "stock_price_transaction_date",
             "portfolio_value",
             "portfolio_value_is_down",
+            "return_value",
+            "return_percent",
+            "return_with_dividends",
+            "return_with_dividends_percent",
+        ]
+
+
+class PortfolioStatsForYearSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = PortfolioStatsForYear
+        fields = [
+            "year",
+            "invested",
+            "dividends",
+            "dividends_yield",
+            "portfolio_currency",
+            "accumulated_investment",
+            "accumulated_dividends",
+            "portfolio_value",
             "return_value",
             "return_percent",
             "return_with_dividends",

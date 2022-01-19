@@ -4,8 +4,10 @@ from rest_framework import serializers
 from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from currencies.models import get_currency_details
 from portfolios.models import Portfolio
-from companies.serializers import CompanySerializerGet
+from companies.serializers import CompanySerializer, CompanySerializerGet
 from shares_transactions.models import SharesTransaction
+from stats.serializers import PortfolioStatsForYearSerializer
+
 
 class PortfolioSerializer(serializers.ModelSerializer):
     companies = UserFilteredPrimaryKeyRelatedField(many=True, read_only=True)
@@ -28,8 +30,9 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 class PortfolioSerializerGet(PortfolioSerializer):
     base_currency = SerializerMethodField()
-    companies = CompanySerializerGet(many=True, read_only=True)
+    companies = CompanySerializer(many=True, read_only=True)
     first_year = serializers.SerializerMethodField()
+    stats = PortfolioStatsForYearSerializer(many=True, read_only=True)
 
     class Meta:
         model = Portfolio
@@ -45,6 +48,7 @@ class PortfolioSerializerGet(PortfolioSerializer):
             "hide_closed_companies",
             "base_currency",
             "companies",
+            "stats",
         ]
 
     def get_base_currency(self, obj):
@@ -59,3 +63,11 @@ class PortfolioSerializerGet(PortfolioSerializer):
         if query.exists():
             return query[0].transaction_date.year
         return None
+
+    # def get_all_stats(self, obj):
+    #     query = Portfolio.objects.filter(
+    #         company__portfolio=obj.id, user=obj.user
+    #     ).order_by("transaction_date")
+    #     if query.exists():
+    #         return query[0].transaction_date.year
+    #     return None
