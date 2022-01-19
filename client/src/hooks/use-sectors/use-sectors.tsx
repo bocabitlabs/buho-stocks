@@ -59,7 +59,6 @@ export const useDeleteSector = () => {
 
 export const useUpdateSector = () => {
   const queryClient = useQueryClient();
-  const cacheKey = "sectors";
   const apiUrl = "/api/v1/sectors/";
 
   return useMutation(
@@ -67,22 +66,18 @@ export const useUpdateSector = () => {
       axios.put(`${apiUrl}${sectorId}/`, newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([cacheKey]);
+        queryClient.invalidateQueries(["sectors"]);
       },
     },
   );
 };
 
 export function useSectors() {
-  const cacheKey = "sectors";
-
-  return useQuery(cacheKey, fetchSectors);
+  return useQuery(["sectors"], fetchSectors);
 }
 
 export function useSector(sectorId: number | undefined) {
-  const cacheKey = "sectors";
-
-  return useQuery(cacheKey, () => fetchSector(sectorId), {
+  return useQuery(["sectors", sectorId], () => fetchSector(sectorId), {
     // The query will not execute until the userId exists
     enabled: !!sectorId,
   });

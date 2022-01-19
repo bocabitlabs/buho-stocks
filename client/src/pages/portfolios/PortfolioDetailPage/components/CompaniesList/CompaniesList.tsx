@@ -1,29 +1,29 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
-import useFetch from "use-http";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import { useDeleteCompany } from "hooks/use-companies/use-companies";
 import { ICompany } from "types/company";
 
 interface IProps {
   companies: ICompany[];
 }
 
-export default function CompaniesList({ companies: companiesProp }: IProps) {
+export default function CompaniesList({ companies }: IProps) {
+  const { createError, createSuccess } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
   const { id } = useParams();
-  const [companies, setCompanies] = useState(companiesProp);
-  const { response, del: deleteCompany, cache } = useFetch("portfolios");
+  const { mutateAsync: deleteCompany } = useDeleteCompany();
 
   const confirmDelete = async (recordId: number) => {
-    await deleteCompany(`${id}/companies/${recordId}/`);
-    if (response.ok) {
-      const removeItem = companies.filter((market: ICompany) => {
-        return market.id !== recordId;
-      });
-      setCompanies(removeItem);
-      cache.clear();
+    try {
+      await deleteCompany({ portfolioId: +id!, companyId: recordId });
+      createSuccess(t("Company deleted successfully"));
+    } catch (error) {
+      console.error(error);
+      createError(t(`Error deleting company: ${error}`));
     }
   };
 
@@ -40,7 +40,7 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       key: "name",
       render: (text: string, record: ICompany) => (
         <>
-          <Link to={`companies/${record.id}`}>{text}</Link> ({record.ticker})
+          <Link to={`companies/${record.id}`}>{text}</Link>
           {record.sector !== null && (
             <>
               <br />
@@ -108,21 +108,31 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       sorter: (a: any, b: any) => +a.dividendsYield - +b.dividendsYield,
     },
     {
-      title: t("Action"),
+      title: t("Last"),
+      dataIndex: "lastTransactionMonth",
+      key: "lastTransactionMonth",
+      sorter: (a: ICompany, b: ICompany) => {
+        return (
+          Date.parse(b.lastTransactionMonth) -
+          Date.parse(a.lastTransactionMonth)
+        );
+      },
+    },
+    {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
           <Link to={`companies/${record.id}/edit`}>
-            <Button icon={<EditOutlined />} />
+            <Button type="text" icon={<EditOutlined />} />
           </Link>
           <Popconfirm
-            key={`market-delete-${record.key}`}
+            key={`delete-${record.key}`}
             title={`Delete company ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
             okText="Yes"
             cancelText="No"
           >
-            <Button danger icon={<DeleteOutlined />} />
+            <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>
         </Space>
       ),
@@ -135,30 +145,28 @@ export default function CompaniesList({ companies: companiesProp }: IProps) {
       key: element.id,
       name: element.name,
       ticker: element.ticker,
-      sharesCount: element.stats.find((stat: any) => stat.year > 3000)
-        .sharesCount,
+      sharesCount: element.allStats.sharesCount,
       description: element.description,
-      dividendsYield: element.stats.find((stat: any) => stat.year > 3000)
-        .dividendsYield,
+      dividendsYield: element.allStats.dividendsYield,
       color: element.color,
       portfolio: element.portfolio,
       logo: element.logo,
       countryCode: element.countryCode,
       sector: element.sector,
       broker: element.broker,
-      invested: element.stats.find((stat: any) => stat.year > 3000).invested,
-      portfolioValue: element.stats.find((stat: any) => stat.year > 3000)
-        .portfolioValue,
-      returnWithDividendsPercent: element.stats.find(
-        (stat: any) => stat.year > 3000,
-      ).returnWithDividendsPercent,
-      portfolioCurrency: element.stats.find((stat: any) => stat.year > 3000)
-        .portfolioCurrency,
+      invested: element.allStats.invested,
+      portfolioValue: element.allStats.portfolioValue,
+      returnWithDividendsPercent: element.allStats.returnWithDividendsPercent,
+      portfolioCurrency: element.allStats.portfolioCurrency,
+      lastTransactionMonth: element.lastTransactionMonth
+        ? element.lastTransactionMonth
+        : "",
     }));
   };
 
   return (
     <Table
+      pagination={{ defaultPageSize: 60 }}
       columns={columns}
       dataSource={getData()}
       scroll={{ x: 800 }}

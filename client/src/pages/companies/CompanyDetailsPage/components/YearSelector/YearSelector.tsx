@@ -1,8 +1,8 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { Form, Select } from "antd";
-import useFetch from "use-http";
 import StatsContent from "../StatsContent/StatsContent";
 import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
+import { useCompanyYearStats } from "hooks/use-stats/use-company-stats";
 
 interface Props {
   companyId: string | undefined;
@@ -15,36 +15,28 @@ export default function YearSelector({
 }: Props): ReactElement {
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
   const [years, setYears] = useState<number[]>([]);
-  const [stats, setStats] = useState<any | null>(null);
   const [stockPrice, setStockPrice] = useState<any | null>(null);
 
-  const {
-    response,
-    get,
-    loading: loadingStats,
-  } = useFetch(`stats/${companyId}`);
+  const { data: stats, isFetching: loadingStats } = useCompanyYearStats(
+    +companyId!,
+    selectedYear,
+    {
+      onSuccess: (data: any) => {
+        setStockPrice({
+          price: data.stockPriceValue,
+          priceCurrency: data.stockPriceCurrency,
+          transactionDate: data.stockPriceTransactionDate,
+        });
+      },
+    },
+  );
 
   const handleYearChange = (value: string) => {
     setSelectedYear(value);
   };
 
   useEffect(() => {
-    async function loadInitialStats() {
-      const initialData = await get(`/${selectedYear}/`);
-      if (response.ok) {
-        setStats(initialData);
-        setStockPrice({
-          price: initialData.stockPriceValue,
-          priceCurrency: initialData.stockPriceCurrency,
-          transactionDate: initialData.stockPriceTransactionDate,
-        });
-      }
-    }
-    loadInitialStats();
-  }, [response.ok, get, companyId, selectedYear]);
-
-  useEffect(() => {
-    async function loadInitialStats() {
+    async function loadInitialYears() {
       const currentYear = new Date().getFullYear();
       const newYears: number[] = [];
       if (firstYear != null) {
@@ -54,7 +46,7 @@ export default function YearSelector({
         setYears(newYears);
       }
     }
-    loadInitialStats();
+    loadInitialYears();
   }, [firstYear]);
 
   return (
@@ -78,8 +70,6 @@ export default function YearSelector({
           <StatsRefreshModal
             companyId={companyId}
             selectedYear={selectedYear}
-            setStats={setStats}
-            setStockPrice={setStockPrice}
           />
         </Form>
       </div>

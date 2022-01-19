@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import {
@@ -14,12 +14,15 @@ import {
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import {
   formatINGRowForShares,
   // getCommission,
   getCompanyFromTransaction,
 } from "./utils";
+import { useCurrencies } from "hooks/use-currencies/use-currencies";
+import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
+import { useAddRightsTransaction } from "hooks/use-rights-transactions/use-rights-transactions";
+import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
 import { ICompany } from "types/company";
 import { ICurrency } from "types/currency";
 import { IPortfolio } from "types/portfolio";
@@ -49,62 +52,42 @@ export default function TradesImportForm({
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     getCompanyFromTransaction(companyName, portfolio),
   );
-  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
-  const {
-    loading: sharesLoading,
-    post: postSharesTransaction,
-    response: sharesResponse,
-    cache,
-  } = useFetch(`companies/${selectedCompany?.id}/shares`);
-  const {
-    loading: rightsLoading,
-    post: postRightsTransaction,
-    response: rightsResponse,
-    cache: rightsCache,
-  } = useFetch(`companies/${selectedCompany?.id}/rights`);
-  const {
-    loading: currenciesLoading,
-    get: getCurrencies,
-    response: currenciesResponse,
-  } = useFetch(`currencies`);
-  const {
-    loading: exchangeRateLoading,
-    get: getExchangeRate,
-    response: exchangeRateResponse,
-  } = useFetch("exchange-rates");
-
-  useEffect(() => {
-    const fetchCurrencies = async () => {
-      const results = await getCurrencies();
-      if (currenciesResponse.ok) {
-        setCurrencies(results);
-      }
-    };
-    fetchCurrencies();
-  }, [getCurrencies, currenciesResponse]);
+  const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
+    selectedCompany?.dividendsCurrency.code,
+  );
+  const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
+  const [transactionDate, setTransactionDate] = useState(
+    initialTransactionDate.format("YYYY-MM-DD"),
+  );
+  const { mutateAsync: createSharesTransaction, isLoading: loadingShares } =
+    useAddSharesTransaction();
+  const { mutateAsync: createRightsTransaction, isLoading: loadingRights } =
+    useAddRightsTransaction();
+  const { isFetching: currenciesLoading, data: currencies } = useCurrencies();
+  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+    selectedCompanyCurrency,
+    portfolioCurrency,
+    transactionDate,
+  );
 
   const onCompanyChange = (value: string) => {
-    const company = getCompanyFromTransaction(value, portfolio);
+    const tempCompany = getCompanyFromTransaction(value, portfolio);
     console.log("total", total);
-    setSelectedCompany(company);
-    form.setFieldsValue({
-      currency: company?.baseCurrency.code,
-    });
+    if (tempCompany) {
+      setSelectedCompany(tempCompany);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
+      form.setFieldsValue({
+        currency: tempCompany?.baseCurrency.code,
+      });
+    }
   };
 
   const fetchExchangeRate = async () => {
-    console.log("fetching exchange rate");
-    console.log(form.getFieldValue("transactionDate"));
     if (selectedCompany && portfolio) {
-      const newExchangeRate = await getExchangeRate(
-        `${selectedCompany?.baseCurrency.code}/${
-          portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}`,
-      );
-      if (exchangeRateResponse.ok) {
-        console.log(newExchangeRate);
+      const { data: exchangeRateResult } = await refetch();
+      if (exchangeRateResult) {
         form.setFieldsValue({
-          exchangeRate: newExchangeRate.exchangeRate,
+          exchangeRate: exchangeRateResult.exchangeRate,
         });
       } else {
         form.setFields([
@@ -117,6 +100,10 @@ export default function TradesImportForm({
     }
   };
 
+  const onDateChange = (e: any) => {
+    setTransactionDate(e.target.value);
+  };
+
   const onFinish = async (values: any) => {
     console.log("Success:", values);
     if (!selectedCompany) {
@@ -127,7 +114,6 @@ export default function TradesImportForm({
       count,
       commissionInCompanyCurrency,
       company,
-      transactionDate,
       grossPricePerShare,
       isRightsTransaction,
       transactionType: formTransactionType,
@@ -143,9 +129,11 @@ export default function TradesImportForm({
     if (formattedCommission < 0) {
       formattedCommission *= -1;
     }
+    console.log(typeof grossPricePerShare);
+    const grossPrice = (+grossPricePerShare).toFixed(3);
     const transaction: ISharesTransactionFormFields = {
       count,
-      grossPricePerShare: grossPricePerShare.toFixed(3),
+      grossPricePerShare: Number(grossPrice),
       grossPricePerShareCurrency: selectedCompany.baseCurrency.code,
       totalCommission: formattedCommission.toFixed(3),
       totalCommissionCurrency: selectedCompany.baseCurrency.code,
@@ -160,16 +148,24 @@ export default function TradesImportForm({
       type: formTransactionType,
     };
     if (isRightsTransaction) {
-      await postRightsTransaction("/", transaction);
-      if (rightsResponse.ok) {
+      try {
+        await createRightsTransaction({
+          companyId: selectedCompany.id,
+          newTransaction: transaction,
+        });
         setFormSent(true);
-        rightsCache.clear();
+      } catch (e) {
+        console.error(e);
       }
     } else {
-      await postSharesTransaction("/", transaction);
-      if (sharesResponse.ok) {
+      try {
+        await createSharesTransaction({
+          companyId: selectedCompany.id,
+          newTransaction: transaction,
+        });
         setFormSent(true);
-        cache.clear();
+      } catch (e) {
+        console.error(e);
       }
     }
   };
@@ -182,16 +178,11 @@ export default function TradesImportForm({
           commissionInCompanyCurrency: total - price * initialCount,
         });
       } else {
-        const newExchangeRate = await getExchangeRate(
-          `EUR/${selectedCompany?.baseCurrency.code}/${form.getFieldValue(
-            "transactionDate",
-          )}`,
-        );
-        if (exchangeRateResponse.ok) {
-          console.log(newExchangeRate);
+        const { data: exchangeRateResult } = await refetch();
+        if (exchangeRateResult) {
           form.setFieldsValue({
             commissionInCompanyCurrency:
-              newExchangeRate.exchangeRate * total - price * initialCount,
+              exchangeRateResult.exchangeRate * total - price * initialCount,
           });
         } else {
           form.setFields([
@@ -307,11 +298,12 @@ export default function TradesImportForm({
             ]}
           >
             <Select placeholder={t("Currency")} loading={currenciesLoading}>
-              {currencies.map((element: ICurrency) => (
-                <Select.Option key={element.code} value={element.code}>
-                  {element.name} ({element.code})
-                </Select.Option>
-              ))}
+              {currencies &&
+                currencies.map((element: ICurrency) => (
+                  <Select.Option key={element.code} value={element.code}>
+                    {element.name} ({element.code})
+                  </Select.Option>
+                ))}
             </Select>
           </Form.Item>
         </Col>
@@ -322,7 +314,7 @@ export default function TradesImportForm({
             rules={[{ required: true, message: "Please input the date" }]}
             help={`Received: ${inputData[0]}`}
           >
-            <Input placeholder="Date" />
+            <Input onChange={onDateChange} placeholder="Date" />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -395,7 +387,7 @@ export default function TradesImportForm({
               type="primary"
               htmlType="submit"
               disabled={formSent}
-              loading={sharesLoading || rightsLoading}
+              loading={loadingShares || loadingRights}
               icon={formSent ? <CheckOutlined /> : null}
             >
               Add transaction

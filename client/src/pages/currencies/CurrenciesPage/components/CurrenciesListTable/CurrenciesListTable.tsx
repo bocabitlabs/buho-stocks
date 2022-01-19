@@ -40,14 +40,17 @@ export default function CurrenciesListTable() {
   ];
 
   const getData = () => {
-    return data.map((currency: ICurrency) => ({
-      id: currency.code,
-      key: currency.code,
-      name: currency.name,
-      code: currency.code,
-      countries: currency.countries,
-      symbol: currency.symbol,
-    }));
+    return (
+      data &&
+      data.map((currency: ICurrency) => ({
+        id: currency.code,
+        key: currency.code,
+        name: currency.name,
+        code: currency.code,
+        countries: currency.countries,
+        symbol: currency.symbol,
+      }))
+    );
   };
 
   if (isFetching) {

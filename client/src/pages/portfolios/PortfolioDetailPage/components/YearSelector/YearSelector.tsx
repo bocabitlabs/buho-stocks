@@ -1,9 +1,9 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { Form, Select } from "antd";
-import useFetch from "use-http";
 import PortfolioCharts from "../PortfolioCharts/PortfolioCharts";
 import StatsContent from "../StatsContent/StatsContent";
 import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
+import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 interface Props {
   id: string | undefined;
@@ -13,19 +13,18 @@ interface Props {
 export default function YearSelector({ id, firstYear }: Props): ReactElement {
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
   const [years, setYears] = useState<any[]>([]);
-  const [stats, setStats] = useState<any | null>(null);
-  const {
-    response,
-    get,
-    loading: loadingStats,
-  } = useFetch(`stats/portfolio/${id}`);
+  const { data: stats, isFetching: loadingStats } = usePortfolioYearStats(
+    +id!,
+    selectedYear,
+    undefined,
+  );
 
   const handleYearChange = (value: string) => {
     setSelectedYear(value);
   };
 
   useEffect(() => {
-    async function loadFirstYear() {
+    async function loadDropdownYears() {
       const currentYear = new Date().getFullYear();
       const newYears = [];
       if (firstYear != null) {
@@ -35,15 +34,9 @@ export default function YearSelector({ id, firstYear }: Props): ReactElement {
         setYears(newYears);
       }
     }
-    async function loadInitialStats() {
-      const initialData = await get(`/${selectedYear}/`);
-      if (response.ok) {
-        setStats(initialData);
-      }
-    }
-    loadInitialStats();
-    loadFirstYear();
-  }, [response.ok, selectedYear, firstYear, get]);
+
+    loadDropdownYears();
+  }, [firstYear]);
 
   return (
     <div style={{ marginTop: 16 }}>
@@ -62,11 +55,7 @@ export default function YearSelector({ id, firstYear }: Props): ReactElement {
             </Select.Option>
           ))}
         </Select>
-        <StatsRefreshModal
-          id={id}
-          selectedYear={selectedYear}
-          setStats={setStats}
-        />
+        <StatsRefreshModal id={id} selectedYear={selectedYear} />
       </Form>
       <div style={{ marginTop: 16 }}>
         <StatsContent stats={stats} />

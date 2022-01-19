@@ -1,29 +1,28 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import { useMarkets } from "hooks/use-markets/use-markets";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
 import getRoute, { MARKETS_ROUTE } from "routes";
 import { IMarket } from "types/market";
 
 export default function MarketsListTable() {
-  const [markets, setMarkets] = useState([]);
-  const { response, del: deleteMarket } = useFetch("markets");
+  const { createError, createSuccess } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
   const { status, data, error, isFetching } = useMarkets();
+  const { mutateAsync: deleteMarket } = useDeleteMarket();
 
   const confirmDelete = async (recordId: number) => {
-    await deleteMarket(`${recordId}/`);
-    if (response.ok) {
-      const removeItem = markets.filter((market: IMarket) => {
-        return market.id !== recordId;
-      });
-      setMarkets(removeItem);
+    try {
+      await deleteMarket(recordId);
+      createSuccess(t("Market deleted successfully"));
+    } catch (errorDelete) {
+      createError(t(`Error deleting market: ${errorDelete}`));
     }
   };
 

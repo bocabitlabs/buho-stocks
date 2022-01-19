@@ -20,6 +20,7 @@ export interface IPortfolio extends IPortfolioBase {
   companies: ICompany[];
   dateCreated: string;
   lastUpdated: string;
+  stats: any;
 }
 
 export interface IPortfolioRouteParams {

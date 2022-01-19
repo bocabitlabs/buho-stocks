@@ -1,12 +1,11 @@
-import React, { ReactElement, useEffect } from "react";
+import React, { ReactElement } from "react";
 import { Line } from "react-chartjs-2";
 import { useParams } from "react-router-dom";
-import useFetch from "use-http";
+import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 export default function ChartPortfolioReturns(): ReactElement {
   const { id } = useParams();
-  const [data, setData] = React.useState<any>(null);
-  const { get, response, loading } = useFetch(`stats/portfolio`);
+  const [chartData, setChartData] = React.useState<any>();
 
   const options = {
     responsive: true,
@@ -36,75 +35,73 @@ export default function ChartPortfolioReturns(): ReactElement {
     },
   };
 
-  useEffect(() => {
-    function getChartData() {
-      return {
-        labels: [],
-        datasets: [
-          {
-            label: "Return Percent",
-            data: [],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-            yAxisID: "y",
-          },
-          {
-            label: "Return w.d. Percent",
-            data: [],
-            borderColor: "rgb(53, 162, 235)",
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
-            yAxisID: "y",
-          },
-        ],
-      };
-    }
+  function getChartData() {
+    return {
+      labels: [],
+      datasets: [
+        {
+          label: "Return Percent",
+          data: [],
+          borderColor: "rgb(255, 99, 132)",
+          backgroundColor: "rgba(255, 99, 132, 0.5)",
+          yAxisID: "y",
+        },
+        {
+          label: "Return w.d. Percent",
+          data: [],
+          borderColor: "rgb(53, 162, 235)",
+          backgroundColor: "rgba(53, 162, 235, 0.5)",
+          yAxisID: "y",
+        },
+      ],
+    };
+  }
 
-    async function loadInitialStats() {
-      const initialData = await get(`${id}/all-years`);
-      if (response.ok) {
-        if (initialData) {
-          const chartData = getChartData();
+  const { isFetching: loading } = usePortfolioYearStats(
+    +id!,
+    "all-years",
+    undefined,
+    {
+      onSuccess: (responseData: any) => {
+        const tempChartData = getChartData();
 
-          const newYears: any = [];
-          const returnsPercent: any = [];
-          const returnsWithDividendsPercent: any = [];
+        const newYears: any = [];
+        const returnsPercent: any = [];
+        const returnsWithDividendsPercent: any = [];
 
-          initialData.sort((a: any, b: any) => {
-            if (a.year > b.year) {
-              return 1;
-            }
-            if (a.year < b.year) {
-              return -1;
-            }
-            return 0;
-          });
-          initialData.forEach((year: any) => {
-            if (
-              !newYears.includes(year.year) &&
-              year.year !== "all" &&
-              year.year !== 9999
-            ) {
-              newYears.push(year.year);
-              returnsPercent.push(Number(year.returnPercent));
-              returnsWithDividendsPercent.push(
-                Number(year.returnWithDividendsPercent),
-              );
-            }
-          });
-          chartData.labels = newYears;
-          chartData.datasets[0].data = returnsPercent;
-          chartData.datasets[1].data = returnsWithDividendsPercent;
+        responseData.sort((a: any, b: any) => {
+          if (a.year > b.year) {
+            return 1;
+          }
+          if (a.year < b.year) {
+            return -1;
+          }
+          return 0;
+        });
+        responseData.forEach((year: any) => {
+          if (
+            !newYears.includes(year.year) &&
+            year.year !== "all" &&
+            year.year !== 9999
+          ) {
+            newYears.push(year.year);
+            returnsPercent.push(Number(year.returnPercent));
+            returnsWithDividendsPercent.push(
+              Number(year.returnWithDividendsPercent),
+            );
+          }
+        });
+        tempChartData.labels = newYears;
+        tempChartData.datasets[0].data = returnsPercent;
+        tempChartData.datasets[1].data = returnsWithDividendsPercent;
 
-          setData(chartData);
-          // setIsDataSet(true);
-        }
-      }
-    }
-    loadInitialStats();
-  }, [response.ok, get, id]);
+        setChartData(tempChartData);
+      },
+    },
+  );
 
-  if (!data || loading) {
+  if (!chartData || loading) {
     return <div>Loading...</div>;
   }
-  return <Line options={options} data={data} />;
+  return <Line options={options} data={chartData} />;
 }

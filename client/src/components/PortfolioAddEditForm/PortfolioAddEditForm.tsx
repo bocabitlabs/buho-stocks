@@ -1,57 +1,42 @@
 import React, { ReactElement, useContext, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Button, Form, Input, Select, Spin, Switch } from "antd";
-import useFetch from "use-http";
+import { Button, Form, Input, Select, Switch } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import { useCurrencies } from "hooks/use-currencies/use-currencies";
+import {
+  useAddPortfolio,
+  useUpdatePortfolio,
+} from "hooks/use-portfolios/use-portfolios";
 import { ICurrency } from "types/currency";
 import { IPortfolio } from "types/portfolio";
 
 interface AddEditFormProps {
-  portfolioId?: string;
+  portfolio?: IPortfolio;
 }
 
 function PortfolioAddEditForm({
-  portfolioId,
+  portfolio,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
   const [countryCode, setCountryCode] = useState("");
   const { createSuccess, createError } = useContext(AlertMessagesContext);
-  const [portfolio, setPortfolio] = useState<IPortfolio | null>(null);
-  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
   const { t } = useTranslation();
-  const { get, post, put, response, loading, cache } = useFetch("portfolios");
-  const {
-    get: getCurrencies,
-    response: currenciesResponse,
-    loading: currenciesLoading,
-  } = useFetch("currencies");
+  const { mutateAsync: createPortfolio } = useAddPortfolio();
+  const { mutateAsync: updatePortfolio } = useUpdatePortfolio();
+
+  const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPortfolio = async () => {
-      const result = await get(`${portfolioId}/`);
-      if (response.ok) {
-        setPortfolio(result);
-        setColor(result.color);
-        setCountryCode(result.countryCode);
-      }
-    };
-    const fetchCurrencies = async () => {
-      const result = await getCurrencies("/");
-      if (currenciesResponse.ok) {
-        setCurrencies(result);
-      }
-    };
-
-    if (portfolioId) {
-      fetchPortfolio();
+    if (portfolio) {
+      setColor(portfolio.color);
+      setCountryCode(portfolio.countryCode);
     }
-    fetchCurrencies();
-  }, [portfolioId, get, getCurrencies, response, currenciesResponse]);
+  }, [portfolio]);
 
   const handleSubmit = async (values: any) => {
     const { name, description, baseCurrencyId, hideClosedCompanies } = values;
@@ -64,24 +49,21 @@ function PortfolioAddEditForm({
       countryCode,
     };
 
-    if (portfolioId) {
-      const id: number = +portfolioId;
-      await put(`${id}/`, newPortfolio);
-      if (!response.ok) {
-        createError(t("Cannot update portfolio"));
-      } else {
-        cache.clear();
+    if (portfolio) {
+      try {
+        await updatePortfolio({ portfolioId: portfolio.id, newPortfolio });
         createSuccess(t("Portfolio has been updated"));
         navigate(-1);
+      } catch (error) {
+        createError(t("Cannot update portfolio"));
       }
     } else {
-      await post("/", newPortfolio);
-      if (!response.ok) {
-        createError(t("Cannot create portfolio"));
-      } else {
-        cache.clear();
+      try {
+        await createPortfolio(newPortfolio);
         createSuccess(t("Portfolio has been created"));
         navigate(-1);
+      } catch (error) {
+        createError(t("Cannot create portfolio"));
       }
     }
   };
@@ -93,10 +75,6 @@ function PortfolioAddEditForm({
   const handleCountryChange = (newValue: string) => {
     setCountryCode(newValue);
   };
-
-  if (loading) {
-    return <Spin />;
-  }
 
   return (
     <Form
@@ -184,7 +162,7 @@ function PortfolioAddEditForm({
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          {portfolioId ? t("Update portfolio") : t("Add portfolio")}
+          {portfolio ? t("Update portfolio") : t("Add portfolio")}
         </Button>
       </Form.Item>
     </Form>
@@ -192,7 +170,7 @@ function PortfolioAddEditForm({
 }
 
 PortfolioAddEditForm.defaultProps = {
-  portfolioId: null,
+  portfolio: null,
 };
 
 export default PortfolioAddEditForm;

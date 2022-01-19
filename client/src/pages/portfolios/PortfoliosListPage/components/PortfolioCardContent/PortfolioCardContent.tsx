@@ -1,8 +1,7 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
-import { Card, Spin, Statistic, Typography } from "antd";
-import useFetch from "use-http";
+import { Card, Statistic, Typography } from "antd";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { IPortfolio } from "types/portfolio";
 
@@ -14,23 +13,11 @@ export default function PortfolioCardContent({
   portfolio,
 }: Props): ReactElement | null {
   const { t } = useTranslation();
-  const [stats, setStats] = useState<any | null>(null);
-  const {
-    response,
-    get,
-    loading: loadingStats,
-  } = useFetch(`stats/portfolio/${portfolio.id}`);
-
-  useEffect(() => {
-    async function loadInitialStats() {
-      const initialData = await get(`/all/`);
-      if (response.ok) {
-        setStats(initialData);
-      }
-    }
-    loadInitialStats();
-  }, [response.ok, get]);
-
+  let stats = portfolio.stats.filter((stat: any) => stat.year === 9999);
+  if (stats.length === 1) {
+    // eslint-disable-next-line prefer-destructuring
+    stats = stats[0];
+  }
   return (
     <Card
       title={portfolio.name}
@@ -38,15 +25,11 @@ export default function PortfolioCardContent({
       extra={<CountryFlag code={portfolio.baseCurrency.code} />}
     >
       {portfolio.companies.length} {t("companies")}
-      {loadingStats ? (
-        <Spin />
-      ) : (
-        <Statistic
-          value={stats?.portfolioValue}
-          precision={2}
-          suffix={stats?.portfolioCurrency}
-        />
-      )}
+      <Statistic
+        value={stats?.portfolioValue}
+        precision={2}
+        suffix={stats?.portfolioCurrency}
+      />
       <Typography.Text
         type={stats?.returnWithDividends < 0 ? "danger" : "success"}
       >
@@ -55,13 +38,19 @@ export default function PortfolioCardContent({
         ) : (
           <ArrowUpOutlined />
         )}
-        {stats?.returnWithDividends.toFixed(2)} {stats?.portfolioCurrency}
+        {stats?.returnWithDividends
+          ? Number(stats.returnWithDividends).toFixed(2)
+          : ""}{" "}
+        {stats?.portfolioCurrency}
       </Typography.Text>{" "}
       {" / "}
       <Typography.Text
         type={stats?.returnWithDividendsPercent < 0 ? "danger" : "success"}
       >
-        {stats?.returnWithDividendsPercent.toFixed(2)}%
+        {stats?.returnWithDividendsPercent
+          ? Number(stats?.returnWithDividendsPercent).toFixed(2)
+          : ""}
+        %
       </Typography.Text>
     </Card>
   );

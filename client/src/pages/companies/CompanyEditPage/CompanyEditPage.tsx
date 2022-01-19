@@ -1,25 +1,14 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import { useParams } from "react-router-dom";
 import { Spin } from "antd";
-import useFetch from "use-http";
 import CompanyEditPageHeader from "./components/CompanyEditPageHeader/CompanyEditPageHeader";
 import CompanyAddEditForm from "components/CompanyAddEditForm/CompanyAddEditForm";
-import { ICompany } from "types/company";
+import { useCompany } from "hooks/use-companies/use-companies";
 
 export default function CompanyEditPage(): ReactElement {
   const { id, companyId } = useParams();
-  const [company, setCompany] = useState<ICompany | null>(null);
-  const { response, get } = useFetch("portfolios");
   const portfolioIdString: string = id!;
-  const companyIdString: string = companyId!;
-
-  useEffect(() => {
-    async function loadInitialPortfolio() {
-      const initialData = await get(`${id}/companies/${companyId}/`);
-      if (response.ok) setCompany(initialData);
-    }
-    loadInitialPortfolio();
-  }, [response.ok, get, id, companyId]);
+  const { data: company } = useCompany(+id!, +companyId!);
 
   if (!company) {
     return <Spin />;
@@ -32,10 +21,7 @@ export default function CompanyEditPage(): ReactElement {
       companyCountryCode={company.countryCode}
       portfolioName={company.portfolio.name}
     >
-      <CompanyAddEditForm
-        portfolioId={portfolioIdString}
-        companyId={companyIdString}
-      />
+      <CompanyAddEditForm portfolioId={portfolioIdString} company={company} />
     </CompanyEditPageHeader>
   );
 }

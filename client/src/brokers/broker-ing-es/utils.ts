@@ -116,8 +116,6 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
     price,
     transactionType: transactionType as TransactionType,
   };
-  console.log("result", result);
-
   return result;
 }
 

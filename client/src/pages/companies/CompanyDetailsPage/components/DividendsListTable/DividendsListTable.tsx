@@ -1,48 +1,38 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import NotesRow from "components/NotesRow/NotesRow";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import {
+  useDeleteDividendsTransaction,
+  useDividendsTransactions,
+} from "hooks/use-dividends-transactions/use-dividends-transactions";
 import { IDividendsTransaction } from "types/dividends-transaction";
 
 export default function DividendsListTable(): ReactElement {
   const { t } = useTranslation();
   const { companyId } = useParams();
-  const [transactions, setTransactions] = useState<IDividendsTransaction[]>([]);
-  const {
-    loading,
-    response,
-    get,
-    del: deleteTransaction,
-    cache,
-  } = useFetch(`companies/${companyId}/dividends`);
+  const { createSuccess, createError } = useContext(AlertMessagesContext);
+  const { isFetching: loading, data: transactions } = useDividendsTransactions(
+    +companyId!,
+  );
+  const { mutateAsync: deleteTransaction } = useDeleteDividendsTransaction();
 
   const confirmDelete = async (recordId: number) => {
-    await deleteTransaction(`${recordId}/`);
-    if (response.ok) {
-      const removeItem = transactions.filter(
-        (transaction: IDividendsTransaction) => {
-          return transaction.id !== recordId;
-        },
-      );
-      setTransactions(removeItem);
-      cache.clear();
+    try {
+      await deleteTransaction({
+        companyId: +companyId!,
+        transactionId: recordId,
+      });
+      createSuccess(t("Dividends transaction deleted successfully"));
+    } catch (error) {
+      createError(t(`Error deleting dividends transaction: ${error}`));
     }
   };
-
-  useEffect(() => {
-    async function loadInitialShares() {
-      const initialTransactions = await get("/");
-      if (response.ok) {
-        setTransactions(initialTransactions);
-      }
-    }
-    loadInitialShares();
-  }, [response.ok, get]);
 
   if (loading) {
     return <Spin />;

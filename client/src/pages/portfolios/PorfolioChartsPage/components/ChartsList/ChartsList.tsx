@@ -1,7 +1,6 @@
-import React, { ReactElement, useCallback, useEffect } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Col, Form, Row, Select } from "antd";
-import useFetch from "use-http";
 import ChartBrokerByCompany from "./components/ChartBrokerByCompany/ChartBrokerByCompany";
 import ChartCurrenciesByCompany from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompany";
 import ChartDividendsByCompany from "./components/ChartDividendsByCompany/ChartDividendsByCompany";
@@ -13,6 +12,7 @@ import ChartPortfolioReturns from "./components/ChartPortfolioReturns/ChartPortf
 import ChartSectorsByCompany from "./components/ChartSectorsByCompany/ChartSectorsByCompany";
 import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany copy/ChartSuperSectorsByCompany";
 import ChartValueByCompany from "./components/ChartValueByCompany/ChartValueByCompany";
+import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 interface Props {
   firstYear: number | null;
@@ -22,29 +22,23 @@ export default function ChartsList({ firstYear }: Props): ReactElement {
   // Params
   const { id } = useParams();
   // States
-  const [data, setData] = React.useState<any>(null);
+  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
   const [selectedYear, setSelectedYear] = React.useState<any | null>("all");
   const [years, setYears] = React.useState<any[]>([]);
   // Hooks
-  const { get: getStatsByCompany, response: responseByCompany } =
-    useFetch(`stats/portfolio`);
+  usePortfolioYearStats(+id!, selectedYear, "company", {
+    onSuccess: (data: any) => {
+      const tempData: any = data.filter((item: any) => {
+        return item.sharesCount > 0;
+      });
+
+      setFilteredChartData(tempData);
+    },
+  });
 
   const handleYearChange = (value: string) => {
     setSelectedYear(value);
   };
-
-  const loadInitialStats = useCallback(async () => {
-    const initialData = await getStatsByCompany(
-      `${id}/year/${selectedYear}/by-company/`,
-    );
-    if (responseByCompany.ok) {
-      const filteredData: any = initialData.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
-
-      setData(filteredData);
-    }
-  }, [getStatsByCompany, id, responseByCompany.ok, selectedYear]);
 
   useEffect(() => {
     async function loadFirstYear() {
@@ -57,20 +51,8 @@ export default function ChartsList({ firstYear }: Props): ReactElement {
         setYears(newYears);
       }
     }
-    loadInitialStats();
     loadFirstYear();
-  }, [
-    responseByCompany.ok,
-    getStatsByCompany,
-    selectedYear,
-    firstYear,
-    id,
-    loadInitialStats,
-  ]);
-
-  useEffect(() => {
-    loadInitialStats();
-  }, [responseByCompany.ok, getStatsByCompany, id, loadInitialStats]);
+  }, [firstYear]);
 
   return (
     <div>
@@ -88,7 +70,7 @@ export default function ChartsList({ firstYear }: Props): ReactElement {
           <ChartPortfolioDividendsPerMonth />
         </Col>
       </Row>
-      {data && (
+      {filteredChartData && (
         <div>
           <div style={{ marginTop: 16 }}>
             <Form layout="inline">
@@ -107,33 +89,33 @@ export default function ChartsList({ firstYear }: Props): ReactElement {
             </Form>
           </div>
           <Row>
-            <ChartInvestedByCompany statsData={data} />
+            <ChartInvestedByCompany statsData={filteredChartData} />
           </Row>
           <Row>
-            <ChartValueByCompany statsData={data} />
+            <ChartValueByCompany statsData={filteredChartData} />
           </Row>
           <Row>
             <Col xs={{ span: 22, offset: 1 }} md={{ span: 16, offset: 4 }}>
-              <ChartDividendsByCompany statsData={data} />
+              <ChartDividendsByCompany statsData={filteredChartData} />
             </Col>
           </Row>
           <Row>
             <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-              <ChartSectorsByCompany statsData={data} />
+              <ChartSectorsByCompany statsData={filteredChartData} />
             </Col>
             <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-              <ChartSuperSectorsByCompany statsData={data} />
+              <ChartSuperSectorsByCompany statsData={filteredChartData} />
             </Col>
           </Row>
           <Row>
             <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-              <ChartCurrenciesByCompany statsData={data} />
+              <ChartCurrenciesByCompany statsData={filteredChartData} />
             </Col>
             <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-              <ChartBrokerByCompany statsData={data} />
+              <ChartBrokerByCompany statsData={filteredChartData} />
             </Col>
             <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-              <ChartMarketByCompany statsData={data} />
+              <ChartMarketByCompany statsData={filteredChartData} />
             </Col>
           </Row>
         </div>

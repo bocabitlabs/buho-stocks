@@ -1,49 +1,40 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import {
+  useDeleteRightsTransaction,
+  useRightsTransactions,
+} from "hooks/use-rights-transactions/use-rights-transactions";
 import { IRightsTransaction } from "types/rights-transaction";
 
 export default function RightsListTable(): ReactElement {
+  const { createSuccess, createError } = useContext(AlertMessagesContext);
+
   const { t } = useTranslation();
   const { companyId } = useParams();
-  const [transactions, setTransactions] = useState<IRightsTransaction[]>([]);
-  const {
-    loading,
-    response,
-    get,
-    del: deleteTransaction,
-    cache,
-  } = useFetch(`companies/${companyId}/rights`);
+  const { isFetching: loading, data: transactions } = useRightsTransactions(
+    +companyId!,
+  );
+  const { mutateAsync: deleteTransaction } = useDeleteRightsTransaction();
 
   const confirmDelete = async (recordId: number) => {
-    await deleteTransaction(`${recordId}/`);
-    if (response.ok) {
-      const removeItem = transactions.filter(
-        (transaction: IRightsTransaction) => {
-          return transaction.id !== recordId;
-        },
-      );
-      setTransactions(removeItem);
-      cache.clear();
+    try {
+      await deleteTransaction({
+        companyId: +companyId!,
+        transactionId: recordId,
+      });
+      createSuccess(t("Rights transaction deleted successfully"));
+    } catch (error) {
+      createError(t(`Error deleting rights transaction: ${error}`));
     }
   };
-
-  useEffect(() => {
-    async function loadInitialShares() {
-      const initialTransactions = await get("/");
-      if (response.ok) {
-        setTransactions(initialTransactions);
-      }
-    }
-    loadInitialShares();
-  }, [response.ok, get]);
 
   if (loading) {
     return <Spin />;
@@ -101,7 +92,7 @@ export default function RightsListTable(): ReactElement {
             <Button icon={<EditOutlined />} />
           </Link>
           <Popconfirm
-            key={`market-delete-${record.key}`}
+            key={`delete-${record.key}`}
             title={`Delete transaction ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
             okText="Yes"

@@ -82,7 +82,7 @@ export function useMarkets() {
 
 export function useMarket(marketId: number | undefined) {
   console.log(`Calling useMarket with marketId: ${marketId}`);
-  return useQuery("market", () => fetchMarket(marketId), {
+  return useQuery(["markets", marketId], () => fetchMarket(marketId), {
     // The query will not execute until the userId exists
     enabled: !!marketId,
   });

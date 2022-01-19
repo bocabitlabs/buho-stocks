@@ -13,8 +13,10 @@ import {
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import { formatINGRowForDividends, getCompanyFromTransaction } from "./utils";
+import { useCurrencies } from "hooks/use-currencies/use-currencies";
+import { useAddDividendsTransaction } from "hooks/use-dividends-transactions/use-dividends-transactions";
+import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import { ICompany } from "types/company";
 import { ICurrency } from "types/currency";
 import { IDividendsTransactionFormFields } from "types/dividends-transaction";
@@ -44,55 +46,45 @@ export default function DividendsImportForm({
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     getCompanyFromTransaction(companyName, portfolio),
   );
-  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
-  const {
-    loading: dividendsLoading,
-    post: postDividendsTransaction,
-    response: dividendsResponse,
-  } = useFetch(`companies/${selectedCompany?.id}/dividends`);
-  const {
-    loading: currenciesLoading,
-    get: getCurrencies,
-    response: currenciesResponse,
-  } = useFetch(`currencies`);
-  const {
-    loading: exchangeRateLoading,
-    get: getExchangeRate,
-    response: exchangeRateResponse,
-  } = useFetch("exchange-rates");
-
-  useEffect(() => {
-    const fetchCurrencies = async () => {
-      const results = await getCurrencies("/");
-      if (currenciesResponse.ok) {
-        setCurrencies(results);
-      }
-    };
-    fetchCurrencies();
-  }, [getCurrencies, currenciesResponse]);
+  const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
+    selectedCompany?.dividendsCurrency.code,
+  );
+  const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
+  const [transactionDate, setTransactionDate] = useState(
+    initialTransactionDate.format("YYYY-MM-DD"),
+  );
+  const { mutateAsync: createDividendsTransaction, isLoading: loading } =
+    useAddDividendsTransaction();
+  const { isFetching: currenciesLoading, data: currencies } = useCurrencies();
+  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+    selectedCompanyCurrency,
+    portfolioCurrency,
+    transactionDate,
+  );
 
   const onCompanyChange = (value: string) => {
-    const company = getCompanyFromTransaction(value, portfolio);
-    console.log("total", total);
-    setSelectedCompany(company);
-    form.setFieldsValue({
-      currency: company?.baseCurrency.code,
-    });
+    const tempCompany = getCompanyFromTransaction(value, portfolio);
+    if (tempCompany) {
+      setSelectedCompany(tempCompany);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
+      form.setFieldsValue({
+        currency: tempCompany?.baseCurrency.code,
+      });
+    }
+  };
+
+  const onDateChange = (e: any) => {
+    setTransactionDate(e.target.value);
   };
 
   const fetchExchangeRate = async () => {
     console.log("fetching exchange rate");
     console.log(form.getFieldValue("transactionDate"));
     if (selectedCompany && portfolio) {
-      const newExchangeRate = await getExchangeRate(
-        `${selectedCompany?.baseCurrency.code}/${
-          portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}/`,
-      );
-      if (exchangeRateResponse.ok) {
-        console.log(newExchangeRate);
+      const { data: exchangeRateResult } = await refetch();
+      if (exchangeRateResult) {
         form.setFieldsValue({
-          exchangeRate: newExchangeRate.exchangeRate,
+          exchangeRate: exchangeRateResult,
         });
       } else {
         form.setFields([
@@ -111,13 +103,8 @@ export default function DividendsImportForm({
       return;
     }
 
-    const {
-      count,
-      commissionInCompanyCurrency,
-      company,
-      transactionDate,
-      grossPricePerShare,
-    } = values;
+    const { count, commissionInCompanyCurrency, company, grossPricePerShare } =
+      values;
 
     let exchangeRateValue = 1;
     if (selectedCompany.baseCurrency.code === portfolio.baseCurrency.code) {
@@ -148,9 +135,14 @@ export default function DividendsImportForm({
       company,
       portfolio: portfolio.id,
     };
-    await postDividendsTransaction("/", transaction);
-    if (dividendsResponse.ok) {
+    try {
+      await createDividendsTransaction({
+        companyId: selectedCompany.id,
+        newTransaction: transaction,
+      });
       setFormSent(true);
+    } catch (e) {
+      console.log(e);
     }
   };
 
@@ -171,18 +163,10 @@ export default function DividendsImportForm({
         console.log(`${total} - ${price * initialCount}`);
       } else {
         console.debug("getting exchange rate from API");
-        const newExchangeRate = await getExchangeRate(
-          `EUR/${selectedCompany?.baseCurrency.code}/${form.getFieldValue(
-            "transactionDate",
-          )}/`,
-        );
-        console.log(newExchangeRate);
-        if (exchangeRateResponse.ok) {
-          console.log(newExchangeRate);
+        const { data: exchangeRateResult } = await refetch();
+        if (exchangeRateResult) {
           form.setFieldsValue({
-            grossPricePerShare: (price * newExchangeRate.exchangeRate).toFixed(
-              3,
-            ),
+            grossPricePerShare: (price * exchangeRateResult).toFixed(3),
           });
         } else {
           form.setFields([
@@ -195,16 +179,7 @@ export default function DividendsImportForm({
       }
     }
     setPriceLoading(false);
-  }, [
-    exchangeRateResponse.ok,
-    form,
-    getExchangeRate,
-    initialCount,
-    portfolio,
-    price,
-    selectedCompany,
-    total,
-  ]);
+  }, [form, initialCount, portfolio, price, refetch, selectedCompany, total]);
 
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
@@ -216,16 +191,11 @@ export default function DividendsImportForm({
           ),
         });
       } else {
-        const newExchangeRate = await getExchangeRate(
-          `EUR/${selectedCompany?.baseCurrency.code}/${form.getFieldValue(
-            "transactionDate",
-          )}/`,
-        );
-        if (exchangeRateResponse.ok) {
-          console.log(newExchangeRate);
+        const { data: exchangeRateResult } = await refetch();
+        if (exchangeRateResult) {
           form.setFieldsValue({
             commissionInCompanyCurrency: (
-              price * initialCount * newExchangeRate.exchangeRate -
+              price * initialCount * exchangeRateResult -
               total
             ).toFixed(3),
           });
@@ -366,11 +336,12 @@ export default function DividendsImportForm({
             ]}
           >
             <Select placeholder={t("Currency")} loading={currenciesLoading}>
-              {currencies.map((element: ICurrency) => (
-                <Select.Option key={element.code} value={element.code}>
-                  {element.name} ({element.code})
-                </Select.Option>
-              ))}
+              {currencies &&
+                currencies.map((element: ICurrency) => (
+                  <Select.Option key={element.code} value={element.code}>
+                    {element.name} ({element.code})
+                  </Select.Option>
+                ))}
             </Select>
           </Form.Item>
         </Col>
@@ -381,7 +352,7 @@ export default function DividendsImportForm({
             rules={[{ required: true, message: "Please input the date" }]}
             help={`Received: ${inputData[0]}`}
           >
-            <Input placeholder="Date" />
+            <Input onChange={onDateChange} placeholder="Date" />
           </Form.Item>
         </Col>
         {selectedCompany?.dividendsCurrency.code !==
@@ -427,7 +398,7 @@ export default function DividendsImportForm({
               type="primary"
               htmlType="submit"
               disabled={formSent}
-              loading={dividendsLoading}
+              loading={loading}
               icon={formSent ? <CheckOutlined /> : null}
             >
               Add dividends

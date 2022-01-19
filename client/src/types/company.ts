@@ -39,8 +39,9 @@ export interface ICompany extends ICompanyBase {
   dividendsTransactions: IDividendsTransaction[];
   dateCreated: string;
   lastUpdated: string;
-  stats: any;
+  allStats: any;
   firstYear: number;
+  lastTransactionMonth: string;
 }
 
 export interface ICompanyRouteParams {

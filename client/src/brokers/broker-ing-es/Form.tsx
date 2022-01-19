@@ -1,22 +1,17 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CSVReader } from "react-papaparse";
 import { Col, Radio, Row, Select, Space, Typography } from "antd";
-import useFetch from "use-http";
 import DividendsImportForm from "./DividendsImportForm";
 import TradesImportForm from "./TradesImportsForm";
 import { dividendsTransactionTypes, sharesTransactionTypes } from "./utils";
+import { usePortfolios } from "hooks/use-portfolios/use-portfolios";
 import { IPortfolio } from "types/portfolio";
 
 export default function Form(): ReactElement {
   const [data, setData] = useState([]);
   const [defaultImport, setDefaultImport] = useState("shares");
-  const [portfolios, setPortfolios] = useState<IPortfolio[]>([]);
-  const {
-    loading: loadingPortfolios,
-    get: getPortfolios,
-    response: responsePortfolios,
-  } = useFetch("portfolios");
+  const { isFetching: loadingPortfolios, data: portfolios } = usePortfolios();
 
   const [selectedPortfolio, setSelectedPortfolio] = useState<IPortfolio | null>(
     null,
@@ -28,23 +23,13 @@ export default function Form(): ReactElement {
     { label: "Import Dividends", value: "dividends" },
   ];
 
-  useEffect(() => {
-    const fetchPortfolios = async () => {
-      const results = await getPortfolios();
-      if (responsePortfolios.ok) {
-        setPortfolios(results);
-      }
-    };
-    fetchPortfolios();
-  }, [getPortfolios, responsePortfolios]);
-
   const importDividendsChange = (e: any) => {
     setData([]);
     setDefaultImport(e.target.value);
   };
 
   const onPortfolioSelect = (value: any) => {
-    const portfolio = portfolios.find((p) => p.id === +value);
+    const portfolio = portfolios.find((p: IPortfolio) => p.id === +value);
     if (portfolio) {
       setSelectedPortfolio(portfolio);
       setData([]);

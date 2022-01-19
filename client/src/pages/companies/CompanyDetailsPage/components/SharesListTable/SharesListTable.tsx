@@ -1,52 +1,39 @@
-import React, { ReactElement, useEffect, useRef, useState } from "react";
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
+import { AlertMessagesContext } from "contexts/alert-messages";
+import {
+  useDeleteSharesTransaction,
+  useSharesTransactions,
+} from "hooks/use-shares-transactions/use-shares-transactions";
 import { ISharesTransaction } from "types/shares-transaction";
 
-export default function SharesListTable(): ReactElement {
+export default function SharesListTable() {
   const { t } = useTranslation();
   const { companyId } = useParams();
-  const [transactions, setTransactions] = useState<ISharesTransaction[]>([]);
-  const {
-    loading,
-    response,
-    get,
-    del: deleteTransaction,
-    cache,
-  } = useFetch(`companies/${companyId}/shares`);
+  const { createSuccess, createError } = useContext(AlertMessagesContext);
+  const { isFetching: loading, data: transactions } = useSharesTransactions(
+    +companyId!,
+  );
+  const { mutateAsync: deleteTransaction } = useDeleteSharesTransaction();
 
   const confirmDelete = async (recordId: number) => {
-    await deleteTransaction(`${recordId}/`);
-    if (response.ok) {
-      const removeItem = transactions.filter(
-        (transaction: ISharesTransaction) => {
-          return transaction.id !== recordId;
-        },
-      );
-      setTransactions(removeItem);
-      cache.clear();
+    try {
+      await deleteTransaction({
+        companyId: +companyId!,
+        transactionId: recordId,
+      });
+      createSuccess(t("Shares transaction deleted successfully"));
+    } catch (error) {
+      createError(t(`Error deleting shares transaction: ${error}`));
     }
   };
-
-  const mounted = useRef(false);
-  useEffect(() => {
-    async function loadInitialShares() {
-      const initialTransactions = await get("/");
-      if (response.ok) {
-        setTransactions(initialTransactions);
-      }
-    }
-    if (!mounted.current) {
-      loadInitialShares();
-    }
-  }, [response.ok, get]);
 
   if (loading) {
     return <Spin />;

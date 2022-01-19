@@ -17,7 +17,8 @@ import {
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
+import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
+import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
 import { ICompany } from "types/company";
 import { IPortfolio } from "types/portfolio";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
@@ -49,18 +50,21 @@ export default function IBTradesImportForm({
       (element) => element.ticker === initialCompanyTicker,
     ),
   );
-  const {
-    loading: exchangeRateLoading,
-    get: getExchangeRate,
-    response: exchangeRateResponse,
-    cache: exchangeRateCache,
-  } = useFetch("exchange-rates");
-  const {
-    loading: sharesLoading,
-    post: postSharesTransaction,
-    response: sharesResponse,
-    cache: sharesCache,
-  } = useFetch(`companies/${selectedCompany?.id}/shares`);
+  const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
+    selectedCompany?.dividendsCurrency.code,
+  );
+  const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
+  const [transactionDate, setTransactionDate] = useState(
+    initialTransactionDate.format("YYYY-MM-DD"),
+  );
+  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+    selectedCompanyCurrency,
+    portfolioCurrency,
+    transactionDate,
+  );
+
+  const { mutateAsync: createSharesTransaction, isLoading: loading } =
+    useAddSharesTransaction();
 
   const onCompanyChange = (value: string) => {
     const tempCompany = portfolio.companies.find((element) => {
@@ -69,7 +73,12 @@ export default function IBTradesImportForm({
     });
     if (tempCompany) {
       setSelectedCompany(tempCompany);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
     }
+  };
+
+  const onDateChange = (e: any) => {
+    setTransactionDate(e.target.value);
   };
 
   const onFinish = async (values: any) => {
@@ -79,8 +88,7 @@ export default function IBTradesImportForm({
       return;
     }
 
-    const { count, commission, company, transactionDate, grossPricePerShare } =
-      values;
+    const { count, commission, company, grossPricePerShare } = values;
 
     let exchangeRateValue = 1;
     if (selectedCompany.baseCurrency.code === portfolio.baseCurrency.code) {
@@ -110,10 +118,14 @@ export default function IBTradesImportForm({
       type: "BUY",
     };
     console.debug(transaction);
-    await postSharesTransaction("/", transaction);
-    if (sharesResponse.ok) {
+    try {
+      await createSharesTransaction({
+        companyId: selectedCompany.id,
+        newTransaction: transaction,
+      });
       setFormSent(true);
-      sharesCache.clear();
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -121,17 +133,13 @@ export default function IBTradesImportForm({
     console.log("fetching exchange rate");
     console.log(form.getFieldValue("transactionDate"));
     if (selectedCompany && portfolio) {
-      const newExchangeRate = await getExchangeRate(
-        `${selectedCompany?.baseCurrency.code}/${
-          portfolio?.baseCurrency.code
-        }/${form.getFieldValue("transactionDate")}/`,
-      );
-      if (exchangeRateResponse.ok) {
-        console.log(newExchangeRate);
+      const { data: exchangeRateResult } = await refetch();
+
+      if (exchangeRateResult) {
+        console.debug(exchangeRateResult);
         form.setFieldsValue({
-          exchangeRate: newExchangeRate.exchangeRate,
+          exchangeRate: exchangeRateResult.exchangeRate,
         });
-        exchangeRateCache.clear();
       } else {
         form.setFields([
           {
@@ -217,7 +225,7 @@ export default function IBTradesImportForm({
             rules={[{ required: true, message: "Please input the date" }]}
             help={`Received: ${inputData[6]}`}
           >
-            <Input placeholder="Date" />
+            <Input onChange={onDateChange} placeholder="Date" />
           </Form.Item>
         </Col>
         {selectedCompany?.baseCurrency.code !== portfolio.baseCurrency.code && (
@@ -262,7 +270,7 @@ export default function IBTradesImportForm({
               type="primary"
               htmlType="submit"
               disabled={formSent}
-              loading={sharesLoading}
+              loading={loading}
               icon={formSent ? <CheckOutlined /> : null}
             >
               Add transaction

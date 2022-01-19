@@ -8,10 +8,10 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Spin } from "antd";
-import useFetch from "use-http";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import { useDeletePortfolio } from "hooks/use-portfolios/use-portfolios";
 
 interface Props {
   portfolioName: string;
@@ -28,9 +28,9 @@ function PortfolioDetailsPageHeader({
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
-  const { response, del: deletePortfolio } = useFetch("portfolios/");
   const { id } = useParams();
+  const { createSuccess, createError } = useContext(AlertMessagesContext);
+  const { mutateAsync: deletePortfolio } = useDeletePortfolio();
   const routes = [
     {
       path: `/app/portfolios/${id}`,
@@ -38,11 +38,11 @@ function PortfolioDetailsPageHeader({
     },
   ];
   const confirmDelete = async () => {
-    await deletePortfolio(`${id}/`);
-    if (response.ok) {
+    try {
+      await deletePortfolio({ portfolioId: +id! });
       createSuccess(t("Portfolio deleted successfully"));
       navigate(-1);
-    } else {
+    } catch (error) {
       createError(t("Error deleting portfolio"));
     }
   };

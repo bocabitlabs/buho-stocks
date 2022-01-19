@@ -3,9 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { DeleteOutlined, LinkOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Tag } from "antd";
-import useFetch from "use-http";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
+import { useDeleteCompany } from "hooks/use-companies/use-companies";
 
 interface Props {
   companyName: string;
@@ -28,7 +28,6 @@ function CompanyDetailsPageHeader({
 }: Props) {
   const { t } = useTranslation();
   const { id, companyId } = useParams();
-  const companyIdString: string = companyId!;
 
   const routes = [
     {
@@ -40,10 +39,10 @@ function CompanyDetailsPageHeader({
       breadcrumbName: companyName || "Loading...",
     },
   ];
-  const { del: deleteCompany } = useFetch(`portfolios/${id}/companies`);
+  const { mutate: deleteCompany } = useDeleteCompany();
 
   function confirmDelete() {
-    deleteCompany(`${+companyIdString}/`);
+    deleteCompany({ portfolioId: +id!, companyId: +companyId! });
   }
 
   return (

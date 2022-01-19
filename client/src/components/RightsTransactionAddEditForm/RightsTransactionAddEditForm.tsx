@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -10,27 +10,29 @@ import {
   InputNumber,
   Row,
   Select,
-  Spin,
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import useFetch from "use-http";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
+import {
+  useAddRightsTransaction,
+  useUpdateRightsTransaction,
+} from "hooks/use-rights-transactions/use-rights-transactions";
 import { ICurrency } from "types/currency";
-import { IExchangeRate } from "types/exchange-rate";
 import {
   IRightsTransaction,
   IRightsTransactionFormFields,
 } from "types/rights-transaction";
 
 interface IProps {
-  transactionId?: string;
+  transaction?: IRightsTransaction | undefined;
   companyBaseCurrency: ICurrency;
   portfolioBaseCurrency: ICurrency;
 }
 
 export default function RightsTransactionAddEditForm({
-  transactionId,
+  transaction,
   companyBaseCurrency,
   portfolioBaseCurrency,
 }: IProps) {
@@ -41,29 +43,25 @@ export default function RightsTransactionAddEditForm({
   const [currentTransactionDate, setCurrentTransactionDate] = useState<string>(
     moment(new Date()).format(dateFormat),
   );
-  const [transaction, setTransaction] = useState<IRightsTransaction | null>(
-    null,
-  );
   const { createError, createSuccess } = useContext(AlertMessagesContext);
 
   const { t } = useTranslation();
-  const [exchangeRate, setExchangeRate] = useState<IExchangeRate | null>(null);
-  const {
-    loading: exchangeRateLoading,
-    response: exchangeRateResponse,
-    get: getExchangeRate,
-  } = useFetch("exchange-rates/");
-
-  const { response, get, put, post, cache } = useFetch(
-    `companies/${companyId}/rights`,
+  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+    companyBaseCurrency.code,
+    portfolioBaseCurrency.code,
+    currentTransactionDate,
   );
 
+  const { mutateAsync: updateTransaction } = useUpdateRightsTransaction();
+  const { mutateAsync: createTransaction } = useAddRightsTransaction();
+
   const fetchExchangeRate = async () => {
-    const initialData = await getExchangeRate(
-      `${companyBaseCurrency.code}/${portfolioBaseCurrency.code}/${currentTransactionDate}/`,
-    );
-    if (exchangeRateResponse.ok) {
-      setExchangeRate(initialData);
+    const { data: exchangeRateResult } = await refetch();
+    if (exchangeRateResult) {
+      console.debug(exchangeRateResult);
+      form.setFieldsValue({
+        exchangeRate: exchangeRateResult.exchangeRate,
+      });
     } else {
       form.setFields([
         {
@@ -73,26 +71,6 @@ export default function RightsTransactionAddEditForm({
       ]);
     }
   };
-
-  useEffect(() => {
-    async function loadInitialTransaction() {
-      const initialData = await get(`${transactionId}/`);
-      if (response.ok) {
-        setTransaction(initialData);
-      }
-    }
-    if (transactionId) {
-      loadInitialTransaction();
-    }
-  }, [response.ok, get, transactionId]);
-
-  useEffect(() => {
-    if (exchangeRate) {
-      form.setFieldsValue({
-        exchangeRate: exchangeRate.exchangeRate,
-      });
-    }
-  }, [exchangeRate, form]);
 
   const handleSubmit = async (values: any) => {
     const {
@@ -118,23 +96,28 @@ export default function RightsTransactionAddEditForm({
       color: "#000",
       portfolio: +id!,
     };
-    if (transactionId) {
-      await put(`${transactionId}/`, newTransactionValues);
-      if (!response.ok) {
-        createError(t("Cannot update transaction"));
-      } else {
-        cache.clear();
+    if (transaction) {
+      try {
+        await updateTransaction({
+          companyId: newTransactionValues.company,
+          transactionId: transaction.id,
+          newTransaction: newTransactionValues,
+        });
         createSuccess(t("Transaction has been updated"));
         navigate(-1);
+      } catch (error) {
+        createError(t("Cannot update transaction"));
       }
     } else {
-      await post("/", newTransactionValues);
-      if (!response.ok) {
-        createError(t("Cannot create transaction"));
-      } else {
-        cache.clear();
+      try {
+        await createTransaction({
+          companyId: newTransactionValues.company,
+          newTransaction: newTransactionValues,
+        });
         createSuccess(t("Transaction has been created"));
-        navigate(`/app/portfolios/${id}/companies/${companyId}`);
+        navigate(-1);
+      } catch (error) {
+        createError(t("Cannot create transaction"));
       }
     }
   };
@@ -164,13 +147,6 @@ export default function RightsTransactionAddEditForm({
   //     commission: newCommission
   //   });
   // };
-
-  // if (!portfolio || !company || (transactionId && !transaction)) {
-  //   return <Spin />;
-  // }
-  if (transactionId && !transaction) {
-    return <Spin />;
-  }
 
   return (
     <Form
@@ -302,7 +278,7 @@ export default function RightsTransactionAddEditForm({
 
       <Form.Item>
         <Button type="primary" htmlType="submit">
-          {transactionId ? t("Edit transaction") : t("Add transaction")}
+          {transaction ? t("Edit transaction") : t("Add transaction")}
         </Button>
       </Form.Item>
     </Form>
@@ -310,5 +286,5 @@ export default function RightsTransactionAddEditForm({
 }
 
 RightsTransactionAddEditForm.defaultProps = {
-  transactionId: null,
+  transaction: undefined,
 };

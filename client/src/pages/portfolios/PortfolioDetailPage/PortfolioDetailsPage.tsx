@@ -1,25 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { Spin } from "antd";
-import useFetch from "use-http";
 import CompaniesList from "./components/CompaniesList/CompaniesList";
 import PortfolioDetailsPageHeader from "./components/PortfolioDetailsPageHeader/PortfolioDetailsPageHeader";
 import YearSelector from "./components/YearSelector/YearSelector";
-import { IPortfolio } from "types/portfolio";
+import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 
 export default function PortfolioDetailsPage() {
   const { id } = useParams();
-  const [portfolio, setPortfolio] = useState<IPortfolio | null>(null);
-  const { response, get } = useFetch("portfolios");
-  useEffect(() => {
-    async function loadInitialPortfolio() {
-      const initialPortfolio = await get(`${id}/`);
-      if (response.ok) {
-        setPortfolio(initialPortfolio);
-      }
-    }
-    loadInitialPortfolio();
-  }, [response.ok, get, id]);
+  const { data: portfolio } = usePortfolio(+id!);
 
   if (!portfolio) {
     return <Spin />;

@@ -1,20 +1,17 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import React, { ReactElement, useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
-import {
-  Avatar,
-  Button,
-  Form,
-  Input,
-  Select,
-  Spin,
-  Switch,
-  Upload,
-} from "antd";
-import useFetch from "use-http";
+import { Avatar, Button, Form, Input, Select, Switch, Upload } from "antd";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import { AlertMessagesContext } from "contexts/alert-messages";
+import {
+  useAddCompany,
+  useUpdateCompany,
+} from "hooks/use-companies/use-companies";
+import { useCurrencies } from "hooks/use-currencies/use-currencies";
+import { useMarkets } from "hooks/use-markets/use-markets";
+import { useSectors } from "hooks/use-sectors/use-sectors";
 import { ICompany } from "types/company";
 import { ICurrency } from "types/currency";
 import { IMarket } from "types/market";
@@ -22,80 +19,31 @@ import { ISector } from "types/sector";
 
 interface AddEditFormProps {
   portfolioId: string;
-  companyId?: string;
+  company?: ICompany;
 }
 
 function CompanyAddEditForm({
   portfolioId,
-  companyId,
+  company,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const [countryCode, setCountryCode] = useState("");
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
 
-  const [company, setCompany] = useState<ICompany | null>(null);
-  const [currencies, setCurrencies] = useState<ICurrency[]>([]);
-  const [markets, setMarkets] = useState<IMarket[]>([]);
-  const [sectors, setSectors] = useState<ISector[]>([]);
   const [fileList, setFileList] = useState<any[]>([]);
   const [base64File, setBas64File] = useState<any>(null);
   const [fileName, setFileName] = useState<string | null>(null);
 
-  const { response, get, put, post, cache, loading } = useFetch(
-    `portfolios/${portfolioId}/companies`,
-  );
-  const {
-    get: getCurrencies,
-    response: currenciesResponse,
-    loading: currenciesLoading,
-  } = useFetch("currencies");
-  const {
-    response: marketsResponse,
-    get: getMarkets,
-    loading: marketsLoading,
-  } = useFetch("markets");
-  const {
-    response: sectorsResponse,
-    get: getSectors,
-    loading: sectorsLoading,
-  } = useFetch("sectors");
+  const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
+  const { data: markets, isFetching: marketsLoading } = useMarkets();
+  const { data: sectors, isFetching: sectorsLoading } = useSectors();
+  const { mutateAsync: createCompany, isLoading: createLoading } =
+    useAddCompany();
+  const { mutateAsync: updateCompany, isLoading: updateLoading } =
+    useUpdateCompany();
+
   const navigate = useNavigate();
-
-  useEffect(() => {
-    async function loadInitialCompany() {
-      const initialCompany = await get(`${companyId}/`);
-      if (response.ok) {
-        setCompany(initialCompany);
-        setCountryCode(initialCompany.countryCode);
-      }
-    }
-    if (companyId) {
-      loadInitialCompany();
-    }
-  }, [response.ok, get, companyId]);
-
-  useEffect(() => {
-    async function loadInitialCurrencies() {
-      const initialCompany = await getCurrencies();
-      if (currenciesResponse.ok) setCurrencies(initialCompany);
-    }
-    loadInitialCurrencies();
-  }, [currenciesResponse.ok, getCurrencies]);
-  useEffect(() => {
-    async function loadInitialMarkets() {
-      const initialMarkets = await getMarkets();
-      if (marketsResponse.ok) setMarkets(initialMarkets);
-    }
-    loadInitialMarkets();
-  }, [marketsResponse.ok, getMarkets]);
-  useEffect(() => {
-    async function loadInitialSectors() {
-      const initialSectors = await getSectors();
-      if (sectorsResponse.ok) setSectors(initialSectors);
-    }
-    loadInitialSectors();
-  }, [sectorsResponse.ok, getSectors]);
 
   const getBase64 = (img: any, callback: any) => {
     const reader = new FileReader();
@@ -135,24 +83,25 @@ function CompanyAddEditForm({
       isClosed,
     };
 
-    if (companyId) {
-      const id: number = +companyId;
-      await put(`${id}/`, newCompany);
-      if (!response.ok) {
-        createError(t("Cannot update company"));
-      } else {
-        cache.clear();
+    if (company) {
+      try {
+        await updateCompany({
+          portfolioId: +portfolioId,
+          companyId: company.id,
+          newCompany,
+        });
         createSuccess(t("Company has been updated"));
         navigate(-1);
+      } catch (error) {
+        createError(t("Cannot update company"));
       }
     } else {
-      await post("/", newCompany);
-      if (!response.ok) {
-        createError(t("Cannot create company"));
-      } else {
-        cache.clear();
+      try {
+        await createCompany({ portfolioId: +portfolioId, newCompany });
         createSuccess(t("Company has been created"));
         navigate(-1);
+      } catch (error) {
+        createError(t("Cannot create company"));
       }
     }
   };
@@ -168,10 +117,6 @@ function CompanyAddEditForm({
       setBas64File(imageUrl);
     });
   };
-
-  if (companyId && !company) {
-    return <Spin />;
-  }
 
   return (
     <Form
@@ -317,8 +262,12 @@ function CompanyAddEditForm({
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" loading={loading}>
-          {companyId ? t("Update company") : t("Add company")}
+        <Button
+          type="primary"
+          htmlType="submit"
+          loading={createLoading || updateLoading}
+        >
+          {company ? t("Update company") : t("Add company")}
         </Button>
       </Form.Item>
     </Form>
@@ -326,7 +275,7 @@ function CompanyAddEditForm({
 }
 
 CompanyAddEditForm.defaultProps = {
-  companyId: null,
+  company: undefined,
 };
 
 export default CompanyAddEditForm;

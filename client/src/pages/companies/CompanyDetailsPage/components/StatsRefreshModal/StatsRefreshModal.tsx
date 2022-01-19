@@ -1,59 +1,45 @@
 import React, { ReactElement, useCallback, useState } from "react";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal } from "antd";
-import useFetch, { CachePolicies } from "use-http";
+import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
+import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 
 interface Props {
   companyId: string | undefined;
   selectedYear: string | undefined;
-  setStockPrice: Function;
-  setStats: Function;
 }
 
 export default function StatsRefreshModal({
   companyId,
   selectedYear,
-  setStockPrice,
-  setStats,
 }: Props): ReactElement {
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
 
-  const { response: responsePrice, get: getPrice } = useFetch(
-    `companies/${companyId}/stock-prices`,
-    { cachePolicy: CachePolicies.NO_CACHE },
-  );
-  const { response, get } = useFetch(`stats/${companyId}`, {
-    cachePolicy: CachePolicies.NO_CACHE,
-  });
+  const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
+  const { mutate: updateStats } = useUpdateYearStatsForced();
 
   const showModal = () => {
     setVisible(true);
   };
 
-  const getStatsForced = useCallback(async () => {
-    const initialData = await get(`/${selectedYear}/force/`);
-    if (response.ok) {
-      setStats(initialData);
-    }
-    if (response.ok) {
-      setStats(initialData);
-    }
-  }, [get, response.ok, selectedYear, setStats]);
+  const getStatsForced = async () => {
+    updateStats({ companyId: +companyId!, year: selectedYear });
+  };
 
   const getStockPrice = useCallback(async () => {
     let tempYear = selectedYear;
     if (selectedYear === "all") {
       tempYear = new Date().getFullYear().toString();
     }
-
-    const result = await getPrice(`${tempYear}/last/force/`);
-    if (responsePrice.ok) {
-      setStockPrice(result);
+    try {
+      await updateStockPrice({ companyId: +companyId!, year: tempYear });
+    } catch (e) {
+      console.error(`Error updating stock price for ${companyId}`);
     }
-  }, [getPrice, responsePrice.ok, selectedYear, setStockPrice]);
+  }, [companyId, selectedYear, updateStockPrice]);
 
   const handleOk = async () => {
     if (updateStockPriceSwitch) {
@@ -63,7 +49,7 @@ export default function StatsRefreshModal({
     }
     if (updateStatsSwitch) {
       setConfirmLoading(true);
-      await getStatsForced();
+      getStatsForced();
     }
     setVisible(false);
     setConfirmLoading(false);

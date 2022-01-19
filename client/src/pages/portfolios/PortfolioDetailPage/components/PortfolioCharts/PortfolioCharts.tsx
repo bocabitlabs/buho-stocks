@@ -1,27 +1,20 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams } from "react-router-dom";
 import { Col, Row, Spin } from "antd";
 import { Chart, registerables } from "chart.js";
-import useFetch from "use-http";
 import PortfolioDividendsChart from "../PortfolioDividendsChart/PortfolioDividendsChart";
 import PortfolioReturnsChart from "../PortfolioReturnsChart/PortfolioReturnsChart";
+import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 Chart.register(...registerables);
 
 export default function Charts() {
   const { id } = useParams();
-  const [stats, setStats] = React.useState([]);
-  const { get, response, loading } = useFetch("stats/portfolio");
-
-  useEffect(() => {
-    async function loadInitialStats() {
-      const initialData = await get(`${id}/all-years/`);
-      if (response.ok) {
-        setStats(initialData);
-      }
-    }
-    loadInitialStats();
-  }, [response.ok, get, id]);
+  const { data: stats, isFetching: loading } = usePortfolioYearStats(
+    +id!,
+    "all-years",
+    undefined,
+  );
 
   if (loading) {
     return <Spin />;

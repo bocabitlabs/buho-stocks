@@ -1,14 +1,17 @@
-import React, { ReactElement, useCallback, useEffect, useState } from "react";
+import React, { ReactElement, useCallback, useState } from "react";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
-import useFetch, { CachePolicies } from "use-http";
+import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
+import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
+import { useUpdatePortfolioYearStatsForced } from "hooks/use-stats/use-portfolio-stats";
+import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 import { ICompany } from "types/company";
+import { IPortfolio } from "types/portfolio";
 
 interface Props {
   id: string | undefined;
   selectedYear: string | undefined;
-  setStats: Function;
 }
 
 async function asyncForEach(array: any[], callback: Function) {
@@ -21,7 +24,6 @@ async function asyncForEach(array: any[], callback: Function) {
 export default function StatsRefreshModal({
   id,
   selectedYear,
-  setStats,
 }: Props): ReactElement {
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -33,37 +35,23 @@ export default function StatsRefreshModal({
   const [indeterminate, setIndeterminate] = React.useState(false);
 
   const [companies, setCompanies] = useState<CheckboxValueType[]>([]);
-  const { response: responsePortfolio, get: getPortfolio } = useFetch(
-    "portfolios",
-    { cachePolicy: CachePolicies.NO_CACHE },
-  );
-  const {
-    get: getPrice,
-    loading: loadingPrice,
-    response: priceResponse,
-    cache: priceCache,
-  } = useFetch(`companies`);
-  const {
-    response,
-    get: getStats,
-    loading: loadingStats,
-    cache,
-  } = useFetch(`stats`);
 
-  useEffect(() => {
-    async function loadInitialPortfolio() {
-      const initialPortfolio = await getPortfolio(`${id}/`);
-      if (responsePortfolio.ok) {
-        const checkboxes = initialPortfolio.companies.map(
-          (company: ICompany) => {
-            return `${company.name} (${company.ticker}) - #${company.id}`;
-          },
-        );
-        setCompanies(checkboxes);
-      }
-    }
-    loadInitialPortfolio();
-  }, [responsePortfolio.ok, getPortfolio, id]);
+  usePortfolio(+id!, {
+    onSuccess: (data: IPortfolio) => {
+      const checkboxes = data.companies.map((company: ICompany) => {
+        return `${company.name} (${company.ticker}) - #${company.id}`;
+      });
+      setCompanies(checkboxes);
+    },
+  });
+  const { mutateAsync: updateStockPrice, isLoading: loadingPrice } =
+    useUpdateCompanyStockPrice();
+  const { mutateAsync: updateCompanyStats, isLoading: updateCompanyLoading } =
+    useUpdateYearStatsForced();
+  const {
+    mutateAsync: updatePortfolioStats,
+    isLoading: updatePortfolioLoading,
+  } = useUpdatePortfolioYearStatsForced();
 
   const showModal = () => {
     setVisible(true);
@@ -71,20 +59,19 @@ export default function StatsRefreshModal({
 
   const getStatsForced = useCallback(
     async (companyId: string) => {
-      cache.clear();
       setUpdateMessage(`Updating stats for company #${companyId}`);
-      await getStats(`/${companyId}/${selectedYear}/force/`);
-      if (response.ok) {
+      try {
+        await updateCompanyStats({ companyId: +companyId, year: selectedYear });
         setUpdateMessage(
           `Stats updated for company #${companyId} and year ${selectedYear}`,
         );
-      } else {
+      } catch (e) {
         setUpdateMessage(
           `Error updating stats for company #${companyId} and year ${selectedYear}`,
         );
       }
     },
-    [getStats, response.ok, selectedYear, cache],
+    [selectedYear, updateCompanyStats],
   );
 
   const getStockPrice = useCallback(
@@ -93,37 +80,36 @@ export default function StatsRefreshModal({
       if (selectedYear === "all") {
         tempYear = new Date().getFullYear().toString();
       }
-      priceCache.clear();
       setUpdateMessage(`Updating price for company #${companyId}`);
-      await getPrice(`/${companyId}/stock-prices/${tempYear}/last/force/`);
-      if (priceResponse.ok) {
+      try {
+        await updateStockPrice({ companyId: +companyId, year: tempYear });
         setUpdateMessage(
           `Price updated for company #${companyId} and year ${tempYear}`,
         );
-      } else {
+      } catch (e) {
         setUpdateMessage(
           `Error updating price for company #${companyId} and year ${tempYear}`,
         );
       }
     },
-    [getPrice, priceCache, priceResponse.ok, selectedYear],
+    [selectedYear, updateStockPrice],
   );
 
   const updatePortfolioStatsForced = useCallback(async () => {
-    cache.clear();
     setUpdateMessage(
       `Updating stats for portfolio #${id} and year ${selectedYear}`,
     );
-    const updatedStats = await getStats(
-      `portfolio/${id}/${selectedYear}/force/`,
-    );
-    if (response.ok) {
-      setStats(updatedStats);
+    try {
+      await updatePortfolioStats({ portfolioId: +id!, year: selectedYear });
       setUpdateMessage(
         `Stats updated for portfolio #${id} and year ${selectedYear}`,
       );
+    } catch (e) {
+      setUpdateMessage(
+        `Error updating stats for portfolio #${id} and year ${selectedYear}`,
+      );
     }
-  }, [cache, getStats, id, response.ok, selectedYear, setStats]);
+  }, [updatePortfolioStats, selectedYear, id]);
 
   const handleOk = async () => {
     setConfirmLoading(true);
@@ -235,7 +221,9 @@ export default function StatsRefreshModal({
           <Button
             type="primary"
             htmlType="submit"
-            loading={loadingPrice || loadingStats}
+            loading={
+              loadingPrice || updateCompanyLoading || updatePortfolioLoading
+            }
           >
             Update stats
           </Button>

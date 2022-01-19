@@ -1,25 +1,14 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement } from "react";
 import { Link } from "react-router-dom";
 import { List, Spin } from "antd";
-import useFetch from "use-http";
 import PortfolioCard from "../PortfolioCard/PortfolioCard";
+import { usePortfolios } from "hooks/use-portfolios/use-portfolios";
 import { IPortfolio } from "types/portfolio";
 
 export default function PortfolioList(): ReactElement {
-  const [portfolios, setPortfolios] = useState<IPortfolio[]>([]);
-  const { loading, response, get } = useFetch("portfolios");
+  const { isFetching, data: portfolios } = usePortfolios();
 
-  useEffect(() => {
-    const fetchPortfolios = async () => {
-      const results = await get("/");
-      if (response.ok) {
-        setPortfolios(results);
-      }
-    };
-    fetchPortfolios();
-  }, [get, response.ok]);
-
-  if (loading) {
+  if (isFetching) {
     return <Spin />;
   }
 
@@ -36,9 +25,9 @@ export default function PortfolioList(): ReactElement {
       }}
       dataSource={portfolios}
       renderItem={(item) => (
-        <Link to={`/app/portfolios/${item.id}`}>
+        <Link to={`/app/portfolios/${(item as IPortfolio).id}`}>
           <List.Item>
-            <PortfolioCard portfolio={item} />
+            <PortfolioCard portfolio={item as IPortfolio} />
           </List.Item>
         </Link>
       )}
