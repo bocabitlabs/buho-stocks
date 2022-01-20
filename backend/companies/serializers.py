@@ -16,17 +16,13 @@ from markets.serializers import MarketSerializer
 from shares_transactions.serializers import SharesTransactionSerializer
 from shares_transactions.models import SharesTransaction
 from drf_extra_fields.fields import Base64ImageField
-from stats.models import CompanyStatsForYear
-from stats.serializers import CompanyStatsForYearSerializer
+from stats.models.company_stats import CompanyStatsForYear
+from stats.serializers.company_stats import CompanyStatsForYearSerializer
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    sector = UserFilteredPrimaryKeyRelatedField(
-        queryset=Sector.objects, many=False, read_only=False
-    )
-    market = UserFilteredPrimaryKeyRelatedField(
-        queryset=Market.objects, many=False, read_only=False
-    )
+    market = MarketSerializer(many=False, read_only=True)
+    sector = SectorSerializerGet(many=False, read_only=True)
     portfolio = UserFilteredPrimaryKeyRelatedField(
         queryset=Portfolio.objects, many=False, read_only=False
     )

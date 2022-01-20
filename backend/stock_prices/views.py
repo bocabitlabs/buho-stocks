@@ -77,14 +77,18 @@ class StockPricesYearAPIView(APIView):
         return data
 
 
+    def get_update_object(self, company_id, year, user_id):
+        company = Company.objects.get(id=company_id, user=user_id)
+        api_service = CustomYFinanceService()
+        api = StockPricesApi(api_service)
+        data = api.get_last_data_from_year(company.ticker, year)
+        return data
+
     # 3. Retrieve
     @swagger_auto_schema(tags=["company_stock_prices"])
-    def get(self, request, company_id, year, position, *args, **kwargs):
+    def get(self, request, company_id, year, *args, **kwargs):
         """
-        Get the first or last stock price of a company for a given year
-
-        - position: first|last
-
+        Get the last stock price of a company for a given year
         """
         instance = self.get_object(company_id, year, request.user.id)
         if not instance:
@@ -96,29 +100,12 @@ class StockPricesYearAPIView(APIView):
         serializer = StockPriceSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-
-class StockPricesYearForceAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self, company_id, year, user_id):
-        company = Company.objects.get(id=company_id, user=user_id)
-        api_service = CustomYFinanceService()
-        api = StockPricesApi(api_service, force=True)
-        data = api.get_last_data_from_year(company.ticker, year)
-        return data
-
-
-    # 3. Retrieve
     @swagger_auto_schema(tags=["company_stock_prices"])
-    def get(self, request, company_id, year, position, *args, **kwargs):
+    def put(self, request, company_id, year, *args, **kwargs):
         """
-        Get the first or last stock price of a company for a given year
-
-        - position: first|last
-
+        Update last stock price of a company for a given year
         """
-        instance = self.get_object(company_id, year, request.user.id)
+        instance = self.get_update_object(company_id, year, request.user.id)
         if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},

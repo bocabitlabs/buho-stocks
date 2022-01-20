@@ -11,12 +11,8 @@ class StockPricesApi:
     def __init__(
         self,
         stock_prices_service: StockPriceServiceBase,
-        force=False,
     ):
         self.stock_prices_service = stock_prices_service
-        self.force = force
-
-        logger.debug(f"StockPricesApi initialized with force={self.force}")
 
     def get_current_data(self, ticker):
 
@@ -61,9 +57,9 @@ class StockPricesApi:
             dict: [description]
         """
         logger.debug(
-            f"Getting historical data for {ticker} from {from_date} to {to_date} ( force={self.force} only_api={only_api}, dry_run={dry_run} )"
+            f"Getting historical data for {ticker} from {from_date} to {to_date}. only_api={only_api}, dry_run={dry_run} )"
         )
-        if only_api or self.force:
+        if only_api:
             prices_length = 0
         else:
             prices = StockPrice.objects.filter(
@@ -131,7 +127,18 @@ class StockPricesApi:
         to_date = f"{year}-{month}-{end_day}"
         return self.get_historical_data(ticker, from_date, to_date)
 
-    def get_last_data_from_year(self, ticker: str, year: int) -> dict:
+    def get_last_data_from_year(self, ticker: str, year: int, only_api=False) -> dict:
+        from_date, to_date = self.get_start_end_dates_for_year(year)
+        logger.debug(f"{ticker}: Getting last data from {from_date} to {to_date}")
+        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1, only_api=only_api)
+        if len(results) > 0:
+            return results[-1]
+
+    def update_last_data_from_year(self, ticker: str, year: int) -> dict:
+        result = self.get_last_data_from_year(ticker, year, only_api=True)
+        return result
+
+    def get_start_end_dates_for_year(self, year: int):
         todays_date = datetime.date.today()
         logger.debug(f"Todays date: {todays_date.year} {type(todays_date.year)} vs year: {year} ({type(year)})")
         if todays_date.year == int(year):
@@ -143,10 +150,7 @@ class StockPricesApi:
         else:
             from_date = f"{year}-12-01"
             to_date = f"{year}-12-31"
-        logger.debug(f"{ticker}: Getting last data from {from_date} to {to_date}")
-        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1)
-        if len(results) > 0:
-            return results[-1]
+        return from_date,to_date
 
     def get_last_data_from_last_month(self, ticker: str) -> dict:
         from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime(

@@ -34,11 +34,7 @@ urlpatterns = [
         stock_prices_views.StockPricesDetailAPIView.as_view(),
     ),
     path(
-        "<int:company_id>/stock-prices/<int:year>/<str:position>/",
+        "<int:company_id>/stock-prices/<int:year>/",
         stock_prices_views.StockPricesYearAPIView.as_view(),
-    ),
-    path(
-        "<int:company_id>/stock-prices/<int:year>/<str:position>/force/",
-        stock_prices_views.StockPricesYearForceAPIView.as_view(),
     ),
 ]

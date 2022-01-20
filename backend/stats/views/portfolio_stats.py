@@ -7,72 +7,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from companies.models import Company
-from portfolios.models import Portfolio
-from shares_transactions.models import SharesTransaction
-from stats.models import PortfolioStatsForYear
-from stats.serializers import CompanyStatsForYearSerializer, PortfolioStatsForYearSerializer
+from stats.models.portfolio_stats import PortfolioStatsForYear
+from stats.serializers.company_stats import CompanyStatsForYearSerializer
+from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 
-from stats.utils import CompanyStatsUtils, PortfolioStatsUtils, CompanyUtils
+from stats.utils.portfolio_utils import PortfolioStatsUtils
 
 logger =logging.getLogger("buho_backend")
-
-class CompanyStatsAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self, company_id, year, user_id):
-        try:
-            company_stats = CompanyStatsUtils(company_id, user_id, year=year)
-            instance = company_stats.get_stats_for_year()
-            return instance
-        except Company.DoesNotExist:
-            return None
-
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["company_stats"])
-    def get(self, request, company_id, year, *args, **kwargs):
-        """
-        Retrieve the company item with given company_id
-        """
-        instance = self.get_object(company_id, year, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = CompanyStatsForYearSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class CompanyStatsForceAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self, company_id, year, user_id):
-        try:
-            company_stats = CompanyStatsUtils(
-                company_id, user_id, year=year, force=True
-            )
-            instance = company_stats.get_stats_for_year()
-            return instance
-        except Company.DoesNotExist:
-            return None
-
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["company_stats"])
-    def get(self, request, company_id, year, *args, **kwargs):
-        """
-        Retrieve the company item with given company_id
-        """
-        instance = self.get_object(company_id, year, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = CompanyStatsForYearSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PortfolioStatsAPIView(APIView):
@@ -92,12 +33,9 @@ class PortfolioStatsAPIView(APIView):
 
     def get_stats_for_year(self, portfolio_id, year, user_id, force):
         portfolio_stats = PortfolioStatsUtils(portfolio_id, user_id, year=year, force=force)
-        if(year == "all-years"):
-            stats = portfolio_stats.get_all_years_stats()
-        else:
-            stats = portfolio_stats.get_stats_for_year()
-            serializer = PortfolioStatsForYearSerializer(stats)
-            stats = serializer.data
+        stats = portfolio_stats.get_stats_for_year()
+        serializer = PortfolioStatsForYearSerializer(stats)
+        stats = serializer.data
         return stats
 
     def get_stats_grouped(self, portfolio_id, year, user_id, force, group_by):
@@ -137,6 +75,38 @@ class PortfolioStatsAPIView(APIView):
         Retrieve the company item with given id
         """
         stats = self.get_object(portfolio_id, year, request.user.id, force=True)
+        if not stats:
+            return Response(
+                {"res": "Object with id does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        return Response(stats, status=status.HTTP_200_OK)
+
+
+class PortfolioStatsAllYearsAPIView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self, portfolio_id, user_id):
+        try:
+            stats = self.get_stats_for_year(portfolio_id, user_id)
+            return stats
+        except PortfolioStatsForYear.DoesNotExist:
+            return None
+
+    def get_stats_for_year(self, portfolio_id, user_id):
+        portfolio_stats = PortfolioStatsUtils(portfolio_id, user_id, year=9999)
+        stats = portfolio_stats.get_all_years_stats()
+        return stats
+
+    # 3. Retrieve
+    @swagger_auto_schema(tags=["portfolio_stats"])
+    def get(self, request, portfolio_id, *args, **kwargs):
+        """
+        Retrieve the company item with given id
+        """
+        stats = self.get_object(portfolio_id, request.user.id)
         if not stats:
             return Response(
                 {"res": "Object with id does not exists"},

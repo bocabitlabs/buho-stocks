@@ -4,7 +4,7 @@ from moneyed import list_all_currencies
 from forex_python.converter import CurrencyCodes
 
 
-def get_currency_details(currency_code):
+def get_currency_details(currency_code, include_countries=False):
     currency_codes = CurrencyCodes()
     # if len(currency.country_codes) > 0:
     currencies = [c for c in list_all_currencies() if c.code == currency_code]
@@ -14,8 +14,9 @@ def get_currency_details(currency_code):
         name = currency_codes.get_currency_name(currency_code)
         if symbol:
             countries = []
-            for country in currency.country_codes:
-                countries.append(get_country_name(country, "en"))
+            if include_countries:
+                for country in currency.country_codes:
+                    countries.append(get_country_name(country, "en"))
 
             new_currency = {
                 "name": name,

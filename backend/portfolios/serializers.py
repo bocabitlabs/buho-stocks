@@ -4,9 +4,9 @@ from rest_framework import serializers
 from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from currencies.models import get_currency_details
 from portfolios.models import Portfolio
-from companies.serializers import CompanySerializer, CompanySerializerGet
+from companies.serializers import CompanySerializer
 from shares_transactions.models import SharesTransaction
-from stats.serializers import PortfolioStatsForYearSerializer
+from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
