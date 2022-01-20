@@ -11,8 +11,8 @@ LOG_TO_FILE = False
 # Default:["console"]. Other options: ["console", "file"]
 LOGGER_HANDLERS = ["console"]
 # Path to the log files
-# Default: "/usr/src/logs/"
-LOGS_ROOT = "/usr/src/logs/"
+# Default: "". Other options: "/usr/src/logs/"
+LOGS_ROOT = ""
 # Type of database
 # VALUES: sqlite | mysql | postgresql
 DATABASE_TYPE = "sqlite"

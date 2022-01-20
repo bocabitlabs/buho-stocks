@@ -193,7 +193,14 @@ LOGGING = {
     },
     "handlers": {
         "console": {"class": "logging.StreamHandler", "formatter": "console"},
-        "file": {}
+        "file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "file",
+            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
+            "backupCount": 10,
+            "filename": config.LOGS_ROOT + "debug.log",
+        }
     },
     "loggers": {
         "buho_backend": {
@@ -203,13 +210,3 @@ LOGGING = {
         },
     },
 }
-
-if config.LOG_TO_FILE:
-    LOGGING["handlers"]["file"] ={
-            "level": "DEBUG",
-            "class": "logging.handlers.RotatingFileHandler",
-            "formatter": "file",
-            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
-            "backupCount": 10,
-            "filename": config.LOGS_ROOT + "debug.log",
-        },
