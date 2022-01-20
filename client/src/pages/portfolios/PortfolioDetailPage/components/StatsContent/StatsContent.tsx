@@ -36,10 +36,13 @@ export default function StatsContent({ stats }: Props): ReactElement {
           title="Portfolio Value"
           value={stats?.portfolioValue}
           valueStyle={{
-            color: stats?.portfolioValueIsDown ? "#cf1322" : "",
+            color:
+              stats?.portfolioValue < stats?.accumulatedInvestment
+                ? "#cf1322"
+                : "",
           }}
           prefix={
-            stats?.portfolioValueIsDown ? (
+            stats?.portfolioValue < stats?.accumulatedInvestment ? (
               <ArrowDownOutlined />
             ) : (
               <ArrowUpOutlined />

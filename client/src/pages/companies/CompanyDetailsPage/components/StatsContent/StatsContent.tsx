@@ -63,7 +63,10 @@ export default function StatsContent({
           title="Portfolio Value"
           value={stats?.portfolioValue}
           valueStyle={{
-            color: stats?.portfolioValueIsDown ? "#cf1322" : "",
+            color:
+              stats?.portfolioValue < stats?.accumulatedInvestment
+                ? "#cf1322"
+                : "",
           }}
           precision={2}
           suffix={stats?.portfolioCurrency}

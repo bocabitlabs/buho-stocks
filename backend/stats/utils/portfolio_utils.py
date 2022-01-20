@@ -261,8 +261,6 @@ class PortfolioStatsUtils:
         data["return_with_dividends_percent"] = self.get_return_percent(
             data["return_with_dividends"], data["accumulated_investment"]
         )
-        if data["portfolio_value"] < data["accumulated_investment"]:
-            data["portfolioValueIsDown"] = True
 
         data["dividends_yield"] = self.get_dividends_yield(
             data["dividends"], data["portfolio_value"]
@@ -348,8 +346,6 @@ class PortfolioStatsUtils:
             data["return_with_dividends_percent"] = self.get_return_percent(
                 data["return_with_dividends"], data["accumulatedInvestment"]
             )
-            if data["portfolioValue"] < data["accumulatedInvestment"]:
-                data["portfolioValueIsDown"] = True
 
             data["dividendsYield"] = self.get_dividends_yield(
                 data["dividends"], data["portfolioValue"]

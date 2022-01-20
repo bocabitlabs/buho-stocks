@@ -33,7 +33,7 @@ export default function PortfolioCardContent({
       <Typography.Text
         type={stats?.returnWithDividends < 0 ? "danger" : "success"}
       >
-        {stats?.portfolioValueIsDown ? (
+        {stats?.portfolioValue < stats?.accumulatedInvestment ? (
           <ArrowDownOutlined />
         ) : (
           <ArrowUpOutlined />
