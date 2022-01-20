@@ -106,21 +106,24 @@ export default function RightsListTable(): ReactElement {
   ];
 
   const getData = () => {
-    return transactions.map((transaction: IRightsTransaction) => ({
-      id: transaction.id,
-      key: transaction.id,
-      count: transaction.count,
-      type: transaction.type,
-      grossPricePerShare: transaction.grossPricePerShare,
-      grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
-      totalCommission: transaction.totalCommission,
-      totalCommissionCurrency: transaction.totalCommissionCurrency,
-      transactionDate: transaction.transactionDate,
-      transactionTotal:
-        +transaction.count * +transaction.grossPricePerShare +
-        +transaction.totalCommission,
-      notes: transaction.notes,
-    }));
+    return (
+      transactions &&
+      transactions.map((transaction: IRightsTransaction) => ({
+        id: transaction.id,
+        key: transaction.id,
+        count: transaction.count,
+        type: transaction.type,
+        grossPricePerShare: transaction.grossPricePerShare,
+        grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
+        totalCommission: transaction.totalCommission,
+        totalCommissionCurrency: transaction.totalCommissionCurrency,
+        transactionDate: transaction.transactionDate,
+        transactionTotal:
+          +transaction.count * +transaction.grossPricePerShare +
+          +transaction.totalCommission,
+        notes: transaction.notes,
+      }))
+    );
   };
 
   if (loading) {

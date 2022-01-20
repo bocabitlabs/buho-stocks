@@ -169,7 +169,7 @@ export default function CompaniesList({ companies }: IProps) {
       pagination={{ defaultPageSize: 60 }}
       columns={columns}
       dataSource={getData()}
-      scroll={{ x: 800 }}
+      scroll={{ x: 600 }}
       style={{ marginTop: 16 }}
     />
   );

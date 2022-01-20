@@ -1,7 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { IDividendsTransactionFormFields } from "types/dividends-transaction";
+import queryClient from "api/query-client";
+import {
+  IDividendsTransaction,
+  IDividendsTransactionFormFields,
+} from "types/dividends-transaction";
 
 interface AddTransactionMutationProps {
   newTransaction: IDividendsTransactionFormFields;
@@ -25,27 +29,28 @@ export const fetchDividendsTransactions = async (
   if (!companyId) {
     throw new Error("companyId is required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<IDividendsTransaction[]>(
     `/api/v1/companies/${companyId}/dividends/`,
     getAxiosOptionsWithAuth(),
   );
   return data;
 };
 
-// export const fetchSharesTransaction = async (marketId: number | undefined) => {
-//   if (!marketId) {
-//     throw new Error("marketId is required");
-//   }
-//   const { data } = await axios.get(
-//     `/api/v1/markets/${marketId}/`,
-//     getAxiosOptionsWithAuth(),
-//   );
-//   return data;
-// };
+export const fetchTransaction = async (
+  companyId: number | undefined,
+  transactionId: number | undefined,
+) => {
+  if (!companyId || !transactionId) {
+    throw new Error("companyId and transactionId are required");
+  }
+  const { data } = await axios.get(
+    `/api/v1/companies/${companyId}/dividends/${transactionId}/`,
+    getAxiosOptionsWithAuth(),
+  );
+  return data;
+};
 
 export const useAddDividendsTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, newTransaction }: AddTransactionMutationProps) =>
       axios.post(
@@ -65,8 +70,6 @@ export const useAddDividendsTransaction = () => {
 };
 
 export const useDeleteDividendsTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, transactionId }: DeleteTransactionMutationProps) =>
       axios.delete(
@@ -86,8 +89,6 @@ export const useDeleteDividendsTransaction = () => {
 };
 
 export const useUpdateDividendsTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({
       companyId,
@@ -112,17 +113,19 @@ export const useUpdateDividendsTransaction = () => {
 };
 
 export function useDividendsTransactions(companyId: number | undefined) {
-  return useQuery(
+  return useQuery<IDividendsTransaction[], Error>(
     ["dividendsTransactions", companyId],
     () => fetchDividendsTransactions(companyId),
     { enabled: !!companyId },
   );
 }
 
-// export function useMarket(marketId: number | undefined) {
-//   console.log(`Calling useMarket with marketId: ${marketId}`);
-//   return useQuery("market", () => fetchMarket(marketId), {
-//     // The query will not execute until the userId exists
-//     enabled: !!marketId,
-//   });
-// }
+export function useDividendsTransaction(
+  companyId: number | undefined,
+  transactionId: number | undefined,
+) {
+  return useQuery("market", () => fetchTransaction(companyId, transactionId), {
+    // The query will not execute until the userId exists
+    enabled: !!companyId && !!transactionId,
+  });
+}

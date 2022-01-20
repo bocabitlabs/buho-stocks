@@ -11,7 +11,7 @@ import { ISector } from "types/sector";
 export default function SectorsTable() {
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
-  const { status, data, error, isFetching } = useSectors();
+  const { status, data: sectors, error, isFetching } = useSectors();
   const { mutateAsync: deleteSector } = useDeleteSector();
 
   const confirmDelete = async (recordId: number) => {
@@ -70,13 +70,16 @@ export default function SectorsTable() {
   ];
 
   const getData = () => {
-    return data.map((element: ISector) => ({
-      id: element.id,
-      key: element.id,
-      name: element.name,
-      color: element.color,
-      superSector: element.superSector?.name,
-    }));
+    return (
+      sectors &&
+      sectors.map((element: ISector) => ({
+        id: element.id,
+        key: element.id,
+        name: element.name,
+        color: element.color,
+        superSector: element.superSector?.name,
+      }))
+    );
   };
 
   if (isFetching) {

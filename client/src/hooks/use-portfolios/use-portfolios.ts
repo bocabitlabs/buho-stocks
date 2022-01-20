@@ -1,11 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { IPortfolioFormFields } from "types/portfolio";
-
-// interface AddMutationProps {
-//   newPortfolio: IPortfolioFormFields;
-// }
+import queryClient from "api/query-client";
+import { IPortfolio, IPortfolioFormFields } from "types/portfolio";
 
 interface UpdateMutationProps {
   newPortfolio: IPortfolioFormFields;
@@ -17,7 +14,7 @@ interface DeleteMutationProps {
 }
 
 export const fetchPortfolios = async () => {
-  const { data } = await axios.get(
+  const { data } = await axios.get<IPortfolio[]>(
     `/api/v1/portfolios/`,
     getAxiosOptionsWithAuth(),
   );
@@ -28,7 +25,7 @@ export const fetchPortfolio = async (portfolioId: number | undefined) => {
   if (!portfolioId) {
     throw new Error("Id is required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<IPortfolio>(
     `/api/v1/portfolios/${portfolioId}/`,
     getAxiosOptionsWithAuth(),
   );
@@ -36,8 +33,6 @@ export const fetchPortfolio = async (portfolioId: number | undefined) => {
 };
 
 export const useAddPortfolio = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     (newPortfolio: IPortfolioFormFields) =>
       axios.post(
@@ -54,8 +49,6 @@ export const useAddPortfolio = () => {
 };
 
 export const useDeletePortfolio = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ portfolioId }: DeleteMutationProps) =>
       axios.delete(
@@ -71,8 +64,6 @@ export const useDeletePortfolio = () => {
 };
 
 export const useUpdatePortfolio = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ portfolioId, newPortfolio }: UpdateMutationProps) =>
       axios.put(
@@ -89,14 +80,14 @@ export const useUpdatePortfolio = () => {
 };
 
 export function usePortfolios() {
-  return useQuery("portfolios", fetchPortfolios);
+  return useQuery<IPortfolio[], Error>("portfolios", fetchPortfolios);
 }
 
 export function usePortfolio(
   portfolioId: number | undefined,
   otherOptions?: any,
 ) {
-  return useQuery(
+  return useQuery<IPortfolio, Error>(
     ["portfolios", portfolioId],
     () => fetchPortfolio(portfolioId),
     {

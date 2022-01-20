@@ -11,9 +11,9 @@ export default function SectorsEditPage() {
   const params = useParams();
   const { id } = params;
   const idString: number = +id!;
-  const { data, error, isFetching } = useSector(idString);
+  const { data: sector, error, isFetching } = useSector(idString);
 
-  if (isFetching) {
+  if (isFetching || !sector) {
     return <div>Loading the sector...</div>;
   }
 
@@ -22,10 +22,10 @@ export default function SectorsEditPage() {
   }
 
   return (
-    <SectorsEditPageHeader sectorName={data.name}>
+    <SectorsEditPageHeader sectorName={sector.name}>
       <Row>
         <Col>
-          <SectorAddEditForm sector={data} isSuper />
+          <SectorAddEditForm sector={sector} isSuper />
         </Col>
         <Col />
       </Row>

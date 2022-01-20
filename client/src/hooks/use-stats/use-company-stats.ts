@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
+import queryClient from "api/query-client";
 
 export const fetchStats = async (
   companyId: number | undefined,
@@ -34,12 +35,11 @@ interface IUpdateYearStatsMutationProps {
 }
 
 export const useUpdateYearStatsForced = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, year }: IUpdateYearStatsMutationProps) =>
-      axios.get(
-        `/api/v1/stats/company/${companyId}/year/${year}/force/`,
+      axios.put(
+        `/api/v1/stats/company/${companyId}/year/${year}/`,
+        {},
         getAxiosOptionsWithAuth(),
       ),
     {

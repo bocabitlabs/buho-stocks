@@ -96,20 +96,23 @@ export default function DividendsListTable(): ReactElement {
   ];
 
   const getData = () => {
-    return transactions.map((transaction: IDividendsTransaction) => ({
-      id: transaction.id,
-      key: transaction.id,
-      count: transaction.count,
-      grossPricePerShare: transaction.grossPricePerShare,
-      grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
-      totalCommission: transaction.totalCommission,
-      totalCommissionCurrency: transaction.totalCommissionCurrency,
-      transactionDate: transaction.transactionDate,
-      transactionTotal:
-        +transaction.count * +transaction.grossPricePerShare -
-        +transaction.totalCommission,
-      notes: transaction.notes,
-    }));
+    return (
+      transactions &&
+      transactions.map((transaction: IDividendsTransaction) => ({
+        id: transaction.id,
+        key: transaction.id,
+        count: transaction.count,
+        grossPricePerShare: transaction.grossPricePerShare,
+        grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
+        totalCommission: transaction.totalCommission,
+        totalCommissionCurrency: transaction.totalCommissionCurrency,
+        transactionDate: transaction.transactionDate,
+        transactionTotal:
+          +transaction.count * +transaction.grossPricePerShare -
+          +transaction.totalCommission,
+        notes: transaction.notes,
+      }))
+    );
   };
 
   if (loading) {

@@ -42,10 +42,14 @@ export default function Form(): ReactElement {
   };
 
   const onPortfolioSelect = (value: any) => {
-    const portfolio = portfolios.find((port: IPortfolio) => port.id === +value);
-    if (portfolio) {
-      setSelectedPortfolio(portfolio);
-      setData([]);
+    if (portfolios) {
+      const portfolio = portfolios.find(
+        (port: IPortfolio) => port.id === +value,
+      );
+      if (portfolio) {
+        setSelectedPortfolio(portfolio);
+        setData([]);
+      }
     }
   };
 

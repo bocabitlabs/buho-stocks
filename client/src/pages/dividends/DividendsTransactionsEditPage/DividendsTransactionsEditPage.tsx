@@ -4,16 +4,19 @@ import { Spin } from "antd";
 import DividendsTransactionEditPageHeader from "./components/DividendsTransactioneditPageHeader/DividendsTransactionEditPageHeader";
 import DividendsTransactionAddEditForm from "components/DividendsTransactionAddEditForm/DividendsTransactionAddEditForm";
 import { useCompany } from "hooks/use-companies/use-companies";
-import { useDividendsTransactions } from "hooks/use-dividends-transactions/use-dividends-transactions";
+import { useDividendsTransaction } from "hooks/use-dividends-transactions/use-dividends-transactions";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 
 export default function DividendsTransactionsEditPage(): ReactElement {
   const { id, companyId, transactionId } = useParams();
   const { data: company } = useCompany(+id!, +companyId!);
   const { data: portfolio } = usePortfolio(+id!);
-  const { data: transaction } = useDividendsTransactions(+transactionId!);
+  const { data: transaction } = useDividendsTransaction(
+    +companyId!,
+    +transactionId!,
+  );
 
-  if (!company || !portfolio) {
+  if (!company || !portfolio || !transaction) {
     return <Spin />;
   }
   return (

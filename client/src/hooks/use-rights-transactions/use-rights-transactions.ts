@@ -1,7 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { IRightsTransactionFormFields } from "types/rights-transaction";
+import queryClient from "api/query-client";
+import {
+  IRightsTransaction,
+  IRightsTransactionFormFields,
+} from "types/rights-transaction";
 
 interface IUpdateRightsMutationProps {
   newTransaction: IRightsTransactionFormFields;
@@ -25,7 +29,7 @@ export const fetchRightsTransactions = async (
   if (!companyId) {
     throw new Error("companyId is required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<IRightsTransaction[]>(
     `/api/v1/companies/${companyId}/rights/`,
     getAxiosOptionsWithAuth(),
   );
@@ -39,7 +43,7 @@ export const fetchRightsTransaction = async (
   if (!companyId && !transactionId) {
     throw new Error("companyId and transactionId are required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<IRightsTransaction>(
     `/api/v1/companies/${companyId}/rights/${transactionId}/`,
     getAxiosOptionsWithAuth(),
   );
@@ -47,8 +51,6 @@ export const fetchRightsTransaction = async (
 };
 
 export const useAddRightsTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, newTransaction }: IAddRightsMutationProps) =>
       axios.post(
@@ -69,8 +71,6 @@ export const useAddRightsTransaction = () => {
 };
 
 export const useUpdateRightsTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({
       companyId,
@@ -96,8 +96,6 @@ export const useUpdateRightsTransaction = () => {
 };
 
 export const useDeleteRightsTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, transactionId }: IDeleteTransactionMutationProps) =>
       axios.delete(
@@ -117,7 +115,7 @@ export const useDeleteRightsTransaction = () => {
 };
 
 export function useRightsTransactions(companyId: number | undefined) {
-  return useQuery(
+  return useQuery<IRightsTransaction[], Error>(
     ["rightsTransactions", companyId],
     () => fetchRightsTransactions(companyId),
     { enabled: !!companyId },
@@ -128,7 +126,7 @@ export function useRightsTransaction(
   companyId: number | undefined,
   transactionId: number | undefined,
 ) {
-  return useQuery(
+  return useQuery<IRightsTransaction, Error>(
     ["rightsTransactions", companyId, transactionId],
     () => fetchRightsTransaction(companyId, transactionId),
     {

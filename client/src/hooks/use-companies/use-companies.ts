@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { ICompanyFormFields } from "types/company";
+import queryClient from "api/query-client";
+import { ICompany, ICompanyFormFields } from "types/company";
 
 interface AddMutationProps {
   newCompany: ICompanyFormFields;
@@ -20,7 +21,7 @@ interface DeleteMutationProps {
 }
 
 export const fetchCompanies = async (portfolioId: number | undefined) => {
-  const { data } = await axios.get(
+  const { data } = await axios.get<ICompany[]>(
     `/api/v1/portfolios/${portfolioId}/companies/`,
     getAxiosOptionsWithAuth(),
   );
@@ -34,7 +35,7 @@ export const fetchCompany = async (
   if (!companyId || !portfolioId) {
     throw new Error("marketId is required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<ICompany>(
     `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
     getAxiosOptionsWithAuth(),
   );
@@ -42,8 +43,6 @@ export const fetchCompany = async (
 };
 
 export const useAddCompany = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ portfolioId, newCompany }: AddMutationProps) =>
       axios.post(
@@ -60,8 +59,6 @@ export const useAddCompany = () => {
 };
 
 export const useDeleteCompany = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ portfolioId, companyId }: DeleteMutationProps) =>
       axios.delete(
@@ -81,8 +78,6 @@ export const useDeleteCompany = () => {
 };
 
 export const useUpdateCompany = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
       axios.put(
@@ -103,7 +98,7 @@ export const useUpdateCompany = () => {
 };
 
 export function useCompanies(portfolioId: number | undefined) {
-  return useQuery(["companies", portfolioId], () =>
+  return useQuery<ICompany[], Error>(["companies", portfolioId], () =>
     fetchCompanies(portfolioId),
   );
 }
@@ -112,7 +107,7 @@ export function useCompany(
   portfolioId: number | undefined,
   companyId: number | undefined,
 ) {
-  return useQuery(
+  return useQuery<ICompany, Error>(
     ["companies", portfolioId, companyId],
     () => fetchCompany(portfolioId, companyId),
     {

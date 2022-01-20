@@ -14,7 +14,7 @@ import { IMarket } from "types/market";
 export default function MarketsListTable() {
   const { createError, createSuccess } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
-  const { status, data, error, isFetching } = useMarkets();
+  const { status, data: markets, error, isFetching } = useMarkets();
   const { mutateAsync: deleteMarket } = useDeleteMarket();
 
   const confirmDelete = async (recordId: number) => {
@@ -96,16 +96,19 @@ export default function MarketsListTable() {
   ];
 
   const getData = () => {
-    return data.map((market: IMarket) => ({
-      id: market.id,
-      key: market.id,
-      name: market.name,
-      description: market.description,
-      region: market.region,
-      openTime: market.openTime,
-      closeTime: market.closeTime,
-      color: market.color,
-    }));
+    return (
+      markets &&
+      markets.map((market: IMarket) => ({
+        id: market.id,
+        key: market.id,
+        name: market.name,
+        description: market.description,
+        region: market.region,
+        openTime: market.openTime,
+        closeTime: market.closeTime,
+        color: market.color,
+      }))
+    );
   };
 
   if (isFetching) {

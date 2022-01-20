@@ -160,7 +160,6 @@ export default function IBDividendsImportForm({
     if (selectedCompany && portfolio) {
       console.debug(`fetching exchange rate for ${selectedCompany.ticker}`);
       const { data: exchangeRateResult } = await refetch();
-      console.log(exchangeRateResult.data);
       if (exchangeRateResult) {
         console.debug(exchangeRateResult);
         form.setFieldsValue({

@@ -10,7 +10,6 @@ export const fetchCurrencies = async () => {
   );
   return data;
 };
-
 export function useCurrencies() {
   return useQuery<ICurrency[], Error>("currencies", fetchCurrencies);
 }

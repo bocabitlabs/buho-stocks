@@ -78,7 +78,7 @@ export default function AppSidebar(): ReactElement {
   }, [location]);
 
   return (
-    <Layout.Sider theme="light" breakpoint="lg" collapsedWidth="0">
+    <Layout.Sider theme="light" breakpoint="xl" collapsedWidth="0">
       <Menu
         theme="light"
         mode="inline"

@@ -8,9 +8,9 @@ import { useMarket } from "hooks/use-markets/use-markets";
 export default function MarketsEditPage() {
   const { id } = useParams();
   const marketIdString: number = +id!;
-  const { data, error, isFetching } = useMarket(marketIdString);
+  const { data: market, error, isFetching } = useMarket(marketIdString);
 
-  if (isFetching) {
+  if (isFetching || !market) {
     return (
       <div>
         <Spin /> Loading de market...
@@ -23,10 +23,10 @@ export default function MarketsEditPage() {
   }
 
   return (
-    <MarketsEditPageHeader marketName={data.name}>
+    <MarketsEditPageHeader marketName={market.name}>
       <Row>
         <Col>
-          <MarketAddEditForm market={data} />
+          <MarketAddEditForm market={market} />
         </Col>
         <Col />
       </Row>

@@ -13,7 +13,7 @@ export default function CompanyDetailsPage(): ReactElement {
   const { id, companyId } = useParams();
   const { data: company, isFetching, error } = useCompany(+id!, +companyId!);
 
-  if (isFetching) {
+  if (isFetching || !company) {
     return (
       <div>
         <Spin /> Loading company...

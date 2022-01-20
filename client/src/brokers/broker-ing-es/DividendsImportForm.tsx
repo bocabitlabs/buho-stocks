@@ -166,7 +166,9 @@ export default function DividendsImportForm({
         const { data: exchangeRateResult } = await refetch();
         if (exchangeRateResult) {
           form.setFieldsValue({
-            grossPricePerShare: (price * exchangeRateResult).toFixed(3),
+            grossPricePerShare: (
+              price * exchangeRateResult.exchangeRate
+            ).toFixed(3),
           });
         } else {
           form.setFields([
@@ -195,7 +197,7 @@ export default function DividendsImportForm({
         if (exchangeRateResult) {
           form.setFieldsValue({
             commissionInCompanyCurrency: (
-              price * initialCount * exchangeRateResult -
+              price * initialCount * exchangeRateResult.exchangeRate -
               total
             ).toFixed(3),
           });

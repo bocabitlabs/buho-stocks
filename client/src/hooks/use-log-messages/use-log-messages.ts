@@ -1,6 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
+import queryClient from "api/query-client";
 import { ILogMessage } from "types/log-messages";
 
 interface DeleteMutationProps {
@@ -18,8 +19,6 @@ export const fetchLogMessages = async (portfolioId: number | undefined) => {
 };
 
 export const useDeleteLogMessages = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ portfolioId, logMessageId }: DeleteMutationProps) =>
       axios.delete(

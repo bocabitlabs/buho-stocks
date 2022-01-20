@@ -4,15 +4,14 @@ import { Col, Row, Spin } from "antd";
 import { Chart, registerables } from "chart.js";
 import PortfolioDividendsChart from "../PortfolioDividendsChart/PortfolioDividendsChart";
 import PortfolioReturnsChart from "../PortfolioReturnsChart/PortfolioReturnsChart";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 Chart.register(...registerables);
 
 export default function Charts() {
   const { id } = useParams();
-  const { data: stats, isFetching: loading } = usePortfolioYearStats(
+  const { data: stats, isFetching: loading } = usePortfolioAllYearStats(
     +id!,
-    "all-years",
     undefined,
   );
 

@@ -14,7 +14,7 @@ import { ISector } from "types/sector";
 export default function SuperSectorsTable() {
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
-  const { status, data, error, isFetching } = useSuperSectors();
+  const { status, data: sectors, error, isFetching } = useSuperSectors();
   const { mutateAsync: deleteSector } = useDeleteSuperSector();
 
   const confirmDelete = async (recordId: number) => {
@@ -67,14 +67,17 @@ export default function SuperSectorsTable() {
   ];
 
   const getData = () => {
-    return data.map((element: ISector) => ({
-      id: element.id,
-      key: element.id,
-      name: element.name,
-      color: element.color,
-      isSuperSector: element.isSuperSector,
-      superSector: element.superSector,
-    }));
+    return (
+      sectors &&
+      sectors.map((element: ISector) => ({
+        id: element.id,
+        key: element.id,
+        name: element.name,
+        color: element.color,
+        isSuperSector: element.isSuperSector,
+        superSector: element.superSector,
+      }))
+    );
   };
 
   if (isFetching) {

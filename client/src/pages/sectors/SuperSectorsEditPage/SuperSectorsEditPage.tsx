@@ -9,9 +9,9 @@ export default function SuperSectorsEditPage() {
   const params = useParams();
   const { id } = params;
   const idString: number = +id!;
-  const { data, error, isFetching } = useSuperSector(idString);
+  const { data: sector, error, isFetching } = useSuperSector(idString);
 
-  if (isFetching) {
+  if (isFetching || !sector) {
     return <div>Loading the sector with super...</div>;
   }
 
@@ -20,10 +20,10 @@ export default function SuperSectorsEditPage() {
   }
 
   return (
-    <SuperSectorsEditPageHeader sectorName={data.name}>
+    <SuperSectorsEditPageHeader sectorName={sector.name}>
       <Row>
         <Col>
-          <SuperSectorAddEditForm sector={data} />
+          <SuperSectorAddEditForm sector={sector} />
         </Col>
         <Col />
       </Row>

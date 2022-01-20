@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { ISectorFormFields } from "types/sector";
+import queryClient from "api/query-client";
+import { ISector, ISectorFormFields } from "types/sector";
 
 interface UpdateSectorMutationProps {
   newSector: ISectorFormFields;
@@ -9,8 +10,10 @@ interface UpdateSectorMutationProps {
 }
 
 export const fetchSectors = async () => {
-  const apiUrl = "/api/v1/sectors/";
-  const { data } = await axios.get(apiUrl, getAxiosOptionsWithAuth());
+  const { data } = await axios.get<ISector[]>(
+    "/api/v1/sectors/",
+    getAxiosOptionsWithAuth(),
+  );
   return data;
 };
 
@@ -18,69 +21,65 @@ export const fetchSector = async (sectorId: number | undefined) => {
   if (!sectorId) {
     throw new Error("sectorId is required");
   }
-  const apiUrl = "/api/v1/sectors/";
-  const { data } = await axios.get(
-    `${apiUrl}${sectorId}/`,
+  const { data } = await axios.get<ISector>(
+    `/api/v1/sectors/${sectorId}/`,
     getAxiosOptionsWithAuth(),
   );
   return data;
 };
 
 export const useAddSector = () => {
-  const queryClient = useQueryClient();
-  const apiUrl = "/api/v1/sectors/";
-  const cacheKey = "sectors";
-
   return useMutation(
     (newSector: ISectorFormFields) =>
-      axios.post(apiUrl, newSector, getAxiosOptionsWithAuth()),
+      axios.post("/api/v1/sectors/", newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([cacheKey]);
+        queryClient.invalidateQueries("sectors");
       },
     },
   );
 };
 
 export const useDeleteSector = () => {
-  const queryClient = useQueryClient();
-  const cacheKey = "sectors";
-  const apiUrl = "/api/v1/sectors/";
-
   return useMutation(
-    (id: number) => axios.delete(`${apiUrl}${id}/`, getAxiosOptionsWithAuth()),
+    (id: number) =>
+      axios.delete(`"/api/v1/sectors/${id}/`, getAxiosOptionsWithAuth()),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries([cacheKey]);
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries(["sectors", variables]);
       },
     },
   );
 };
 
 export const useUpdateSector = () => {
-  const queryClient = useQueryClient();
-  const apiUrl = "/api/v1/sectors/";
-
   return useMutation(
     ({ sectorId, newSector }: UpdateSectorMutationProps) =>
-      axios.put(`${apiUrl}${sectorId}/`, newSector, getAxiosOptionsWithAuth()),
+      axios.put(
+        `/api/v1/sectors/${sectorId}/`,
+        newSector,
+        getAxiosOptionsWithAuth(),
+      ),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["sectors"]);
+      onSuccess: (data, variables) => {
+        queryClient.invalidateQueries(["sectors", variables.sectorId]);
       },
     },
   );
 };
 
 export function useSectors() {
-  return useQuery(["sectors"], fetchSectors);
+  return useQuery<ISector[], Error>("sectors", fetchSectors);
 }
 
 export function useSector(sectorId: number | undefined) {
-  return useQuery(["sectors", sectorId], () => fetchSector(sectorId), {
-    // The query will not execute until the userId exists
-    enabled: !!sectorId,
-  });
+  return useQuery<ISector, Error>(
+    ["sectors", sectorId],
+    () => fetchSector(sectorId),
+    {
+      enabled: !!sectorId,
+    },
+  );
 }
 
 export default useSectors;

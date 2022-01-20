@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { ISettingsFormFields } from "types/settings";
+import queryClient from "api/query-client";
+import { ISettings, ISettingsFormFields } from "types/settings";
 
 interface UpdateSettingsMutationProps {
   newSettings: ISettingsFormFields;
@@ -9,14 +10,14 @@ interface UpdateSettingsMutationProps {
 }
 
 export const fetchSettings = async () => {
-  const apiUrl = "/api/v1/settings/";
-  const { data } = await axios.get(apiUrl, getAxiosOptionsWithAuth());
+  const { data } = await axios.get<ISettings>(
+    "/api/v1/settings/",
+    getAxiosOptionsWithAuth(),
+  );
   return data;
 };
 
 export const useUpdateSettings = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ id, newSettings }: UpdateSettingsMutationProps) =>
       axios.put(
@@ -26,14 +27,14 @@ export const useUpdateSettings = () => {
       ),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["settings"]);
+        queryClient.invalidateQueries("settings");
       },
     },
   );
 };
 
 export function useSettings(options = {}) {
-  return useQuery("settings", fetchSettings, options);
+  return useQuery<ISettings, Error>("settings", fetchSettings, options);
 }
 
 export default useSettings;

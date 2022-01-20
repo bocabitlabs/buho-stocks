@@ -1,7 +1,8 @@
 import React, { ReactElement } from "react";
-import { QueryClient, QueryClientProvider } from "react-query";
+import { QueryClientProvider } from "react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ReactQueryDevtools } from "react-query/devtools";
+import queryClient from "api/query-client";
 import App from "App";
 import RequireAuth from "components/RequireAuth/RequireAuth";
 import ScrollToTop from "components/ScrollToTop/ScrollToTop";
@@ -40,14 +41,6 @@ import SettingsPage from "pages/settings/SettingsPage/SettingsPage";
 import SharesTransactionsAddPage from "pages/shares/SharesTransactionsAddPage/SharesTransactionsAddPage";
 import SharesTransactionsEditPage from "pages/shares/SharesTransactionsEditPage/SharesTransactionsEditPage";
 import getRoute, { HOME_ROUTE } from "routes";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-});
 
 export default function Main(): ReactElement {
   const authContext = useAuthContext();

@@ -40,6 +40,7 @@ export interface ICompany extends ICompanyBase {
   dateCreated: string;
   lastUpdated: string;
   allStats: any;
+  stats: any;
   firstYear: number;
   lastTransactionMonth: string;
 }

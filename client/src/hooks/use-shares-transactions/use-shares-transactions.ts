@@ -1,7 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
-import { ISharesTransactionFormFields } from "types/shares-transaction";
+import queryClient from "api/query-client";
+import {
+  ISharesTransaction,
+  ISharesTransactionFormFields,
+} from "types/shares-transaction";
 
 interface IUpdateSharesMutationProps {
   newTransaction: ISharesTransactionFormFields;
@@ -25,7 +29,7 @@ export const fetchSharesTransactions = async (
   if (!companyId) {
     throw new Error("companyId is required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<ISharesTransaction[]>(
     `/api/v1/companies/${companyId}/shares/`,
     getAxiosOptionsWithAuth(),
   );
@@ -39,7 +43,7 @@ export const fetchSharesTransaction = async (
   if (!companyId && !transactionId) {
     throw new Error("companyId and transactionId are required");
   }
-  const { data } = await axios.get(
+  const { data } = await axios.get<ISharesTransaction>(
     `/api/v1/companies/${companyId}/shares/${transactionId}/`,
     getAxiosOptionsWithAuth(),
   );
@@ -47,8 +51,6 @@ export const fetchSharesTransaction = async (
 };
 
 export const useAddSharesTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, newTransaction }: IAddSharesMutationProps) =>
       axios.post(
@@ -69,8 +71,6 @@ export const useAddSharesTransaction = () => {
 };
 
 export const useDeleteSharesTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({ companyId, transactionId }: DeleteTransactionMutationProps) =>
       axios.delete(
@@ -86,8 +86,6 @@ export const useDeleteSharesTransaction = () => {
 };
 
 export const useUpdateSharesTransaction = () => {
-  const queryClient = useQueryClient();
-
   return useMutation(
     ({
       companyId,
@@ -113,7 +111,7 @@ export const useUpdateSharesTransaction = () => {
 };
 
 export function useSharesTransactions(companyId: number | undefined) {
-  return useQuery(
+  return useQuery<ISharesTransaction[], Error>(
     ["sharesTransactions", companyId],
     () => fetchSharesTransactions(companyId),
     { enabled: !!companyId },
@@ -124,7 +122,7 @@ export function useSharesTransaction(
   companyId: number | undefined,
   transactionId: number | undefined,
 ) {
-  return useQuery(
+  return useQuery<ISharesTransaction, Error>(
     ["sharesTransactions", companyId, transactionId],
     () => fetchSharesTransaction(companyId, transactionId),
     {
