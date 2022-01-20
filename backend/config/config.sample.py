@@ -7,6 +7,9 @@ LOG_LEVEL = "DEBUG"
 # Whether or not to log to file
 # Default: False
 LOG_TO_FILE = False
+# Active handlers for the logger
+# Default:["console"]. Other options: ["console", "file"]
+LOGGER_HANDLERS = ["console"]
 # Path to the log files
 # Default: "/usr/src/logs/"
 LOGS_ROOT = "/usr/src/logs/"
