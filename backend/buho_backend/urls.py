@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from unicodedata import name
 from django.conf.urls import url
 from django.contrib import admin
 from django.urls import path, register_converter, include
@@ -42,9 +43,9 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/v1/companies/", include("companies.urls")),
+    path("api/v1/companies/", include("companies.urls"), name="companies"),
     path("api/v1/currencies/", include("currencies.urls")),
-    path("api/v1/exchange-rates/", include("exchange_rates.urls")),
+    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
     path("api/v1/markets/", include("markets.urls")),
     path("api/v1/portfolios/", include("portfolios.urls")),
     path("api/v1/sectors/", include("sectors.urls")),
