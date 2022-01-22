@@ -21,12 +21,22 @@ class UserLoginTestCase(APITestCase):
             "first_name": cls.user_object.first_name,
             "last_name": cls.user_object.last_name,
         }
+
+        user = User.objects.create(
+            username=cls.signup_dict["username"],
+            email=cls.signup_dict["email"],
+            first_name=cls.signup_dict["first_name"],
+            last_name=cls.signup_dict["last_name"],
+        )
+
+        user.set_password(cls.signup_dict["password"])
+        user.save()
+
         cls.signup_url = reverse("auth_register")
         cls.login_url = reverse("auth_login")
         cls.faker_obj = Faker()
 
     def test_if_login_works(self):
-        self.client.post(self.signup_url, self.signup_dict)
         # Make request
         self.assertEqual(User.objects.count(), 1)
         data = {

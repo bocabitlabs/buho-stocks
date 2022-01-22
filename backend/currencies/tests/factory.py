@@ -6,5 +6,3 @@ class CurrencyFactory(Factory):
     code = Faker("currency_code")
     symbol = Faker('currency_symbol')
     countries = [Faker("country") for _ in range(3)]
-
-    user = SubFactory('auth.tests.factory.UserFactory', currencies=[])

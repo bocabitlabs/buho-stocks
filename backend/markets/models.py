@@ -16,7 +16,7 @@ class Market(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     def __str___(self):
-        return self.name
+        return f"{self.name} {self.region} ({self.open_time}-{self.close_time})"
 
     class Meta:
         ordering = ['name']

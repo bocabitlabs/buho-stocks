@@ -25,25 +25,3 @@ class CurrencyListAPIView(APIView):
         """
         currencies = get_all_currencies()
         return Response(currencies, status=status.HTTP_200_OK)
-
-
-class CurrencyDetailAPIView(APIView):
-    """Operations for a single Currency"""
-
-    authentication_classes = [BasicAuthentication, TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["currencies"])
-    def get(self, request, code, *args, **kwargs):
-        """
-        Retrieve the currency item with given currency_id
-        """
-        instance = get_currency_details(code)
-        if not instance:
-            return Response(
-                {"res": "Object with currency id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        return Response(instance, status=status.HTTP_200_OK)
