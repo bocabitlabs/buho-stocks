@@ -15,4 +15,4 @@ class MarketFactory(django.DjangoModelFactory):
     open_time = Faker('time')
     close_time = Faker('time')
 
-    user = SubFactory(UserFactory, markets=[])
+    user = SubFactory(UserFactory)
