@@ -1,17 +1,16 @@
-import React, { ReactElement, useCallback, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
 import { useUpdatePortfolioYearStatsForced } from "hooks/use-stats/use-portfolio-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 import { ICompany } from "types/company";
-import { IPortfolio } from "types/portfolio";
 
 interface Props {
   id: string | undefined;
   selectedYear: string | undefined;
+  companies: ICompany[];
 }
 
 async function asyncForEach(array: any[], callback: Function) {
@@ -24,6 +23,7 @@ async function asyncForEach(array: any[], callback: Function) {
 export default function StatsRefreshModal({
   id,
   selectedYear,
+  companies,
 }: Props): ReactElement {
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
@@ -33,17 +33,15 @@ export default function StatsRefreshModal({
   const [checkAll, setCheckAll] = useState(false);
   const [checkedList, setCheckedList] = React.useState<CheckboxValueType[]>([]);
   const [indeterminate, setIndeterminate] = React.useState(false);
+  const [checkboxes, setCheckboxes] = useState<CheckboxValueType[]>([]);
 
-  const [companies, setCompanies] = useState<CheckboxValueType[]>([]);
+  useEffect(() => {
+    const tempCheckboxes = companies.map((company: ICompany) => {
+      return `${company.name} (${company.ticker}) - #${company.id}`;
+    });
+    setCheckboxes(tempCheckboxes);
+  }, [companies]);
 
-  usePortfolio(+id!, {
-    onSuccess: (data: IPortfolio) => {
-      const checkboxes = data.companies.map((company: ICompany) => {
-        return `${company.name} (${company.ticker}) - #${company.id}`;
-      });
-      setCompanies(checkboxes);
-    },
-  });
   const { mutateAsync: updateStockPrice, isLoading: loadingPrice } =
     useUpdateCompanyStockPrice();
   const { mutateAsync: updateCompanyStats, isLoading: updateCompanyLoading } =
@@ -148,7 +146,7 @@ export default function StatsRefreshModal({
   };
 
   const onCheckAllChange = (e: any) => {
-    setCheckedList(e.target.checked ? companies : []);
+    setCheckedList(e.target.checked ? checkboxes : []);
     setIndeterminate(false);
     setCheckAll(e.target.checked);
   };
@@ -156,9 +154,9 @@ export default function StatsRefreshModal({
   const onChange = (checkedValue: CheckboxValueType[]) => {
     setCheckedList(checkedValue);
     setIndeterminate(
-      !!checkedValue.length && checkedValue.length < companies.length,
+      !!checkedValue.length && checkedValue.length < checkboxes.length,
     );
-    setCheckAll(checkedValue.length === companies.length);
+    setCheckAll(checkedValue.length === checkboxes.length);
   };
 
   return (
@@ -210,7 +208,7 @@ export default function StatsRefreshModal({
             valuePropName="checked"
           >
             <Checkbox.Group onChange={onChange} value={checkedList}>
-              {companies.map((company, index: number) => (
+              {checkboxes.map((company, index: number) => (
                 <div key={index.toString()}>
                   <Checkbox value={company}>{company}</Checkbox>
                 </div>

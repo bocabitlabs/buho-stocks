@@ -1,7 +1,7 @@
 from rest_framework.fields import SerializerMethodField
 from rest_framework import serializers
 
-from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
+from companies.serializers_lite import CompanySerializerLite
 from currencies.models import get_currency_details
 from portfolios.models import Portfolio
 from companies.serializers import CompanySerializer
@@ -10,7 +10,7 @@ from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
-    companies = UserFilteredPrimaryKeyRelatedField(many=True, read_only=True)
+    companies = CompanySerializerLite(many=True, read_only=True)
 
     class Meta:
         model = Portfolio

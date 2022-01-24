@@ -19,7 +19,11 @@ export default function PortfolioDetailsPage() {
       portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
-      <YearSelector id={id} firstYear={portfolio.firstYear} />
+      <YearSelector
+        id={id}
+        firstYear={portfolio.firstYear}
+        companies={portfolio ? portfolio.companies : []}
+      />
       <CompaniesList companies={portfolio ? portfolio.companies : []} />
     </PortfolioDetailsPageHeader>
   );
