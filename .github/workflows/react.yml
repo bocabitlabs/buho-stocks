@@ -30,4 +30,6 @@ jobs:
           cd client && yarn lint
       - name: Run Tests
         run: |
-          cd client && yarn test
+          cd client && yarn test --coverage
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
