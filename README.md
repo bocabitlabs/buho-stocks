@@ -1,7 +1,10 @@
 # Buho Backend (WIP)
 
+<p align="center">
 [![Django CI](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg)](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml) [![React CI](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg)](https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml)
 
+<a href="https://codecov.io/gh/bocabitlabs/buho-stocks-docker" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks-docker/branch/master/graph/badge.svg" alt="codecov"/></a>
+</p>
 
 ## Install
 
