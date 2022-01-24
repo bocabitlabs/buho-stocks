@@ -1,4 +1,5 @@
 black==21.9b0
+coverage==6.2
 Django==3.2.8
 django-filter==21.1
 django-money==2.1
