@@ -1,0 +1,8 @@
+[run]
+branch = true
+omit = */tests/*, */migrations/*, */wsgi.py, manage.py, fabfile.py, */__init__.py
+source = .
+
+# .coveragerc
+[report]
+show_missing = True

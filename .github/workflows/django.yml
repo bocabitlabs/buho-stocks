@@ -29,6 +29,6 @@ jobs:
         sed -i -e "s/\/usr\/src\/data\/db.sqlite3/{{env.GITHUB_WORKSPACE}}\backend\/db.sqlite3/g" backend/config/config.py
     - name: Run Tests
       run: |
-        python backend/manage.py test --coverage
+        coverage run backend/manage.py test
     - name: Upload coverage
       uses: codecov/codecov-action@v1
