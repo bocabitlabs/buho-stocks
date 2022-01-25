@@ -49,7 +49,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(validated_data["password"])
         user.save()
 
-        user_settings = UserSettings.objects.create(user=user)
-        user_settings.save()
+        # user_settings = UserSettings.objects.create(user=user)
+        # user_settings.save()
 
         return user

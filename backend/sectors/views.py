@@ -16,14 +16,11 @@ from sectors.models import Sector, SuperSector
 
 
 class SectorListAPIView(APIView):
-    # add permission to check if user is authenticated
-    # permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [
         TokenAuthentication,
     ]
     permission_classes = [IsAuthenticated]
 
-    # 1. List all
     @swagger_auto_schema(tags=["sectors"])
     def get(self, request, *args, **kwargs):
         """
@@ -39,18 +36,16 @@ class SectorListAPIView(APIView):
         """
         Create the Sector with given market data
         """
-        print(request.data)
         data = {
             "name": request.data.get("name"),
             "color": request.data.get("color"),
             "super_sector": request.data.get("super_sector"),
         }
-        print(data)
+        print(request.data.get("super_sector") == None)
         serializer = SectorSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        print("Not valid")
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

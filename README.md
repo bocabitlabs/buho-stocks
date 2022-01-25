@@ -5,7 +5,7 @@
 <p align="center">Application to manage and track a stocks portfolio with dividends and return for a <a href="https://en.wikipedia.org/wiki/Buy_and_hold" title="Wikipedia">Buy & Hold investment</a> investment strategy.</p>
 
 <p align="center">
-<img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks-docker" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks-docker/branch/master/graph/badge.svg" alt="codecov"/></a>
+<img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks-docker" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks-docker/branch/main/graph/badge.svg" alt="codecov"/></a>
 </p>
 
 <p align="center">
@@ -13,23 +13,24 @@
   <a href="#install">Install</a> •
   <a href="#development">Development</a> •
   <a href="#links">Links</a> •
-  <a href="#attributions">Attributions</a>
+  <a href="#attributions">Attributions</a> •
+  <a href="#screenshots">Screenshots</a> •
 </p>
 
 ## 🎁 Features
 
-| Feature  | Description  |
-|---|---|
-| Unlimited portfolios  |   |
-| Unlimited companies per portfolio  |   |
-| Support for stock transactions, dividends and rights | |
-| Unlimited sectors and subsectors | |
-| Historical Exchange rates from ECB | |
-| Import CSV files from Interactive Brokers and ING (Spain) | |
-| ~~Export data to CSV~~ | |
+| Feature  |
+|---|
+| Unlimited portfolios  |
+| Unlimited companies per portfolio  |
+| Support for stock transactions, dividends and rights |
+| Unlimited sectors and subsectors |
+| Historical Exchange rates from ECB |
+| Import CSV files from Interactive Brokers and ING (Spain) |
+| ~~Export data to CSV~~ |
 | Fetch stock prices and exchange rates from a external source in real time. |
-| Multiple charts: dividends, returns, sectors, currencies... | |
-| ~~Database backup~~ | |
+| Multiple charts: dividends, returns, sectors, currencies... |
+| ~~Database backup~~ |
 
 - Planned: Support for multiple languages
 
