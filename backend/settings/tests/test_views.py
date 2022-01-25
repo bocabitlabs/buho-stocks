@@ -5,6 +5,7 @@ from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
 import factory
 from auth.tests.factory import UserFactory
+from django.contrib.auth.models import User
 
 
 class UserSettingsListTestCase(APITestCase):
@@ -46,9 +47,12 @@ class UserSettingsDetailTestCase(APITestCase):
 
     def test_update_settings(self):
         temp_data = {"language": "en"}
-        url = reverse("user-settings-detail", args=[10])
+        url = reverse("user-settings-detail", args=[self.user_saved.usersettings.id])
         response = self.client.put(url, temp_data)
         # Check status response
+        self.assertEqual(len(User.objects.all()), 1)
+        print(response.data)
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["language"],

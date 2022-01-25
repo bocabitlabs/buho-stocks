@@ -114,7 +114,7 @@ class SectorsDetailTestCase(APITestCase):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_sector(self):
-        url = reverse("sector-detail", args=[1])
+        url = reverse("sector-detail", args=[self.instances[0].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -126,21 +126,22 @@ class SectorsDetailTestCase(APITestCase):
             response.data["color"],
             self.instances[0].color,
         )
-        url = reverse("sector-detail", args=[4])
+        index = len(self.instances) - 1
+        url = reverse("sector-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             response.data["name"],
-            self.instances[len(self.instances) - 1].name,
+            self.instances[index].name,
         )
         self.assertEqual(
             response.data["color"],
-            self.instances[len(self.instances) - 1].color,
+            self.instances[index].color,
         )
 
     def test_update_sector_super_sector(self):
         super_sector = SuperSectorFactory.create(user=self.user_saved)
         temp_data = factory.build(dict, FACTORY_CLASS=SectorFactory, super_sector=super_sector.id)
-        url = reverse("sector-detail", args=[1])
+        url = reverse("sector-detail", args=[self.instances[0].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -158,7 +159,7 @@ class SectorsDetailTestCase(APITestCase):
 
     def test_update_sector(self):
         temp_data = factory.build(dict, FACTORY_CLASS=SectorFactory)
-        url = reverse("sector-detail", args=[1])
+        url = reverse("sector-detail", args=[self.instances[0].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -172,12 +173,12 @@ class SectorsDetailTestCase(APITestCase):
         )
 
     def test_delete_sector(self):
-        url = reverse("sector-detail", args=[1])
+        url = reverse("sector-detail", args=[self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         with self.assertRaises(Sector.DoesNotExist):
-            Sector.objects.get(id=1)
+            Sector.objects.get(id=self.instances[0].id)
 
 
 class SuperSectorsDetailTestCase(APITestCase):
@@ -196,35 +197,36 @@ class SuperSectorsDetailTestCase(APITestCase):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_super_sector(self):
-        # for sector in SuperSector.objects.all():
-        #   print(f"{sector.id} - {sector.name}")
+        index = 0
         self.assertEqual(len(SuperSector.objects.all()), 4)
-        url = reverse("super-sector-detail", args=[4])
+        url = reverse("super-sector-detail", args=[self.instances[index].id])
         response = self.client.get(url)
-        # # Check status response
+        # # # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["name"],
-            self.instances[0].name,
+            self.instances[index].name,
         )
         self.assertEqual(
             response.data["color"],
-            self.instances[0].color,
+            self.instances[index].color,
         )
-        url = reverse("super-sector-detail", args=[7])
+        index = len(self.instances) - 1
+        url = reverse("super-sector-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             response.data["name"],
-            self.instances[len(self.instances) - 1].name,
+            self.instances[index].name,
         )
         self.assertEqual(
             response.data["color"],
-            self.instances[len(self.instances) - 1].color,
+            self.instances[index].color,
         )
 
     def test_update_super_sector(self):
+        index = 0
         temp_data = factory.build(dict, FACTORY_CLASS=SuperSectorFactory)
-        url = reverse("super-sector-detail", args=[4])
+        url = reverse("super-sector-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -238,9 +240,10 @@ class SuperSectorsDetailTestCase(APITestCase):
         )
 
     def test_delete_super_sector(self):
-        url = reverse("super-sector-detail", args=[4])
+        index = len(self.instances) - 1
+        url = reverse("super-sector-detail", args=[self.instances[index].id])
         response = self.client.delete(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         with self.assertRaises(SuperSector.DoesNotExist):
-            SuperSector.objects.get(id=4)
+            SuperSector.objects.get(id=self.instances[index].id)
