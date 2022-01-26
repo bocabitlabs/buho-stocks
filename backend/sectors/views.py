@@ -41,7 +41,6 @@ class SectorListAPIView(APIView):
             "color": request.data.get("color"),
             "super_sector": request.data.get("super_sector"),
         }
-        print(request.data.get("super_sector") == None)
         serializer = SectorSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save(user=self.request.user)
@@ -154,7 +153,6 @@ class SuperSectorListAPIView(APIView):
         }
         serializer = SuperSectorSerializer(data=data, context={"request": request})
         if serializer.is_valid():
-            print("Serializer is valid")
             serializer.save(user=self.request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 

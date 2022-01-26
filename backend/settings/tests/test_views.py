@@ -51,7 +51,6 @@ class UserSettingsDetailTestCase(APITestCase):
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(len(User.objects.all()), 1)
-        print(response.data)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(

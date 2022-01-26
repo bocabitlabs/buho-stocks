@@ -1,16 +1,19 @@
 import datetime
 from exchange_rates.serializers import ExchangeRateSerializer
 from forex_python.converter import CurrencyRates
+import logging
+
+logger = logging.getLogger("buho_backend")
 
 def get_exchange_rates_from_api(exchange_from, exchange_to, exchange_date):
-    # print("Call the exchange API")
-    # print(f"From: {exchange_from} To: {exchange_to} Date: {exchange_date}")
+    logger.debug("Call the exchange API")
+    logger.debug(f"From: {exchange_from} To: {exchange_to} Date: {exchange_date}")
 
     if isinstance(exchange_date, str):
         exchange_date = datetime.datetime.strptime(exchange_date, "%Y-%m-%d").date()
 
     currency_rates = CurrencyRates()
-    # print(f"Making request: {exchange_from} {exchange_date}")
+    logger.debug(f"Making request: {exchange_from} {exchange_date}")
     rates = currency_rates.get_rates(exchange_from, exchange_date)
     desired_exchange = None
     for key in rates:
@@ -26,7 +29,6 @@ def get_exchange_rates_from_api(exchange_from, exchange_to, exchange_date):
             if key == exchange_to:
                 desired_exchange = serializer
         else:
-            print("Serializer is not valid")
-            print(key)
-            print(serializer.errors)
+            logger.debug("Serializer is not valid")
+            logger.debug(serializer.errors)
     return desired_exchange

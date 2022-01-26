@@ -7,6 +7,7 @@ from buho_backend.transaction_types import TransactionType
 from companies.models import Company
 from exchange_rates.models import ExchangeRate
 from exchange_rates.utils import get_exchange_rates_from_api
+from shares_transactions.models import SharesTransaction
 from stats.models.company_stats import CompanyStatsForYear
 from stock_prices.api import StockPricesApi
 from stock_prices.services.custom_yfinance_service import CustomYFinanceService
@@ -128,19 +129,19 @@ class CompanyStatsUtils:
             query = query.all()
         else:
             query = query.filter(transaction_date__year=self.year)
-        print(f"Found {query.count()} dividends")
+        logger.debug(f"Found {query.count()} dividends")
         for item in query:
             exchange_rate = 1
             if self.use_currency == "portfolio":
                 exchange_rate = item.exchange_rate
-            print(
+            logger.debug(
                 f"{item.gross_price_per_share.amount} * {exchange_rate} * {item.count}"
             )
             total += (
                 item.gross_price_per_share.amount * exchange_rate * item.count
                 - item.total_commission.amount * exchange_rate
             )
-            print(f"Total: {total}")
+            logger.debug(f"Total: {total}")
         return total
 
     def get_accumulated_dividends_until_year(self):
@@ -192,7 +193,7 @@ class CompanyStatsUtils:
                         )
                         exchange_rate_value = exchange_rate["exchange_rate"].value
                     except RatesNotAvailableError as error:
-                        print(str(error))
+                        logger.debug(str(error))
         return exchange_rate_value
 
     def get_portfolio_value(self, stock_price, shares_count):

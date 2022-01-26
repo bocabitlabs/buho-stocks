@@ -32,25 +32,6 @@ class ExchangeRateListAPIView(APIView):
         serializer = ExchangeRateSerializer(todos, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # # 2. Create
-    # @swagger_auto_schema(tags=["exchange_rates"], request_body=ExchangeRateSerializer)
-    # def post(self, request, *args, **kwargs):
-    #     """
-    #     Create the Exchange rate with given market data
-    #     """
-    #     data = {
-    #         "exchange_from": request.data.get("exchange_from"),
-    #         "exchange_to": request.data.get("exchange_to"),
-    #         "exchange_date": request.data.get("exchange_date"),
-    #         "exchange_rate": request.data.get("exchange_rate"),
-    #     }
-    #     serializer = ExchangeRateSerializer(data=data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class ExchangeRateDetailAPIView(APIView):
     """Operations for a single Exchange rate"""
@@ -58,7 +39,7 @@ class ExchangeRateDetailAPIView(APIView):
     authentication_classes = [
         TokenAuthentication,
     ]
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_object(self, exchange_from, exchange_to, exchange_date):
         try:
@@ -95,43 +76,3 @@ class ExchangeRateDetailAPIView(APIView):
         else:
             serializer = ExchangeRateSerializer(todo_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 4. Update
-    @swagger_auto_schema(tags=["exchange_rates"], request_body=ExchangeRateSerializer)
-    def put(self, request, exchange_from, exchange_to, exchange_date, *args, **kwargs):
-        """
-        Update the market item with given market_id
-        """
-        todo_instance = self.get_object(exchange_from, exchange_to, exchange_date)
-        if not todo_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        data = {
-            "exchange_from": request.data.get("exchange_from"),
-            "exchange_to": request.data.get("exchange_to"),
-            "exchange_date": request.data.get("exchange_date"),
-            "exchange_rate": request.data.get("exchange_rate"),
-        }
-        serializer = ExchangeRateSerializer(
-            instance=todo_instance, data=data, partial=True
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # 5. Delete
-    @swagger_auto_schema(tags=["exchange_rates"])
-    def delete(
-        self, request, exchange_from, exchange_to, exchange_date, *args, **kwargs
-    ):
-        market_instance = self.get_object(exchange_from, exchange_to, exchange_date)
-        if not market_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        market_instance.delete()
-        return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)

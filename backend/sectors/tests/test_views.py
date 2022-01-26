@@ -44,7 +44,6 @@ class SectorsListTestCase(APITestCase):
 
     def test_create_sector(self):
         temp_data = factory.build(dict, FACTORY_CLASS=SectorFactory)
-        print(temp_data)
         response = self.client.post(self.sectors_url, temp_data)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

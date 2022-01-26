@@ -39,12 +39,7 @@ class YFinanceStockPricesService(StockPriceServiceBase):
             start=start_date, end=end_date, period="1d", timeout=10
         )
         logger.debug(result)
-        # print(type(result))
-        # print(result)
         for col, row in result.iterrows():
-            # result += max(row.B, row.C)
-            # print(element)
-            # print(col)
             logger.debug(col)
             logger.debug(row)
             try:
