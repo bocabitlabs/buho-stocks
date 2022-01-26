@@ -4,9 +4,8 @@ from companies import views as company_views
 from log_messages import views as log_views
 
 urlpatterns = [
-    path("", views.PortfoliosListAPIView.as_view()),
-    path("<int:portfolio_id>/", views.PortfolioDetailAPIView.as_view()),
-    path("", views.PortfoliosListAPIView.as_view()),
+    path("", views.PortfoliosListAPIView.as_view(), name="portfolio-list"),
+    path("<int:portfolio_id>/", views.PortfolioDetailAPIView.as_view(), name="portfolio-detail"),
     path("<int:portfolio_id>/companies/", company_views.CompaniesListAPIView.as_view()),
     path(
         "<int:portfolio_id>/companies/<int:company_id>/",
