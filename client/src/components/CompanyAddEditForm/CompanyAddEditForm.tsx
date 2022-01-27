@@ -27,7 +27,9 @@ function CompanyAddEditForm({
   company,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
-  const [countryCode, setCountryCode] = useState("");
+  const [countryCode, setCountryCode] = useState(
+    company ? company.countryCode : "",
+  );
   const { t } = useTranslation();
   const { createError, createSuccess } = useContext(AlertMessagesContext);
 

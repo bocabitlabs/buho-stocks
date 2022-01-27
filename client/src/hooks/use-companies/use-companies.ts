@@ -62,7 +62,7 @@ export const useDeleteCompany = () => {
   return useMutation(
     ({ portfolioId, companyId }: DeleteMutationProps) =>
       axios.delete(
-        `/api/v1/portfolios/${portfolioId}/companies/${companyId}`,
+        `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
         getAxiosOptionsWithAuth(),
       ),
     {
@@ -81,7 +81,7 @@ export const useUpdateCompany = () => {
   return useMutation(
     ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
       axios.put(
-        `/api/v1/portfolios/${portfolioId}/companies/${companyId}`,
+        `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
         newCompany,
         getAxiosOptionsWithAuth(),
       ),
