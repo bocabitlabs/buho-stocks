@@ -42,7 +42,7 @@ class Company(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     def __str___(self):
-        return self.name
+        return f"{self.id} - {self.name} ({self.ticker})"
 
     class Meta:
         ordering = ['name']

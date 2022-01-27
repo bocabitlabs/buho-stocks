@@ -61,38 +61,41 @@ class MarketsDetailTestCase(APITestCase):
         for _ in range(0, 4):
             market = MarketFactory.create(user=cls.user_saved)
             markets.append(market)
-        cls.markets = markets
+        cls.instances = markets
 
     def setUp(self):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_markets(self):
-        url = reverse("market-detail", args=[1])
+        index = 0
+        url = reverse("market-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["name"],
-            self.markets[0].name,
+            self.instances[index].name,
         )
         self.assertEqual(
             response.data["description"],
-            self.markets[0].description,
+            self.instances[index].description,
         )
-        url = reverse("market-detail", args=[4])
+        index = len(self.instances) - 1
+        url = reverse("market-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             response.data["name"],
-            self.markets[len(self.markets) - 1].name,
+            self.instances[index].name,
         )
         self.assertEqual(
             response.data["description"],
-            self.markets[len(self.markets) - 1].description,
+            self.instances[index].description,
         )
 
     def test_update_market(self):
+        index = 0
         temp_data = factory.build(dict, FACTORY_CLASS=MarketFactory)
-        url = reverse("market-detail", args=[1])
+        url = reverse("market-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -106,9 +109,10 @@ class MarketsDetailTestCase(APITestCase):
         )
 
     def test_delete_market(self):
-        url = reverse("market-detail", args=[1])
+        index = 0
+        url = reverse("market-detail", args=[self.instances[index].id])
         response = self.client.delete(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         with self.assertRaises(Market.DoesNotExist):
-          Market.objects.get(id=1)
+          Market.objects.get(id=self.instances[index].id)

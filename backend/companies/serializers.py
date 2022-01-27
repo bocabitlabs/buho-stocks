@@ -18,11 +18,13 @@ from shares_transactions.models import SharesTransaction
 from drf_extra_fields.fields import Base64ImageField
 from stats.models.company_stats import CompanyStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
+import logging
 
+logger = logging.getLogger("buho_backend")
 
 class CompanySerializer(serializers.ModelSerializer):
-    market = MarketSerializer(many=False, read_only=True)
-    sector = SectorSerializerGet(many=False, read_only=True)
+    market = UserFilteredPrimaryKeyRelatedField(queryset=Market.objects, many=False, read_only=False)
+    sector = UserFilteredPrimaryKeyRelatedField(queryset=Sector.objects,many=False, read_only=False)
     portfolio = UserFilteredPrimaryKeyRelatedField(
         queryset=Portfolio.objects, many=False, read_only=False
     )
@@ -42,15 +44,13 @@ class CompanySerializer(serializers.ModelSerializer):
             "color",
             "country_code",
             "description",
-            # "dividends_currency",
+            "dividends_currency",
             "dividends_transactions",
             "logo",
             "market",
             "name",
             "portfolio",
-            # "rights_transactions",
             "sector",
-            # "shares_transactions",
             "ticker",
             "url",
             "all_stats",
@@ -60,6 +60,7 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
+        logger.debug(f"Validating attrs: {attrs}")
         market = attrs["market"]
         portfolio = attrs["portfolio"]
         sector = attrs["sector"]

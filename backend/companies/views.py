@@ -10,7 +10,9 @@ from companies.serializers import CompanySerializer, CompanySerializerGet
 from companies.models import Company
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
+import logging
 
+logger = logging.getLogger("buho_backend")
 
 class CompaniesListAPIView(APIView):
     """Get all the companies from a user's portfolio"""
@@ -117,16 +119,16 @@ class CompanyDetailAPIView(APIView):
             "name": request.data.get("name"),
             "description": request.data.get("description"),
             "color": request.data.get("color"),
-            "tiker": request.data.get("ticker"),
+            "ticker": request.data.get("ticker"),
             "alt_tickers": request.data.get("alt_tickers"),
             "country_code": request.data.get("country_code"),
             "broker": request.data.get("broker"),
             "url": request.data.get("url"),
-            "currency": request.data.get("currency"),
+            "base_currency": request.data.get("base_currency"),
             "dividends_currency": request.data.get("dividends_currency"),
             "sector": request.data.get("sector"),
             "market": request.data.get("market"),
-            "portfolio": request.data.get("portfolio"),
+            "portfolio": portfolio_id,
         }
         if request.data.get("logo"):
             data["logo"] = request.data.get("logo")
