@@ -60,7 +60,6 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        logger.debug(f"Validating attrs: {attrs}")
         market = attrs["market"]
         portfolio = attrs["portfolio"]
         sector = attrs["sector"]

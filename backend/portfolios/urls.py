@@ -11,9 +11,9 @@ urlpatterns = [
         "<int:portfolio_id>/companies/<int:company_id>/",
         company_views.CompanyDetailAPIView.as_view(), name="company-detail",
     ),
-    path("<int:portfolio_id>/messages/", log_views.LogMessageListAPIView.as_view()),
+    path("<int:portfolio_id>/messages/", log_views.LogMessageListAPIView.as_view(), name="log-message-list"),
     path(
         "<int:portfolio_id>/messages/<int:message_id>/",
-        log_views.LogMessageDetailAPIView.as_view(),
+        log_views.LogMessageDetailAPIView.as_view(), name="log-message-detail",
     ),
 ]
