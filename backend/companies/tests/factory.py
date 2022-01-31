@@ -13,7 +13,7 @@ class CompanyFactory(django.DjangoModelFactory):
         model = Company
 
     name = Faker("company")
-    ticker = Faker("color")
+    ticker = Faker("pystr", max_chars=4)
     alt_tickers = Faker("paragraph")
     description = Faker("paragraph")
     url = Faker("url")

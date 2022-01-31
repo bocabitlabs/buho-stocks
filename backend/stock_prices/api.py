@@ -78,7 +78,7 @@ class StockPricesApi:
             f"Prices length: {prices_length} vs minimum values: {minimum_values}"
         )
         if prices_length < minimum_values:
-            if self.force:
+            if only_api:
                 logger.debug("Force is true. Searching remote.")
             else:
                 logger.debug("No historical data found locally. Searching remote.")
