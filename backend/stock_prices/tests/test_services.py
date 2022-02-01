@@ -1,4 +1,5 @@
 from decimal import Decimal
+import pathlib
 import time
 from unittest.mock import patch
 from django.urls import reverse
@@ -28,7 +29,7 @@ class CustomYServiceTestCase(APITestCase):
         self,
     ):
         response_text = ""
-        with open('/workspace/backend/stock_prices/tests/resp_text.txt') as f:
+        with open(f"{pathlib.Path(__file__).parent.resolve()}/resp_text.txt") as f:
           response_text = [x.strip() for x in f.readlines()]
         logger.debug(response_text)
         responses.add(
