@@ -16,4 +16,5 @@ pre-commit==2.15.0
 pylint==2.11.1
 pylint-django==2.4.4
 requests==2.26.0
+responses==0.17.0
 yfinance==0.1.67

@@ -25,7 +25,7 @@ class StockPricesYearAPIView(APIView):
         company = Company.objects.get(id=company_id, user=user_id)
         api_service = CustomYFinanceService()
         api = StockPricesApi(api_service)
-        data = api.get_last_data_from_year(company.ticker, year)
+        data = api.get_last_data_from_year(company.ticker, year, only_api=True)
         return data
 
     @swagger_auto_schema(tags=["company_stock_prices"])

@@ -11,11 +11,11 @@ logger = logging.getLogger("buho_backend")
 
 
 class CustomYFinanceService(StockPriceServiceBase):
-    def __init__(self):
-        pass
+    def __init__(self, wait_time=2):
+        self.wait_time = wait_time
 
     def get_current_data(self, ticker: str):
-        time.sleep(2)
+        time.sleep(self.wait_time)
         company = yfinance.Ticker(ticker)
         company_info = company.info
 
@@ -34,7 +34,7 @@ class CustomYFinanceService(StockPriceServiceBase):
     def get_historical_data(self, ticker: str, start_date: str, end_date: str):
         prices = []
         logger.debug(f"Get historical data for {ticker} from {start_date} to {end_date}")
-        time.sleep(2)
+        time.sleep(self.wait_time)
 
         results, currency = self.request_from_api(ticker, start_date, end_date)
 
@@ -68,6 +68,7 @@ class CustomYFinanceService(StockPriceServiceBase):
 
     def request_from_api(self, ticker, from_date, to_date):
         # Convert from_date to datetime
+        logger.debug(f"Requesting historical data for {ticker} from {from_date} to {to_date}")
         from_date_datetime = datetime.strptime(from_date, "%Y-%m-%d")
         # Convert to_date to datetime
         to_date_datetime = datetime.strptime(to_date, "%Y-%m-%d")
@@ -88,8 +89,6 @@ class CustomYFinanceService(StockPriceServiceBase):
                 0
             ]
         )
-        logger.debug(f"Got {len(result)} rows")
-        logger.debug(result)
         currency_search = re.search("Currency in (\w+)\<\/span\>", response.text)
         currency = currency_search.group(1)
 
