@@ -33,6 +33,8 @@ class CompanySerializer(serializers.ModelSerializer):
     all_stats = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
 
+    base_currency = SerializerMethodField()
+    dividends_currency = SerializerMethodField()
 
     class Meta:
         model = Company
@@ -85,6 +87,16 @@ class CompanySerializer(serializers.ModelSerializer):
         if query.exists():
             return f"{query[len(query)-1].transaction_date.year}-{query[len(query)-1].transaction_date.month}"
         return None
+
+    def get_base_currency(self, obj):
+        return get_currency_details(
+            obj.base_currency
+        )  # access the price of the product associated with the order_unit object
+
+    def get_dividends_currency(self, obj):
+        return get_currency_details(
+            obj.dividends_currency
+        )  # access the price of the product associated with the order_unit object
 
 
 class CompanySerializerGet(CompanySerializer):
