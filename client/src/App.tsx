@@ -1,10 +1,20 @@
 import React, { useContext } from "react";
-import { Outlet } from "react-router-dom";
+// import { Outlet } from "react-router-dom";
 import "./App.css";
-import { Avatar, Layout, Typography } from "antd";
+import { Outlet } from "react-router-dom";
+import {
+  Avatar,
+  // Avatar,
+  Layout,
+  Typography,
+  //  Typography
+} from "antd";
+// import { Content, Header } from "antd/lib/layout/layout";
+// import AlertMessages from "components/AlertMessages/AlertMessages";
+// import AppSidebar from "components/AppSidebar/AppSidebar";
+// import PageFooter from "components/PageFooter/PageFooter";
 import { Content, Header } from "antd/lib/layout/layout";
 import AlertMessages from "components/AlertMessages/AlertMessages";
-import AppSidebar from "components/AppSidebar/AppSidebar";
 import PageFooter from "components/PageFooter/PageFooter";
 import { AuthContext } from "contexts/auth";
 import LanguageLoader from "LanguageLoader";
@@ -20,7 +30,7 @@ function App() {
   return (
     <Layout>
       <LanguageLoader />
-      <AppSidebar />
+      {/* <AppSidebar /> */}
       <div className="site-main-content">
         <Header
           className="site-layout-sub-header-background"
