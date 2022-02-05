@@ -7,6 +7,7 @@ import "@testing-library/jest-dom";
 
 import { server } from "./mocks/server";
 // src/setupTests.js
+import "./i18n";
 
 /**
  * Added to avoid matchMedia error
