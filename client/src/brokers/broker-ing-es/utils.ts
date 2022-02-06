@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment, { Moment } from "moment";
 import { FormattedINGRow, TransactionType } from "./types";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 import { IPortfolio } from "types/portfolio";
 
 export const sharesBuyTransactionTypes = ["COMPRA", "ALTA POR CANJE"];
@@ -17,7 +17,7 @@ const normalizeAndRemoveAccents = (inputString: string) => {
 export const getCompanyFromTransaction = (
   name: string,
   portfolio: IPortfolio,
-): ICompany | undefined => {
+): ICompanyListItem | undefined => {
   const found = portfolio.companies.find((element) =>
     normalizeAndRemoveAccents(element.name)
       .toLowerCase()
@@ -31,14 +31,14 @@ export const getCompanyFromTransaction = (
 
 export const getTotalAmountInCompanyCurrency = (
   initialTotal: number,
-  company: ICompany,
+  company: ICompanyListItem,
   transactionDate: Moment,
 ) => {
   const INGDefaultCurrency = "EUR";
   const totalInCompanyCurrency = initialTotal;
-  if (company && company.baseCurrency.code !== "EUR") {
+  if (company && company.baseCurrency !== "EUR") {
     // First, exchage it to EUR, which is the ING total's currency
-    const temporalExchangeName = INGDefaultCurrency + company.baseCurrency.code;
+    const temporalExchangeName = INGDefaultCurrency + company.baseCurrency;
     console.log("temporalExchangeName", temporalExchangeName);
     console.log("transactionDate", transactionDate);
     // const newExchangeRate = ExchangeRatesService.get(
@@ -54,13 +54,13 @@ export const getTotalAmountInCompanyCurrency = (
 
 export const getPriceInCompanyCurrency = (
   initialPrice: number,
-  company: ICompany,
+  company: ICompanyListItem,
   transactionDate: Moment,
 ) => {
   const INGDefaultCurrency = "EUR";
-  if (company && company.baseCurrency.code !== INGDefaultCurrency) {
+  if (company && company.baseCurrency !== INGDefaultCurrency) {
     // First, exchage it to EUR, which is the ING total's currency
-    const temporalExchangeName = INGDefaultCurrency + company.baseCurrency.code;
+    const temporalExchangeName = INGDefaultCurrency + company.baseCurrency;
     console.log(temporalExchangeName);
     console.log("transactionDate", transactionDate.format("DD-MM-YYYY"));
     // const newExchangeRate = ExchangeRatesService.get(

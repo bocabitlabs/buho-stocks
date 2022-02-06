@@ -17,7 +17,7 @@ import { formatINGRowForDividends, getCompanyFromTransaction } from "./utils";
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import { useAddDividendsTransaction } from "hooks/use-dividends-transactions/use-dividends-transactions";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 import { ICurrency } from "types/currency";
 import { IDividendsTransactionFormFields } from "types/dividends-transaction";
 import { IPortfolio } from "types/portfolio";
@@ -43,11 +43,11 @@ export default function DividendsImportForm({
     count: initialCount,
     price,
   } = formatINGRowForDividends(inputData);
-  const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
-    getCompanyFromTransaction(companyName, portfolio),
-  );
+  const [selectedCompany, setSelectedCompany] = useState<
+    ICompanyListItem | undefined
+  >(getCompanyFromTransaction(companyName, portfolio));
   const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
-    selectedCompany?.dividendsCurrency.code,
+    selectedCompany?.dividendsCurrency,
   );
   const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
   const [transactionDate, setTransactionDate] = useState(
@@ -66,9 +66,9 @@ export default function DividendsImportForm({
     const tempCompany = getCompanyFromTransaction(value, portfolio);
     if (tempCompany) {
       setSelectedCompany(tempCompany);
-      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
       form.setFieldsValue({
-        currency: tempCompany?.baseCurrency.code,
+        currency: tempCompany?.baseCurrency,
       });
     }
   };
@@ -107,7 +107,7 @@ export default function DividendsImportForm({
       values;
 
     let exchangeRateValue = 1;
-    if (selectedCompany.baseCurrency.code === portfolio.baseCurrency.code) {
+    if (selectedCompany.baseCurrency === portfolio.baseCurrency.code) {
       exchangeRateValue = 1;
     } else {
       exchangeRateValue = values.exchangeRate;
@@ -123,9 +123,9 @@ export default function DividendsImportForm({
     const transaction: IDividendsTransactionFormFields = {
       count,
       grossPricePerShare: +grossPriceInNumber,
-      grossPricePerShareCurrency: selectedCompany.baseCurrency.code,
+      grossPricePerShareCurrency: selectedCompany.baseCurrency,
       totalCommission: +commissionInNumber,
-      totalCommissionCurrency: selectedCompany.baseCurrency.code,
+      totalCommissionCurrency: selectedCompany.baseCurrency,
       exchangeRate: exchangeRateValue,
       transactionDate,
       color: "#0066cc",
@@ -156,7 +156,7 @@ export default function DividendsImportForm({
       },
     ]);
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.dividendsCurrency.code === "EUR") {
+      if (selectedCompany?.dividendsCurrency === "EUR") {
         form.setFieldsValue({
           grossPricePerShare: price.toFixed(3),
         });
@@ -186,7 +186,7 @@ export default function DividendsImportForm({
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.dividendsCurrency.code === "EUR") {
+      if (selectedCompany?.dividendsCurrency === "EUR") {
         form.setFieldsValue({
           commissionInCompanyCurrency: (price * initialCount - total).toFixed(
             3,
@@ -227,7 +227,7 @@ export default function DividendsImportForm({
         grossPricePerShare: price,
         count: initialCount,
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
-        currency: selectedCompany ? selectedCompany.baseCurrency.code : "",
+        currency: selectedCompany ? selectedCompany.baseCurrency : "",
         company: selectedCompany?.name,
       }}
     >
@@ -258,7 +258,7 @@ export default function DividendsImportForm({
           >
             <Input
               placeholder="Price"
-              addonAfter={`${selectedCompany?.dividendsCurrency.symbol}`}
+              addonAfter={`${selectedCompany?.dividendsCurrency}`}
             />
           </Form.Item>
         </Col>
@@ -267,11 +267,11 @@ export default function DividendsImportForm({
             <Button
               disabled={
                 initialTransactionDate === null ||
-                selectedCompany?.dividendsCurrency.code === undefined
+                selectedCompany?.dividendsCurrency === undefined
               }
               onClick={getPriceInCompanyCurrency}
               loading={priceLoading}
-              title={`EUR to ${selectedCompany?.dividendsCurrency.code}`}
+              title={`EUR to ${selectedCompany?.dividendsCurrency}`}
             >
               {t("Get price")}
             </Button>
@@ -310,7 +310,7 @@ export default function DividendsImportForm({
               step={0.001}
               style={{ width: "100%" }}
               disabled={exchangeRateLoading}
-              addonAfter={`${selectedCompany?.dividendsCurrency.symbol}`}
+              addonAfter={`${selectedCompany?.dividendsCurrency}`}
             />
           </Form.Item>
         </Col>
@@ -319,11 +319,11 @@ export default function DividendsImportForm({
             <Button
               disabled={
                 initialTransactionDate === null ||
-                selectedCompany?.dividendsCurrency.code === undefined
+                selectedCompany?.dividendsCurrency === undefined
               }
               onClick={getCommissionInCompanyCurrency}
               loading={commissionLoading}
-              title={`EUR to ${selectedCompany?.dividendsCurrency.code}`}
+              title={`EUR to ${selectedCompany?.dividendsCurrency}`}
             >
               {t("Get commission")}
             </Button>
@@ -357,8 +357,7 @@ export default function DividendsImportForm({
             <Input onChange={onDateChange} placeholder="Date" />
           </Form.Item>
         </Col>
-        {selectedCompany?.dividendsCurrency.code !==
-          portfolio.baseCurrency.code && (
+        {selectedCompany?.dividendsCurrency !== portfolio.baseCurrency.code && (
           <>
             <Col span={6}>
               <Form.Item
@@ -386,7 +385,7 @@ export default function DividendsImportForm({
                   disabled={initialTransactionDate === null || !selectedCompany}
                   onClick={fetchExchangeRate}
                   loading={exchangeRateLoading}
-                  title={`${selectedCompany?.dividendsCurrency.code} to ${portfolio.baseCurrency.code}`}
+                  title={`${selectedCompany?.dividendsCurrency} to ${portfolio.baseCurrency.code}`}
                 >
                   {t("Get exchange rate")}
                 </Button>

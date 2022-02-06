@@ -5,12 +5,12 @@ import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
 import { useUpdatePortfolioYearStatsForced } from "hooks/use-stats/use-portfolio-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 
 interface Props {
   id: string | undefined;
   selectedYear: string | undefined;
-  companies: ICompany[];
+  companies: ICompanyListItem[];
 }
 
 async function asyncForEach(array: any[], callback: Function) {
@@ -36,7 +36,7 @@ export default function StatsRefreshModal({
   const [checkboxes, setCheckboxes] = useState<CheckboxValueType[]>([]);
 
   useEffect(() => {
-    const tempCheckboxes = companies.map((company: ICompany) => {
+    const tempCheckboxes = companies.map((company: ICompanyListItem) => {
       return `${company.name} (${company.ticker}) - #${company.id}`;
     });
     setCheckboxes(tempCheckboxes);

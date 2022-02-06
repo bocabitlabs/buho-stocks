@@ -19,7 +19,7 @@ import {
 import moment from "moment";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 import { IPortfolio } from "types/portfolio";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
 
@@ -45,13 +45,15 @@ export default function IBTradesImportForm({
   const [form] = Form.useForm();
   const [formSent, setFormSent] = useState(false);
   const { t } = useTranslation();
-  const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
+  const [selectedCompany, setSelectedCompany] = useState<
+    ICompanyListItem | undefined
+  >(
     portfolio.companies.find(
       (element) => element.ticker === initialCompanyTicker,
     ),
   );
   const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
-    selectedCompany?.dividendsCurrency.code,
+    selectedCompany?.dividendsCurrency,
   );
   const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
   const [transactionDate, setTransactionDate] = useState(
@@ -73,7 +75,7 @@ export default function IBTradesImportForm({
     });
     if (tempCompany) {
       setSelectedCompany(tempCompany);
-      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
     }
   };
 
@@ -91,7 +93,7 @@ export default function IBTradesImportForm({
     const { count, commission, company, grossPricePerShare } = values;
 
     let exchangeRateValue = 1;
-    if (selectedCompany.baseCurrency.code === portfolio.baseCurrency.code) {
+    if (selectedCompany.baseCurrency === portfolio.baseCurrency.code) {
       exchangeRateValue = 1;
     } else {
       exchangeRateValue = values.exchangeRate;
@@ -104,9 +106,9 @@ export default function IBTradesImportForm({
     const transaction: ISharesTransactionFormFields = {
       count,
       grossPricePerShare: grossPricePerShare.toFixed(3),
-      grossPricePerShareCurrency: selectedCompany.baseCurrency.code,
+      grossPricePerShareCurrency: selectedCompany.baseCurrency,
       totalCommission: formattedCommission.toFixed(3),
-      totalCommissionCurrency: selectedCompany.baseCurrency.code,
+      totalCommissionCurrency: selectedCompany.baseCurrency,
       exchangeRate: exchangeRateValue,
       transactionDate,
       color: "#0066cc",
@@ -228,7 +230,7 @@ export default function IBTradesImportForm({
             <Input onChange={onDateChange} placeholder="Date" />
           </Form.Item>
         </Col>
-        {selectedCompany?.baseCurrency.code !== portfolio.baseCurrency.code && (
+        {selectedCompany?.baseCurrency !== portfolio.baseCurrency.code && (
           <>
             <Col span={6}>
               <Form.Item
@@ -256,7 +258,7 @@ export default function IBTradesImportForm({
                   disabled={initialTransactionDate === null || !selectedCompany}
                   onClick={fetchExchangeRate}
                   loading={exchangeRateLoading}
-                  title={`${selectedCompany?.baseCurrency.code} to ${portfolio.baseCurrency.code}`}
+                  title={`${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`}
                 >
                   {t("Get exchange rate")}
                 </Button>

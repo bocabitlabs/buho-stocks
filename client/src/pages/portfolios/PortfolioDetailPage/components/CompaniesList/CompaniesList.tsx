@@ -5,10 +5,10 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
 import { AlertMessagesContext } from "contexts/alert-messages";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 
 interface IProps {
-  companies: ICompany[];
+  companies: ICompanyListItem[];
 }
 
 export default function CompaniesList({ companies }: IProps) {
@@ -38,7 +38,7 @@ export default function CompaniesList({ companies }: IProps) {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: ICompany) => (
+      render: (text: string, record: ICompanyListItem) => (
         <>
           <Link to={`companies/${record.id}`}>{text}</Link>
           {record.sector !== null && (
@@ -55,13 +55,15 @@ export default function CompaniesList({ companies }: IProps) {
           )}
         </>
       ),
-      sorter: (a: ICompany, b: ICompany) => a.name.localeCompare(b.name),
+      sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
+        a.name.localeCompare(b.name),
     },
     {
       title: t("Ticker"),
       dataIndex: "ticker",
       key: "ticker",
-      sorter: (a: ICompany, b: ICompany) => a.ticker.localeCompare(b.ticker),
+      sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
+        a.ticker.localeCompare(b.ticker),
     },
     {
       title: t("Shares"),
@@ -73,7 +75,8 @@ export default function CompaniesList({ companies }: IProps) {
       title: t("Broker"),
       dataIndex: "broker",
       key: "broker",
-      sorter: (a: ICompany, b: ICompany) => a.broker.localeCompare(b.broker),
+      sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
+        a.broker.localeCompare(b.broker),
       responsive: ["md"],
     },
     {
@@ -111,7 +114,7 @@ export default function CompaniesList({ companies }: IProps) {
       title: t("Last"),
       dataIndex: "lastTransactionMonth",
       key: "lastTransactionMonth",
-      sorter: (a: ICompany, b: ICompany) => {
+      sorter: (a: ICompanyListItem, b: ICompanyListItem) => {
         return (
           Date.parse(b.lastTransactionMonth) -
           Date.parse(a.lastTransactionMonth)
@@ -140,24 +143,28 @@ export default function CompaniesList({ companies }: IProps) {
   ];
 
   const getData = () => {
-    return companies.map((element: ICompany) => ({
+    return companies.map((element: ICompanyListItem) => ({
       id: element.id,
       key: element.id,
       name: element.name,
       ticker: element.ticker,
-      sharesCount: element.allStats.sharesCount,
+      sharesCount: element.allStats ? element.allStats?.sharesCount : 0,
       description: element.description,
-      dividendsYield: element.allStats.dividendsYield,
+      dividendsYield: element.allStats ? element.allStats.dividendsYield : 0,
       color: element.color,
       portfolio: element.portfolio,
       logo: element.logo,
       countryCode: element.countryCode,
       sector: element.sector,
       broker: element.broker,
-      invested: element.allStats.invested,
-      portfolioValue: element.allStats.portfolioValue,
-      returnWithDividendsPercent: element.allStats.returnWithDividendsPercent,
-      portfolioCurrency: element.allStats.portfolioCurrency,
+      invested: element.allStats ? element.allStats.invested : 0,
+      portfolioValue: element.allStats ? element.allStats.portfolioValue : 0,
+      returnWithDividendsPercent: element.allStats
+        ? element.allStats.returnWithDividendsPercent
+        : 0,
+      portfolioCurrency: element.allStats
+        ? element.allStats.portfolioCurrency
+        : 0,
       lastTransactionMonth: element.lastTransactionMonth
         ? element.lastTransactionMonth
         : "",

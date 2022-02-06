@@ -15,7 +15,7 @@ import {
 import moment from "moment";
 import { useAddDividendsTransaction } from "hooks/use-dividends-transactions/use-dividends-transactions";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 import { IDividendsTransactionFormFields } from "types/dividends-transaction";
 import { IPortfolio } from "types/portfolio";
 
@@ -64,13 +64,15 @@ export default function IBDividendsImportForm({
 
   const [formSent, setFormSent] = useState(false);
   const { t } = useTranslation();
-  const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
+  const [selectedCompany, setSelectedCompany] = useState<
+    ICompanyListItem | undefined
+  >(
     portfolio.companies.find(
       (element) => element.ticker === initialCompanyTicker,
     ),
   );
   const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
-    selectedCompany?.dividendsCurrency.code,
+    selectedCompany?.dividendsCurrency,
   );
   const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
   const [transactionDate, setTransactionDate] = useState(
@@ -91,7 +93,7 @@ export default function IBDividendsImportForm({
     );
     if (tempCompany) {
       setSelectedCompany(tempCompany);
-      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
     }
   };
 
@@ -109,9 +111,7 @@ export default function IBDividendsImportForm({
     const { count, commission, company, grossPricePerShare } = values;
 
     let exchangeRateValue = 1;
-    if (
-      selectedCompany.dividendsCurrency.code === portfolio.baseCurrency.code
-    ) {
+    if (selectedCompany.dividendsCurrency === portfolio.baseCurrency.code) {
       exchangeRateValue = 1;
     } else {
       exchangeRateValue = values.exchangeRate;
@@ -124,9 +124,9 @@ export default function IBDividendsImportForm({
     const transaction: IDividendsTransactionFormFields = {
       count,
       grossPricePerShare: grossPricePerShare.toFixed(3),
-      grossPricePerShareCurrency: selectedCompany.dividendsCurrency.code,
+      grossPricePerShareCurrency: selectedCompany.dividendsCurrency,
       totalCommission: formattedCommission.toFixed(3),
-      totalCommissionCurrency: selectedCompany.dividendsCurrency.code,
+      totalCommissionCurrency: selectedCompany.dividendsCurrency,
       exchangeRate: exchangeRateValue,
       transactionDate,
       color: "#0066cc",
@@ -262,8 +262,7 @@ export default function IBDividendsImportForm({
           </Form.Item>
         </Col>
 
-        {selectedCompany?.dividendsCurrency.code !==
-          portfolio.baseCurrency.code && (
+        {selectedCompany?.dividendsCurrency !== portfolio.baseCurrency.code && (
           <>
             <Col span={6}>
               <Form.Item
@@ -291,7 +290,7 @@ export default function IBDividendsImportForm({
                   disabled={initialTransactionDate === null || !selectedCompany}
                   onClick={fetchExchangeRate}
                   loading={exchangeRateLoading}
-                  title={`${selectedCompany?.dividendsCurrency.code} to ${portfolio.baseCurrency.code}`}
+                  title={`${selectedCompany?.dividendsCurrency} to ${portfolio.baseCurrency.code}`}
                 >
                   {t("Get exchange rate")}
                 </Button>

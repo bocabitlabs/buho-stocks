@@ -23,7 +23,7 @@ import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import { useAddRightsTransaction } from "hooks/use-rights-transactions/use-rights-transactions";
 import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 import { ICurrency } from "types/currency";
 import { IPortfolio } from "types/portfolio";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
@@ -49,11 +49,11 @@ export default function TradesImportForm({
     price,
     transactionType,
   } = formatINGRowForShares(inputData);
-  const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
-    getCompanyFromTransaction(companyName, portfolio),
-  );
+  const [selectedCompany, setSelectedCompany] = useState<
+    ICompanyListItem | undefined
+  >(getCompanyFromTransaction(companyName, portfolio));
   const [selectedCompanyCurrency, setSelectedCompanyCurrency] = useState(
-    selectedCompany?.dividendsCurrency.code,
+    selectedCompany?.dividendsCurrency,
   );
   const [portfolioCurrency] = useState(portfolio.baseCurrency.code);
   const [transactionDate, setTransactionDate] = useState(
@@ -75,9 +75,9 @@ export default function TradesImportForm({
     console.log("total", total);
     if (tempCompany) {
       setSelectedCompany(tempCompany);
-      setSelectedCompanyCurrency(tempCompany.dividendsCurrency.code);
+      setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
       form.setFieldsValue({
-        currency: tempCompany?.baseCurrency.code,
+        currency: tempCompany?.baseCurrency,
       });
     }
   };
@@ -120,7 +120,7 @@ export default function TradesImportForm({
     } = values;
 
     let exchangeRateValue = 1;
-    if (selectedCompany.baseCurrency.code === portfolio.baseCurrency.code) {
+    if (selectedCompany.baseCurrency === portfolio.baseCurrency.code) {
       exchangeRateValue = 1;
     } else {
       exchangeRateValue = values.exchangeRate;
@@ -134,9 +134,9 @@ export default function TradesImportForm({
     const transaction: ISharesTransactionFormFields = {
       count,
       grossPricePerShare: Number(grossPrice),
-      grossPricePerShareCurrency: selectedCompany.baseCurrency.code,
+      grossPricePerShareCurrency: selectedCompany.baseCurrency,
       totalCommission: formattedCommission.toFixed(3),
-      totalCommissionCurrency: selectedCompany.baseCurrency.code,
+      totalCommissionCurrency: selectedCompany.baseCurrency,
       exchangeRate: exchangeRateValue,
       transactionDate,
       color: "#0066cc",
@@ -173,7 +173,7 @@ export default function TradesImportForm({
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.baseCurrency.code === "EUR") {
+      if (selectedCompany?.baseCurrency === "EUR") {
         form.setFieldsValue({
           commissionInCompanyCurrency: total - price * initialCount,
         });
@@ -206,7 +206,7 @@ export default function TradesImportForm({
         grossPricePerShare: price,
         count: initialCount,
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
-        currency: selectedCompany ? selectedCompany.baseCurrency.code : "",
+        currency: selectedCompany ? selectedCompany.baseCurrency : "",
         transactionType,
         company: selectedCompany?.name,
       }}
@@ -279,11 +279,11 @@ export default function TradesImportForm({
             <Button
               disabled={
                 initialTransactionDate === null ||
-                selectedCompany?.dividendsCurrency.code === undefined
+                selectedCompany?.dividendsCurrency === undefined
               }
               onClick={getCommissionInCompanyCurrency}
               loading={commissionLoading}
-              title={`EUR to ${selectedCompany?.baseCurrency.code}`}
+              title={`EUR to ${selectedCompany?.baseCurrency}`}
             >
               {t("Get commission")}
             </Button>
@@ -335,8 +335,7 @@ export default function TradesImportForm({
             </Select>
           </Form.Item>
         </Col>
-        {selectedCompany?.dividendsCurrency.code !==
-          portfolio.baseCurrency.code && (
+        {selectedCompany?.dividendsCurrency !== portfolio.baseCurrency.code && (
           <>
             <Col span={6}>
               <Form.Item
@@ -364,7 +363,7 @@ export default function TradesImportForm({
                   disabled={initialTransactionDate === null || !selectedCompany}
                   onClick={fetchExchangeRate}
                   loading={exchangeRateLoading}
-                  title={`${selectedCompany?.baseCurrency.code} to ${portfolio.baseCurrency.code}`}
+                  title={`${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`}
                 >
                   {t("Get exchange rate")}
                 </Button>

@@ -1,4 +1,4 @@
-import { ICompany } from "./company";
+import { ICompany, ICompanyListItem } from "./company";
 import { ICurrency } from "./currency";
 
 interface IPortfolioBase {
@@ -17,7 +17,7 @@ export interface IPortfolio extends IPortfolioBase {
   id: number;
   baseCurrency: ICurrency;
   firstYear: number;
-  companies: ICompany[];
+  companies: ICompanyListItem[];
   dateCreated: string;
   lastUpdated: string;
   stats: any;

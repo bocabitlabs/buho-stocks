@@ -4,12 +4,12 @@ import PortfolioCharts from "../PortfolioCharts/PortfolioCharts";
 import StatsContent from "../StatsContent/StatsContent";
 import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { ICompany } from "types/company";
+import { ICompanyListItem } from "types/company";
 
 interface Props {
   id: string | undefined;
   firstYear: number | null;
-  companies: ICompany[];
+  companies: ICompanyListItem[];
 }
 
 export default function YearSelector({

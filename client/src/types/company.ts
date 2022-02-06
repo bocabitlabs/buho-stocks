@@ -27,10 +27,8 @@ export interface ICompanyFormFields extends ICompanyBase {
   portfolio: number;
 }
 
-export interface ICompany extends ICompanyBase {
+export interface ICompanyItemBase extends ICompanyBase {
   id: number;
-  baseCurrency: ICurrency;
-  dividendsCurrency: ICurrency;
   sector: ISector;
   market: IMarket;
   portfolio: IPortfolioLite;
@@ -43,6 +41,16 @@ export interface ICompany extends ICompanyBase {
   stats: any;
   firstYear: number;
   lastTransactionMonth: string;
+}
+
+export interface ICompany extends ICompanyItemBase {
+  baseCurrency: ICurrency;
+  dividendsCurrency: ICurrency;
+}
+
+export interface ICompanyListItem extends ICompanyItemBase {
+  baseCurrency: string;
+  dividendsCurrency: string;
 }
 
 export interface ICompanyRouteParams {

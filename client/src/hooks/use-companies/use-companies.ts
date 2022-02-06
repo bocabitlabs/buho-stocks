@@ -52,7 +52,7 @@ export const useAddCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["companies", variables.portfolioId]);
+        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
     },
   );
@@ -67,11 +67,7 @@ export const useDeleteCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([
-          "companies",
-          variables.portfolioId,
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
     },
   );
@@ -88,7 +84,7 @@ export const useUpdateCompany = () => {
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries([
-          "companies",
+          "portfolios",
           variables.portfolioId,
           variables.companyId,
         ]);
