@@ -34,8 +34,10 @@ class PortfolioStatsAPIView(APIView):
     def get_stats_for_year(self, portfolio_id, year, user_id, force):
         portfolio_stats = PortfolioStatsUtils(portfolio_id, user_id, year=year, force=force)
         stats = portfolio_stats.get_stats_for_year()
+        logger.debug(stats)
         serializer = PortfolioStatsForYearSerializer(stats)
         stats = serializer.data
+        logger.debug(stats)
         return stats
 
     def get_stats_grouped(self, portfolio_id, year, user_id, force, group_by):

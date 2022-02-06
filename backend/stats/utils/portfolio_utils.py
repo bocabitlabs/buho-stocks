@@ -23,6 +23,7 @@ class PortfolioUtils:
             return query[0].transaction_date.year
         return None
 
+
 class PortfolioStatsUtils:
     def __init__(
         self, portfolio_id, user_id, year="all", use_currency="portfolio", force=False
@@ -215,12 +216,15 @@ class PortfolioStatsUtils:
         year_for_all = 9999
         temp_year = year_for_all if self.year == "all" else self.year
 
+        results = None
         if PortfolioStatsForYear.objects.filter(
             portfolio=self.portfolio, year=temp_year
         ).exists():
             results = PortfolioStatsForYear.objects.get(
                 portfolio=self.portfolio, year=temp_year
             )
+
+        if not self.force and results:
             return results
 
         data = {
@@ -266,15 +270,22 @@ class PortfolioStatsUtils:
             data["dividends"], data["portfolio_value"]
         )
 
-        # Create a new CompanyStatsForYear
-        data = PortfolioStatsForYear.objects.create(
-            user=User.objects.get(id=self.user_id),
-            portfolio=self.portfolio,
-            year=temp_year,
-            **data,
-        )
+        if results:
+            for key in data:
+                logger.debug(f"{key}: {data[key]}")
+                setattr(results, key, data[key])
+            results.save()
+        else:
+            # Create a new CompanyStatsForYear
+            results = PortfolioStatsForYear.objects.create(
+                user=User.objects.get(id=self.user_id),
+                portfolio=self.portfolio,
+                year=temp_year,
+                **data,
+            )
+        logger.debug(f"{data['invested']}")
 
-        return data
+        return results
 
     def get_stats_for_year_by_company(self):
         results = []

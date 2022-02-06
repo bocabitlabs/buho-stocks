@@ -1,4 +1,4 @@
-import { ICompany, ICompanyListItem } from "./company";
+import { ICompanyListItem } from "./company";
 import { ICurrency } from "./currency";
 
 interface IPortfolioBase {
