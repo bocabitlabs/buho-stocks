@@ -120,10 +120,10 @@ export default function IBDividendsImportForm({
     if (formattedCommission < 0) {
       formattedCommission *= -1;
     }
-
+    const grossPrice = (+grossPricePerShare).toFixed(3);
     const transaction: IDividendsTransactionFormFields = {
       count,
-      grossPricePerShare: grossPricePerShare.toFixed(3),
+      grossPricePerShare: Number(grossPrice),
       grossPricePerShareCurrency: selectedCompany.dividendsCurrency,
       totalCommission: formattedCommission.toFixed(3),
       totalCommissionCurrency: selectedCompany.dividendsCurrency,
