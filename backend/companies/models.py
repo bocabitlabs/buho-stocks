@@ -13,9 +13,9 @@ def user_directory_path(instance, filename):
 class Company(models.Model):
     name = models.CharField(max_length=200)
     ticker = models.CharField(max_length=200)
-    alt_tickers = models.CharField(max_length=200)
-    description = models.TextField()
-    url = models.URLField(max_length=200)
+    alt_tickers = models.CharField(max_length=200, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    url = models.URLField(max_length=200, blank=True, null=True)
     color = models.CharField(max_length=200)
     broker = models.CharField(max_length=200)
     country_code = models.CharField(max_length=200)
