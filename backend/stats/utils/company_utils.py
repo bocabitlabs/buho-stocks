@@ -1,5 +1,6 @@
 from decimal import Decimal
 import logging
+from unicodedata import decimal
 from django.contrib.auth.models import User
 from forex_python.converter import RatesNotAvailableError
 from django.utils import timezone
@@ -17,7 +18,7 @@ logger = logging.getLogger("buho_backend")
 
 
 class CompanyUtils:
-    def get_company_first_year(self, company_id, user_id):
+    def get_company_first_year(self, company_id: int, user_id: int):
         query = SharesTransaction.objects.filter(
             company_id=company_id, user=user_id
         ).order_by("transaction_date")
@@ -25,9 +26,15 @@ class CompanyUtils:
             return query[0].transaction_date.year
         return None
 
+
 class CompanyStatsUtils:
     def __init__(
-        self, company_id, user_id, year="all", use_currency="portfolio", force=False
+        self,
+        company_id: int,
+        user_id: int,
+        year="all",
+        use_currency="portfolio",
+        force: bool = False,
     ):
         self.company = Company.objects.get(id=company_id, user=user_id)
         self.year = year
@@ -35,7 +42,13 @@ class CompanyStatsUtils:
         self.user_id = user_id
         self.force = force
 
-    def get_shares_count(self):
+    def get_shares_count(self) -> int:
+        """Get the total number of shares of the company for all the years
+        or until a given year (accummulated value).
+
+        Returns:
+            int: Total number of shares
+        """
         total = 0
         query = self.company.shares_transactions
         if self.year == "all":
@@ -43,7 +56,10 @@ class CompanyStatsUtils:
         else:
             query = query.filter(transaction_date__year__lte=self.year)
         for item in query:
-            total += item.count
+            if item.type == TransactionType.BUY:
+                total += item.count
+            else:
+                total -= item.count
         return total
 
     def _get_total_invested_in_rights(self):
@@ -56,10 +72,15 @@ class CompanyStatsUtils:
                 transaction_date__year=self.year, type=TransactionType.BUY
             )
         for item in query:
-            exchange_rate = 1
-            if self.use_currency == "portfolio":
-                exchange_rate = item.exchange_rate
-            total += (
+             total += self.get_transaction_amount(item)
+        return total
+
+    def get_transaction_amount(self, item):
+        exchange_rate = 1
+        if self.use_currency == "portfolio":
+            exchange_rate = item.exchange_rate
+
+        total = (
                 item.gross_price_per_share.amount * item.count * exchange_rate
                 + item.total_commission.amount * exchange_rate
             )
@@ -75,13 +96,7 @@ class CompanyStatsUtils:
                 transaction_date__year=self.year, type=TransactionType.BUY
             )
         for item in query:
-            exchange_rate = 1
-            if self.use_currency == "portfolio":
-                exchange_rate = item.exchange_rate
-            total += (
-                item.gross_price_per_share.amount * exchange_rate * item.count
-                + item.total_commission.amount * exchange_rate
-            )
+            total += self.get_transaction_amount(item)
         return total
 
     def _get_accumulated_invested_in_shares_until_year(self):
@@ -94,13 +109,7 @@ class CompanyStatsUtils:
                 transaction_date__year__lte=self.year, type=TransactionType.BUY
             )
         for item in query:
-            exchange_rate = 1
-            if self.use_currency == "portfolio":
-                exchange_rate = item.exchange_rate
-            total += (
-                item.gross_price_per_share.amount * exchange_rate * item.count
-                + item.total_commission.amount * exchange_rate
-            )
+            total += self.get_transaction_amount(item)
         return total
 
     def _get_accumulated_invested_in_rights_until_year(self):
@@ -113,13 +122,7 @@ class CompanyStatsUtils:
                 transaction_date__year__lte=self.year, type=TransactionType.BUY
             )
         for item in query:
-            exchange_rate = 1
-            if self.use_currency == "portfolio":
-                exchange_rate = item.exchange_rate
-            total += (
-                item.gross_price_per_share.amount * exchange_rate * item.count
-                - item.total_commission.amount * exchange_rate
-            )
+            total += self.get_transaction_amount(item)
         return total
 
     def get_dividends(self):
@@ -129,19 +132,8 @@ class CompanyStatsUtils:
             query = query.all()
         else:
             query = query.filter(transaction_date__year=self.year)
-        logger.debug(f"Found {query.count()} dividends")
         for item in query:
-            exchange_rate = 1
-            if self.use_currency == "portfolio":
-                exchange_rate = item.exchange_rate
-            logger.debug(
-                f"{item.gross_price_per_share.amount} * {exchange_rate} * {item.count}"
-            )
-            total += (
-                item.gross_price_per_share.amount * exchange_rate * item.count
-                - item.total_commission.amount * exchange_rate
-            )
-            logger.debug(f"Total: {total}")
+            total += self.get_dividends_transaction_amount(item)
         return total
 
     def get_accumulated_dividends_until_year(self):
@@ -152,10 +144,14 @@ class CompanyStatsUtils:
         else:
             query = query.filter(transaction_date__year__lte=self.year)
         for item in query:
-            exchange_rate = 1
-            if self.use_currency == "portfolio":
-                exchange_rate = item.exchange_rate
-            total += (
+             total += self.get_dividends_transaction_amount(item)
+        return total
+
+    def get_dividends_transaction_amount(self, item):
+        exchange_rate = 1
+        if self.use_currency == "portfolio":
+            exchange_rate = item.exchange_rate
+        total = (
                 item.gross_price_per_share.amount * exchange_rate * item.count
                 - item.total_commission.amount * exchange_rate
             )
@@ -305,7 +301,6 @@ class CompanyStatsUtils:
             "return_with_dividends": return_with_dividends,
             "return_with_dividends_percent": return_with_dividends_percent,
         }
-        logger.debug(results)
         # Delete the old CompanyStatsForYear if it was created more than 1 month ago
         if CompanyStatsForYear.objects.filter(
             company=self.company, year=temp_year

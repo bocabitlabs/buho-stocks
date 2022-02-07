@@ -85,7 +85,6 @@ class StockPricesApi:
             prices = self.stock_prices_service.get_historical_data(
                 ticker, from_date, to_date
             )
-            logger.debug(f"Found prices in remote: {len(prices)}")
             for price in prices:
                 serialized_date = price.get("transaction_date", "unknown")
                 try:
@@ -101,7 +100,6 @@ class StockPricesApi:
 
                 if serializer.is_valid():
                     if not dry_run:
-                        logger.info(f"{ticker}-{serialized_date}. Saving element.")
                         serializer.save()
                     else:
                         logger.debug(f"Dry run. Not saving element.")

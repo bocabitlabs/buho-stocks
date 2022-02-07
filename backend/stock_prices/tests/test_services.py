@@ -31,7 +31,6 @@ class CustomYServiceTestCase(APITestCase):
         response_text = ""
         with open(f"{pathlib.Path(__file__).parent.resolve()}/resp_text.txt") as f:
           response_text = [x.strip() for x in f.readlines()]
-        logger.debug(response_text)
         responses.add(
             responses.GET,
             "https://finance.yahoo.com/quote/CSCO/history",
@@ -43,6 +42,5 @@ class CustomYServiceTestCase(APITestCase):
         self.assertEqual(currency, "USD")
         self.assertEqual(len(results), 9)
         result = results[4]
-        logger.debug(result)
         self.assertIn("date", result)
         self.assertIn("close", result)
