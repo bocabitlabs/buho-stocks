@@ -45,8 +45,8 @@ export const useDeleteMarket = () => {
     (id: number) =>
       axios.delete(`/api/v1/markets/${id}/`, getAxiosOptionsWithAuth()),
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["markets", variables]);
+      onSuccess: () => {
+        queryClient.invalidateQueries(["markets"]);
       },
     },
   );

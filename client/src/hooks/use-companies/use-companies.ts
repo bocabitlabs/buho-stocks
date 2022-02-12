@@ -83,11 +83,7 @@ export const useUpdateCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([
-          "portfolios",
-          variables.portfolioId,
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
     },
   );
