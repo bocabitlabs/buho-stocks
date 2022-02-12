@@ -50,9 +50,9 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement {
         const colorsArray: any[] = Array(12).fill(0);
         const monthlyValues: any[] = Array(12).fill(0);
         Object.entries(v as object).forEach(([k1, v1]) => {
-          const monthNumber = Number(k1);
-          monthlyValues[monthNumber - 1] = v1;
-          colorsArray[monthNumber - 1] = hexToRgb(allColors[index]);
+          const monthIndex = tempChartData.labels.indexOf(k1);
+          monthlyValues[monthIndex] = v1;
+          colorsArray[monthIndex] = hexToRgb(allColors[index]);
         });
         const newDataset = {
           label: k,
