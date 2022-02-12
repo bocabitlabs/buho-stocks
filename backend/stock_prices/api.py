@@ -74,9 +74,6 @@ class StockPricesApi:
 
             if minimum_values is None:
                 minimum_values = delta.days / 2 - 1
-        logger.debug(
-            f"Prices length: {prices_length} vs minimum values: {minimum_values}"
-        )
         if prices_length < minimum_values:
             if only_api:
                 logger.debug("Force is true. Searching remote.")
@@ -127,7 +124,6 @@ class StockPricesApi:
 
     def get_last_data_from_year(self, ticker: str, year: int, only_api=False) -> dict:
         from_date, to_date = self.get_start_end_dates_for_year(year)
-        logger.debug(f"{ticker}: Getting last data from {from_date} to {to_date}")
         results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1, only_api=only_api)
         if len(results) > 0:
             return results[-1]
@@ -138,7 +134,6 @@ class StockPricesApi:
 
     def get_start_end_dates_for_year(self, year: int):
         todays_date = datetime.date.today()
-        logger.debug(f"Todays date: {todays_date.year} {type(todays_date.year)} vs year: {year} ({type(year)})")
         if todays_date.year == int(year):
             # Get today minus 15 days
             from_date = (todays_date - datetime.timedelta(days=15)).strftime(

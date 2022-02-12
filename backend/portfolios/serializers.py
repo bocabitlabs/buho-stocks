@@ -27,7 +27,6 @@ class PortfolioSerializer(serializers.ModelSerializer):
             "companies",
         ]
 
-
 class PortfolioSerializerGet(PortfolioSerializer):
     base_currency = SerializerMethodField()
     companies = CompanySerializer(many=True, read_only=True)

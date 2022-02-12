@@ -1,6 +1,8 @@
 import datetime
+from companies.models import Company
+from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from forex_python.converter import CurrencyRates
+from forex_python.converter import CurrencyRates, RatesNotAvailableError
 import logging
 
 logger = logging.getLogger("buho_backend")
@@ -32,3 +34,32 @@ def get_exchange_rates_from_api(exchange_from, exchange_to, exchange_date):
             logger.debug("Serializer is not valid")
             logger.debug(serializer.errors)
     return desired_exchange
+
+class ExchangeRatesUtils:
+
+    def __init__(self, company: Company, use_currency: str = "portfolio"):
+        self.company = company
+        self.use_currency = use_currency
+
+    def get_exchange_rate_for_date(self, transaction_date: str):
+        exchange_rate_value = 1
+        if self.use_currency == "portfolio":
+            if self.company.base_currency != self.company.portfolio.base_currency:
+                try:
+                    exchange_rate = ExchangeRate.objects.get(
+                        exchange_from=self.company.base_currency,
+                        exchange_to=self.company.portfolio.base_currency,
+                        exchange_date=transaction_date,
+                    )
+                    exchange_rate_value = exchange_rate.exchange_rate
+                except ExchangeRate.DoesNotExist:
+                    try:
+                        exchange_rate = get_exchange_rates_from_api(
+                            self.company.base_currency,
+                            self.company.portfolio.base_currency,
+                            transaction_date,
+                        )
+                        exchange_rate_value = exchange_rate["exchange_rate"].value
+                    except RatesNotAvailableError as error:
+                        logger.debug(str(error))
+        return exchange_rate_value

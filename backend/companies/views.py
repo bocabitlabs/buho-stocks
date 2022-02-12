@@ -1,10 +1,12 @@
+from django.utils.decorators import method_decorator
+
 from rest_framework.response import Response
 from rest_framework.authentication import (
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from rest_framework import status
+from rest_framework import status, generics
 from drf_yasg.utils import swagger_auto_schema
 from companies.serializers import CompanySerializer, CompanySerializerGet
 from companies.models import Company
@@ -14,61 +16,102 @@ import logging
 
 logger = logging.getLogger("buho_backend")
 
-class CompaniesListAPIView(APIView):
-    """Get all the companies from a user's portfolio"""
 
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get a list of companies of the current user",
+        tags=["portfolio_companies"],
+    ),
+)
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        operation_description="Create a new company for the current user",
+        tags=["portfolio_companies"],
+    ),
+)
+class CompanyListCreateAPIView(generics.ListCreateAPIView):
+    """Get all the markets from a user"""
+
+    serializer_class = CompanySerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = 'portfolio_id'
 
-    # 1. List all
-    @swagger_auto_schema(tags=["portfolio_companies"])
-    def get(self, request, portfolio_id, *args, **kwargs):
-        """
-        List all the portfolio items for given requested user
-        """
-        elements = Company.objects.filter(user=request.user.id, portfolio=portfolio_id)
 
-        serializer = CompanySerializerGet(
-            elements, many=True, context={"request": request}
+    def get_queryset(self):
+        user = self.request.user
+        portfolio_id = self.kwargs.get("portfolio_id")
+        return Company.objects.filter(user=user.id, portfolio=portfolio_id)
+
+    def perform_create(self, serializer):
+        portfolio_id = self.kwargs.get("portfolio_id")
+        serializer.save(user=self.request.user)
+        LogMessage.objects.create(
+            message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
+            message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
+            portfolio=Portfolio.objects.get(id=portfolio_id),
+            user=self.request.user,
         )
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # 2. Create
-    @swagger_auto_schema(tags=["portfolio_companies"], request_body=CompanySerializer)
-    def post(self, request, portfolio_id, *args, **kwargs):
-        """
-        Create the company with given portfolio data
-        """
-        data = {
-            "name": request.data.get("name"),
-            "description": request.data.get("description"),
-            "color": request.data.get("color"),
-            "ticker": request.data.get("ticker"),
-            "alt_tickers": request.data.get("alt_tickers"),
-            "country_code": request.data.get("country_code"),
-            "broker": request.data.get("broker"),
-            "url": request.data.get("url"),
-            "base_currency": request.data.get("base_currency"),
-            "dividends_currency": request.data.get("dividends_currency"),
-            "sector": request.data.get("sector"),
-            "market": request.data.get("market"),
-            "portfolio": portfolio_id,
-        }
-        if request.data.get("logo"):
-            data["logo"] = request.data.get("logo")
 
-        serializer = CompanySerializer(data=data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            LogMessage.objects.create(
-                message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
-                message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
-                portfolio=Portfolio.objects.get(id=portfolio_id),
-                user=self.request.user,
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+# class CompaniesListAPIView(APIView):
+#     """Get all the companies from a user's portfolio"""
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#     authentication_classes = [TokenAuthentication]
+#     permission_classes = [IsAuthenticated]
+
+#     # 1. List all
+#     @swagger_auto_schema(tags=["portfolio_companies"])
+#     def get(self, request, portfolio_id, *args, **kwargs):
+#         """
+#         List all the portfolio items for given requested user
+#         """
+#         elements = Company.objects.filter(user=request.user.id, portfolio=portfolio_id)
+
+#         serializer = CompanySerializerGet(
+#             elements, many=True, context={"request": request}
+#         )
+#         return Response(serializer.data, status=status.HTTP_200_OK)
+
+#     # 2. Create
+#     @swagger_auto_schema(tags=["portfolio_companies"], request_body=CompanySerializer)
+#     def post(self, request, portfolio_id, *args, **kwargs):
+#         """
+#         Create the company with given portfolio data
+#         """
+#         data = {
+#             "alt_tickers": request.data.get("alt_tickers"),
+#             "base_currency": request.data.get("base_currency"),
+#             "broker": request.data.get("broker"),
+#             "color": request.data.get("color"),
+#             "country_code": request.data.get("country_code"),
+#             "description": request.data.get("description"),
+#             "dividends_currency": request.data.get("dividends_currency"),
+#             "is_closed": request.data.get("is_closed"),
+#             "market": request.data.get("market"),
+#             "name": request.data.get("name"),
+#             "portfolio": portfolio_id,
+#             "sector": request.data.get("sector"),
+#             "ticker": request.data.get("ticker"),
+#             "url": request.data.get("url"),
+#         }
+#         if request.data.get("logo"):
+#             data["logo"] = request.data.get("logo")
+
+#         serializer = CompanySerializer(data=data, context={"request": request})
+#         if serializer.is_valid():
+#             serializer.save(user=self.request.user)
+#             LogMessage.objects.create(
+#                 message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
+#                 message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
+#                 portfolio=Portfolio.objects.get(id=portfolio_id),
+#                 user=self.request.user,
+#             )
+#             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CompanyDetailAPIView(APIView):
@@ -116,19 +159,20 @@ class CompanyDetailAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
         data = {
-            "name": request.data.get("name"),
-            "description": request.data.get("description"),
-            "color": request.data.get("color"),
-            "ticker": request.data.get("ticker"),
             "alt_tickers": request.data.get("alt_tickers"),
-            "country_code": request.data.get("country_code"),
-            "broker": request.data.get("broker"),
-            "url": request.data.get("url"),
             "base_currency": request.data.get("base_currency"),
+            "broker": request.data.get("broker"),
+            "color": request.data.get("color"),
+            "country_code": request.data.get("country_code"),
+            "description": request.data.get("description"),
             "dividends_currency": request.data.get("dividends_currency"),
-            "sector": request.data.get("sector"),
+            "is_closed": request.data.get("is_closed"),
             "market": request.data.get("market"),
+            "name": request.data.get("name"),
             "portfolio": portfolio_id,
+            "sector": request.data.get("sector"),
+            "ticker": request.data.get("ticker"),
+            "url": request.data.get("url"),
         }
         if request.data.get("logo"):
             data["logo"] = request.data.get("logo")

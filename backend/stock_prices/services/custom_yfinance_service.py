@@ -33,16 +33,16 @@ class CustomYFinanceService(StockPriceServiceBase):
 
     def get_historical_data(self, ticker: str, start_date: str, end_date: str):
         prices = []
-        logger.debug(f"Get historical data for {ticker} from {start_date} to {end_date}")
         time.sleep(self.wait_time)
 
         results, currency = self.request_from_api(ticker, start_date, end_date)
 
+        if results is None:
+            return []
+
         for row in results:
             try:
                 price = row["close"]
-                logger.debug(f"Got price {price} in currency {currency}")
-                # price = price.replace(",", "")
                 if currency.upper() == "GBP":
                     price = price / 100
                     currency = "GBP"
@@ -51,8 +51,6 @@ class CustomYFinanceService(StockPriceServiceBase):
                 row_date = datetime.fromtimestamp(row["date"]).strftime("%Y-%m-%d")
                 transaction_date = row_date
 
-
-                logger.debug(f"{ticker}: Got price {price} ({currency}) for {transaction_date}")
                 data = {
                     "price": price,
                     "price_currency": currency,
@@ -68,7 +66,6 @@ class CustomYFinanceService(StockPriceServiceBase):
 
     def request_from_api(self, ticker, from_date, to_date):
         # Convert from_date to datetime
-        logger.debug(f"Requesting historical data for {ticker} from {from_date} to {to_date}")
         from_date_datetime = datetime.strptime(from_date, "%Y-%m-%d")
         # Convert to_date to datetime
         to_date_datetime = datetime.strptime(to_date, "%Y-%m-%d")
@@ -84,12 +81,16 @@ class CustomYFinanceService(StockPriceServiceBase):
             },
         )
         data = response
-        result = json.loads(
-            data.text.split('HistoricalPriceStore":{"prices":')[1].split(',"isPending')[
-                0
-            ]
-        )
-        currency_search = re.search("Currency in (\w+)\<\/span\>", response.text)
-        currency = currency_search.group(1)
+        try:
+            result = json.loads(
+                data.text.split('HistoricalPriceStore":{"prices":')[1].split(',"isPending')[
+                    0
+                ]
+            )
+            currency_search = re.search("Currency in (\w+)\<\/span\>", response.text)
+            currency = currency_search.group(1)
+        except (IndexError, TypeError) as error:
+            logger.warning(f"{ticker}: IndexError: {error}. Skipping.")
+            return None, None
 
         return result, currency

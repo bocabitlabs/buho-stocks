@@ -1,8 +1,15 @@
+from asyncio.log import logger
+import datetime
+import logging
 from django.contrib.auth.models import User
 from django.db import models
+from rest_framework import serializers
 from buho_backend.transaction_types import TransactionType
 from companies.models import Company
 from djmoney.models.fields import MoneyField
+
+
+logger = logging.getLogger("buho_backend")
 
 
 class Transaction(models.Model):
@@ -27,6 +34,12 @@ class Transaction(models.Model):
 
     def __str___(self):
         return f"{self.count} - {self.gross_price_per_share} - {self.total_commission}"
+
+    def clean(self):
+        # Transaction cannot be in the future
+        if self.transaction_date > datetime.date.today():
+            logger.debug(f"Clean called: {self.transaction_date}")
+            raise serializers.ValidationError({'transaction_date':"Transaction cannot be created in the future"}, code='invalid')
 
 
 class SharesTransaction(Transaction):

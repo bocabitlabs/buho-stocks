@@ -113,6 +113,6 @@ class MarketsDetailTestCase(APITestCase):
         url = reverse("market-detail", args=[self.instances[index].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(Market.DoesNotExist):
           Market.objects.get(id=self.instances[index].id)

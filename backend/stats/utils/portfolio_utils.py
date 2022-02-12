@@ -1,10 +1,10 @@
 import datetime
-from itertools import groupby
 import logging
 from django.contrib.auth.models import User
 from buho_backend.transaction_types import TransactionType
+from companies.utils import CompanyUtils
 from stats.models.portfolio_stats import PortfolioStatsForYear
-from stats.utils.company_utils import CompanyStatsUtils, CompanyUtils
+from stats.utils.company_utils import CompanyStatsUtils
 from stock_prices.api import StockPricesApi
 from stock_prices.services.custom_yfinance_service import CustomYFinanceService
 from portfolios.models import Portfolio
@@ -373,23 +373,31 @@ class PortfolioStatsUtils:
         transactions = (
             DividendsTransaction.objects.filter(
                 company__portfolio=self.portfolio, transaction_date__year=year
-            )
-            .only(
-                "transaction_date",
-                "gross_price_per_share",
-                "gross_price_per_share_currency",
-                "exchange_rate",
-                "count",
-            )
-            .order_by("transaction_date")
+            ).order_by("transaction_date")
         )
-        summary = {
-            k: sum(
-                (x.count * x.exchange_rate * x.gross_price_per_share.amount) for x in g
-            )
-            for k, g in groupby(transactions, key=lambda i: i.transaction_date.month)
-        }
-        return summary
+
+        result = {}
+        def get_transaction_value(transaction):
+            current_value = (
+                    transaction.count
+                    * transaction.exchange_rate
+                    * transaction.gross_price_per_share.amount
+                    - transaction.total_commission.amount
+                    * transaction.exchange_rate
+                )
+            return current_value
+
+        for transaction in transactions:
+            month = str(transaction.transaction_date.strftime("%B"))
+            if month in result.keys():
+                current_value = get_transaction_value(transaction)
+                result[month] = result[month] + current_value
+            else:
+                current_value = get_transaction_value(transaction)
+                result[month] = current_value
+        logger.debug(result)
+
+        return result
 
     def get_dividends_for_all_years_monthly(self):
         logger.debug(f"Get dividends for all years monthly")

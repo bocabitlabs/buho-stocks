@@ -37,7 +37,7 @@ class CompaniesListTestCase(APITestCase):
         self.assertEqual(len(response.data), 0)
 
         for _ in range(0, 4):
-            CompanyFactory.create(user=self.user_saved, portfolio=portfolio)
+            CompanyFactory.create(user=self.user_saved, portfolio=portfolio, is_closed=False)
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
