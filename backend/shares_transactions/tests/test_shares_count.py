@@ -26,7 +26,7 @@ class SharesCountTestCase(APITestCase):
         cls.shares_count = 0
         cls.total_amount = 0
         cls.total_transactions = 0
-        cls.years = [2018, 2020, 2021, 2022]
+        cls.years = [2018, 2020, 2021, datetime.date.today().year]
         cls.counts = [10, 20, 30, 40, 50]
         cls.accummulated_counts = [10, 30, 60, 100, 150]
         cls.prices = [Decimal(10), Decimal(20), Decimal(30), Decimal(40), Decimal(50)]
@@ -86,8 +86,8 @@ class SharesCountTestCase(APITestCase):
         for index in range(0, len(self.years)):
             utils = SharesTransactionsUtils(self.company.shares_transactions)
             self.assertEqual(
-                utils.get_shares_count_until_year(self.years[index]),
-                self.accummulated_counts[index],
+                utils.get_shares_count_on_year(self.years[index]),
+                self.counts[index],
             )
 
     def test_get_shares_count_with_sells(self):
@@ -127,7 +127,3 @@ class SharesCountTestCase(APITestCase):
                 utils.get_shares_count_until_year(self.years[index]),
                 self.accummulated_counts_after_sell[index],
             )
-
-    # def test_get_invested_in_shares_for_all(self):
-    #     company_stats = CompanyStatsUtils(self.company.id, self.user_saved.id)
-    #     self.assertEqual(company_stats.get_invested_in_shares(), self.total_amount)
