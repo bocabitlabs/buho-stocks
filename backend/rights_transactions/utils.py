@@ -6,7 +6,7 @@ from shares_transactions.utils import TransactionsUtils
 
 class RightsTransactionsUtils:
 
-    def __init__(self, transactions: list[RightsTransaction], use_currency: str):
+    def __init__(self, transactions: list[RightsTransaction], use_currency: str = "portfolio"):
         self.transactions = transactions
         self.use_currency = use_currency
 
@@ -56,4 +56,9 @@ class RightsTransactionsUtils:
         total = TransactionsUtils().get_transactions_amount(
             query, use_currency=self.use_currency
         )
+        return total
+
+    def get_accumulated_investment_until_current_year(self):
+        year = date.today().year
+        total = self.get_accumulated_investment_until_year(year)
         return total

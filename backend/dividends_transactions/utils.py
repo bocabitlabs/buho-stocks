@@ -4,7 +4,7 @@ from dividends_transactions.models import DividendsTransaction
 
 
 class DividendsTransactionsUtils:
-    def __init__(self, transactions: list[DividendsTransaction], use_currency: str):
+    def __init__(self, transactions: list[DividendsTransaction], use_currency: str = "portfolio"):
         self.transactions = transactions
         self.use_currency = use_currency
 
@@ -52,4 +52,9 @@ class DividendsTransactionsUtils:
         total = 0
         query = self._get_transactions_query(year, filter="accumulated")
         total = self._get_transactions_amount(query)
+        return total
+
+    def get_accumulated_dividends_until_current_year(self):
+        year = date.today().year
+        total = self.get_accumulated_dividends_until_year(year)
         return total
