@@ -42,7 +42,7 @@ class CompanyStatsUtils:
             use_currency=self.use_currency,
         )
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
-        self.exchange_rates_utils = ExchangeRatesUtils(self.company, use_currency=self.use_currency)
+        self.exchange_rates_utils = ExchangeRatesUtils(use_currency=self.use_currency)
 
     def get_total_invested(self):
         total = 0
@@ -63,6 +63,8 @@ class CompanyStatsUtils:
             price = stock_price["price"]
             transaction_date = stock_price["transaction_date"]
             exchange_rate_value = self.exchange_rates_utils.get_exchange_rate_for_date(
+                self.company.base_currency,
+                self.company.portfolio_currency,
                 transaction_date
             )
         total = Decimal(price) * shares_count * Decimal(exchange_rate_value)

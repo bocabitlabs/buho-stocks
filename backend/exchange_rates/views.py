@@ -9,7 +9,7 @@ from drf_yasg.utils import swagger_auto_schema
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from exchange_rates.utils import get_exchange_rates_from_api
+from exchange_rates.utils import ExchangeRatesUtils
 
 from forex_python.converter import RatesNotAvailableError
 
@@ -60,7 +60,7 @@ class ExchangeRateDetailAPIView(APIView):
         todo_instance = self.get_object(exchange_from, exchange_to, exchange_date)
         if not todo_instance:
             try:
-                serializer = get_exchange_rates_from_api(
+                serializer = ExchangeRatesUtils().get_exchange_rates_from_api(
                     exchange_from, exchange_to, exchange_date
                 )
                 if not serializer:

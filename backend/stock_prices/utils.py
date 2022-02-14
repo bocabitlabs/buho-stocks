@@ -1,7 +1,5 @@
 from companies.models import Company
 from companies.utils import CompanyUtils
-from exchange_rates.models import ExchangeRate
-from exchange_rates.utils import get_exchange_rates_from_api
 from stock_prices.api import StockPricesApi
 from stock_prices.services.custom_yfinance_service import CustomYFinanceService
 
