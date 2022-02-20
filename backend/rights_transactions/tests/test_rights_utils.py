@@ -31,7 +31,7 @@ class RightsInvestedTestCase(APITestCase):
         cls.total_transactions = 0
         cls.years = [2018, 2020, 2021, datetime.date.today().year]
         cls.counts = [10, 20, 30, 40]
-        cls.accummulated_counts = [10, 30, 60, 100]
+        cls.accumulated_counts = [10, 30, 60, 100]
         cls.prices = [Decimal(10), Decimal(20), Decimal(30), Decimal(40)]
         cls.exchange_rate = 0.5
         cls.commissions = [Decimal(1), Decimal(2), Decimal(3), Decimal(4)]

@@ -3,10 +3,8 @@ import logging
 from django.contrib.auth.models import User
 from django.utils import timezone
 from companies.models import Company
-from dividends_transactions.utils import DividendsTransactionsUtils
+from companies.utils import CompanyUtils
 from exchange_rates.utils import ExchangeRatesUtils
-from shares_transactions.utils import SharesTransactionsUtils
-from rights_transactions.utils import RightsTransactionsUtils
 from stats.models.company_stats import CompanyStatsForYear
 from stock_prices.utils import StockPricesUtils
 
@@ -28,33 +26,12 @@ class CompanyStatsUtils:
         self.use_currency = use_currency
         self.user_id = user_id
         self.force = force
+        self.company_utils = CompanyUtils(
+            self.company.id, use_currency=self.use_currency
+        )
 
-        self.shares_utils = SharesTransactionsUtils(
-            self.company.shares_transactions,
-            use_currency=self.use_currency,
-        )
-        self.rights_utils = RightsTransactionsUtils(
-            self.company.rights_transactions,
-            use_currency=self.use_currency,
-        )
-        self.dividends_utils = DividendsTransactionsUtils(
-            self.company.dividends_transactions,
-            use_currency=self.use_currency,
-        )
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
         self.exchange_rates_utils = ExchangeRatesUtils(use_currency=self.use_currency)
-
-    def get_total_invested(self):
-        total = 0
-        total += self.shares_utils.get_invested_on_year(self.year)
-        total += self.rights_utils.get_invested_on_year(self.year)
-        return total
-
-    def get_accumulated_investment_until_year(self):
-        total = 0
-        total += self.shares_utils.get_accumulated_investment_until_year(self.year)
-        total += self.rights_utils.get_accumulated_investment_until_year(self.year)
-        return total
 
     def get_portfolio_value(self, stock_price, shares_count):
         price = 0
@@ -65,7 +42,7 @@ class CompanyStatsUtils:
             exchange_rate_value = self.exchange_rates_utils.get_exchange_rate_for_date(
                 self.company.base_currency,
                 self.company.portfolio_currency,
-                transaction_date
+                transaction_date,
             )
         total = Decimal(price) * shares_count * Decimal(exchange_rate_value)
         return total
@@ -106,12 +83,16 @@ class CompanyStatsUtils:
 
     def calculate_stats_for_year(self, year: int):
 
-        accum_shares_count = self.shares_utils.get_shares_count_until_year(year)
-        total_invested = self.get_total_invested()
-        dividends = self.dividends_utils.get_dividends_of_year(year)
-        accumulated_investment = self.get_accumulated_investment_until_year()
+        accum_shares_count = (
+            self.company_utils.get_accumulated_shares_count_until_year(year)
+        )
+        total_invested = self.company_utils.get_total_invested_on_year(year)
+        dividends = self.company_utils.dividends_utils.get_dividends_of_year(year)
+        accumulated_investment = (
+            self.company_utils.get_accumulated_investment_until_year(year)
+        )
         accumulated_dividends = (
-            self.dividends_utils.get_accumulated_dividends_until_year(year)
+            self.company_utils.dividends_utils.get_accumulated_dividends_until_year(year)
         )
         last_stock_price = self.stock_prices_utils.get_year_last_stock_price()
         # Calculated values

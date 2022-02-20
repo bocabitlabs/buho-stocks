@@ -26,7 +26,12 @@ class PortfolioUtils:
 
 class PortfolioStatsUtils:
     def __init__(
-        self, portfolio_id, user_id, year="all", use_currency="portfolio", force=False
+        self,
+        portfolio_id: int,
+        user_id: int,
+        year: int = "all",
+        use_currency="portfolio",
+        force: bool = False,
     ):
         self.portfolio = Portfolio.objects.get(id=portfolio_id, user=user_id)
         self.year = year
@@ -370,21 +375,19 @@ class PortfolioStatsUtils:
         logger.debug(f"Get dividends for year {year}")
         if year == None:
             year = self.year
-        transactions = (
-            DividendsTransaction.objects.filter(
-                company__portfolio=self.portfolio, transaction_date__year=year
-            ).order_by("transaction_date")
-        )
+        transactions = DividendsTransaction.objects.filter(
+            company__portfolio=self.portfolio, transaction_date__year=year
+        ).order_by("transaction_date")
 
         result = {}
+
         def get_transaction_value(transaction):
             current_value = (
-                    transaction.count
-                    * transaction.exchange_rate
-                    * transaction.gross_price_per_share.amount
-                    - transaction.total_commission.amount
-                    * transaction.exchange_rate
-                )
+                transaction.count
+                * transaction.exchange_rate
+                * transaction.gross_price_per_share.amount
+                - transaction.total_commission.amount * transaction.exchange_rate
+            )
             return current_value
 
         for transaction in transactions:

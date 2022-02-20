@@ -12,7 +12,7 @@ class DividendsTransactionsUtils:
         """[summary]
 
         Args:
-            filter (str, optional): accumulated to obtain the accummulated values.
+            filter (str, optional): accumulated to obtain the accumulated values.
             Otherwhise will get the values for a give year or all Defaults to None.
 
         Returns:

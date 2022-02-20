@@ -44,7 +44,7 @@ class SharesTransactionsUtils:
         """[summary]
 
         Args:
-            filter (str, optional): accumulated to obtain the accummulated values.
+            filter (str, optional): accumulated to obtain the accumulated values.
             Otherwhise will get the values for a give year or all Defaults to None.
 
         Returns:
@@ -84,7 +84,7 @@ class SharesTransactionsUtils:
 
     def get_shares_count_until_year(self, year: int) -> int:
         """Get the total number of shares of the company for all the years
-        or until a given year (accummulated value).
+        or until a given year (accumulated value).
 
         Returns:
             int: Total number of shares
@@ -101,7 +101,7 @@ class SharesTransactionsUtils:
 
     def get_shares_count_on_year(self, year: int) -> int:
         """Get the total number of shares of the company for all the years
-        or until a given year (accummulated value).
+        or until a given year (accumulated value).
 
         Returns:
             int: Total number of shares

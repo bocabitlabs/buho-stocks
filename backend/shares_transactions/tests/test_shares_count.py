@@ -28,7 +28,7 @@ class SharesCountTestCase(APITestCase):
         cls.total_transactions = 0
         cls.years = [2018, 2020, 2021, datetime.date.today().year]
         cls.counts = [10, 20, 30, 40, 50]
-        cls.accummulated_counts = [10, 30, 60, 100, 150]
+        cls.accumulated_counts = [10, 30, 60, 100, 150]
         cls.prices = [Decimal(10), Decimal(20), Decimal(30), Decimal(40), Decimal(50)]
         cls.exchange_rate = 0.5
         cls.commissions = [Decimal(1), Decimal(2), Decimal(3), Decimal(4), Decimal(5)]
@@ -47,7 +47,7 @@ class SharesCountTestCase(APITestCase):
             Decimal(20),
             Decimal(25),
         ]
-        cls.accummulated_counts_after_sell = [9, 27, 54, 90, 135]
+        cls.accumulated_counts_after_sell = [9, 27, 54, 90, 135]
 
         for index in range(0, len(cls.years)):
             first_datetime = datetime.datetime.strptime(
@@ -125,5 +125,5 @@ class SharesCountTestCase(APITestCase):
 
             self.assertEqual(
                 utils.get_shares_count_until_year(self.years[index]),
-                self.accummulated_counts_after_sell[index],
+                self.accumulated_counts_after_sell[index],
             )
