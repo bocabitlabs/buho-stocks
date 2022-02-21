@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button, Form, Input } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useAddSuperSector,
   useUpdateSuperSector,
@@ -18,7 +18,6 @@ function SuperSectorAddEditForm({ sector }: AddEditFormProps) {
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
   const { t } = useTranslation();
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
   const navigate = useNavigate();
 
   const { mutateAsync: createSuperSectorAsync } = useAddSuperSector();
@@ -54,10 +53,10 @@ function SuperSectorAddEditForm({ sector }: AddEditFormProps) {
         createSuperSectorAsync(newSector);
         actionType = "create";
       }
-      createSuccess(`Sector has been ${actionType}d`);
+      toast.success(`Sector has been ${actionType}d`);
       navigate(-1);
     } catch (error) {
-      createError(`Cannot ${actionType} sector`);
+      toast.error(`Cannot ${actionType} sector`);
     }
   };
 

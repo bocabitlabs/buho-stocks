@@ -1,17 +1,7 @@
 import React, { useContext } from "react";
-// import { Outlet } from "react-router-dom";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import {
-  Avatar,
-  // Avatar,
-  Layout,
-  Typography,
-  //  Typography
-} from "antd";
-// import { Content, Header } from "antd/lib/layout/layout";
-// import AlertMessages from "components/AlertMessages/AlertMessages";
-// import PageFooter from "components/PageFooter/PageFooter";
+import { Avatar, Layout, Typography } from "antd";
 import { Content, Header } from "antd/lib/layout/layout";
 import AlertMessages from "components/AlertMessages/AlertMessages";
 import AppSidebar from "components/AppSidebar/AppSidebar";

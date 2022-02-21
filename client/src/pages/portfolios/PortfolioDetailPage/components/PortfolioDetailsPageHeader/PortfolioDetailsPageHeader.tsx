@@ -1,6 +1,7 @@
-import React, { ReactNode, useContext } from "react";
+import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   DeleteOutlined,
   LineChartOutlined,
@@ -10,7 +11,6 @@ import {
 import { Button, PageHeader, Popconfirm, Spin } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { useDeletePortfolio } from "hooks/use-portfolios/use-portfolios";
 
 interface Props {
@@ -29,7 +29,6 @@ function PortfolioDetailsPageHeader({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
   const { mutateAsync: deletePortfolio } = useDeletePortfolio();
   const routes = [
     {
@@ -40,10 +39,10 @@ function PortfolioDetailsPageHeader({
   const confirmDelete = async () => {
     try {
       await deletePortfolio({ portfolioId: +id! });
-      createSuccess(t("Portfolio deleted successfully"));
+      toast.success(t("Portfolio deleted successfully"));
       navigate(-1);
     } catch (error) {
-      createError(t("Error deleting portfolio"));
+      toast.error(t("Error deleting portfolio"));
     }
   };
 

@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useSuperSectors,
   useDeleteSuperSector,
@@ -13,16 +13,16 @@ import { ISector } from "types/sector";
 
 export default function SuperSectorsTable() {
   const { t } = useTranslation();
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
+
   const { status, data: sectors, error, isFetching } = useSuperSectors();
   const { mutateAsync: deleteSector } = useDeleteSuperSector();
 
   const confirmDelete = async (recordId: number) => {
     try {
       await deleteSector(recordId);
-      createSuccess(t("Super sector deleted successfully"));
+      toast.success(t("Super sector deleted successfully"));
     } catch (err) {
-      createError(t(`Error deleting super sector: ${err}`));
+      toast.error(t(`Error deleting super sector: ${err}`));
     }
   };
 

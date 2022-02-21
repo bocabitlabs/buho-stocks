@@ -1,6 +1,7 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import {
   Button,
   Col,
@@ -13,7 +14,6 @@ import {
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import {
   useAddSharesTransaction,
@@ -43,7 +43,7 @@ export default function SharesTransactionAddEditForm({
   const [currentTransactionDate, setCurrentTransactionDate] = useState<string>(
     moment(new Date()).format(dateFormat),
   );
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
+
   const { t } = useTranslation();
   const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
     companyBaseCurrency.code,
@@ -102,10 +102,10 @@ export default function SharesTransactionAddEditForm({
           transactionId: transaction.id,
           newTransaction: newTransactionValues,
         });
-        createSuccess(t("Transaction has been updated"));
+        toast.success(t("Transaction has been updated"));
         navigate(-1);
       } catch (error) {
-        createError(t("Cannot update transaction"));
+        toast.error(t("Cannot update transaction"));
       }
     } else {
       try {
@@ -113,10 +113,10 @@ export default function SharesTransactionAddEditForm({
           companyId: newTransactionValues.company,
           newTransaction: newTransactionValues,
         });
-        createSuccess(t("Transaction has been created"));
+        toast.success(t("Transaction has been created"));
         navigate(-1);
       } catch (error) {
-        createError(t("Cannot create transaction"));
+        toast.error(t("Cannot create transaction"));
       }
     }
   };

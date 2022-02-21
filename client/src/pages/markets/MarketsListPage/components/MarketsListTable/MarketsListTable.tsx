@@ -1,28 +1,47 @@
-import React, { useContext } from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Table } from "antd";
+import { Alert, Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import { AlertMessagesContext } from "contexts/alert-messages";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
+import MarketAddEditForm from "pages/markets/MarketsListPage/components/MarketAddEditForm/MarketAddEditForm";
 import getRoute, { MARKETS_ROUTE } from "routes";
 import { IMarket } from "types/market";
 
 export default function MarketsListTable() {
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
-  const { status, data: markets, error, isFetching } = useMarkets();
+  const { data: markets, error, isFetching } = useMarkets();
   const { mutateAsync: deleteMarket } = useDeleteMarket();
+  const [selectedMarketId, setSelectedMarketId] = useState<number | undefined>(
+    undefined,
+  );
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (recordId: number) => {
+    setSelectedMarketId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const confirmDelete = async (recordId: number) => {
     try {
       await deleteMarket(recordId);
-      createSuccess(t("Market deleted successfully"));
+      toast.success(t("Market deleted successfully"));
     } catch (errorDelete) {
-      createError(t(`Error deleting market: ${errorDelete}`));
+      toast.error(t(`Error deleting market: ${errorDelete}`));
     }
   };
 
@@ -41,7 +60,11 @@ export default function MarketsListTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string) => <strong>{text}</strong>,
+      render: (text: string, record: IMarket) => (
+        <Button type="link" onClick={() => showModal(record.id)}>
+          {text}
+        </Button>
+      ),
       sorter: (a: IMarket, b: IMarket) => a.name.localeCompare(b.name),
     },
     {
@@ -112,16 +135,31 @@ export default function MarketsListTable() {
   };
 
   if (isFetching) {
-    return <div>{isFetching ? <div>Fetching data...</div> : <div />}</div>;
+    return <LoadingSpin />;
   }
 
   if (error) {
-    return <div>Error fetching the data from the API</div>;
+    return (
+      <Alert
+        showIcon
+        message="Unable to load markets"
+        description={error.message}
+        type="error"
+      />
+    );
   }
 
-  if (status === "loading") {
-    return <div>Loading</div>;
-  }
-
-  return <Table columns={columns} dataSource={getData()} />;
+  return (
+    <div>
+      <Table columns={columns} dataSource={getData()} />{" "}
+      <MarketAddEditForm
+        title="Update market"
+        okText="Update"
+        marketId={selectedMarketId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={handleCancel}
+      />
+    </div>
+  );
 }

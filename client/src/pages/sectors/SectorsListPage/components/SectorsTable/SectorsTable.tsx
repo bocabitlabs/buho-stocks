@@ -1,25 +1,25 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { useDeleteSector, useSectors } from "hooks/use-sectors/use-sectors";
 import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector } from "types/sector";
 
 export default function SectorsTable() {
   const { t } = useTranslation();
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
+
   const { status, data: sectors, error, isFetching } = useSectors();
   const { mutateAsync: deleteSector } = useDeleteSector();
 
   const confirmDelete = async (recordId: number) => {
     try {
       await deleteSector(recordId);
-      createSuccess(t("Sector deleted successfully"));
+      toast.success(t("Sector deleted successfully"));
     } catch (err) {
-      createError(t(`Error deleting sector: ${err}`));
+      toast.error(t(`Error deleting sector: ${err}`));
     }
   };
 

@@ -1,10 +1,10 @@
-import React, { ReactElement, useContext, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { Button, Form, Input, Select, Switch } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import {
   useAddPortfolio,
@@ -23,7 +23,6 @@ function PortfolioAddEditForm({
   const [form] = Form.useForm();
   const [color, setColor] = useState("#607d8b");
   const [countryCode, setCountryCode] = useState("");
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
   const { mutateAsync: createPortfolio } = useAddPortfolio();
   const { mutateAsync: updatePortfolio } = useUpdatePortfolio();
@@ -52,18 +51,18 @@ function PortfolioAddEditForm({
     if (portfolio) {
       try {
         await updatePortfolio({ portfolioId: portfolio.id, newPortfolio });
-        createSuccess(t("Portfolio has been updated"));
+        toast.success(t("Portfolio has been updated"));
         navigate(-1);
       } catch (error) {
-        createError(t("Cannot update portfolio"));
+        toast.error(t("Cannot update portfolio"));
       }
     } else {
       try {
         await createPortfolio(newPortfolio);
-        createSuccess(t("Portfolio has been created"));
+        toast.success(t("Portfolio has been created"));
         navigate(-1);
       } catch (error) {
-        createError(t("Cannot create portfolio"));
+        toast.error(t("Cannot create portfolio"));
       }
     }
   };

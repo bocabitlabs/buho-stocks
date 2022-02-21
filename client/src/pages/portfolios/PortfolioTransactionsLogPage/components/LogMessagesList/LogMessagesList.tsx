@@ -1,11 +1,11 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useDeleteLogMessages,
   useLogMessages,
@@ -13,7 +13,6 @@ import {
 import { ILogMessage } from "types/log-messages";
 
 export default function LogMessagesList() {
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
   const { id } = useParams();
   const { data: messages } = useLogMessages(+id!);
@@ -22,9 +21,9 @@ export default function LogMessagesList() {
   const confirmDelete = async (recordId: number) => {
     try {
       await deleteMessage({ portfolioId: +id!, logMessageId: recordId });
-      createSuccess(t("Log message deleted successfully"));
+      toast.success(t("Log message deleted successfully"));
     } catch (error) {
-      createError(t(`Error deleting log message: ${error}`));
+      toast.error(t(`Error deleting log message: ${error}`));
     }
   };
 

@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -28,14 +30,21 @@ export const fetchMarket = async (marketId: number | undefined) => {
   return data;
 };
 
-export const useAddMarket = () => {
+export const useAddMarket = (options?: any) => {
+  const { t } = useTranslation();
+
   return useMutation(
     (newMarket: IMarketFormFields) =>
       axios.post("/api/v1/markets/", newMarket, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
+        toast.success(t("Market created"));
         queryClient.invalidateQueries("markets");
       },
+      onError: (error: any) => {
+        toast.error(t(`Cannot create market: ${error}`));
+      },
+      ...options,
     },
   );
 };
@@ -52,7 +61,9 @@ export const useDeleteMarket = () => {
   );
 };
 
-export const useUpdateMarket = () => {
+export const useUpdateMarket = (options?: any) => {
+  const { t } = useTranslation();
+
   return useMutation(
     ({ marketId, newMarket }: UpdateMarketMutationProps) =>
       axios.put(
@@ -61,9 +72,14 @@ export const useUpdateMarket = () => {
         getAxiosOptionsWithAuth(),
       ),
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["markets", variables.marketId]);
+      onSuccess: () => {
+        toast.success(t("Market has been updated"));
+        queryClient.invalidateQueries(["markets"]);
       },
+      onError: (error: any) => {
+        toast.error(t(`Cannot update market: ${error}`));
+      },
+      ...options,
     },
   );
 };
@@ -72,12 +88,13 @@ export function useMarkets() {
   return useQuery<IMarket[], Error>("markets", fetchMarkets);
 }
 
-export function useMarket(marketId: number | undefined) {
+export function useMarket(marketId: number | undefined, options?: any) {
   return useQuery<IMarket, Error>(
     ["markets", marketId],
     () => fetchMarket(marketId),
     {
       enabled: !!marketId,
+      ...options,
     },
   );
 }

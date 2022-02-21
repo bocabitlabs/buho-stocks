@@ -1,15 +1,27 @@
 import React, { ReactElement } from "react";
 import { Link } from "react-router-dom";
-import { List, Spin } from "antd";
+import { Alert, List } from "antd";
 import PortfolioCard from "../PortfolioCard/PortfolioCard";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolios } from "hooks/use-portfolios/use-portfolios";
 import { IPortfolio } from "types/portfolio";
 
 export default function PortfolioList(): ReactElement {
-  const { isFetching, data: portfolios } = usePortfolios();
+  const { isFetching, data: portfolios, error } = usePortfolios();
 
   if (isFetching) {
-    return <Spin />;
+    return <LoadingSpin />;
+  }
+
+  if (error) {
+    return (
+      <Alert
+        showIcon
+        message="Unable to load portfolios"
+        description={error.message}
+        type="error"
+      />
+    );
   }
 
   return (

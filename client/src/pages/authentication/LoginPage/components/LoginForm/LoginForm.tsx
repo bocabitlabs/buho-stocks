@@ -1,9 +1,9 @@
 import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 import { Button, Form, Input, PageHeader } from "antd";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { AuthContext } from "contexts/auth";
 import { useLoginUser } from "hooks/use-auth/use-auth";
 
@@ -16,19 +16,19 @@ export function LoginForm() {
   const navigate = useNavigate();
   const { state: locationState } = useLocation();
   const { state: authState, authenticate } = useContext(AuthContext);
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
+
   const from = (locationState as LocationState)?.from?.pathname || "/app";
 
   const { mutate: loginUser } = useLoginUser({
     onSuccess: (response: any) => {
       if (response) {
         authenticate(response.data.token);
-        createSuccess(t("Login successful"));
+        toast.success(t("Login successful"));
         navigate("/app/home");
       }
     },
     onError: (error: any) => {
-      createError(t(`Login failed: ${error}`));
+      toast.error(t(`Login failed: ${error}`));
     },
   });
 

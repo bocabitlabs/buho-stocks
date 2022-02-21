@@ -1,13 +1,13 @@
-import React, { ReactElement, useContext } from "react";
+import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useDeleteRightsTransaction,
   useRightsTransactions,
@@ -15,8 +15,6 @@ import {
 import { IRightsTransaction } from "types/rights-transaction";
 
 export default function RightsListTable(): ReactElement {
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
-
   const { t } = useTranslation();
   const { companyId } = useParams();
   const { isFetching: loading, data: transactions } = useRightsTransactions(
@@ -30,9 +28,9 @@ export default function RightsListTable(): ReactElement {
         companyId: +companyId!,
         transactionId: recordId,
       });
-      createSuccess(t("Rights transaction deleted successfully"));
+      toast.success(t("Rights transaction deleted successfully"));
     } catch (error) {
-      createError(t(`Error deleting rights transaction: ${error}`));
+      toast.error(t(`Error deleting rights transaction: ${error}`));
     }
   };
 

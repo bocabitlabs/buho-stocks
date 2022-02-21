@@ -1,10 +1,10 @@
-import React, { ReactElement, useContext, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
 import { Avatar, Button, Form, Input, Select, Switch, Upload } from "antd";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useAddCompany,
   useUpdateCompany,
@@ -31,7 +31,6 @@ function CompanyAddEditForm({
     company ? company.countryCode : "",
   );
   const { t } = useTranslation();
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
 
   const [fileList, setFileList] = useState<any[]>([]);
   const [base64File, setBas64File] = useState<any>(null);
@@ -92,18 +91,18 @@ function CompanyAddEditForm({
           companyId: company.id,
           newCompany,
         });
-        createSuccess(t("Company has been updated"));
+        toast.success(t("Company has been updated"));
         navigate(-1);
       } catch (error) {
-        createError(t("Cannot update company"));
+        toast.error(t("Cannot update company"));
       }
     } else {
       try {
         await createCompany({ portfolioId: +portfolioId, newCompany });
-        createSuccess(t("Company has been created"));
+        toast.success(t("Company has been created"));
         navigate(-1);
       } catch (error) {
-        createError(t("Cannot create company"));
+        toast.error(t("Cannot create company"));
       }
     }
   };

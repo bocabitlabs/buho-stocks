@@ -1,9 +1,9 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
 import { ICompanyListItem } from "types/company";
 
@@ -12,7 +12,6 @@ interface IProps {
 }
 
 export default function CompaniesList({ companies }: IProps) {
-  const { createError, createSuccess } = useContext(AlertMessagesContext);
   const { t } = useTranslation();
   const { id } = useParams();
   const { mutateAsync: deleteCompany } = useDeleteCompany();
@@ -20,10 +19,10 @@ export default function CompaniesList({ companies }: IProps) {
   const confirmDelete = async (recordId: number) => {
     try {
       await deleteCompany({ portfolioId: +id!, companyId: recordId });
-      createSuccess(t("Company deleted successfully"));
+      toast.success(t("Company deleted successfully"));
     } catch (error) {
       console.error(error);
-      createError(t(`Error deleting company: ${error}`));
+      toast.error(t(`Error deleting company: ${error}`));
     }
   };
 

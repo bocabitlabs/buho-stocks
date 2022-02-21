@@ -1,13 +1,13 @@
-import React, { useContext } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useDeleteSharesTransaction,
   useSharesTransactions,
@@ -17,7 +17,6 @@ import { ISharesTransaction } from "types/shares-transaction";
 export default function SharesListTable() {
   const { t } = useTranslation();
   const { companyId } = useParams();
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
   const { isFetching: loading, data: transactions } = useSharesTransactions(
     +companyId!,
   );
@@ -29,9 +28,9 @@ export default function SharesListTable() {
         companyId: +companyId!,
         transactionId: recordId,
       });
-      createSuccess(t("Shares transaction deleted successfully"));
+      toast.success(t("Shares transaction deleted successfully"));
     } catch (error) {
-      createError(t(`Error deleting shares transaction: ${error}`));
+      toast.error(t(`Error deleting shares transaction: ${error}`));
     }
   };
 

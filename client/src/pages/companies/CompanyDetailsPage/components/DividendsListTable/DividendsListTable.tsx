@@ -1,12 +1,12 @@
-import React, { ReactElement, useContext } from "react";
+import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import NotesRow from "components/NotesRow/NotesRow";
-import { AlertMessagesContext } from "contexts/alert-messages";
 import {
   useDeleteDividendsTransaction,
   useDividendsTransactions,
@@ -16,7 +16,6 @@ import { IDividendsTransaction } from "types/dividends-transaction";
 export default function DividendsListTable(): ReactElement {
   const { t } = useTranslation();
   const { companyId } = useParams();
-  const { createSuccess, createError } = useContext(AlertMessagesContext);
   const { isFetching: loading, data: transactions } = useDividendsTransactions(
     +companyId!,
   );
@@ -28,9 +27,9 @@ export default function DividendsListTable(): ReactElement {
         companyId: +companyId!,
         transactionId: recordId,
       });
-      createSuccess(t("Dividends transaction deleted successfully"));
+      toast.success(t("Dividends transaction deleted successfully"));
     } catch (error) {
-      createError(t(`Error deleting dividends transaction: ${error}`));
+      toast.error(t(`Error deleting dividends transaction: ${error}`));
     }
   };
 
