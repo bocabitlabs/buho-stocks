@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -38,7 +39,11 @@ export const useAddSuperSector = () => {
       ),
     {
       onSuccess: () => {
+        toast.success("Super sector has been added");
         queryClient.invalidateQueries("superSectors");
+      },
+      onError: (err) => {
+        toast.error(`Cannot create super sector: ${err}`);
       },
     },
   );
@@ -49,8 +54,12 @@ export const useDeleteSuperSector = () => {
     (id: number) =>
       axios.delete(`/api/v1/sectors/super/${id}/`, getAxiosOptionsWithAuth()),
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["superSectors", variables]);
+      onSuccess: () => {
+        toast.success("Super sector has been deleted");
+        queryClient.invalidateQueries("sectors");
+      },
+      onError: (err) => {
+        toast.error(`Cannot delete sector: ${err}`);
       },
     },
   );
@@ -65,8 +74,12 @@ export const useUpdateSuperSector = () => {
         getAxiosOptionsWithAuth(),
       ),
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["superSectors", variables.sectorId]);
+      onSuccess: () => {
+        toast.success("Super sector has been updated");
+        queryClient.invalidateQueries("superSectors");
+      },
+      onError: (err) => {
+        toast.error(`Cannot update super sector: ${err}`);
       },
     },
   );
@@ -76,12 +89,13 @@ export function useSuperSectors() {
   return useQuery<ISector[], Error>("superSectors", fetchSuperSectors);
 }
 
-export function useSuperSector(sectorId: number | undefined) {
+export function useSuperSector(sectorId: number | undefined, options?: any) {
   return useQuery<ISector, Error>(
     ["superSectors", sectorId],
     () => fetchSuperSector(sectorId),
     {
       enabled: !!sectorId,
+      ...options,
     },
   );
 }

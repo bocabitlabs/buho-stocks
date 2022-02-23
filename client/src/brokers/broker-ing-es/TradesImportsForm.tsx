@@ -144,7 +144,6 @@ export default function TradesImportForm({
         "YYYY-MM-DD HH:mm:ss",
       )}`,
       company,
-      portfolio: portfolio.id,
       type: formTransactionType,
     };
     if (isRightsTransaction) {

@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -60,10 +61,14 @@ export const useAddDividendsTransaction = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success("Transaction created successfully");
         queryClient.invalidateQueries([
           "dividendsTransactions",
           variables.companyId,
         ]);
+      },
+      onError: () => {
+        toast.error("Unable to create transaction");
       },
     },
   );
@@ -78,11 +83,14 @@ export const useDeleteDividendsTransaction = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success("Transaction deleted");
         queryClient.invalidateQueries([
           "dividendsTransactions",
-          variables,
-          variables.transactionId,
+          variables.companyId,
         ]);
+      },
+      onError: () => {
+        toast.error("Unable to delete dividends transaction");
       },
     },
   );
@@ -102,11 +110,14 @@ export const useUpdateDividendsTransaction = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success("Transaction updated");
         queryClient.invalidateQueries([
           "dividendsTransactions",
           variables.companyId,
-          variables.transactionId,
         ]);
+      },
+      onError: () => {
+        toast.error("Unable to update dividends transaction");
       },
     },
   );
@@ -123,9 +134,15 @@ export function useDividendsTransactions(companyId: number | undefined) {
 export function useDividendsTransaction(
   companyId: number | undefined,
   transactionId: number | undefined,
+  options?: any,
 ) {
-  return useQuery("market", () => fetchTransaction(companyId, transactionId), {
-    // The query will not execute until the userId exists
-    enabled: !!companyId && !!transactionId,
-  });
+  return useQuery<IDividendsTransaction, Error>(
+    ["dividendsTransactions", companyId, transactionId],
+    () => fetchTransaction(companyId, transactionId),
+    {
+      // The query will not execute until the userId exists
+      enabled: !!companyId && !!transactionId,
+      ...options,
+    },
+  );
 }

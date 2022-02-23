@@ -9,7 +9,6 @@ export interface Transaction {
   company: number;
   color: string;
   notes: string;
-  portfolio: number;
 }
 
 export type TransactionType = "BUY" | "SELL";

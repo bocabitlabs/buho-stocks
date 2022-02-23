@@ -1,6 +1,6 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
@@ -11,15 +11,41 @@ import {
   useDeleteDividendsTransaction,
   useDividendsTransactions,
 } from "hooks/use-dividends-transactions/use-dividends-transactions";
+import DividendsTransactionAddEditForm from "pages/companies/CompanyDetailsPage/components/DividendsTransactionAddEditForm/DividendsTransactionAddEditForm";
+import { ICurrency } from "types/currency";
 import { IDividendsTransaction } from "types/dividends-transaction";
 
-export default function DividendsListTable(): ReactElement {
+interface IProps {
+  companyDividendsCurrency: ICurrency;
+  portfolioBaseCurrency: string;
+}
+
+export default function DividendsListTable({
+  companyDividendsCurrency,
+  portfolioBaseCurrency,
+}: IProps): ReactElement {
   const { t } = useTranslation();
   const { companyId } = useParams();
   const { isFetching: loading, data: transactions } = useDividendsTransactions(
     +companyId!,
   );
   const { mutateAsync: deleteTransaction } = useDeleteDividendsTransaction();
+  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (recordId: number) => {
+    setSelectedId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const confirmDelete = async (recordId: number) => {
     try {
@@ -77,9 +103,10 @@ export default function DividendsListTable(): ReactElement {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`dividends/${record.id}/`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
           <Popconfirm
             key={`market-delete-${record.key}`}
             title={`Delete transaction ${record.name}?`}
@@ -119,17 +146,30 @@ export default function DividendsListTable(): ReactElement {
   }
 
   return (
-    <Table
-      size="small"
-      columns={columns}
-      bordered
-      dataSource={getData()}
-      scroll={{ x: 800 }}
-      expandable={{
-        expandedRowRender: NotesRow,
-        rowExpandable: (record) =>
-          record.notes !== "undefined" && record.notes !== undefined,
-      }}
-    />
+    <div>
+      <Table
+        size="small"
+        columns={columns}
+        bordered
+        dataSource={getData()}
+        scroll={{ x: 800 }}
+        expandable={{
+          expandedRowRender: NotesRow,
+          rowExpandable: (record) =>
+            record.notes !== "undefined" && record.notes !== undefined,
+        }}
+      />
+      <DividendsTransactionAddEditForm
+        title="Update dividends transaction"
+        okText="Update"
+        transactionId={selectedId}
+        companyId={+companyId!}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={onCancel}
+        companyDividendsCurrency={companyDividendsCurrency}
+        portfolioBaseCurrency={portfolioBaseCurrency}
+      />
+    </div>
   );
 }

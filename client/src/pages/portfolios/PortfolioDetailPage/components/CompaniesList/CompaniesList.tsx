@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
+import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
 import { ICompanyListItem } from "types/company";
 
 interface IProps {
@@ -15,6 +16,22 @@ export default function CompaniesList({ companies }: IProps) {
   const { t } = useTranslation();
   const { id } = useParams();
   const { mutateAsync: deleteCompany } = useDeleteCompany();
+  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (recordId: number) => {
+    setSelectedId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const confirmDelete = async (recordId: number) => {
     try {
@@ -124,9 +141,11 @@ export default function CompaniesList({ companies }: IProps) {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`companies/${record.id}/edit`}>
-            <Button type="text" icon={<EditOutlined />} />
-          </Link>
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
           <Popconfirm
             key={`delete-${record.key}`}
             title={`Delete company ${record.name}?`}
@@ -171,12 +190,23 @@ export default function CompaniesList({ companies }: IProps) {
   };
 
   return (
-    <Table
-      pagination={{ defaultPageSize: 60 }}
-      columns={columns}
-      dataSource={getData()}
-      scroll={{ x: 600 }}
-      style={{ marginTop: 16 }}
-    />
+    <div>
+      <Table
+        pagination={{ defaultPageSize: 60 }}
+        columns={columns}
+        dataSource={getData()}
+        scroll={{ x: 600 }}
+        style={{ marginTop: 16 }}
+      />
+      <CompanyAddEditForm
+        title="Update company"
+        okText="Update"
+        portfolioId={+id!}
+        companyId={selectedId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={onCancel}
+      />
+    </div>
   );
 }

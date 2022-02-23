@@ -98,6 +98,7 @@ export function useCompanies(portfolioId: number | undefined) {
 export function useCompany(
   portfolioId: number | undefined,
   companyId: number | undefined,
+  options?: any,
 ) {
   return useQuery<ICompany, Error>(
     ["companies", portfolioId, companyId],
@@ -105,6 +106,7 @@ export function useCompany(
     {
       // The query will not execute until the userId exists
       enabled: !!portfolioId && !!companyId,
+      ...options,
     },
   );
 }

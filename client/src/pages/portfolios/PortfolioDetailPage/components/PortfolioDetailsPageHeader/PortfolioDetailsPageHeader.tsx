@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -8,10 +8,11 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Spin } from "antd";
+import { Button, PageHeader, Popconfirm } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeletePortfolio } from "hooks/use-portfolios/use-portfolios";
+import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
 
 interface Props {
   portfolioName: string;
@@ -36,6 +37,21 @@ function PortfolioDetailsPageHeader({
       breadcrumbName: portfolioName,
     },
   ];
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
+
   const confirmDelete = async () => {
     try {
       await deletePortfolio({ portfolioId: +id! });
@@ -46,9 +62,6 @@ function PortfolioDetailsPageHeader({
     }
   };
 
-  if (!portfolioName) {
-    return <Spin />;
-  }
   return (
     <PageHeader
       className="site-page-header"
@@ -80,9 +93,7 @@ function PortfolioDetailsPageHeader({
           type="primary"
           key="company-add-header"
           icon={<PlusOutlined />}
-          onClick={() => {
-            navigate(`companies/add`);
-          }}
+          onClick={showModal}
         >
           {t("Company")}
         </Button>,
@@ -100,6 +111,14 @@ function PortfolioDetailsPageHeader({
       ]}
     >
       {children}
+      <CompanyAddEditForm
+        title="Add new company"
+        okText="Create"
+        portfolioId={+id!}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={onCancel}
+      />
     </PageHeader>
   );
 }

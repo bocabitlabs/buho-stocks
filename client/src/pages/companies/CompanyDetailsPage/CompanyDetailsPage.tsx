@@ -43,7 +43,11 @@ export default function CompanyDetailsPage(): ReactElement {
       />
       <YearSelector companyId={companyId} firstYear={company.firstYear} />
       <Charts stats={company.stats} />
-      <TransactionsTabs />
+      <TransactionsTabs
+        companyBaseCurrency={company.baseCurrency}
+        companyDividendsCurrency={company.dividendsCurrency}
+        portfolioBaseCurrency={company.portfolio.baseCurrency}
+      />
       <CompanyExtraInfo companyDescription={company.description} />
     </CompanyDetailsPageHeader>
   );

@@ -134,7 +134,6 @@ export default function IBDividendsImportForm({
         "YYYY-MM-DD HH:mm:ss",
       )}. ${notes}`,
       company,
-      portfolio: portfolio.id,
     };
     console.debug(transaction);
     try {

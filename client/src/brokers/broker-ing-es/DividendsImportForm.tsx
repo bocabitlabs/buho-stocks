@@ -133,7 +133,6 @@ export default function DividendsImportForm({
         "YYYY-MM-DD HH:mm:ss",
       )}`,
       company,
-      portfolio: portfolio.id,
     };
     try {
       await createDividendsTransaction({

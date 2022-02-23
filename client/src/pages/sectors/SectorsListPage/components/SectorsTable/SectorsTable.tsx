@@ -1,18 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Table } from "antd";
+import { Alert, Button, Popconfirm, Space, Table } from "antd";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useDeleteSector, useSectors } from "hooks/use-sectors/use-sectors";
+import SectorAddEditForm from "pages/sectors/SectorsListPage/components/SectorAddEditForm/SectorAddEditForm";
 import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector } from "types/sector";
 
 export default function SectorsTable() {
   const { t } = useTranslation();
 
-  const { status, data: sectors, error, isFetching } = useSectors();
+  const { data: sectors, error, isFetching } = useSectors();
   const { mutateAsync: deleteSector } = useDeleteSector();
+  const [selectedSectorId, setSelectedSectorId] = useState<number | undefined>(
+    undefined,
+  );
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showSectorModal = (recordId: number) => {
+    setSelectedSectorId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const confirmDelete = async (recordId: number) => {
     try {
@@ -38,7 +58,11 @@ export default function SectorsTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string) => <strong>{text}</strong>,
+      render: (text: string, record: ISector) => (
+        <Button type="link" onClick={() => showSectorModal(record.id)}>
+          {text}
+        </Button>
+      ),
       sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name),
     },
     {
@@ -83,16 +107,31 @@ export default function SectorsTable() {
   };
 
   if (isFetching) {
-    return <div>{isFetching ? <div>Fetching data...</div> : <div />}</div>;
+    return <LoadingSpin />;
   }
 
   if (error) {
-    return <div>Error fetching the data from the API</div>;
+    return (
+      <Alert
+        showIcon
+        message="Unable to load sectors"
+        description={error.message}
+        type="error"
+      />
+    );
   }
 
-  if (status === "loading") {
-    return <div>Loading</div>;
-  }
-
-  return <Table columns={columns} dataSource={getData()} />;
+  return (
+    <div>
+      <Table columns={columns} dataSource={getData()} />
+      <SectorAddEditForm
+        title="Update sector"
+        okText="Update"
+        sectorId={selectedSectorId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={handleCancel}
+      />
+    </div>
+  );
 }

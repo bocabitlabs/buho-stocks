@@ -116,7 +116,6 @@ export default function IBTradesImportForm({
         "YYYY-MM-DD HH:mm:ss",
       )}`,
       company,
-      portfolio: portfolio.id,
       type: "BUY",
     };
     console.debug(transaction);

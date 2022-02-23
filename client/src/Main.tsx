@@ -11,31 +11,17 @@ import { AuthContext } from "contexts/auth";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import { LoginPage } from "pages/authentication/LoginPage/LoginPage";
 import RegisterPage from "pages/authentication/RegisterPage/RegisterPage";
-import CompaniesAddPage from "pages/companies/CompaniesAddPage/CompaniesAddPage";
 import CompanyDetailsPage from "pages/companies/CompanyDetailsPage/CompanyDetailsPage";
-import CompanyEditPage from "pages/companies/CompanyEditPage/CompanyEditPage";
 import CurrenciesPage from "pages/currencies/CurrenciesPage/CurrenciesPage";
-import DividendsTransactionsAddPage from "pages/dividends/DividendsTransactionsAddPage/DividendsTransactionsAddPage";
-import DividendsTransactionsEditPage from "pages/dividends/DividendsTransactionsEditPage/DividendsTransactionsEditPage";
 import ImportExportPage from "pages/ImportExportPage/ImportExportPage";
 import ImportFromBrokerPage from "pages/ImportFromBrokerPage/ImportFromBrokerPage";
 import MarketsListPage from "pages/markets/MarketsListPage/MarketsListPage";
 import PortfolioChartsPage from "pages/portfolios/PorfolioChartsPage/PortfolioChartsPage";
 import PortfolioDetailsPage from "pages/portfolios/PortfolioDetailPage/PortfolioDetailsPage";
-import PortfoliosAddPage from "pages/portfolios/PortfoliosAddPage/PortfoliosAddPage";
 import PortfoliosListPage from "pages/portfolios/PortfoliosListPage/PortfoliosListPage";
 import PortfolioTransactionsLogPage from "pages/portfolios/PortfolioTransactionsLogPage/PortfolioTransactionsLogPage";
-import RightsTransactionsAddPage from "pages/rights/RightsTransactionsAddPage/RightsTransactionsAddPage";
-import RightsTransactionsEditPage from "pages/rights/RightsTransactionsEditPage/RightsTransactionsEditPage";
-import SectorsAddPage from "pages/sectors/SectorsAddPage/SectorsAddpage";
-import SectorsEditPage from "pages/sectors/SectorsEditPage/SectorsEditPage";
 import SectorsListPage from "pages/sectors/SectorsListPage/SectorsListPage";
-import SectorsPages from "pages/sectors/SectorsPages/SectorsPages";
-import SuperSectorsAddPage from "pages/sectors/SuperSectorsAddPage/SuperSectorsAddpage";
-import SuperSectorsEditPage from "pages/sectors/SuperSectorsEditPage/SuperSectorsEditPage";
 import SettingsPage from "pages/settings/SettingsPage/SettingsPage";
-import SharesTransactionsAddPage from "pages/shares/SharesTransactionsAddPage/SharesTransactionsAddPage";
-import SharesTransactionsEditPage from "pages/shares/SharesTransactionsEditPage/SharesTransactionsEditPage";
 import getRoute, { HOME_ROUTE } from "routes";
 
 export default function Main(): ReactElement {
@@ -67,7 +53,6 @@ export default function Main(): ReactElement {
                 element={<ImportFromBrokerPage />}
               />
               <Route path="markets" element={<MarketsListPage />} />
-              <Route path="portfolios/add/*" element={<PortfoliosAddPage />} />
               <Route path="portfolios/:id" element={<PortfolioDetailsPage />} />
               <Route
                 path="portfolios/:id/log/*"
@@ -78,49 +63,11 @@ export default function Main(): ReactElement {
                 element={<PortfolioChartsPage />}
               />
               <Route
-                path="portfolios/:id/companies/add/*"
-                element={<CompaniesAddPage />}
-              />
-              <Route
                 path="portfolios/:id/companies/:companyId"
                 element={<CompanyDetailsPage />}
               />
-              <Route
-                path="portfolios/:id/companies/:companyId/edit"
-                element={<CompanyEditPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/shares/add/*"
-                element={<SharesTransactionsAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/shares/:transactionId"
-                element={<SharesTransactionsEditPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/rights/add/*"
-                element={<RightsTransactionsAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/rights/:transactionId"
-                element={<RightsTransactionsEditPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/dividends/add/*"
-                element={<DividendsTransactionsAddPage />}
-              />
-              <Route
-                path="portfolios/:id/companies/:companyId/dividends/:transactionId"
-                element={<DividendsTransactionsEditPage />}
-              />
               <Route path="settings" element={<SettingsPage />} />
-              <Route path="sectors" element={<SectorsPages />}>
-                <Route path="" element={<SectorsListPage />} />
-                <Route path="add/*" element={<SectorsAddPage />} />
-                <Route path=":id" element={<SectorsEditPage />} />
-                <Route path="super/add/*" element={<SuperSectorsAddPage />} />
-                <Route path="super/:id" element={<SuperSectorsEditPage />} />
-              </Route>
+              <Route path="sectors" element={<SectorsListPage />} />
             </Route>
           </Routes>
         </BrowserRouter>

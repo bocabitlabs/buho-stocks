@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -34,6 +35,7 @@ export const useAddSector = () => {
       axios.post("/api/v1/sectors/", newSector, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
+        toast.success("Sector has been added");
         queryClient.invalidateQueries("sectors");
       },
     },
@@ -45,8 +47,12 @@ export const useDeleteSector = () => {
     (id: number) =>
       axios.delete(`"/api/v1/sectors/${id}/`, getAxiosOptionsWithAuth()),
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["sectors", variables]);
+      onSuccess: () => {
+        toast.success("Sector has been deleted");
+        queryClient.invalidateQueries("sectors");
+      },
+      onError: (err) => {
+        toast.error(`Cannot create sector: ${err}`);
       },
     },
   );
@@ -61,8 +67,12 @@ export const useUpdateSector = () => {
         getAxiosOptionsWithAuth(),
       ),
     {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries(["sectors", variables.sectorId]);
+      onSuccess: () => {
+        toast.success("Sector has been updated");
+        queryClient.invalidateQueries("sectors");
+      },
+      onError: (err) => {
+        toast.error(`Cannot update sector: ${err}`);
       },
     },
   );
@@ -72,12 +82,13 @@ export function useSectors() {
   return useQuery<ISector[], Error>("sectors", fetchSectors);
 }
 
-export function useSector(sectorId: number | undefined) {
+export function useSector(sectorId: number | undefined, options: any) {
   return useQuery<ISector, Error>(
     ["sectors", sectorId],
     () => fetchSector(sectorId),
     {
       enabled: !!sectorId,
+      ...options,
     },
   );
 }

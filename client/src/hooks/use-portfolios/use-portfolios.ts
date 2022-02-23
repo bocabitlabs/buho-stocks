@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -33,6 +35,8 @@ export const fetchPortfolio = async (portfolioId: number | undefined) => {
 };
 
 export const useAddPortfolio = () => {
+  const { t } = useTranslation();
+
   return useMutation(
     (newPortfolio: IPortfolioFormFields) =>
       axios.post(
@@ -42,6 +46,11 @@ export const useAddPortfolio = () => {
       ),
     {
       onSuccess: () => {
+        toast.success(t("Portfolio created"));
+        queryClient.invalidateQueries(["portfolios"]);
+      },
+      onError: () => {
+        toast.error(t("Unable to create portfolio"));
         queryClient.invalidateQueries(["portfolios"]);
       },
     },
@@ -49,6 +58,8 @@ export const useAddPortfolio = () => {
 };
 
 export const useDeletePortfolio = () => {
+  const { t } = useTranslation();
+
   return useMutation(
     ({ portfolioId }: DeleteMutationProps) =>
       axios.delete(
@@ -57,13 +68,20 @@ export const useDeletePortfolio = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.error(t("Portfolio deleted"));
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+      },
+      onError: () => {
+        toast.error(t("Unable to delete portfolio"));
+        queryClient.invalidateQueries(["portfolios"]);
       },
     },
   );
 };
 
 export const useUpdatePortfolio = () => {
+  const { t } = useTranslation();
+
   return useMutation(
     ({ portfolioId, newPortfolio }: UpdateMutationProps) =>
       axios.put(
@@ -73,7 +91,12 @@ export const useUpdatePortfolio = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success(t("Portfolio has been updated"));
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+      },
+      onError: () => {
+        toast.error(t("Unable to update portfolio"));
+        queryClient.invalidateQueries(["portfolios"]);
       },
     },
   );
@@ -83,17 +106,14 @@ export function usePortfolios() {
   return useQuery<IPortfolio[], Error>("portfolios", fetchPortfolios);
 }
 
-export function usePortfolio(
-  portfolioId: number | undefined,
-  otherOptions?: any,
-) {
+export function usePortfolio(portfolioId: number | undefined, options?: any) {
   return useQuery<IPortfolio, Error>(
     ["portfolios", portfolioId],
     () => fetchPortfolio(portfolioId),
     {
       // The query will not execute until the userId exists
       enabled: !!portfolioId,
-      ...otherOptions,
+      ...options,
     },
   );
 }
