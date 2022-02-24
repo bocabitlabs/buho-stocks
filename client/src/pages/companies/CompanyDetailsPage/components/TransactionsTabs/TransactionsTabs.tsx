@@ -1,13 +1,11 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Tabs } from "antd";
-import DividendsListTable from "../DividendsListTable/DividendsListTable";
-import RightsListTable from "../RightsListTable/RightsListTable";
-import SharesListTable from "../SharesListTable/SharesListTable";
-import SharesTransactionAddEditForm from "../SharesTransactionAddEditForm/SharesTransactionAddEditForm";
+import { useNavigate } from "react-router-dom";
+import { Tabs } from "antd";
+import DividendsTabPane from "../DividendsTabPane/DividendsTabPane";
+import RightsTabPane from "../RightsTabPane/RightsTabPane";
+import SharesTabPane from "../SharesTabPane/SharesTabPane";
 import { useQueryParameters } from "hooks/use-query-params/use-query-params";
-import DividendsTransactionAddEditForm from "pages/companies/CompanyDetailsPage/components/DividendsTransactionAddEditForm/DividendsTransactionAddEditForm";
 import { ICurrency } from "types/currency";
 
 interface IProps {
@@ -24,35 +22,6 @@ export default function TransactionsTabs({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQueryParameters();
-  const { companyId } = useParams();
-  const [isDividendsModalVisible, setIsDividendsModalVisible] = useState(false);
-  const [isSharesModalVisible, setIsSharesModalVisible] = useState(false);
-
-  const showDividendsModal = () => {
-    setIsDividendsModalVisible(true);
-  };
-
-  const showSharesModal = () => {
-    setIsSharesModalVisible(true);
-  };
-
-  const onDividendsCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsDividendsModalVisible(false);
-  };
-
-  const onSharesCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsSharesModalVisible(false);
-  };
-
-  const onDividendsCancel = () => {
-    setIsDividendsModalVisible(false);
-  };
-
-  const onSharesCancel = () => {
-    setIsDividendsModalVisible(false);
-  };
 
   return (
     <Tabs
@@ -65,65 +34,22 @@ export default function TransactionsTabs({
       }}
     >
       <Tabs.TabPane tab={t("Shares")} key="shares">
-        <Button
-          key="add-shares-button"
-          type="primary"
-          onClick={showSharesModal}
-          style={{ marginBottom: 16 }}
-        >
-          {t("+ Shares")}
-        </Button>
-        <SharesTransactionAddEditForm
-          title="Add shares transaction"
-          okText="Create"
-          companyId={+companyId!}
-          isModalVisible={isSharesModalVisible}
-          onCreate={onSharesCreate}
-          onCancel={onSharesCancel}
-          companyBaseCurrency={companyBaseCurrency}
-          portfolioBaseCurrency={portfolioBaseCurrency}
-        />
-        <SharesListTable
+        <SharesTabPane
           companyBaseCurrency={companyBaseCurrency}
           portfolioBaseCurrency={portfolioBaseCurrency}
         />
       </Tabs.TabPane>
       <Tabs.TabPane tab={t("Dividends")} key="dividends">
-        <Button
-          key="add-dividends-button"
-          type="primary"
-          onClick={showDividendsModal}
-          style={{ marginBottom: 16 }}
-        >
-          {t("+ Dividends")}
-        </Button>
-        <DividendsTransactionAddEditForm
-          title="Add dividends transaction"
-          okText="Create"
-          companyId={+companyId!}
-          isModalVisible={isDividendsModalVisible}
-          onCreate={onDividendsCreate}
-          onCancel={onDividendsCancel}
-          companyDividendsCurrency={companyDividendsCurrency}
-          portfolioBaseCurrency={portfolioBaseCurrency}
-        />
-        <DividendsListTable
+        <DividendsTabPane
           companyDividendsCurrency={companyDividendsCurrency}
           portfolioBaseCurrency={portfolioBaseCurrency}
         />
       </Tabs.TabPane>
       <Tabs.TabPane tab={t("Rights")} key="rights">
-        <Button
-          key="add-rights-button"
-          type="primary"
-          onClick={() => {
-            navigate(`rights/add`);
-          }}
-          style={{ marginBottom: 16 }}
-        >
-          {t("+ Rights")}
-        </Button>
-        <RightsListTable />
+        <RightsTabPane
+          companyBaseCurrency={companyBaseCurrency}
+          portfolioBaseCurrency={portfolioBaseCurrency}
+        />
       </Tabs.TabPane>
     </Tabs>
   );

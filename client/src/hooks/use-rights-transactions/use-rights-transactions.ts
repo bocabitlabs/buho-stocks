@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -60,11 +61,14 @@ export const useAddRightsTransaction = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success(`Rights added successfully`);
         queryClient.invalidateQueries([
           "rightsTransactions",
           variables.companyId,
-          variables.newTransaction,
         ]);
+      },
+      onError: () => {
+        toast.error(`Unable to add rights`);
       },
     },
   );
@@ -77,19 +81,21 @@ export const useUpdateRightsTransaction = () => {
       transactionId,
       newTransaction,
     }: IUpdateRightsMutationProps) =>
-      axios.post(
+      axios.put(
         `/api/v1/companies/${companyId}/rights/${transactionId}/`,
         newTransaction,
         getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success(`Rights updated successfully`);
         queryClient.invalidateQueries([
           "rightsTransactions",
           variables.companyId,
-          variables.transactionId,
-          variables.newTransaction,
         ]);
+      },
+      onError: () => {
+        toast.error(`Unable to update transaction`);
       },
     },
   );
@@ -104,11 +110,14 @@ export const useDeleteRightsTransaction = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success(`Rights deleted successfully`);
         queryClient.invalidateQueries([
           "rightsTransactions",
           variables.companyId,
-          variables.transactionId,
         ]);
+      },
+      onError: () => {
+        toast.error("Unable to delete transaction");
       },
     },
   );

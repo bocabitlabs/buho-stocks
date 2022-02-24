@@ -1,12 +1,13 @@
 import React, { ReactElement } from "react";
 import { useParams } from "react-router-dom";
-import { Spin } from "antd";
+import { Alert } from "antd";
 import Charts from "./components/Charts/Charts";
 import CompanyDetailsPageHeader from "./components/CompanyDetailsPageHeader/CompanyDetailsPageHeader";
 import CompanyExtraInfo from "./components/CompanyExtraInfo/CompanyExtraInfo";
 import CompanyInfo from "./components/CompanyInfo/CompanyInfo";
 import TransactionsTabs from "./components/TransactionsTabs/TransactionsTabs";
 import YearSelector from "./components/YearSelector/YearSelector";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useCompany } from "hooks/use-companies/use-companies";
 
 export default function CompanyDetailsPage(): ReactElement {
@@ -14,15 +15,19 @@ export default function CompanyDetailsPage(): ReactElement {
   const { data: company, isFetching, error } = useCompany(+id!, +companyId!);
 
   if (isFetching || !company) {
-    return (
-      <div>
-        <Spin /> Loading company...
-      </div>
-    );
+    return <LoadingSpin style={{ marginTop: 20 }} />;
   }
 
   if (error) {
-    <div>Error fetching the data</div>;
+    return (
+      <Alert
+        style={{ marginTop: 20 }}
+        showIcon
+        message="Unable to load company"
+        description={error.message}
+        type="error"
+      />
+    );
   }
 
   return (

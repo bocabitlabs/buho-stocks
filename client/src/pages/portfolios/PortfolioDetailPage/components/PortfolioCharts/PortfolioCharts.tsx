@@ -1,22 +1,20 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Col, Row, Spin } from "antd";
+import { Col, Row } from "antd";
 import { Chart, registerables } from "chart.js";
 import PortfolioDividendsChart from "../PortfolioDividendsChart/PortfolioDividendsChart";
 import PortfolioReturnsChart from "../PortfolioReturnsChart/PortfolioReturnsChart";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 Chart.register(...registerables);
 
 export default function Charts() {
   const { id } = useParams();
-  const { data: stats, isFetching: loading } = usePortfolioAllYearStats(
-    +id!,
-    undefined,
-  );
+  const { data: stats, isFetching } = usePortfolioAllYearStats(+id!, undefined);
 
-  if (loading) {
-    return <Spin />;
+  if (isFetching) {
+    return <LoadingSpin />;
   }
 
   return (

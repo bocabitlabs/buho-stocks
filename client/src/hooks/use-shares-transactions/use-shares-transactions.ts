@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -63,8 +64,10 @@ export const useAddSharesTransaction = () => {
         queryClient.invalidateQueries([
           "sharesTransactions",
           variables.companyId,
-          variables.newTransaction,
         ]);
+      },
+      onError: () => {
+        toast.error("Unable to add shares transaction");
       },
     },
   );
@@ -79,7 +82,11 @@ export const useDeleteSharesTransaction = () => {
       ),
     {
       onSuccess: () => {
+        toast.success("Shares transaction deleted successfully");
         queryClient.invalidateQueries(["sharesTransactions"]);
+      },
+      onError: () => {
+        toast.error("Unable to delete");
       },
     },
   );
@@ -92,19 +99,21 @@ export const useUpdateSharesTransaction = () => {
       transactionId,
       newTransaction,
     }: IUpdateSharesMutationProps) =>
-      axios.post(
+      axios.put(
         `/api/v1/companies/${companyId}/shares/${transactionId}/`,
         newTransaction,
         getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success("Shares transaction updated successfully");
         queryClient.invalidateQueries([
           "sharesTransactions",
           variables.companyId,
-          variables.transactionId,
-          variables.newTransaction,
         ]);
+      },
+      onError: () => {
+        toast.error("Unable to update shares transaction");
       },
     },
   );

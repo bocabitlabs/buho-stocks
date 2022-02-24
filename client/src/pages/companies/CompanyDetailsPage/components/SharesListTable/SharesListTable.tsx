@@ -1,26 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
+import SharesTransactionAddEditForm from "../SharesTransactionAddEditForm/SharesTransactionAddEditForm";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
 import {
   useDeleteSharesTransaction,
   useSharesTransactions,
 } from "hooks/use-shares-transactions/use-shares-transactions";
+import { ICurrency } from "types/currency";
 import { ISharesTransaction } from "types/shares-transaction";
 
-export default function SharesListTable() {
+interface IProps {
+  companyBaseCurrency: ICurrency;
+  portfolioBaseCurrency: string;
+}
+
+export default function SharesListTable({
+  companyBaseCurrency,
+  portfolioBaseCurrency,
+}: IProps) {
   const { t } = useTranslation();
   const { companyId } = useParams();
   const { isFetching: loading, data: transactions } = useSharesTransactions(
     +companyId!,
   );
   const { mutateAsync: deleteTransaction } = useDeleteSharesTransaction();
+  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (recordId: number) => {
+    setSelectedId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
 
   const confirmDelete = async (recordId: number) => {
     try {
@@ -86,9 +112,10 @@ export default function SharesListTable() {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`shares/${record.id}/`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
           <Popconfirm
             key={`market-delete-${record.key}`}
             title={`Delete transaction ${record.name}?`}
@@ -129,17 +156,30 @@ export default function SharesListTable() {
   }
 
   return (
-    <Table
-      size="small"
-      columns={columns}
-      bordered
-      dataSource={getData()}
-      scroll={{ x: 800 }}
-      expandable={{
-        expandedRowRender: NotesRow,
-        rowExpandable: (record) =>
-          record.notes !== "undefined" && record.notes !== undefined,
-      }}
-    />
+    <div>
+      <Table
+        size="small"
+        columns={columns}
+        bordered
+        dataSource={getData()}
+        scroll={{ x: 800 }}
+        expandable={{
+          expandedRowRender: NotesRow,
+          rowExpandable: (record) =>
+            record.notes !== "undefined" && record.notes !== undefined,
+        }}
+      />
+      <SharesTransactionAddEditForm
+        title="Update shares transaction"
+        okText="Update"
+        companyId={+companyId!}
+        transactionId={selectedId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={onCancel}
+        companyBaseCurrency={companyBaseCurrency}
+        portfolioBaseCurrency={portfolioBaseCurrency}
+      />
+    </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Form, Input, Modal, Select, Switch } from "antd";
+import { Alert, Form, Input, Modal, Select, Switch } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import {
@@ -35,7 +35,6 @@ function SectorAddEditForm({
   const { t } = useTranslation();
 
   const { data: superSectors } = useSuperSectors();
-
   const { mutate: createSector } = useAddSector();
   const { mutate: updateSector } = useUpdateSector();
   const {
@@ -45,6 +44,7 @@ function SectorAddEditForm({
   } = useSector(sectorId, {
     onSuccess: (data: any) => {
       setColor(data.color);
+      form.setFieldsValue({ superSectorId: data.superSector });
     },
   });
 
@@ -178,13 +178,6 @@ function SectorAddEditForm({
             <Switch />
           </Form.Item>
         )}
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            {sector
-              ? t(`Update ${sector.isSuperSector ? "super" : ""} sector`)
-              : t("Add sector")}
-          </Button>
-        </Form.Item>
       </Form>
     </Modal>
   );

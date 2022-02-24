@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 
 interface Props {
   stats: any;
@@ -74,7 +75,7 @@ export default function DividendsChart({ stats }: Props): ReactElement {
   }, [stats]);
 
   if (!isDataSet || !data) {
-    return <div>Loading...</div>;
+    return <LoadingSpin />;
   }
   return <Bar options={options} data={data} />;
 }

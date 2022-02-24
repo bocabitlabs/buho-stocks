@@ -1,18 +1,32 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { Spin } from "antd";
+import { Alert } from "antd";
 import CompaniesList from "./components/CompaniesList/CompaniesList";
 import PortfolioDetailsPageHeader from "./components/PortfolioDetailsPageHeader/PortfolioDetailsPageHeader";
 import YearSelector from "./components/YearSelector/YearSelector";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 
 export default function PortfolioDetailsPage() {
   const { id } = useParams();
-  const { data: portfolio } = usePortfolio(+id!);
+  const { data: portfolio, error } = usePortfolio(+id!);
 
   if (!portfolio) {
-    return <Spin />;
+    return <LoadingSpin style={{ marginTop: 20 }} />;
   }
+
+  if (error) {
+    return (
+      <Alert
+        style={{ marginTop: 20 }}
+        showIcon
+        message="Unable to load portfolio"
+        description={error.message}
+        type="error"
+      />
+    );
+  }
+
   return (
     <PortfolioDetailsPageHeader
       portfolioName={portfolio.name}

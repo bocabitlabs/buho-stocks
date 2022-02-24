@@ -45,7 +45,7 @@ export const useAddSector = () => {
 export const useDeleteSector = () => {
   return useMutation(
     (id: number) =>
-      axios.delete(`"/api/v1/sectors/${id}/`, getAxiosOptionsWithAuth()),
+      axios.delete(`/api/v1/sectors/${id}/`, getAxiosOptionsWithAuth()),
     {
       onSuccess: () => {
         toast.success("Sector has been deleted");

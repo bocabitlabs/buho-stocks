@@ -1,20 +1,17 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Button, Popconfirm, Space, Table } from "antd";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useDeleteSector, useSectors } from "hooks/use-sectors/use-sectors";
 import SectorAddEditForm from "pages/sectors/SectorsListPage/components/SectorAddEditForm/SectorAddEditForm";
-import getRoute, { SECTORS_ROUTE } from "routes";
 import { ISector } from "types/sector";
 
 export default function SectorsTable() {
   const { t } = useTranslation();
 
   const { data: sectors, error, isFetching } = useSectors();
-  const { mutateAsync: deleteSector } = useDeleteSector();
+  const { mutate: deleteSector } = useDeleteSector();
   const [selectedSectorId, setSelectedSectorId] = useState<number | undefined>(
     undefined,
   );
@@ -35,12 +32,7 @@ export default function SectorsTable() {
   };
 
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteSector(recordId);
-      toast.success(t("Sector deleted successfully"));
-    } catch (err) {
-      toast.error(t(`Error deleting sector: ${err}`));
-    }
+    deleteSector(recordId);
   };
 
   const columns: any = [
@@ -58,11 +50,7 @@ export default function SectorsTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: ISector) => (
-        <Button type="link" onClick={() => showSectorModal(record.id)}>
-          {text}
-        </Button>
-      ),
+      render: (text: string) => <strong>{text}</strong>,
       sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name),
     },
     {
@@ -76,9 +64,10 @@ export default function SectorsTable() {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`${getRoute(SECTORS_ROUTE)}/${record.id}`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => showSectorModal(record.id)}
+          />
           <Popconfirm
             key={`sector-delete-${record.key}`}
             title={`Delete sector ${record.name}?`}

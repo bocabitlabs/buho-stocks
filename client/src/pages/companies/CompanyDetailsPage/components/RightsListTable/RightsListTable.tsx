@@ -1,27 +1,52 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
+import RightsTransactionAddEditForm from "../RightsTransactionAddEditForm/RightsTransactionAddEditForm";
 import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
 import {
   useDeleteRightsTransaction,
   useRightsTransactions,
 } from "hooks/use-rights-transactions/use-rights-transactions";
+import { ICurrency } from "types/currency";
 import { IRightsTransaction } from "types/rights-transaction";
 
-export default function RightsListTable(): ReactElement {
+interface IProps {
+  companyBaseCurrency: ICurrency;
+  portfolioBaseCurrency: string;
+}
+
+export default function RightsListTable({
+  companyBaseCurrency,
+  portfolioBaseCurrency,
+}: IProps): ReactElement {
   const { t } = useTranslation();
   const { companyId } = useParams();
   const { isFetching: loading, data: transactions } = useRightsTransactions(
     +companyId!,
   );
   const { mutateAsync: deleteTransaction } = useDeleteRightsTransaction();
+  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const showModal = (recordId: number) => {
+    setSelectedId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
   const confirmDelete = async (recordId: number) => {
     try {
       await deleteTransaction({
@@ -86,9 +111,10 @@ export default function RightsListTable(): ReactElement {
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`rights/${record.id}/`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
           <Popconfirm
             key={`delete-${record.key}`}
             title={`Delete transaction ${record.name}?`}
@@ -129,17 +155,30 @@ export default function RightsListTable(): ReactElement {
   }
 
   return (
-    <Table
-      size="small"
-      columns={columns}
-      bordered
-      dataSource={getData()}
-      scroll={{ x: 800 }}
-      expandable={{
-        expandedRowRender: NotesRow,
-        rowExpandable: (record) =>
-          record.notes !== "undefined" && record.notes !== undefined,
-      }}
-    />
+    <div>
+      <Table
+        size="small"
+        columns={columns}
+        bordered
+        dataSource={getData()}
+        scroll={{ x: 800 }}
+        expandable={{
+          expandedRowRender: NotesRow,
+          rowExpandable: (record) =>
+            record.notes !== "undefined" && record.notes !== undefined,
+        }}
+      />
+      <RightsTransactionAddEditForm
+        title="Update rights transaction"
+        okText="Update"
+        companyId={+companyId!}
+        transactionId={selectedId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={onCancel}
+        companyBaseCurrency={companyBaseCurrency}
+        portfolioBaseCurrency={portfolioBaseCurrency}
+      />
+    </div>
   );
 }
