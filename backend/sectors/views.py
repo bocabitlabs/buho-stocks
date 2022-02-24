@@ -1,8 +1,10 @@
-# from django.contrib.auth.models import User, Group
+import logging
+from django.utils.decorators import method_decorator
 from rest_framework.response import Response
 from rest_framework.authentication import (
     TokenAuthentication,
 )
+from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -14,218 +16,160 @@ from sectors.serializers import (
 )
 from sectors.models import Sector, SuperSector
 
-
-class SectorListAPIView(APIView):
-    authentication_classes = [
-        TokenAuthentication,
-    ]
-    permission_classes = [IsAuthenticated]
-
-    @swagger_auto_schema(tags=["sectors"])
-    def get(self, request, *args, **kwargs):
-        """
-        List all the market items for given requested user
-        """
-        sectors = Sector.objects.filter(user=request.user.id)
-        serializer = SectorSerializerGet(sectors, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 2. Create
-    @swagger_auto_schema(tags=["sectors"], request_body=SectorSerializer)
-    def post(self, request, *args, **kwargs):
-        """
-        Create the Sector with given market data
-        """
-        data = {
-            "name": request.data.get("name"),
-            "color": request.data.get("color"),
-            "super_sector": request.data.get("super_sector"),
-        }
-        serializer = SectorSerializer(data=data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+logger = logging.getLogger("buho_backend")
 
 
-class SectorDetailAPIView(APIView):
-    # add permission to check if user is authenticated
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get a list of sectors of the current user",
+        tags=["sectors"],
+        responses={200: SectorSerializerGet(many=True)},
+    ),
+)
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        operation_description="Create a new sector for the current user",
+        tags=["sectors"],
+        responses={200: SectorSerializer(many=False)},
+    ),
+)
+class SectorListCreateAPIView(generics.ListCreateAPIView):
+    """Get all the sectors from a user"""
+
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, todo_id, user_id):
-        """
-        Helper method to get the object with given todo_id, and user_id
-        """
-        try:
-            return Sector.objects.get(id=todo_id, user=user_id)
-        except Sector.DoesNotExist:
-            return None
+    def get_queryset(self):
+        user = self.request.user
+        return Sector.objects.filter(user=user.id)
 
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["sectors"])
-    def get(self, request, sector_id, *args, **kwargs):
-        """
-        Retrieves the Todo with given todo_id
-        """
-        todo_instance = self.get_object(sector_id, request.user.id)
-        if not todo_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-        serializer = SectorSerializerGet(todo_instance, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 4. Update
-    @swagger_auto_schema(tags=["sectors"], request_body=SectorSerializer)
-    def put(self, request, sector_id, *args, **kwargs):
-        """
-        Updates the todo item with given todo_id if exists
-        """
-        todo_instance = self.get_object(sector_id, request.user.id)
-        if not todo_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        data = {
-            "name": request.data.get("name"),
-            "color": request.data.get("color"),
-            "super_sector": request.data.get("super_sector"),
-        }
-        serializer = SectorSerializer(
-            instance=todo_instance,
-            data=data,
-            partial=True,
-            context={"request": request},
+    def get_serializer_class(self):
+        logger.debug(self.request.method)
+        if self.request.method == "GET":
+            return SectorSerializerGet
+        if self.request.method == "POST":
+            return SectorSerializer
+        return (
+            super().get_serializer_class()
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # 5. Delete
-    @swagger_auto_schema(tags=["sectors"])
-    def delete(self, request, sector_id, *args, **kwargs):
-        """
-        Deletes the todo item with given todo_id if exists
-        """
-        market_instance = self.get_object(sector_id, request.user.id)
-        if not market_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        market_instance.delete()
-        return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)
 
 
-class SuperSectorListAPIView(APIView):
-    # add permission to check if user is authenticated
-    authentication_classes = [
-        TokenAuthentication,
-    ]
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get an existing sector of the current user",
+        tags=["sectors"],
+        responses={200: SectorSerializerGet(many=False)},
+    ),
+)
+@method_decorator(
+    name="put",
+    decorator=swagger_auto_schema(
+        operation_description="Update an existing sector of the current user",
+        tags=["sectors"],
+        responses={200: SectorSerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="patch",
+    decorator=swagger_auto_schema(
+        operation_description="Patch an existing sector of the current user",
+        tags=["sectors"],
+        responses={200: SectorSerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="delete",
+    decorator=swagger_auto_schema(
+        operation_description="Delete an existing sector of the current user",
+        tags=["sectors"],
+    ),
+)
+class SectorDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+    serializer_class = SectorSerializer
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "sector_id"
 
-    # 1. List all
-    @swagger_auto_schema(tags=["super_sectors"])
-    def get(self, request, *args, **kwargs):
-        """
-        List all the market items for given requested user
-        """
-        sectors = SuperSector.objects.filter(user=request.user.id)
-        serializer = SuperSectorSerializer(
-            sectors, many=True, context={"request": request}
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        user = self.request.user
+        return Sector.objects.filter(user=user.id)
 
-    # 2. Create
-    @swagger_auto_schema(tags=["super_sectors"], request_body=SuperSectorSerializer)
-    def post(self, request, *args, **kwargs):
-        """
-        Create the Sector with given market data
-        """
-        data = {
-            "name": request.data.get("name"),
-            "color": request.data.get("color"),
-        }
-        serializer = SuperSectorSerializer(data=data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get a list of super sectors of the current user",
+        tags=["super_sectors"],
+        responses={200: SectorSerializerGet(many=True)},
+    ),
+)
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        operation_description="Create a new super sector for the current user",
+        tags=["super_sectors"],
+        responses={200: SectorSerializer(many=False)},
+    ),
+)
+class SuperSectorListCreateAPIView(generics.ListCreateAPIView):
+    """Get all the super sectors from a user"""
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SuperSectorDetailAPIView(APIView):
-    # add permission to check if user is authenticated
-    authentication_classes = [
-        TokenAuthentication,
-    ]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = SuperSectorSerializer
 
-    def get_object(self, todo_id, user_id):
-        """
-        Helper method to get the object with given todo_id, and user_id
-        """
-        try:
-            return SuperSector.objects.get(id=todo_id, user=user_id)
-        except Sector.DoesNotExist:
-            return None
+    def get_queryset(self):
+        user = self.request.user
+        return SuperSector.objects.filter(user=user.id)
 
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["super_sectors"])
-    def get(self, request, sector_id, *args, **kwargs):
-        """
-        Retrieves the Todo with given todo_id
-        """
-        todo_instance = self.get_object(sector_id, request.user.id)
-        if not todo_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-        serializer = SuperSectorSerializer(todo_instance, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # 4. Update
-    @swagger_auto_schema(tags=["super_sectors"], request_body=SuperSectorSerializer)
-    def put(self, request, sector_id, *args, **kwargs):
-        """
-        Updates the todo item with given todo_id if exists
-        """
-        todo_instance = self.get_object(sector_id, request.user.id)
-        if not todo_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        data = {"name": request.data.get("name"), "color": request.data.get("color")}
-        serializer = SuperSectorSerializer(
-            instance=todo_instance,
-            data=data,
-            partial=True,
-            context={"request": request},
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get an existing sector of the current user",
+        tags=["sectors"],
+        responses={200: SectorSerializerGet(many=False)},
+    ),
+)
+@method_decorator(
+    name="put",
+    decorator=swagger_auto_schema(
+        operation_description="Update an existing super sector of the current user",
+        tags=["super_sectors"],
+        responses={200: SectorSerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="patch",
+    decorator=swagger_auto_schema(
+        operation_description="Patch an existing super sector of the current user",
+        tags=["super_sectors"],
+        responses={200: SectorSerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="delete",
+    decorator=swagger_auto_schema(
+        operation_description="Delete an existing super sector of the current user",
+        tags=["super_sectors"],
+    ),
+)
+class SuperSectorDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
 
-    # 5. Delete
-    @swagger_auto_schema(tags=["super_sectors"])
-    def delete(self, request, sector_id, *args, **kwargs):
-        """
-        Deletes the todo item with given todo_id if exists
-        """
-        sector_instance = self.get_object(sector_id, request.user.id)
-        if not sector_instance:
-            return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        sector_instance.delete()
-        return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)
+    serializer_class = SuperSectorSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "sector_id"
+
+    def get_queryset(self):
+        user = self.request.user
+        return SuperSector.objects.filter(user=user.id)

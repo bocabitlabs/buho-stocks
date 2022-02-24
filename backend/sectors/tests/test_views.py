@@ -45,7 +45,7 @@ class SectorsListTestCase(APITestCase):
     def test_create_sector(self):
         temp_data = factory.build(dict, FACTORY_CLASS=SectorFactory)
         response = self.client.post(self.sectors_url, temp_data)
-
+        logger.debug(response.data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
             response.data["name"],
@@ -175,7 +175,7 @@ class SectorsDetailTestCase(APITestCase):
         url = reverse("sector-detail", args=[self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(Sector.DoesNotExist):
             Sector.objects.get(id=self.instances[0].id)
 
@@ -243,6 +243,6 @@ class SuperSectorsDetailTestCase(APITestCase):
         url = reverse("super-sector-detail", args=[self.instances[index].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(SuperSector.DoesNotExist):
             SuperSector.objects.get(id=self.instances[index].id)

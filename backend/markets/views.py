@@ -43,6 +43,10 @@ class MarketListCreateAPIView(generics.ListCreateAPIView):
     operation_description="Update an existing market of the current user",
     tags=["markets"]
 ))
+@method_decorator(name='patch', decorator=swagger_auto_schema(
+    operation_description="Patch an existing market of the current user",
+    tags=["markets"]
+))
 @method_decorator(name='delete', decorator=swagger_auto_schema(
     operation_description="Delete an existing market of the current user",
     tags=["markets"]
