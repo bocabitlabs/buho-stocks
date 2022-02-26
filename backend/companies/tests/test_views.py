@@ -120,6 +120,6 @@ class CompanisDetailTestCase(APITestCase):
         url = reverse("company-detail", args=[self.portfolio.id, self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(Company.DoesNotExist):
             Company.objects.get(id=self.instances[0].id)

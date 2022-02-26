@@ -44,7 +44,6 @@ schema_view = get_schema_view(
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("auth/", include("auth.urls"), name="authentication"),
-    # path("api/v1/companies/", include("companies.urls"), name="companies"),
     path("api/v1/companies/<int:company_id>/shares/", include("shares_transactions.urls"), name="shares-transactions"),
     path("api/v1/companies/<int:company_id>/rights/", include("rights_transactions.urls"), name="rights-transactions"),
     path("api/v1/companies/<int:company_id>/dividends/", include("dividends_transactions.urls"), name="dividends-transactions"),

@@ -1,3 +1,5 @@
+from django.utils.decorators import method_decorator
+from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.authentication import (
     TokenAuthentication,
@@ -11,156 +13,79 @@ from log_messages.models import LogMessage
 from shares_transactions.models import SharesTransaction
 from shares_transactions.serializers import SharesTransactionSerializer
 
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get a list of shares transactions of the current company",
+        tags=["company_shares"],
+    ),
+)
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        operation_description="Create a new shares transaction for the current company",
+        tags=["company_shares"],
+    ),
+)
+class SharesTransactionListCreateAPIView(generics.ListCreateAPIView):
+    """Get all the portfolios from a user"""
 
-class SharesTransactionsListAPIView(APIView):
-    """Get all the shares transactions from a user's company"""
-
+    serializer_class = SharesTransactionSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    # 1. List all
-    @swagger_auto_schema(tags=["company_shares"])
-    def get(self, request, company_id, *args, **kwargs):
-        """
-        List all the company items for given requested user
-        """
-        elements = SharesTransaction.objects.filter(
-            user=request.user.id, company=company_id
-        )
-        serializer = SharesTransactionSerializer(
-            elements, many=True, context={"request": request}
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    def get_queryset(self):
+        company_id = self.kwargs.get("company_id")
+        user = self.request.user
+        return SharesTransaction.objects.filter(company=company_id, user=user.id)
 
-    # 2. Create
-    @swagger_auto_schema(
-        tags=["company_shares"], request_body=SharesTransactionSerializer
-    )
-    def post(self, request, company_id, *args, **kwargs):
-        """
-        Create a shares transaction with given data
-        """
-        data = {
-            "count": request.data.get("count"),
-            "color": request.data.get("color"),
-            "exchange_rate": request.data.get("exchange_rate"),
-            "transaction_date": request.data.get("transaction_date"),
-            "type": request.data.get("type"),
-            "gross_price_per_share": request.data.get("gross_price_per_share"),
-            "gross_price_per_share_currency": request.data.get(
-                "gross_price_per_share_currency"
-            ),
-            "total_commission": request.data.get("total_commission"),
-            "total_commission_currency": request.data.get("total_commission_currency"),
-            "notes": request.data.get("notes"),
-            "company": company_id,
-        }
-
-        serializer = SharesTransactionSerializer(
-            data=data, context={"request": request}
-        )
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            company = Company.objects.get(id=company_id)
-            LogMessage.objects.create(
-                message_type=LogMessage.MESSAGE_TYPE_ADD_SHARES,
-                message_text=f"Shares added: {company.name} ({company.ticker}). {serializer.data.get('count')} - {serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}",
-                portfolio=company.portfolio,
-                user=self.request.user,
-            )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class SharesTransactionDetailAPIView(APIView):
-    """Operations for a single Shares Transaction"""
-
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self, company_id, transaction_id, user_id):
-        """
-        Get a market object from a user given the portfolio id
-        """
-        try:
-            return SharesTransaction.objects.get(
-                id=transaction_id, company=company_id, user=user_id
-            )
-        except SharesTransaction.DoesNotExist:
-            return None
-
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["company_shares"])
-    def get(self, request, company_id, transaction_id, *args, **kwargs):
-        """
-        Retrieve the company item with given company_id
-        """
-        instance = self.get_object(company_id, transaction_id, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
-        serializer = SharesTransactionSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 4. Update
-    @swagger_auto_schema(
-        tags=["company_shares"], request_body=SharesTransactionSerializer
-    )
-    def put(self, request, company_id, transaction_id, *args, **kwargs):
-        """
-        Update the company item with given company_id
-        """
-        instance = self.get_object(company_id, transaction_id, request.user.id)
-        if not instance:
-            return Response(
-                {"res": f"Transaction with id ${transaction_id} does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        data = {
-            "count": request.data.get("count"),
-            "color": request.data.get("color"),
-            "exchange_rate": request.data.get("exchange_rate"),
-            "transaction_date": request.data.get("transaction_date"),
-            "type": request.data.get("type"),
-            "gross_price_per_share": request.data.get("gross_price_per_share"),
-            "gross_price_per_share_currency": request.data.get(
-                "gross_price_per_share_currency"
-            ),
-            "total_commission": request.data.get("total_commission"),
-            "total_commission_currency": request.data.get("total_commission_currency"),
-            "notes": request.data.get("notes"),
-            "company": company_id,
-        }
-        serializer = SharesTransactionSerializer(
-            instance=instance, data=data, partial=True, context={"request": request}
-        )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # 5. Delete
-    @swagger_auto_schema(tags=["company_shares"])
-    def delete(self, request, company_id, transaction_id, *args, **kwargs):
-        """
-        Delete the company item with given transaction id
-        """
-        instance = self.get_object(company_id, transaction_id, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        instance.delete()
-        company = Company.objects.get(id=company_id)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        # Log the operation
+        company = Company.objects.get(id=serializer.data['company'])
         LogMessage.objects.create(
-            message_type=LogMessage.MESSAGE_TYPE_DELETE_SHARES,
-            message_text=f"Shares deleted: {company.name} ({company.ticker}). {instance.count} - {instance.gross_price_per_share}. {instance.notes}",
+            message_type=LogMessage.MESSAGE_TYPE_ADD_SHARES,
+            message_text=f"Shares added: {company.name} ({company.ticker}). {serializer.data.get('count')} - {serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}",
             portfolio=company.portfolio,
             user=self.request.user,
         )
-        return Response({"res": "Shares deleted!"}, status=status.HTTP_200_OK)
+
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get an existing shares transaction of the current user",
+        tags=["company_shares"],
+    ),
+)
+@method_decorator(
+    name="put",
+    decorator=swagger_auto_schema(
+        operation_description="Update an existing shares transaction of the current user",
+        tags=["company_shares"],
+    ),
+)
+@method_decorator(
+    name="patch",
+    decorator=swagger_auto_schema(
+        operation_description="Patch an existing shares transaction of the current user",
+        tags=["company_shares"],
+    ),
+)
+@method_decorator(
+    name="delete",
+    decorator=swagger_auto_schema(
+        operation_description="Delete an existing shares transaction of the current user",
+        tags=["company_shares"],
+    ),
+)
+class SharesTransactionDetailsDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+    serializer_class = SharesTransactionSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "transaction_id"
+
+    def get_queryset(self):
+        transaction_id = self.kwargs.get("transaction_id")
+        user = self.request.user
+        return SharesTransaction.objects.filter(id=transaction_id, user=user.id)

@@ -130,6 +130,6 @@ class PortfoliosDetailTestCase(APITestCase):
         url = reverse("portfolio-detail", args=[self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(Portfolio.DoesNotExist):
             Portfolio.objects.get(id=self.instances[0].id)

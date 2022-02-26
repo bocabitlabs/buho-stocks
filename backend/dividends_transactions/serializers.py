@@ -37,6 +37,5 @@ class DividendsTransactionSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         company = attrs["company"]
-
         validate_ownership(self.context, company, Company)
         return attrs

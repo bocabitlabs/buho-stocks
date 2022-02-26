@@ -1,120 +1,97 @@
-from rest_framework.response import Response
+from django.utils.decorators import method_decorator
+from rest_framework import generics
+
 from rest_framework.authentication import (
     TokenAuthentication,
 )
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
 from portfolios.models import Portfolio
 
-
-class PortfoliosListAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    # 1. List all
-    @swagger_auto_schema(tags=["portfolios"])
-    def get(self, request, *args, **kwargs):
-        """
-        List all the portfolio items for given requested user
-        """
-        elements = Portfolio.objects.filter(user=request.user.id).all()
-        serializer = PortfolioSerializerGet(
-            elements, many=True, context={"request": request}
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 2. Create
-    @swagger_auto_schema(tags=["portfolios"], request_body=PortfolioSerializer)
-    def post(self, request, *args, **kwargs):
-        """
-        Create the portfolio with given portfolio data
-        """
-        data = {
-            "name": request.data.get("name"),
-            "description": request.data.get("description"),
-            "color": request.data.get("color"),
-            "hide_closed_companies": request.data.get("hide_closed_companies"),
-            "base_currency": request.data.get("base_currency"),
-            "country_code": request.data.get("country_code"),
-        }
-        serializer = PortfolioSerializer(data=data, context={"request": request})
-        if serializer.is_valid():
-            serializer.save(user=self.request.user)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PortfolioDetailAPIView(APIView):
-    """Operations for a single Portfolio"""
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get a list of portfolios of the current user",
+        tags=["portfolios"],
+        responses={200: PortfolioSerializerGet(many=True)},
+    ),
+)
+@method_decorator(
+    name="post",
+    decorator=swagger_auto_schema(
+        operation_description="Create a new portfolio for the current user",
+        tags=["portfolios"],
+        responses={200: PortfolioSerializer(many=False)},
+    ),
+)
+class PortfolioListCreateAPIView(generics.ListCreateAPIView):
+    """Get all the portfolios from a user"""
 
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, portfolio_id, user_id):
-        try:
-            return Portfolio.objects.get(id=portfolio_id, user=user_id)
-        except Portfolio.DoesNotExist:
-            return None
+    def get_queryset(self):
+        user = self.request.user
+        return Portfolio.objects.filter(user=user.id)
 
-    # 3. Retrieve
-    @swagger_auto_schema(tags=["portfolios"])
-    def get(self, request, portfolio_id, *args, **kwargs):
-        """
-        Retrieve the portfolio item with given portfolio_id
-        """
-        instance = self.get_object(portfolio_id, request.user.id)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
-        if not instance:
-            return Response(
-                {"res": "Object with portfolio id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        serializer = PortfolioSerializerGet(instance, context={"request": request})
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    # 4. Update
-    @swagger_auto_schema(tags=["portfolios"], request_body=PortfolioSerializer)
-    def put(self, request, portfolio_id, *args, **kwargs):
-        """
-        Update the portfolio item with given portfolio_id
-        """
-        instance = self.get_object(portfolio_id, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with portfolio id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        data = {
-            "name": request.data.get("name"),
-            "description": request.data.get("description"),
-            "color": request.data.get("color"),
-            "hide_closed_companies": request.data.get("hide_closed_companies"),
-            "base_currency": request.data.get("base_currency"),
-            "country_code": request.data.get("country_code"),
-        }
-        serializer = PortfolioSerializer(
-            instance=instance, data=data, partial=True, context={"request": request}
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return PortfolioSerializerGet
+        if self.request.method == "POST":
+            return PortfolioSerializer
+        return (
+            super().get_serializer_class()
         )
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    # 5. Delete
-    @swagger_auto_schema(tags=["portfolios"])
-    def delete(self, request, portfolio_id, *args, **kwargs):
-        """
-        Delete the portfolio item with given portfolio_id
-        """
-        instance = self.get_object(portfolio_id, request.user.id)
-        if not instance:
-            return Response(
-                {"res": "Object with portfolio id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        instance.delete()
-        return Response({"res": "Object deleted!"}, status=status.HTTP_200_OK)
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_description="Get an existing portfolio of the current user",
+        tags=["portfolios"],
+        responses={200: PortfolioSerializerGet(many=False)},
+    ),
+)
+@method_decorator(
+    name="put",
+    decorator=swagger_auto_schema(
+        operation_description="Update an existing portfolio of the current user",
+        tags=["portfolios"],
+        responses={200: PortfolioSerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="patch",
+    decorator=swagger_auto_schema(
+        operation_description="Patch an existing portfolio of the current user",
+        tags=["portfolios"],
+        responses={200: PortfolioSerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="delete",
+    decorator=swagger_auto_schema(
+        operation_description="Delete an existing portfolio of the current user",
+        tags=["portfolios"],
+    ),
+)
+class PortfolioDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+    serializer_class = PortfolioSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    lookup_url_kwarg = "portfolio_id"
+
+    def get_queryset(self):
+        user = self.request.user
+        return Portfolio.objects.filter(user=user.id)
+
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return PortfolioSerializerGet
+        return (
+            super().get_serializer_class()
+        )

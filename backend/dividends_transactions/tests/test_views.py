@@ -133,6 +133,6 @@ class DividendsTransactionsDetailTestCase(APITestCase):
         trans = DividendsTransaction.objects.all()
         self.assertEqual(len(trans), 3)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(DividendsTransaction.DoesNotExist):
             DividendsTransaction.objects.get(id=self.instances[0].id)

@@ -136,6 +136,6 @@ class SharesTransactionsDetailTestCase(APITestCase):
         trans = SharesTransaction.objects.all()
         self.assertEqual(len(trans), 3)
 
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(SharesTransaction.DoesNotExist):
             SharesTransaction.objects.get(id=self.instances[0].id)
