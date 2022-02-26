@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -161,6 +161,20 @@ export default function RightsTransactionAddEditForm({
     }
   };
 
+  useEffect(() => {
+    if (transaction) {
+      form.setFieldsValue({
+        count: transaction.count,
+        grossPricePerShare: transaction.grossPricePerShare,
+        totalCommission: transaction.totalCommission,
+        exchangeRate: transaction.exchangeRate,
+        notes: transaction.notes,
+        transactionDate: moment(transaction.transactionDate),
+        type: transaction.type,
+      });
+    }
+  }, [form, transaction]);
+
   return (
     <Modal
       visible={isModalVisible}
@@ -180,22 +194,7 @@ export default function RightsTransactionAddEditForm({
         />
       )}
       {(isSuccess || !transactionId) && (
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleSubmit}
-          initialValues={{
-            count: transaction?.count,
-            grossPricePerShare: transaction?.grossPricePerShare,
-            totalCommission: transaction?.totalCommission,
-            exchangeRate: transaction?.exchangeRate,
-            notes: transaction?.notes,
-            transactionDate: transaction
-              ? moment(transaction.transactionDate)
-              : moment(currentTransactionDate),
-            type: transaction ? transaction.type : "BUY",
-          }}
-        >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
             name="count"
             label={t("Number of rights")}

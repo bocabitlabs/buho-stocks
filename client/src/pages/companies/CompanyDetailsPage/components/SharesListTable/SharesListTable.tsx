@@ -35,6 +35,7 @@ export default function SharesListTable({
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = (recordId: number) => {
+    console.log(`showModal: ${recordId}`);
     setSelectedId(recordId);
     setIsModalVisible(true);
   };
@@ -117,7 +118,7 @@ export default function SharesListTable({
             onClick={() => showModal(record.id)}
           />
           <Popconfirm
-            key={`market-delete-${record.key}`}
+            key={`delete-${record.key}`}
             title={`Delete transaction ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
             okText="Yes"

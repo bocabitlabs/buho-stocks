@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Form, Input, Modal, Select, Switch } from "antd";
 import ColorSelector from "components/ColorSelector/ColorSelector";
@@ -39,8 +39,9 @@ function SectorAddEditForm({
   const { mutate: updateSector } = useUpdateSector();
   const {
     data: sector,
-    error: errorFetchingSector,
-    isFetching: fetchingSector,
+    error: errorFetching,
+    isFetching,
+    isSuccess,
   } = useSector(sectorId, {
     onSuccess: (data: any) => {
       setColor(data.color);
@@ -83,20 +84,15 @@ function SectorAddEditForm({
     }
   };
 
-  if (fetchingSector) {
-    return <LoadingSpin />;
-  }
-
-  if (errorFetchingSector) {
-    return (
-      <Alert
-        showIcon
-        message="Unable to load sector"
-        description={errorFetchingSector.message}
-        type="error"
-      />
-    );
-  }
+  useEffect(() => {
+    if (sector) {
+      form.setFieldsValue({
+        name: sector?.name,
+        isSuperSector: sector?.isSuperSector,
+        superSectorId: sector?.superSector?.id,
+      });
+    }
+  }, [form, sector]);
 
   return (
     <Modal
@@ -107,78 +103,83 @@ function SectorAddEditForm({
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{
-          name: sector?.name,
-          isSuperSector: sector?.isSuperSector,
-          superSectorId: sector?.superSector?.id,
-        }}
-      >
-        <Form.Item
-          name="name"
-          label={t("Name")}
-          rules={[
-            {
-              required: true,
-              message: t("Please input the name of the sector"),
-            },
-          ]}
-        >
-          <Input type="text" placeholder="REIT, Banks, Semiconductors,..." />
-        </Form.Item>
-        <Form.Item
-          label={
-            <div>
-              {t("Color")}:{" "}
-              <svg
-                width="35"
-                height="35"
-                viewBox="0 0 35 35"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="10"
-                  y="10"
-                  width="25"
-                  height="25"
-                  rx="5"
-                  ry="5"
-                  fill={color}
-                />
-              </svg>
-            </div>
-          }
-        >
-          <ColorSelector color={color} handleColorChange={handleColorChange} />
-        </Form.Item>
-        {!isSuper && (
-          <Form.Item name="superSectorId" label={t("Super sector")}>
-            <Select placeholder={t("Select its super sector")} allowClear>
-              {superSectors &&
-                superSectors.map((sectorItem: ISector) => (
-                  <Select.Option
-                    value={sectorItem.id}
-                    key={`sector-${sectorItem.id}-${sectorItem.id}`}
-                  >
-                    {sectorItem.name}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-        )}
-        {!isSuper && !sector && (
+      {isFetching && <LoadingSpin />}
+      {errorFetching && (
+        <Alert
+          showIcon
+          message="Unable to load sector"
+          description={errorFetching.message}
+          type="error"
+        />
+      )}
+      {(isSuccess || !sectorId) && (
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
-            label={t("Is a super sector")}
-            name="isSuperSector"
-            valuePropName="checked"
+            name="name"
+            label={t("Name")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the name of the sector"),
+              },
+            ]}
           >
-            <Switch />
+            <Input type="text" placeholder="REIT, Banks, Semiconductors,..." />
           </Form.Item>
-        )}
-      </Form>
+          <Form.Item
+            label={
+              <div>
+                {t("Color")}:{" "}
+                <svg
+                  width="35"
+                  height="35"
+                  viewBox="0 0 35 35"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    x="10"
+                    y="10"
+                    width="25"
+                    height="25"
+                    rx="5"
+                    ry="5"
+                    fill={color}
+                  />
+                </svg>
+              </div>
+            }
+          >
+            <ColorSelector
+              color={color}
+              handleColorChange={handleColorChange}
+            />
+          </Form.Item>
+          {!isSuper && (
+            <Form.Item name="superSectorId" label={t("Super sector")}>
+              <Select placeholder={t("Select its super sector")} allowClear>
+                {superSectors &&
+                  superSectors.map((sectorItem: ISector) => (
+                    <Select.Option
+                      value={sectorItem.id}
+                      key={`sector-${sectorItem.id}-${sectorItem.id}`}
+                    >
+                      {sectorItem.name}
+                    </Select.Option>
+                  ))}
+              </Select>
+            </Form.Item>
+          )}
+          {!isSuper && !sector && (
+            <Form.Item
+              label={t("Is a super sector")}
+              name="isSuperSector"
+              valuePropName="checked"
+            >
+              <Switch />
+            </Form.Item>
+          )}
+        </Form>
+      )}
     </Modal>
   );
 }

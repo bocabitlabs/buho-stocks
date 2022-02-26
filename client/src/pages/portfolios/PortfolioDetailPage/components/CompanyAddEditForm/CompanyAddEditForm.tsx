@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
@@ -62,8 +62,9 @@ function CompanyAddEditForm({
     useUpdateCompany();
   const {
     data: company,
-    error: errorFetchingCompany,
-    isFetching: isErrorFetching,
+    error: errorFetching,
+    isFetching,
+    isSuccess,
   } = useCompany(portfolioId, companyId, {
     onSuccess: (data: any) => {
       setCountryCode(data.countryCode);
@@ -143,20 +144,24 @@ function CompanyAddEditForm({
     }
   };
 
-  if (isErrorFetching) {
-    return <LoadingSpin />;
-  }
-
-  if (errorFetchingCompany) {
-    return (
-      <Alert
-        showIcon
-        message="Unable to load company"
-        description={errorFetchingCompany.message}
-        type="error"
-      />
-    );
-  }
+  useEffect(() => {
+    if (company) {
+      form.setFieldsValue({
+        name: company?.name,
+        description: company?.description,
+        ticker: company?.ticker,
+        altTickers: company?.altTickers,
+        broker: company?.broker,
+        url: company?.url,
+        sector: company?.sector.id,
+        baseCurrency: company?.baseCurrency.code,
+        dividendsCurrency: company?.dividendsCurrency.code,
+        market: company?.market.id,
+        isClosed: company?.isClosed,
+        countryCode: company?.countryCode,
+      });
+    }
+  }, [form, company]);
 
   return (
     <Modal
@@ -167,162 +172,155 @@ function CompanyAddEditForm({
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{
-          name: company?.name,
-          description: company?.description,
-          ticker: company?.ticker,
-          altTickers: company?.altTickers,
-          broker: company?.broker,
-          url: company?.url,
-          sector: company?.sector.id,
-          baseCurrency: company?.baseCurrency.code,
-          dividendsCurrency: company?.dividendsCurrency.code,
-          market: company?.market.id,
-          isClosed: company?.isClosed,
-          countryCode: company?.countryCode,
-        }}
-      >
-        <Form.Item
-          name="name"
-          label={t("Name")}
-          rules={[
-            {
-              required: true,
-              message: t("Please input the name of the company"),
-            },
-          ]}
-        >
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item name="ticker" label={t("Ticker")}>
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item name="altTickers" label={t("Altnernative tickers")}>
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item name="logo" label="Company Logo">
-          <Upload
-            showUploadList={false}
-            name="logo"
-            fileList={fileList}
-            onChange={handleUpload}
-            beforeUpload={() => false} // return false so that antd doesn't upload the picture right away
+      {isFetching && <LoadingSpin />}
+      {errorFetching && (
+        <Alert
+          showIcon
+          message="Unable to load company"
+          description={errorFetching.message}
+          type="error"
+        />
+      )}
+      {(isSuccess || !companyId) && (
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="name"
+            label={t("Name")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the name of the company"),
+              },
+            ]}
           >
-            {company?.logo && !fileName && (
-              <Avatar src={company.logo} style={{ marginRight: 10 }} />
-            )}
-            <Button icon={<PlusOutlined />}>Upload</Button>{" "}
-            {fileName ? `Selected ${fileName}` : ""}
-          </Upload>
-        </Form.Item>
-        <Form.Item name="baseCurrency" label={t("Currency")}>
-          <Select
-            showSearch
-            placeholder={t("Select a currency")}
-            allowClear
-            loading={currenciesLoading}
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item name="ticker" label={t("Ticker")}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item name="altTickers" label={t("Altnernative tickers")}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item name="logo" label="Company Logo">
+            <Upload
+              showUploadList={false}
+              name="logo"
+              fileList={fileList}
+              onChange={handleUpload}
+              beforeUpload={() => false} // return false so that antd doesn't upload the picture right away
+            >
+              {company?.logo && !fileName && (
+                <Avatar src={company.logo} style={{ marginRight: 10 }} />
+              )}
+              <Button icon={<PlusOutlined />}>Upload</Button>{" "}
+              {fileName ? `Selected ${fileName}` : ""}
+            </Upload>
+          </Form.Item>
+          <Form.Item name="baseCurrency" label={t("Currency")}>
+            <Select
+              showSearch
+              placeholder={t("Select a currency")}
+              allowClear
+              loading={currenciesLoading}
+            >
+              {currencies &&
+                currencies.map((item: ICurrency) => (
+                  <Select.Option
+                    value={item.code}
+                    key={`currency-${item.code}-${item.code}`}
+                  >
+                    {item.name} ({item.code})
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="dividendsCurrency" label={t("Dividends Currency")}>
+            <Select
+              showSearch
+              placeholder={t("Select a currency for the dividends")}
+              allowClear
+              loading={currenciesLoading}
+            >
+              {currencies &&
+                currencies.map((item: ICurrency) => (
+                  <Select.Option
+                    value={item.code}
+                    key={`currency-${item.code}-${item.code}`}
+                  >
+                    {item.name} ({item.code})
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="market" label={t("Market")}>
+            <Select
+              placeholder={t("Select a market")}
+              allowClear
+              loading={marketsLoading}
+            >
+              {markets &&
+                markets.map((sectorItem: IMarket) => (
+                  <Select.Option
+                    value={sectorItem.id}
+                    key={`currency-${sectorItem.id}-${sectorItem.id}`}
+                  >
+                    {sectorItem.name}
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
+          <Form.Item name="sector" label={t("Sector")}>
+            <Select
+              placeholder={t("Select a sector")}
+              allowClear
+              loading={sectorsLoading}
+            >
+              {sectors &&
+                sectors.map((sectorItem: ISector) => (
+                  <Select.Option
+                    value={sectorItem.id}
+                    key={`sector-${sectorItem.id}-${sectorItem.id}`}
+                  >
+                    {sectorItem.name}
+                  </Select.Option>
+                ))}
+            </Select>
+          </Form.Item>
+          <Form.Item
+            label={t("Is closed")}
+            name="isClosed"
+            valuePropName="checked"
           >
-            {currencies &&
-              currencies.map((item: ICurrency) => (
-                <Select.Option
-                  value={item.code}
-                  key={`currency-${item.code}-${item.code}`}
-                >
-                  {item.name} ({item.code})
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="dividendsCurrency" label={t("Dividends Currency")}>
-          <Select
-            showSearch
-            placeholder={t("Select a currency for the dividends")}
-            allowClear
-            loading={currenciesLoading}
-          >
-            {currencies &&
-              currencies.map((item: ICurrency) => (
-                <Select.Option
-                  value={item.code}
-                  key={`currency-${item.code}-${item.code}`}
-                >
-                  {item.name} ({item.code})
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="market" label={t("Market")}>
-          <Select
-            placeholder={t("Select a market")}
-            allowClear
-            loading={marketsLoading}
-          >
-            {markets &&
-              markets.map((sectorItem: IMarket) => (
-                <Select.Option
-                  value={sectorItem.id}
-                  key={`currency-${sectorItem.id}-${sectorItem.id}`}
-                >
-                  {sectorItem.name}
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="sector" label={t("Sector")}>
-          <Select
-            placeholder={t("Select a sector")}
-            allowClear
-            loading={sectorsLoading}
-          >
-            {sectors &&
-              sectors.map((sectorItem: ISector) => (
-                <Select.Option
-                  value={sectorItem.id}
-                  key={`sector-${sectorItem.id}-${sectorItem.id}`}
-                >
-                  {sectorItem.name}
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
-        <Form.Item
-          label={t("Is closed")}
-          name="isClosed"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
+            <Switch />
+          </Form.Item>
 
-        <Form.Item name="broker" label={t("Broker")}>
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item name="url" label={t("URL")}>
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item name="countryCode" label={t("Country")}>
-          <CountrySelector
-            handleChange={handleCountryChange}
-            initialValue={countryCode}
-          />
-        </Form.Item>
-        <Form.Item name="description" label={t("Description")}>
-          <Input.TextArea rows={4} />
-        </Form.Item>
+          <Form.Item name="broker" label={t("Broker")}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item name="url" label={t("URL")}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item name="countryCode" label={t("Country")}>
+            <CountrySelector
+              handleChange={handleCountryChange}
+              initialValue={countryCode}
+            />
+          </Form.Item>
+          <Form.Item name="description" label={t("Description")}>
+            <Input.TextArea rows={4} />
+          </Form.Item>
 
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={createLoading || updateLoading}
-          >
-            {company ? t("Update company") : t("Add company")}
-          </Button>
-        </Form.Item>
-      </Form>
+          <Form.Item>
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={createLoading || updateLoading}
+            >
+              {company ? t("Update company") : t("Add company")}
+            </Button>
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 }

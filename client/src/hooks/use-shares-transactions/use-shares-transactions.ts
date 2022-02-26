@@ -130,12 +130,14 @@ export function useSharesTransactions(companyId: number | undefined) {
 export function useSharesTransaction(
   companyId: number | undefined,
   transactionId: number | undefined,
+  options?: any,
 ) {
   return useQuery<ISharesTransaction, Error>(
     ["sharesTransactions", companyId, transactionId],
     () => fetchSharesTransaction(companyId, transactionId),
     {
       enabled: !!companyId && !!transactionId,
+      ...options,
     },
   );
 }

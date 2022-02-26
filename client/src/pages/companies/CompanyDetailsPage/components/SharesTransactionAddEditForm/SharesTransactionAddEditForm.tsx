@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -22,7 +22,10 @@ import {
   useUpdateSharesTransaction,
 } from "hooks/use-shares-transactions/use-shares-transactions";
 import { ICurrency } from "types/currency";
-import { ISharesTransactionFormFields } from "types/shares-transaction";
+import {
+  ISharesTransaction,
+  ISharesTransactionFormFields,
+} from "types/shares-transaction";
 
 interface IProps {
   transactionId?: number;
@@ -52,7 +55,6 @@ export default function SharesTransactionAddEditForm({
   const [currentTransactionDate, setCurrentTransactionDate] = useState<string>(
     moment(new Date()).format(dateFormat),
   );
-
   const { t } = useTranslation();
   const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
     companyBaseCurrency.code,
@@ -67,8 +69,21 @@ export default function SharesTransactionAddEditForm({
     data: transaction,
     error: errorFetchingTransaction,
     isFetching,
-  } = useSharesTransaction(companyId, transactionId);
-
+    isSuccess,
+  } = useSharesTransaction(companyId, transactionId, {
+    onSuccess: (data: ISharesTransaction) => {
+      console.log("onSuccess: ", data);
+      form.setFieldsValue({
+        count: data.count,
+        grossPricePerShare: data.grossPricePerShare,
+        totalCommission: data.totalCommission,
+        exchangeRate: data.exchangeRate,
+        notes: data.notes,
+        transactionDate: moment(data.transactionDate),
+        type: data.type,
+      });
+    },
+  });
   const fetchExchangeRate = async () => {
     const { data: exchangeRateResult } = await refetch();
     if (exchangeRateResult) {
@@ -149,10 +164,6 @@ export default function SharesTransactionAddEditForm({
   //   });
   // };
 
-  // if (!portfolio || !company || (transactionId && !transaction)) {
-  //   return <Spin />;
-  // }
-
   const handleFormSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -164,20 +175,19 @@ export default function SharesTransactionAddEditForm({
     }
   };
 
-  if (isFetching) {
-    return <LoadingSpin />;
-  }
-
-  if (errorFetchingTransaction) {
-    return (
-      <Alert
-        showIcon
-        message="Unable to load transaction"
-        description={errorFetchingTransaction.message}
-        type="error"
-      />
-    );
-  }
+  useEffect(() => {
+    if (transaction) {
+      form.setFieldsValue({
+        count: transaction.count,
+        grossPricePerShare: transaction.grossPricePerShare,
+        totalCommission: transaction.totalCommission,
+        exchangeRate: transaction.exchangeRate,
+        notes: transaction.notes,
+        transactionDate: moment(transaction.transactionDate),
+        type: transaction.type,
+      });
+    }
+  }, [form, transaction]);
 
   return (
     <Modal
@@ -188,133 +198,135 @@ export default function SharesTransactionAddEditForm({
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{
-          count: transaction?.count,
-          grossPricePerShare: transaction?.grossPricePerShare,
-          totalCommission: transaction?.totalCommission,
-          exchangeRate: transaction?.exchangeRate,
-          notes: transaction?.notes,
-          transactionDate: transaction
-            ? moment(transaction.transactionDate)
-            : moment(currentTransactionDate),
-          type: transaction ? transaction.type : "BUY",
-        }}
-      >
-        <Form.Item
-          name="count"
-          label={t("Number of shares")}
-          rules={[
-            { required: true, message: t("Please input the number of shares") },
-          ]}
-        >
-          <InputNumber min={0} step={1} style={{ width: "100%" }} />
-        </Form.Item>
-        <Form.Item
-          name="grossPricePerShare"
-          label={t("Gross price per share")}
-          rules={[
-            {
-              required: true,
-              message: t("Please input the gross price per share"),
-            },
-          ]}
-        >
-          <InputNumber
-            decimalSeparator="."
-            addonAfter={`${companyBaseCurrency.symbol}`}
-            min={0}
-            step={0.001}
-          />
-        </Form.Item>
-        <Form.Item
-          name="type"
-          label={t("Operation's type")}
-          rules={[
-            {
-              required: true,
-              message: t("Please input the type of transaction"),
-            },
-          ]}
-        >
-          <Select placeholder={t("Select an option")}>
-            <Select.Option value="BUY">{t("Buy")}</Select.Option>
-            <Select.Option value="SELL">{t("Sell")}</Select.Option>
-          </Select>
-        </Form.Item>
-        <Form.Item
-          name="totalCommission"
-          label={t("Total commission")}
-          rules={[
-            { required: true, message: t("Please input the total commission") },
-          ]}
-        >
-          <InputNumber
-            addonAfter={`${companyBaseCurrency.symbol}`}
-            decimalSeparator="."
-            min={0}
-            step={0.001}
-          />
-        </Form.Item>
-        <Form.Item
-          name="transactionDate"
-          label={t("Transaction's date")}
-          rules={[
-            {
-              required: true,
-              message: t("Please input the date of the operation"),
-            },
-          ]}
-        >
-          <DatePicker
-            format={dateFormat}
-            onChange={currentTransactionDateChange}
-          />
-        </Form.Item>
-        {companyBaseCurrency.code !== portfolioBaseCurrency && (
-          <Row gutter={8}>
-            <Col span={12}>
-              <Form.Item
-                name="exchangeRate"
-                label="Exchange rate"
-                rules={[
-                  {
-                    required: true,
-                    message: t("Please input the exchange rate"),
-                  },
-                ]}
-              >
-                <InputNumber
-                  decimalSeparator="."
-                  min={0}
-                  step={0.001}
-                  style={{ width: "100%" }}
-                  disabled={exchangeRateLoading}
-                />
-              </Form.Item>
-            </Col>
-            <Col span={12}>
-              <Form.Item label="&nbsp;">
-                <Button
-                  disabled={currentTransactionDate === null}
-                  onClick={fetchExchangeRate}
-                  loading={exchangeRateLoading}
+      {isFetching && <LoadingSpin />}
+      {errorFetchingTransaction && (
+        <Alert
+          showIcon
+          message="Unable to load transaction"
+          description={errorFetchingTransaction.message}
+          type="error"
+        />
+      )}
+      {(isSuccess || !transactionId) && (
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="count"
+            label={t("Number of shares")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the number of shares"),
+              },
+            ]}
+          >
+            <InputNumber min={0} step={1} style={{ width: "100%" }} />
+          </Form.Item>
+          <Form.Item
+            name="grossPricePerShare"
+            label={t("Gross price per share")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the gross price per share"),
+              },
+            ]}
+          >
+            <InputNumber
+              decimalSeparator="."
+              addonAfter={`${companyBaseCurrency.symbol}`}
+              min={0}
+              step={0.001}
+            />
+          </Form.Item>
+          <Form.Item
+            name="type"
+            label={t("Operation's type")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the type of transaction"),
+              },
+            ]}
+          >
+            <Select placeholder={t("Select an option")}>
+              <Select.Option value="BUY">{t("Buy")}</Select.Option>
+              <Select.Option value="SELL">{t("Sell")}</Select.Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="totalCommission"
+            label={t("Total commission")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the total commission"),
+              },
+            ]}
+          >
+            <InputNumber
+              addonAfter={`${companyBaseCurrency.symbol}`}
+              decimalSeparator="."
+              min={0}
+              step={0.001}
+            />
+          </Form.Item>
+          <Form.Item
+            name="transactionDate"
+            label={t("Transaction's date")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the date of the operation"),
+              },
+            ]}
+          >
+            <DatePicker
+              format={dateFormat}
+              onChange={currentTransactionDateChange}
+            />
+          </Form.Item>
+          {companyBaseCurrency.code !== portfolioBaseCurrency && (
+            <Row gutter={8}>
+              <Col span={12}>
+                <Form.Item
+                  name="exchangeRate"
+                  label="Exchange rate"
+                  rules={[
+                    {
+                      required: true,
+                      message: t("Please input the exchange rate"),
+                    },
+                  ]}
                 >
-                  {t("Get exchange rate")} ({companyBaseCurrency.code} to{" "}
-                  {portfolioBaseCurrency})
-                </Button>
-              </Form.Item>
-            </Col>
-          </Row>
-        )}
+                  <InputNumber
+                    decimalSeparator="."
+                    min={0}
+                    step={0.001}
+                    style={{ width: "100%" }}
+                    disabled={exchangeRateLoading}
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item label="&nbsp;">
+                  <Button
+                    disabled={currentTransactionDate === null}
+                    onClick={fetchExchangeRate}
+                    loading={exchangeRateLoading}
+                  >
+                    {t("Get exchange rate")} ({companyBaseCurrency.code} to{" "}
+                    {portfolioBaseCurrency})
+                  </Button>
+                </Form.Item>
+              </Col>
+            </Row>
+          )}
 
-        <Form.Item name="notes" label={t("Notes")}>
-          <Input.TextArea rows={4} />
-        </Form.Item>
-      </Form>
+          <Form.Item name="notes" label={t("Notes")}>
+            <Input.TextArea rows={4} />
+          </Form.Item>
+        </Form>
+      )}
     </Modal>
   );
 }
