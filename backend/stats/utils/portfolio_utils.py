@@ -176,7 +176,7 @@ class PortfolioStatsUtils:
             if company.is_closed:
                 continue
 
-            first_year = CompanyUtils().get_company_first_year(company.id, company.user)
+            first_year = CompanyUtils(self.company.id).get_company_first_year(company.user)
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
             if self.year != "all":
                 if not first_year or first_year > int(self.year):

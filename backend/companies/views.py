@@ -64,7 +64,7 @@ logger = logging.getLogger("buho_backend")
 )
 class CompanyViewSet(viewsets.ModelViewSet):
     """
-    A viewset for viewing and editing sector instances.
+    A viewset for viewing and editing company instances.
     """
 
     serializer_class = CompanySerializer
@@ -77,8 +77,10 @@ class CompanyViewSet(viewsets.ModelViewSet):
         user = self.request.user
         company_id = self.kwargs.get("company_id")
         portfolio_id = self.kwargs.get("portfolio_id")
+
         if self.action == "list" or self.action == "create":
             return Company.objects.filter(portfolio=portfolio_id, user=user.id)
+
         return Company.objects.filter(
             id=company_id, portfolio=portfolio_id, user=user.id
         )
@@ -86,6 +88,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         portfolio_id = self.kwargs.get("portfolio_id")
         serializer.save(user=self.request.user)
+
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
             message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",

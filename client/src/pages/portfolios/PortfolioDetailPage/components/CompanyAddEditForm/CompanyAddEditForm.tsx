@@ -1,6 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 import { PlusOutlined } from "@ant-design/icons";
 import {
   Alert,
@@ -57,9 +56,8 @@ function CompanyAddEditForm({
   const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
   const { data: markets, isFetching: marketsLoading } = useMarkets();
   const { data: sectors, isFetching: sectorsLoading } = useSectors();
-  const { mutate: createCompany, isLoading: createLoading } = useAddCompany();
-  const { mutate: updateCompany, isLoading: updateLoading } =
-    useUpdateCompany();
+  const { mutate: createCompany } = useAddCompany();
+  const { mutate: updateCompany } = useUpdateCompany();
   const {
     data: company,
     error: errorFetching,
@@ -117,7 +115,6 @@ function CompanyAddEditForm({
       });
     } else {
       createCompany({ portfolioId: +portfolioId, newCompany });
-      toast.success(t("Company has been created"));
     }
   };
 
@@ -308,16 +305,6 @@ function CompanyAddEditForm({
           </Form.Item>
           <Form.Item name="description" label={t("Description")}>
             <Input.TextArea rows={4} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={createLoading || updateLoading}
-            >
-              {company ? t("Update company") : t("Add company")}
-            </Button>
           </Form.Item>
         </Form>
       )}

@@ -41,7 +41,7 @@ class CompanyStatsUtils:
             transaction_date = stock_price["transaction_date"]
             exchange_rate_value = self.exchange_rates_utils.get_exchange_rate_for_date(
                 self.company.base_currency,
-                self.company.portfolio_currency,
+                self.company.portfolio.base_currency,
                 transaction_date,
             )
         total = Decimal(price) * shares_count * Decimal(exchange_rate_value)

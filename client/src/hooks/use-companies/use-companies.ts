@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
@@ -59,6 +61,7 @@ export const useAddCompany = () => {
 };
 
 export const useDeleteCompany = () => {
+  const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, companyId }: DeleteMutationProps) =>
       axios.delete(
@@ -67,13 +70,18 @@ export const useDeleteCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success(t("Company has been created"));
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+      },
+      onError: () => {
+        toast.error(t("Unable to create company"));
       },
     },
   );
 };
 
 export const useUpdateCompany = () => {
+  const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
       axios.put(
@@ -83,7 +91,11 @@ export const useUpdateCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        toast.success(t("Company has been updated"));
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+      },
+      onError: () => {
+        toast.error(t("Unable to update company"));
       },
     },
   );
