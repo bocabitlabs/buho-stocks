@@ -81,6 +81,8 @@ export default function StatsRefreshModal({
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
+        okText="Update stats"
+        cancelText="Cancel"
       >
         <Form>
           Do you want to update the stats and the stock price?

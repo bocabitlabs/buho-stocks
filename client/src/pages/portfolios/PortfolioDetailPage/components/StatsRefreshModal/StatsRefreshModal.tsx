@@ -25,6 +25,7 @@ export default function StatsRefreshModal({
   selectedYear,
   companies,
 }: Props): ReactElement {
+  const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
@@ -158,6 +159,16 @@ export default function StatsRefreshModal({
     );
     setCheckAll(checkedValue.length === checkboxes.length);
   };
+  console.log(loadingPrice || updateCompanyLoading || updatePortfolioLoading);
+
+  const handleFormSubmit = async () => {
+    try {
+      await handleOk();
+      form.resetFields();
+    } catch (error) {
+      console.log("Validate Failed:", error);
+    }
+  };
 
   return (
     <>
@@ -172,9 +183,11 @@ export default function StatsRefreshModal({
         visible={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
-        okButtonProps={{ style: { display: "none" } }}
+        okText="Update stats"
+        cancelText="Cancelar"
+        onOk={handleFormSubmit}
       >
-        <Form onFinish={handleOk}>
+        <Form form={form} layout="vertical">
           For each company:
           <Form.Item
             name="updateStockPrice"
@@ -216,15 +229,6 @@ export default function StatsRefreshModal({
             </Checkbox.Group>
           </Form.Item>
           <Typography.Paragraph>{updateMessage}</Typography.Paragraph>
-          <Button
-            type="primary"
-            htmlType="submit"
-            loading={
-              loadingPrice || updateCompanyLoading || updatePortfolioLoading
-            }
-          >
-            Update stats
-          </Button>
         </Form>
       </Modal>
     </>
