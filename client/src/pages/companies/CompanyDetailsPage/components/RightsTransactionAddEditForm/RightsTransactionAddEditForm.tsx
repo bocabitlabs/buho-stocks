@@ -60,8 +60,10 @@ export default function RightsTransactionAddEditForm({
     currentTransactionDate,
   );
 
-  const { mutate: updateTransaction } = useUpdateRightsTransaction();
-  const { mutate: createTransaction } = useAddRightsTransaction();
+  const { mutate: updateTransaction, isLoading: isUpdateLoading } =
+    useUpdateRightsTransaction();
+  const { mutate: createTransaction, isLoading: isCreateLoading } =
+    useAddRightsTransaction();
 
   const {
     data: transaction,
@@ -183,6 +185,7 @@ export default function RightsTransactionAddEditForm({
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={handleFormSubmit}
+      confirmLoading={isCreateLoading || isUpdateLoading}
     >
       {isFetching && <LoadingSpin />}
       {errorFetchingTransaction && (

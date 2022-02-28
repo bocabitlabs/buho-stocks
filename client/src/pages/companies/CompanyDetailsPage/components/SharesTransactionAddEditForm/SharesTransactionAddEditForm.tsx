@@ -62,8 +62,10 @@ export default function SharesTransactionAddEditForm({
     currentTransactionDate,
   );
 
-  const { mutate: updateTransaction } = useUpdateSharesTransaction();
-  const { mutate: createTransaction } = useAddSharesTransaction();
+  const { mutate: updateTransaction, isLoading: isUpdateLoading } =
+    useUpdateSharesTransaction();
+  const { mutate: createTransaction, isLoading: isCreateLoading } =
+    useAddSharesTransaction();
 
   const {
     data: transaction,
@@ -197,6 +199,7 @@ export default function SharesTransactionAddEditForm({
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={handleFormSubmit}
+      confirmLoading={isCreateLoading || isUpdateLoading}
     >
       {isFetching && <LoadingSpin />}
       {errorFetchingTransaction && (

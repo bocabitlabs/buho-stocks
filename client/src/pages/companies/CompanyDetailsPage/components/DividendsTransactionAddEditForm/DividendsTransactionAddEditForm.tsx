@@ -59,8 +59,10 @@ export default function DividendsTransactionAddEditForm({
     portfolioBaseCurrency,
     currentTransactionDate,
   );
-  const { mutate: updateTransaction } = useUpdateDividendsTransaction();
-  const { mutate: createTransaction } = useAddDividendsTransaction();
+  const { mutate: updateTransaction, isLoading: isLoadingUpdate } =
+    useUpdateDividendsTransaction();
+  const { mutate: createTransaction, isLoading: isLoadindCreate } =
+    useAddDividendsTransaction();
   const {
     data: transaction,
     error: errorFetchingTransaction,
@@ -181,6 +183,7 @@ export default function DividendsTransactionAddEditForm({
       cancelText="Cancel"
       onCancel={onCancel}
       onOk={handleFormSubmit}
+      confirmLoading={isLoadingUpdate || isLoadindCreate}
     >
       {isFetching && <LoadingSpin />}
       {errorFetchingTransaction && (
