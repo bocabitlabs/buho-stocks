@@ -28,7 +28,7 @@ DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = config.ALLOWED_HOSTS
 
-
+TOKEN_EXPIRED_AFTER_MINUTES = config.TOKEN_EXPIRED_AFTER_MINUTES
 # Application definition
 
 INSTALLED_APPS = [
@@ -173,7 +173,6 @@ MEDIA_ROOT = config.MEDIA_ROOT
 
 SWAGGER_SETTINGS = {
     "SECURITY_DEFINITIONS": {
-        "Basic": {"type": "basic"},
         "Token": {"type": "apiKey", "name": "Authorization", "in": "header"},
     }
 }

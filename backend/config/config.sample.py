@@ -34,3 +34,6 @@ MEDIA_ROOT = "/usr/src/media/"
 # Timezone of the application
 # Default: "UTC"
 TIME_ZONE = "UTC"
+# Minutes it takes the authentication token to expire
+# Default: 60 * 24 * 15 (15 days)
+TOKEN_EXPIRED_AFTER_MINUTES = 60 * 24 * 15
