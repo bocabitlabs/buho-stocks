@@ -23,7 +23,6 @@ class SharesTransactionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "count",
-            "color",
             "exchange_rate",
             "transaction_date",
             "type",

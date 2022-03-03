@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 
@@ -15,7 +16,7 @@ from stats.utils.company_utils import CompanyStatsUtils
 logger =logging.getLogger("buho_backend")
 
 class CompanyStatsAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, company_id, year, user_id, force=False):

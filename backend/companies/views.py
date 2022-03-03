@@ -1,11 +1,8 @@
 from django.utils.decorators import method_decorator
-
-from rest_framework.authentication import (
-    TokenAuthentication,
-)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from drf_yasg.utils import swagger_auto_schema
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.serializers import CompanySerializer, CompanySerializerGet
 from companies.models import Company
 from log_messages.models import LogMessage
@@ -18,48 +15,54 @@ logger = logging.getLogger("buho_backend")
 @method_decorator(
     name="list",
     decorator=swagger_auto_schema(
-        operation_description="Get a list of company of the current user",
-        tags=["companies"],
+        operation_id="List portfolio companies",
+        operation_description="Get a list of company of a portfolio",
+        tags=["Companies"],
         responses={200: CompanySerializerGet(many=True)},
     ),
 )
 @method_decorator(
     name="create",
     decorator=swagger_auto_schema(
-        operation_description="Create a new company for the current user",
-        tags=["companies"],
+        operation_id="Create company",
+        operation_description="Create a new company in a portfolio",
+        tags=["Companies"],
         responses={200: CompanySerializer(many=False)},
     ),
 )
 @method_decorator(
     name="retrieve",
     decorator=swagger_auto_schema(
-        operation_description="Get an existing company of the current user",
-        tags=["companies"],
+        operation_id="Get company details",
+        operation_description="Retrieve details of a company",
+        tags=["Companies"],
         responses={200: CompanySerializerGet(many=False)},
     ),
 )
 @method_decorator(
     name="update",
     decorator=swagger_auto_schema(
-        operation_description="Update an existing company of the current user",
-        tags=["companies"],
+        operation_id="Update a company",
+        operation_description="Update an existing company",
+        tags=["Companies"],
         responses={200: CompanySerializer(many=False)},
     ),
 )
 @method_decorator(
     name="partial_update",
     decorator=swagger_auto_schema(
+        operation_id="Patch a company",
         operation_description="Patch an existing company of the current user",
-        tags=["companies"],
+        tags=["Companies"],
         responses={200: CompanySerializer(many=False)},
     ),
 )
 @method_decorator(
     name="destroy",
     decorator=swagger_auto_schema(
-        operation_description="Delete an existing company of the current user",
-        tags=["companies"],
+        operation_id="Delete company",
+        operation_description="Delete an existing company",
+        tags=["Companies"],
     ),
 )
 class CompanyViewSet(viewsets.ModelViewSet):
@@ -68,7 +71,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = CompanySerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "company_id"
     lookup_field = "id"

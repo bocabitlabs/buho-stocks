@@ -1,11 +1,9 @@
 import logging
 from django.utils.decorators import method_decorator
-from rest_framework.authentication import (
-    TokenAuthentication,
-)
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from sectors.serializers import (
     SectorSerializer,
     SectorSerializerGet,
@@ -69,7 +67,7 @@ class SectorViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = SectorSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "sector_id"
 
@@ -141,7 +139,7 @@ class SuperSectorViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = SuperSectorSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "sector_id"
 

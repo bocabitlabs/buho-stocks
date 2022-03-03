@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
@@ -17,7 +18,7 @@ logger =logging.getLogger("buho_backend")
 
 
 class PortfolioStatsAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, year, user_id, force=False, group_by=None):
@@ -87,7 +88,7 @@ class PortfolioStatsAPIView(APIView):
 
 
 class PortfolioStatsAllYearsAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, user_id):

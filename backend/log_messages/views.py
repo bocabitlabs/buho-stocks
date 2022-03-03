@@ -6,12 +6,13 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from log_messages.models import LogMessage
 from log_messages.serializers import LogMessageSerializer
 
 
 class LogMessageListAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     # 1. List all
@@ -26,7 +27,7 @@ class LogMessageListAPIView(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class LogMessageDetailAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, portfolio_id, message_id, user_id):

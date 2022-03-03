@@ -22,7 +22,6 @@ class DividendsTransactionSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "count",
-            "color",
             "exchange_rate",
             "transaction_date",
             "gross_price_per_share",

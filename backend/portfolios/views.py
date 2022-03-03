@@ -6,6 +6,7 @@ from rest_framework.authentication import (
 )
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
 from portfolios.models import Portfolio
 
@@ -63,7 +64,7 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = PortfolioSerializer
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "portfolio_id"
     lookup_field = "id"

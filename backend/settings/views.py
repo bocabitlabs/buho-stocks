@@ -5,13 +5,14 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 
 from settings.models import UserSettings
 from settings.serializers import UserSettingsSerializer
 
 
 class UserSettingsListAPIView(APIView):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
     # test
     # 1. List all
@@ -27,7 +28,7 @@ class UserSettingsListAPIView(APIView):
 
 class UserSettingsDetailAPIView(APIView):
     # add permission to check if user is authenticated
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [ExpiringTokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def get_object(self, todo_id, user_id):

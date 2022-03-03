@@ -17,7 +17,6 @@ class Transaction(models.Model):
         abstract = True
 
     count = models.IntegerField()
-    color = models.CharField(max_length=200)
     exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
     transaction_date = models.DateField()
     gross_price_per_share = MoneyField(

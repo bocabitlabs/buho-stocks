@@ -4,12 +4,12 @@ from rights_transactions import views as rights_views
 urlpatterns = [
     path(
         "",
-        rights_views.RightsTransactionsListAPIView.as_view(),
+        rights_views.RightsTransactionListCreateAPIView.as_view(),
         name="rights-transaction-list",
     ),
     path(
         "<int:transaction_id>/",
-        rights_views.RightsTransactionDetailAPIView.as_view(),
+        rights_views.RightsTransactionDetailsDetailAPIView.as_view(),
         name="rights-transaction-detail",
     ),
 ]
