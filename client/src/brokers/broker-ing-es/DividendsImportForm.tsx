@@ -227,7 +227,7 @@ export default function DividendsImportForm({
         count: initialCount,
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
         currency: selectedCompany ? selectedCompany.baseCurrency : "",
-        company: selectedCompany?.name,
+        company: selectedCompany?.id,
       }}
     >
       <Row>
@@ -284,7 +284,7 @@ export default function DividendsImportForm({
           >
             <Select placeholder={t("Company")} onChange={onCompanyChange}>
               {portfolio.companies.map((element) => (
-                <Select.Option key={element.id} value={element.name}>
+                <Select.Option key={element.id} value={element.id}>
                   {element.name} ({element.ticker})
                 </Select.Option>
               ))}

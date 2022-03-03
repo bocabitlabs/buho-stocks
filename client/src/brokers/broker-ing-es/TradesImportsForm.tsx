@@ -72,7 +72,6 @@ export default function TradesImportForm({
 
   const onCompanyChange = (value: string) => {
     const tempCompany = getCompanyFromTransaction(value, portfolio);
-    console.log("total", total);
     if (tempCompany) {
       setSelectedCompany(tempCompany);
       setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
@@ -207,7 +206,7 @@ export default function TradesImportForm({
         transactionDate: initialTransactionDate.format("YYYY-MM-DD"),
         currency: selectedCompany ? selectedCompany.baseCurrency : "",
         transactionType,
-        company: selectedCompany?.name,
+        company: selectedCompany?.id,
       }}
     >
       <Row>
@@ -246,7 +245,7 @@ export default function TradesImportForm({
           >
             <Select placeholder={t("Company")} onChange={onCompanyChange}>
               {portfolio.companies.map((element) => (
-                <Select.Option key={element.id} value={element.name}>
+                <Select.Option key={element.id} value={element.id}>
                   {element.name} ({element.ticker})
                 </Select.Option>
               ))}

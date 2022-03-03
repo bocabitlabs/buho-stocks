@@ -46,7 +46,6 @@ function CompanyAddEditForm({
   companyId,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
-  const [countryCode, setCountryCode] = useState("");
   const { t } = useTranslation();
 
   const [fileList, setFileList] = useState<any[]>([]);
@@ -63,12 +62,8 @@ function CompanyAddEditForm({
     error: errorFetching,
     isFetching,
     isSuccess,
-  } = useCompany(portfolioId, companyId, {
-    onSuccess: (data: any) => {
-      setCountryCode(data.countryCode);
-    },
-  });
-
+  } = useCompany(portfolioId, companyId);
+  const [countryCode, setCountryCode] = useState(company?.countryCode || "");
   const getBase64 = (img: any, callback: any) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -144,19 +139,19 @@ function CompanyAddEditForm({
   useEffect(() => {
     if (company) {
       form.setFieldsValue({
-        name: company?.name,
-        description: company?.description,
-        ticker: company?.ticker,
-        altTickers: company?.altTickers,
-        broker: company?.broker,
-        url: company?.url,
-        sector: company?.sector.id,
-        baseCurrency: company?.baseCurrency.code,
-        dividendsCurrency: company?.dividendsCurrency.code,
-        market: company?.market.id,
-        isClosed: company?.isClosed,
-        countryCode: company?.countryCode,
+        name: company.name,
+        description: company.description,
+        ticker: company.ticker,
+        altTickers: company.altTickers,
+        broker: company.broker,
+        url: company.url,
+        sector: company.sector.id,
+        baseCurrency: company.baseCurrency.code,
+        dividendsCurrency: company.dividendsCurrency.code,
+        market: company.market.id,
+        isClosed: company.isClosed,
       });
+      setCountryCode(company.countryCode);
     }
   }, [form, company]);
 

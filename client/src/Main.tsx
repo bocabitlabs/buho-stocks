@@ -73,7 +73,7 @@ export default function Main(): ReactElement {
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
-      <ToastContainer position="top-center" theme="colored" />
+      <ToastContainer position="top-center" theme="colored" newestOnTop />
     </AuthContext.Provider>
   );
 }
