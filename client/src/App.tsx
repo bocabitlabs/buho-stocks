@@ -1,11 +1,12 @@
-import React, { useContext } from "react";
+import React, { useCallback, useContext, useState } from "react";
 import "./App.css";
 import { Outlet } from "react-router-dom";
-import { Avatar, Layout, Typography } from "antd";
-import { Content, Header } from "antd/lib/layout/layout";
-import AlertMessages from "components/AlertMessages/AlertMessages";
-import AppSidebar from "components/AppSidebar/AppSidebar";
+import { Layout } from "antd";
+import { navLinks } from "components/AppSidebar/AppSidebar";
+import NavBar from "components/NavBar/NavBar";
 import PageFooter from "components/PageFooter/PageFooter";
+import RoutesMenu from "components/RoutesMenu/RoutesMenu";
+import SideBar from "components/SideBar/SideBar";
 import { AuthContext } from "contexts/auth";
 import LanguageLoader from "LanguageLoader";
 
@@ -13,40 +14,36 @@ function App() {
   const { state } = useContext(AuthContext);
   const { isAuthenticated } = state;
 
+  const [selectedKey, setSelectedKey] = useState<string>("0");
+  const changeSelectedKey = useCallback((event: any) => {
+    const { key } = event;
+    setSelectedKey(key);
+  }, []);
+
   if (!isAuthenticated) {
     return <div>Login in...</div>;
   }
 
+  const Menu = (
+    <RoutesMenu
+      routeLinks={navLinks}
+      selectedKey={selectedKey}
+      changeSelectedKey={changeSelectedKey}
+    />
+  );
+
   return (
-    <Layout>
+    <div className="App">
       <LanguageLoader />
-      <AppSidebar />
-      <div className="site-main-content">
-        <Header
-          className="site-layout-sub-header-background"
-          style={{
-            zIndex: 1,
-            width: "100%",
-            backgroundColor: "#fff",
-            padding: "0 20px",
-            height: 60,
-            display: "block",
-          }}
-        >
-          <Typography.Title style={{ fontSize: 30, lineHeight: "inherit" }}>
-            <Avatar src="/icons/android-icon-72x72.png" />
-            Buho Stocks
-          </Typography.Title>
-        </Header>
-        <Content className="site-layout" style={{ margin: "24px 16px 0" }}>
-          <AlertMessages />
-          <div className="site-layout-background" style={{ minHeight: 380 }}>
-            <Outlet />
-          </div>
-        </Content>
-        <PageFooter />
-      </div>
-    </Layout>
+      <NavBar menu={Menu} />
+      <Layout>
+        <SideBar menu={Menu} />
+        <Layout.Content>
+          <Outlet />
+          <PageFooter />
+        </Layout.Content>
+      </Layout>
+    </div>
   );
 }
 

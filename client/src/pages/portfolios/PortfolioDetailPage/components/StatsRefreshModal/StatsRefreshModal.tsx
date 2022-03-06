@@ -43,14 +43,10 @@ export default function StatsRefreshModal({
     setCheckboxes(tempCheckboxes);
   }, [companies]);
 
-  const { mutateAsync: updateStockPrice, isLoading: loadingPrice } =
-    useUpdateCompanyStockPrice();
-  const { mutateAsync: updateCompanyStats, isLoading: updateCompanyLoading } =
-    useUpdateYearStatsForced();
-  const {
-    mutateAsync: updatePortfolioStats,
-    isLoading: updatePortfolioLoading,
-  } = useUpdatePortfolioYearStatsForced();
+  const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
+  const { mutateAsync: updateCompanyStats } = useUpdateYearStatsForced();
+  const { mutateAsync: updatePortfolioStats } =
+    useUpdatePortfolioYearStatsForced();
 
   const showModal = () => {
     setVisible(true);
@@ -159,7 +155,6 @@ export default function StatsRefreshModal({
     );
     setCheckAll(checkedValue.length === checkboxes.length);
   };
-  console.log(loadingPrice || updateCompanyLoading || updatePortfolioLoading);
 
   const handleFormSubmit = async () => {
     try {

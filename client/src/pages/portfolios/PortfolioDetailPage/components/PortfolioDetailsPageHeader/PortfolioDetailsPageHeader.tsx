@@ -18,7 +18,7 @@ interface Props {
   portfolioName: string;
   portfolioDescription: string;
   portfolioCountryCode: string;
-  children: ReactNode;
+  children?: ReactNode;
 }
 
 function PortfolioDetailsPageHeader({
@@ -122,5 +122,7 @@ function PortfolioDetailsPageHeader({
     </PageHeader>
   );
 }
-
+PortfolioDetailsPageHeader.defaultProps = {
+  children: null,
+};
 export default PortfolioDetailsPageHeader;

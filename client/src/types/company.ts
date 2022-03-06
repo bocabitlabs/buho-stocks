@@ -16,6 +16,7 @@ interface ICompanyBase {
   broker: string;
   countryCode: string;
   isClosed: boolean;
+  isin: string;
   logo: string;
 }
 

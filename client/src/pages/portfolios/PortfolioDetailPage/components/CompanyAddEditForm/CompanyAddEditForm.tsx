@@ -83,6 +83,7 @@ function CompanyAddEditForm({
       url,
       broker,
       isClosed,
+      isin,
     } = values;
     const newCompany = {
       name,
@@ -100,6 +101,7 @@ function CompanyAddEditForm({
       broker,
       countryCode,
       isClosed,
+      isin,
     };
 
     if (companyId) {
@@ -150,6 +152,7 @@ function CompanyAddEditForm({
         dividendsCurrency: company.dividendsCurrency.code,
         market: company.market.id,
         isClosed: company.isClosed,
+        isin: company.isin,
       });
       setCountryCode(company.countryCode);
     }
@@ -191,6 +194,9 @@ function CompanyAddEditForm({
             <Input type="text" />
           </Form.Item>
           <Form.Item name="altTickers" label={t("Altnernative tickers")}>
+            <Input type="text" />
+          </Form.Item>
+          <Form.Item name="isin" label={t("ISIN")}>
             <Input type="text" />
           </Form.Item>
           <Form.Item name="logo" label="Company Logo">
