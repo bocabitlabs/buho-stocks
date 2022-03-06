@@ -5,6 +5,7 @@ import ChartBrokerByCompany from "./components/ChartBrokerByCompany/ChartBrokerB
 import ChartCurrenciesByCompany from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompany";
 import ChartDividendsByCompany from "./components/ChartDividendsByCompany/ChartDividendsByCompany";
 import ChartInvestedByCompany from "./components/ChartInvestedByCompany/ChartInvestedByCompany";
+import ChartInvestedByCompanyYearly from "./components/ChartInvestedByCompanyYearly/ChartInvestedByCompanyYearly";
 import ChartMarketByCompany from "./components/ChartMarketByCompany/ChartMarketByCompany";
 import ChartPortfolioDividends from "./components/ChartPortfolioDividends/ChartPortfolioDividends";
 import ChartPortfolioDividendsPerMonth from "./components/ChartPortfolioDividendsPerMonth/ChartPortfolioDividendsPerMonth";
@@ -90,6 +91,9 @@ export default function ChartsList({ firstYear }: Props): ReactElement {
           </div>
           <Row>
             <ChartInvestedByCompany statsData={filteredChartData} />
+          </Row>
+          <Row>
+            <ChartInvestedByCompanyYearly statsData={filteredChartData} />
           </Row>
           <Row>
             <ChartValueByCompany statsData={filteredChartData} />

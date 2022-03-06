@@ -4,7 +4,7 @@ import { Bar } from "react-chartjs-2";
 interface Props {
   statsData: any;
 }
-export default function ChartInvestedByCompany({ statsData }: Props) {
+export default function ChartInvestedByCompanyYearly({ statsData }: Props) {
   const [data, setData] = React.useState<any>(null);
 
   const options = {
@@ -15,7 +15,7 @@ export default function ChartInvestedByCompany({ statsData }: Props) {
       },
       title: {
         display: true,
-        text: "Accumulated investment by company",
+        text: "Invested by company",
       },
     },
     scales: {
@@ -43,23 +43,23 @@ export default function ChartInvestedByCompany({ statsData }: Props) {
         ],
       };
       const companies: any = [];
-      const accumulatedInvestment: any = [];
+      const invested: any = [];
 
       statsData.sort((a: any, b: any) => {
-        if (Number(a.accumulatedInvestment) < Number(b.accumulatedInvestment)) {
+        if (Number(a.invested) < Number(b.invested)) {
           return 1;
         }
-        if (Number(a.accumulatedInvestment) > Number(b.accumulatedInvestment)) {
+        if (Number(a.invested) > Number(b.invested)) {
           return -1;
         }
         return 0;
       });
       statsData.forEach((stat: any) => {
         companies.push(stat.company.name);
-        accumulatedInvestment.push(Number(stat.accumulatedInvestment));
+        invested.push(Number(stat.invested));
       });
       tempData.labels = companies;
-      tempData.datasets[0].data = accumulatedInvestment;
+      tempData.datasets[0].data = invested;
 
       setData(tempData);
     }
