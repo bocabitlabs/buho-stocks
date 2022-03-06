@@ -19,6 +19,7 @@ class Company(models.Model):
     color = models.CharField(max_length=200)
     broker = models.CharField(max_length=200)
     country_code = models.CharField(max_length=200)
+    isin = models.CharField(max_length=200, blank=True, null=True)
 
     is_closed = models.BooleanField(default=False)
 

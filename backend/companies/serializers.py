@@ -151,6 +151,8 @@ class CompanySerializerGet(CompanySerializer):
             "description",
             "dividends_currency",
             "dividends_transactions",
+            "isin",
+            "is_closed",
             "logo",
             "market",
             "name",
