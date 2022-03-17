@@ -13,6 +13,10 @@ logger = logging.getLogger("buho_backend")
 
 
 class CompanyStatsUtils:
+
+    year_for_all = 9999
+
+
     def __init__(
         self,
         company_id: int,
@@ -70,6 +74,9 @@ class CompanyStatsUtils:
     def get_dividends_yield(self, dividends, portfolio_value):
         total = 0
         if portfolio_value != 0:
+            logger.debug("Calculating dividends yield")
+            logger.debug(f"Dividends: {dividends}")
+            logger.debug(f"Portfolio value: {portfolio_value}")
             total = dividends / portfolio_value * 100 if portfolio_value else 0
         return total
 
@@ -105,7 +112,10 @@ class CompanyStatsUtils:
         return_with_dividends_percent = self.get_return_percent(
             return_with_dividends, accumulated_investment
         )
-        dividends_yield = self.get_dividends_yield(dividends, portfolio_value)
+        if year == self.year_for_all:
+            dividends_yield = self.get_dividends_yield(accumulated_dividends, portfolio_value)
+        else:
+            dividends_yield = self.get_dividends_yield(dividends, portfolio_value)
 
         # Fixes
         last_stock_price_value = last_stock_price["price"] if last_stock_price else 0
@@ -157,8 +167,7 @@ class CompanyStatsUtils:
 
     def get_stats_for_year(self):
 
-        year_for_all = 9999
-        temp_year = year_for_all if self.year == "all" else self.year
+        temp_year = self.year_for_all if self.year == "all" else self.year
 
         if not self.force:
             instance = self.get_stats_for_year_from_db(temp_year)
@@ -166,7 +175,6 @@ class CompanyStatsUtils:
                 return instance
 
         results_dict = self.calculate_stats_for_year(temp_year)
-        logger.debug(results_dict)
         instance = self.update_or_create_stats_for_year(temp_year, results_dict)
 
         return instance

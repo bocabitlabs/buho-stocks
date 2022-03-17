@@ -25,6 +25,9 @@ class PortfolioUtils:
 
 
 class PortfolioStatsUtils:
+
+    year_for_all = 9999
+
     def __init__(
         self,
         portfolio_id: int,
@@ -176,7 +179,9 @@ class PortfolioStatsUtils:
             if company.is_closed:
                 continue
 
-            first_year = CompanyUtils(self.company.id).get_company_first_year(company.user)
+            first_year = CompanyUtils(self.company.id).get_company_first_year(
+                company.user
+            )
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
             if self.year != "all":
                 if not first_year or first_year > int(self.year):
@@ -218,8 +223,7 @@ class PortfolioStatsUtils:
 
     def get_stats_for_year(self):
 
-        year_for_all = 9999
-        temp_year = year_for_all if self.year == "all" else self.year
+        temp_year = self.year_for_all if self.year == "all" else self.year
 
         results = None
         if PortfolioStatsForYear.objects.filter(
@@ -271,9 +275,14 @@ class PortfolioStatsUtils:
             data["return_with_dividends"], data["accumulated_investment"]
         )
 
-        data["dividends_yield"] = self.get_dividends_yield(
-            data["dividends"], data["portfolio_value"]
-        )
+        if temp_year == self.year_for_all:
+            data["dividends_yield"] = self.get_dividends_yield(
+                data["accumulated_dividends"], data["portfolio_value"]
+            )
+        else:
+            data["dividends_yield"] = self.get_dividends_yield(
+                data["dividends"], data["portfolio_value"]
+            )
 
         if results:
             for key in data:
@@ -363,9 +372,14 @@ class PortfolioStatsUtils:
                 data["return_with_dividends"], data["accumulatedInvestment"]
             )
 
-            data["dividendsYield"] = self.get_dividends_yield(
-                data["dividends"], data["portfolioValue"]
-            )
+            if year == self.year_for_all:
+                data["dividendsYield"] = self.get_dividends_yield(
+                    data["accumulatedDividends"], data["portfolioValue"]
+                )
+            else:
+                data["dividendsYield"] = self.get_dividends_yield(
+                    data["dividends"], data["portfolioValue"]
+                )
 
             years_result.append(data)
 
