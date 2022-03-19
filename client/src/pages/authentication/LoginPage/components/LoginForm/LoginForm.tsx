@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
-import { Button, Form, Input, PageHeader } from "antd";
+import { Avatar, Button, Form, Input, PageHeader } from "antd";
 import { AuthContext } from "contexts/auth";
 import { useLoginUser } from "hooks/use-auth/use-auth";
 
@@ -58,7 +58,11 @@ export function LoginForm() {
     >
       <PageHeader
         className="site-page-header-responsive"
-        title="Buho Stocks"
+        title={
+          <>
+            <Avatar src="/icons/android-icon-72x72.png" /> Buho Stocks
+          </>
+        }
         subTitle={t("Sign in")}
       >
         <Form.Item

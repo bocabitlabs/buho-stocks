@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
+import momentTz from "moment-timezone";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
+import { useSettings } from "hooks/use-settings/use-settings";
 import MarketAddEditForm from "pages/markets/MarketsListPage/components/MarketAddEditForm/MarketAddEditForm";
-import getRoute, { MARKETS_ROUTE } from "routes";
 import { IMarket } from "types/market";
 
 export default function MarketsListTable() {
   const { t } = useTranslation();
   const { data: markets, error, isFetching } = useMarkets();
+  const { data: settings } = useSettings();
+
   const { mutateAsync: deleteMarket } = useDeleteMarket();
   const [selectedMarketId, setSelectedMarketId] = useState<number | undefined>(
     undefined,
@@ -86,7 +88,18 @@ export default function MarketsListTable() {
       dataIndex: "openTime",
       key: "openTime",
       sorter: (a: IMarket, b: IMarket) => a.openTime.localeCompare(b.openTime),
-      render: (text: string) => moment(text, "HH:mm").format("HH:mm"),
+      render: (text: string, record: IMarket) => {
+        const originalMoment = moment(text, "HH:mm").format("YYYY-MM-DD HH:mm");
+        const marketTimezone = record.timezone;
+        const openTime = momentTz.tz(originalMoment, marketTimezone);
+        const utcTime = openTime.clone().tz(settings?.timezone || "UTC");
+
+        return (
+          <div title={`${t("Timezone")}: ${settings?.timezone || "UTC"}`}>
+            {utcTime.format("HH:mm")}
+          </div>
+        );
+      },
     },
     {
       title: t("Closing time"),
@@ -94,16 +107,28 @@ export default function MarketsListTable() {
       key: "closeTime",
       sorter: (a: IMarket, b: IMarket) =>
         a.closeTime.localeCompare(b.closeTime),
-      render: (text: string) => moment(text, "HH:mm").format("HH:mm"),
+      render: (text: string, record: IMarket) => {
+        const originalMoment = moment(text, "HH:mm").format("YYYY-MM-DD HH:mm");
+        const marketTimezone = record.timezone;
+        const openTime = momentTz.tz(originalMoment, marketTimezone);
+        const utcTime = openTime.clone().tz(settings?.timezone || "UTC");
+
+        return (
+          <div title={`${t("Timezone")}: ${settings?.timezone || "UTC"}`}>
+            {utcTime.format("HH:mm")}
+          </div>
+        );
+      },
     },
     {
       title: t("Action"),
       key: "action",
       render: (text: string, record: any) => (
         <Space size="middle">
-          <Link to={`${getRoute(MARKETS_ROUTE)}/${record.id}`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
+          <Button
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
           <Popconfirm
             key={`market-delete-${record.key}`}
             title={`Delete market ${record.name}?`}
@@ -130,6 +155,7 @@ export default function MarketsListTable() {
         openTime: market.openTime,
         closeTime: market.closeTime,
         color: market.color,
+        timezone: market.timezone,
       }))
     );
   };

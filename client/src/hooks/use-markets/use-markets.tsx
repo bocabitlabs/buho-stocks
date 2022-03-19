@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
-import { IMarket, IMarketFormFields } from "types/market";
+import { IMarket, IMarketFormFields, ITimezone } from "types/market";
 
 interface UpdateMarketMutationProps {
   newMarket: IMarketFormFields;
@@ -14,6 +14,14 @@ interface UpdateMarketMutationProps {
 export const fetchMarkets = async () => {
   const { data } = await axios.get<IMarket[]>(
     "/api/v1/markets/",
+    getAxiosOptionsWithAuth(),
+  );
+  return data;
+};
+
+export const fetchTimezones = async () => {
+  const { data } = await axios.get<IMarket[]>(
+    "/api/v1/markets/timezones/",
     getAxiosOptionsWithAuth(),
   );
   return data;
@@ -97,6 +105,10 @@ export function useMarket(marketId: number | undefined, options?: any) {
       ...options,
     },
   );
+}
+
+export function useTimezones() {
+  return useQuery<ITimezone[], Error>("timezones", fetchTimezones);
 }
 
 export default useMarkets;

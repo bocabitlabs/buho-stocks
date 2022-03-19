@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.0.40-alpha",
+  "version": "0.0.42-alpha",
   "homepage": "/",
   "proxy": "http://localhost:8001/",
   "private": true,
@@ -34,6 +34,7 @@
     "eslint-plugin-react-hooks": "^4.3.0",
     "i18next": "^21.3.1",
     "material-colors": "^1.2.6",
+    "moment-timezone": "^0.5.34",
     "nock": "^13.2.2",
     "path-to-regexp": "^6.2.0",
     "prettier": "^2.4.1",

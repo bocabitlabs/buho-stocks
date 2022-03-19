@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
@@ -15,7 +14,7 @@ interface IProps {
 export default function CompaniesList({ companies }: IProps) {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { mutateAsync: deleteCompany } = useDeleteCompany();
+  const { mutate: deleteCompany } = useDeleteCompany();
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -34,13 +33,7 @@ export default function CompaniesList({ companies }: IProps) {
   };
 
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteCompany({ portfolioId: +id!, companyId: recordId });
-      toast.success(t("Company deleted successfully"));
-    } catch (error) {
-      console.error(error);
-      toast.error(t(`Error deleting company: ${error}`));
-    }
+    deleteCompany({ portfolioId: +id!, companyId: recordId });
   };
 
   const columns: any = [
@@ -97,11 +90,12 @@ export default function CompaniesList({ companies }: IProps) {
     },
     {
       title: t("Invested"),
-      dataIndex: "invested",
-      key: "invested",
+      dataIndex: "accumulatedInvestment",
+      key: "accumulatedInvestment",
       render: (text: string, record: any) =>
         `${(+text).toFixed(2)} ${record.portfolioCurrency}`,
-      sorter: (a: any, b: any) => +a.invested - +b.invested,
+      sorter: (a: any, b: any) =>
+        +a.accumulatedInvestment - +b.accumulatedInvestment,
     },
     {
       title: t("Portfolio value"),
@@ -175,7 +169,9 @@ export default function CompaniesList({ companies }: IProps) {
       countryCode: element.countryCode,
       sector: element.sector,
       broker: element.broker,
-      invested: element.allStats ? element.allStats.invested : 0,
+      accumulatedInvestment: element.allStats
+        ? element.allStats.accumulatedInvestment
+        : 0,
       portfolioValue: element.allStats ? element.allStats.portfolioValue : 0,
       returnWithDividendsPercent: element.allStats
         ? element.allStats.returnWithDividendsPercent

@@ -5,6 +5,7 @@ export interface ISettingsFormFields {
   mainPortfolio: string;
   portfolioSortBy: string;
   portfolioDisplayMode: string;
+  timezone: string;
 }
 
 export interface ISettings extends ISettingsFormFields {

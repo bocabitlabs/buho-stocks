@@ -3,6 +3,7 @@ import { ISettings } from "types/settings";
 const settingsMock: ISettings = {
   id: 1,
   language: "en",
+  timezone: "UTC",
   portfolioSortBy: "date",
   companySortBy: "date",
   mainPortfolio: "1",

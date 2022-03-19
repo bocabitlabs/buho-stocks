@@ -9,4 +9,5 @@ urlpatterns = [
                 "patch": "partial_update",
                 "delete": "destroy",
             }), name="market-detail"),
+    path("timezones/", views.TimezoneList.as_view(), name="timezone-list"),
 ]

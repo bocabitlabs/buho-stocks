@@ -70,7 +70,7 @@ export const useDeleteCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
-        toast.success(t("Company has been created"));
+        toast.success(`${t("Company has been deleted")}`);
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
       onError: () => {

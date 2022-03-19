@@ -1,11 +1,11 @@
 from django.utils.decorators import method_decorator
 
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
 from drf_yasg.utils import swagger_auto_schema
 from buho_backend.utils.token_utils import ExpiringTokenAuthentication
-from markets.serializers import MarketSerializer
-from markets.models import Market
+from markets.serializers import MarketSerializer, TimezoneSerializer
+from markets.models import Market, get_all_timezones
 import logging
 
 logger = logging.getLogger("buho_backend")
@@ -78,3 +78,18 @@ class MarketViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+@method_decorator(
+    name="get",
+    decorator=swagger_auto_schema(
+        operation_id="Get all timezones",
+        operation_description="Get all the available timezones",
+        tags=["Markets"],
+    ),
+)
+class TimezoneList(generics.ListAPIView):
+    queryset = get_all_timezones()
+    serializer_class = TimezoneSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [ExpiringTokenAuthentication]

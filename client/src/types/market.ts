@@ -1,3 +1,7 @@
+export interface ITimezone {
+  name: string;
+}
+
 export interface IMarketFormFields {
   name: string;
   description: string;
@@ -5,6 +9,7 @@ export interface IMarketFormFields {
   region: string;
   openTime: string;
   closeTime: string;
+  timezone: string;
 }
 
 export interface IMarket extends IMarketFormFields {

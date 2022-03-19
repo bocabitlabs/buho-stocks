@@ -1,6 +1,7 @@
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Form, Select } from "antd";
+import { useTimezones } from "hooks/use-markets/use-markets";
 import {
   useSettings,
   useUpdateSettings,
@@ -12,18 +13,21 @@ function SettingsForm(): ReactElement | null {
   const { isFetching, data, error } = useSettings();
   const { mutateAsync: updateSettingsAsync } = useUpdateSettings();
   const { t, i18n } = useTranslation();
+  const { data: timezones, isLoading: timezonesLoading } = useTimezones();
 
   const handleUpdate = async (values: any) => {
     const {
       // companyDisplayMode,
       // companySortBy,
       language,
+      timezone,
       // mainPortfolio,
       // portfolioDisplayMode,
       // portfolioSortBy
     } = values;
     const newSettings: ISettingsFormFields = {
       language,
+      timezone,
       companyDisplayMode: "TODO",
       companySortBy: "TODO",
       mainPortfolio: "TODO",
@@ -53,6 +57,7 @@ function SettingsForm(): ReactElement | null {
         // companyDisplayMode: settings.companyDisplayMode,
         // companySortBy: settings.companySortBy,
         language: data?.language,
+        timezone: data?.timezone,
         // mainPortfolio: settings.mainPortfolio,
         // portfolioDisplayMode: settings.portfolioDisplayMode,
         // portfolioSortBy: settings.portfolioSortBy
@@ -66,6 +71,28 @@ function SettingsForm(): ReactElement | null {
           <Select.Option value="es" key="es">
             Español
           </Select.Option>
+        </Select>
+      </Form.Item>
+      <Form.Item
+        name="timezone"
+        label={t("Account Timezone")}
+        rules={[{ required: true }]}
+      >
+        <Select
+          showSearch
+          loading={timezonesLoading}
+          style={{ width: 200 }}
+          placeholder="Search to Select"
+          optionFilterProp="children"
+          filterOption={(input: any, option: any) =>
+            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+          }
+        >
+          {timezones?.map((timezone: any, index: number) => (
+            <Select.Option value={timezone.name} key={index.toString()}>
+              {timezone.name}
+            </Select.Option>
+          ))}
         </Select>
       </Form.Item>
       <Form.Item>

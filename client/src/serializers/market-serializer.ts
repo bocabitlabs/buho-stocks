@@ -11,6 +11,7 @@ export const serializeMarket = (data: any) => {
     closeTime: data.close_time,
     dateCreated: data.date_created,
     lastUpdated: data.last_updated,
+    timezone: data.timezone,
   };
   return serializedData;
 };

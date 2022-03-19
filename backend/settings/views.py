@@ -72,6 +72,7 @@ class UserSettingsDetailAPIView(APIView):
             "companyDisplayMode": request.data.get("companyDisplayMode"),
             "companySortBy": request.data.get("companySortBy"),
             "language": request.data.get("language"),
+            "timezone": request.data.get("timezone"),
             "mainPortfolio": request.data.get("mainPortfolio"),
             "portfolioSortBy": request.data.get("portfolioSortBy"),
             "portfolioDisplayMode": request.data.get("portfolioDisplayMode"),

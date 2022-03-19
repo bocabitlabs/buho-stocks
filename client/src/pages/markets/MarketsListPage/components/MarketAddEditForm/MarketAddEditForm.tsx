@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Col, Form, Input, Modal, Row, TimePicker } from "antd";
+import { Alert, Col, Form, Input, Modal, Row, Select, TimePicker } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import ColorSelector from "components/ColorSelector/ColorSelector";
@@ -9,6 +9,7 @@ import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import {
   useAddMarket,
   useMarket,
+  useTimezones,
   useUpdateMarket,
 } from "hooks/use-markets/use-markets";
 
@@ -33,7 +34,7 @@ function MarketAddEditForm({
   const [color, setColor] = useState("#607d8b");
   const [region, setRegion] = useState("");
   const { t } = useTranslation();
-
+  const { data: timezones, isLoading: timezonesLoading } = useTimezones();
   const { mutate: createMarket } = useAddMarket();
   const { mutate: updatedMarket } = useUpdateMarket();
   const {
@@ -55,7 +56,7 @@ function MarketAddEditForm({
   }, [color, region]);
 
   const handleSubmit = async (values: any) => {
-    const { name, description, openTime, closeTime } = values;
+    const { name, description, openTime, closeTime, timezone } = values;
     const newMarket = {
       name,
       description,
@@ -63,6 +64,7 @@ function MarketAddEditForm({
       color,
       openTime: openTime.format("HH:mm"),
       closeTime: closeTime.format("HH:mm"),
+      timezone,
     };
     if (marketId) {
       updatedMarket({ marketId, newMarket });
@@ -90,6 +92,19 @@ function MarketAddEditForm({
       console.log("Validate Failed:", error);
     }
   };
+
+  useEffect(() => {
+    if (market) {
+      form.setFieldsValue({
+        name: market?.name,
+        description: market?.description,
+        region: market?.region,
+        openTime: market ? moment(market?.openTime, "HH:mm") : "",
+        closeTime: market ? moment(market?.closeTime, "HH:mm") : "",
+        timezone: market?.timezone,
+      });
+    }
+  }, [form, market]);
 
   if (fetchingMarket) {
     return <LoadingSpin />;
@@ -124,6 +139,7 @@ function MarketAddEditForm({
           region: market?.region,
           openTime: market ? moment(market?.openTime, "HH:mm") : "",
           closeTime: market ? moment(market?.closeTime, "HH:mm") : "",
+          timezone: market?.timezone,
         }}
       >
         {" "}
@@ -213,6 +229,31 @@ function MarketAddEditForm({
               ]}
             >
               <TimePicker name="closeTime" format="HH:mm" />
+            </Form.Item>
+          </Col>
+          <Col span={24}>
+            <Form.Item
+              name="timezone"
+              label={t("Timezone")}
+              rules={[{ required: true }]}
+            >
+              <Select
+                showSearch
+                loading={timezonesLoading}
+                style={{ width: 200 }}
+                placeholder="Search to Select"
+                optionFilterProp="children"
+                filterOption={(input: any, option: any) =>
+                  option.children.toLowerCase().indexOf(input.toLowerCase()) >=
+                  0
+                }
+              >
+                {timezones?.map((timezone: any, index: number) => (
+                  <Select.Option value={timezone.name} key={index.toString()}>
+                    {timezone.name}
+                  </Select.Option>
+                ))}
+              </Select>
             </Form.Item>
           </Col>
         </Row>
