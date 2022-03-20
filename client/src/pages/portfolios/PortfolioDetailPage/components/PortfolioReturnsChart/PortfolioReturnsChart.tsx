@@ -1,11 +1,13 @@
 import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   stats: any;
 }
 
 export default function PortfolioReturnsChart({ stats }: Props): ReactElement {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
   const options = {
@@ -16,7 +18,17 @@ export default function PortfolioReturnsChart({ stats }: Props): ReactElement {
       },
       title: {
         display: true,
-        text: "Portfolio Returns",
+        text: t("Portfolio Returns"),
+      },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const percentage = `${context.dataset.label}: ${Number(
+              context.formattedValue,
+            ).toFixed(2)}%`;
+            return percentage;
+          },
+        },
       },
     },
   };
@@ -26,13 +38,13 @@ export default function PortfolioReturnsChart({ stats }: Props): ReactElement {
         labels: [],
         datasets: [
           {
-            label: "Return Percent",
+            label: t("Return"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
           {
-            label: "Return w.d. Percent",
+            label: t("Return + dividends"),
             data: [],
             borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -71,10 +83,10 @@ export default function PortfolioReturnsChart({ stats }: Props): ReactElement {
       setData(tempData);
       setIsDataSet(true);
     }
-  }, [stats]);
+  }, [stats, t]);
 
   if (!isDataSet || !data) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Line options={options} data={data} />;
 }

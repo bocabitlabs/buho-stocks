@@ -1,13 +1,17 @@
 import React, { ReactElement, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   stats: any;
+  portfolioCurrency: string;
 }
 
 export default function PortfolioDividendsChart({
   stats,
+  portfolioCurrency,
 }: Props): ReactElement {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
   const options = {
@@ -18,7 +22,18 @@ export default function PortfolioDividendsChart({
       },
       title: {
         display: true,
-        text: "Portfolio Dividends",
+        text: t("Portfolio Dividends"),
+      },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            console.log(context);
+            const percentage = `${context.dataset.label}: ${Number(
+              context.formattedValue,
+            ).toFixed(2)} ${portfolioCurrency}`;
+            return percentage;
+          },
+        },
       },
     },
   };
