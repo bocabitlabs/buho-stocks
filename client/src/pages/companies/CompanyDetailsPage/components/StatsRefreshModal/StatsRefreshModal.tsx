@@ -1,4 +1,5 @@
 import React, { ReactElement, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal } from "antd";
 import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
@@ -13,6 +14,8 @@ export default function StatsRefreshModal({
   companyId,
   selectedYear,
 }: Props): ReactElement {
+  const { t } = useTranslation();
+
   const [visible, setVisible] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
@@ -76,24 +79,24 @@ export default function StatsRefreshModal({
         icon={<SyncOutlined />}
       />
       <Modal
-        title="Refresh stats and stock prices"
+        title={t("Refresh stats and stock prices")}
         visible={visible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
-        okText="Update stats"
-        cancelText="Cancel"
+        okText={t("Update stats")}
+        cancelText={t("Cancel")}
       >
         <Form>
-          Do you want to update the stats and the stock price?
+          {t("Do you want to update the stats and the stock price?")}
           <Form.Item style={{ marginBottom: 0 }}>
             <Checkbox onChange={onStockPriceChange}>
-              Update the stock price from API
+              {t("Update the stock price from API")}
             </Checkbox>
           </Form.Item>
           <Form.Item>
             <Checkbox onChange={onStatsChange}>
-              Update the stats for the year {selectedYear}
+              {t("Update the stats for the year")} {selectedYear}
             </Checkbox>
           </Form.Item>
         </Form>

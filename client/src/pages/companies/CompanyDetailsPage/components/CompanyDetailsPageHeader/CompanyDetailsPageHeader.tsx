@@ -32,11 +32,11 @@ function CompanyDetailsPageHeader({
   const routes = [
     {
       path: `/app/portfolios/${id}`,
-      breadcrumbName: portfolioName || "Loading...",
+      breadcrumbName: portfolioName || t("Loading..."),
     },
     {
       path: `/app/portfolios/${id}/companies/${companyId}`,
-      breadcrumbName: companyName || "Loading...",
+      breadcrumbName: companyName || t("Loading..."),
     },
   ];
   const { mutate: deleteCompany } = useDeleteCompany();
@@ -64,7 +64,7 @@ function CompanyDetailsPageHeader({
       extra={[
         <Popconfirm
           key="portfolio-delete-header"
-          title="Delete this company?"
+          title={t("Delete this company?")}
           onConfirm={() => confirmDelete()}
           okText={t("Yes")}
           cancelText={t("No")}

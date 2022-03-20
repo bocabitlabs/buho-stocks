@@ -29,13 +29,13 @@ export default function ImportExportPage(): ReactElement {
   };
 
   const options1 = [
-    { label: "Import", value: "import" },
-    { label: "Export", value: "export", disabled: true },
+    { label: t("Import"), value: "import" },
+    { label: t("Export"), value: "export", disabled: true },
   ];
 
   const options2 = [
-    { label: "Import from App", value: "import-app", disabled: true },
-    { label: "Import from Broker", value: "import-broker" },
+    { label: t("Import from App"), value: "import-app", disabled: true },
+    { label: t("Import from Broker"), value: "import-broker" },
   ];
 
   return (
@@ -77,7 +77,7 @@ export default function ImportExportPage(): ReactElement {
             )}
             {selectedBroker && (
               <Button onClick={() => goToBrokerImportPage(selectedBroker)}>
-                Import
+                {t("Import")}
               </Button>
             )}
           </Space>

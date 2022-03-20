@@ -99,7 +99,7 @@ function SectorAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >
@@ -107,7 +107,7 @@ function SectorAddEditForm({
       {errorFetching && (
         <Alert
           showIcon
-          message="Unable to load sector"
+          message={t("Unable to load sector")}
           description={errorFetching.message}
           type="error"
         />
@@ -124,7 +124,10 @@ function SectorAddEditForm({
               },
             ]}
           >
-            <Input type="text" placeholder="REIT, Banks, Semiconductors,..." />
+            <Input
+              type="text"
+              placeholder={t("REIT, Banks, Semiconductors,...")}
+            />
           </Form.Item>
           <Form.Item
             label={

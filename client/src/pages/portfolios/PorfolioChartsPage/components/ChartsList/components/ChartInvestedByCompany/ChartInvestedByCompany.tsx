@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   statsData: any;
 }
 export default function ChartInvestedByCompany({ statsData }: Props) {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
 
   const options = {
@@ -15,7 +17,7 @@ export default function ChartInvestedByCompany({ statsData }: Props) {
       },
       title: {
         display: true,
-        text: "Accumulated investment by company",
+        text: t("Accumulated investment by company"),
       },
     },
     scales: {
@@ -35,7 +37,7 @@ export default function ChartInvestedByCompany({ statsData }: Props) {
         labels: [],
         datasets: [
           {
-            label: "Invested",
+            label: t("Invested"),
             data: [],
             borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -64,10 +66,10 @@ export default function ChartInvestedByCompany({ statsData }: Props) {
       setData(tempData);
     }
     loadInitialStats();
-  }, [statsData]);
+  }, [statsData, t]);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Bar options={options} data={data} />;
 }

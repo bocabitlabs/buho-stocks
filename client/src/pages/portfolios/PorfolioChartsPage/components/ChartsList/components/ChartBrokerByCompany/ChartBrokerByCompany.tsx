@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import fewColors, { hexToRgb } from "utils/colors";
 
 const groupBy = (arr: any[], key: string) => {
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function ChartBrokerByCompany({ statsData }: Props) {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
 
   const options = {
@@ -26,7 +28,7 @@ export default function ChartBrokerByCompany({ statsData }: Props) {
       },
       title: {
         display: true,
-        text: "Brokers",
+        text: t("Brokers"),
       },
     },
   };
@@ -38,7 +40,7 @@ export default function ChartBrokerByCompany({ statsData }: Props) {
         labels: [],
         datasets: [
           {
-            label: "Brokers",
+            label: t("Brokers"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -68,10 +70,10 @@ export default function ChartBrokerByCompany({ statsData }: Props) {
       setData(tempData);
     }
     loadInitialStats();
-  }, [statsData]);
+  }, [statsData, t]);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Pie options={options} data={data} />;
 }

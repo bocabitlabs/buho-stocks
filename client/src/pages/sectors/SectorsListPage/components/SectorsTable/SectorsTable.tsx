@@ -70,10 +70,10 @@ export default function SectorsTable() {
           />
           <Popconfirm
             key={`sector-delete-${record.key}`}
-            title={`Delete sector ${record.name}?`}
+            title={`${t("Delete sector")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
@@ -103,7 +103,7 @@ export default function SectorsTable() {
     return (
       <Alert
         showIcon
-        message="Unable to load sectors"
+        message={t("Unable to load sectors")}
         description={error.message}
         type="error"
       />
@@ -119,8 +119,8 @@ export default function SectorsTable() {
         dataSource={getData()}
       />
       <SectorAddEditForm
-        title="Update sector"
-        okText="Update"
+        title={t("Update sector")}
+        okText={t("Update")}
         sectorId={selectedSectorId}
         isModalVisible={isModalVisible}
         onCreate={onCreate}

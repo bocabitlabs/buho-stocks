@@ -80,7 +80,7 @@ export default function DividendsTransactionAddEditForm({
       form.setFields([
         {
           name: "exchangeRate",
-          errors: ["Unable to fetch the exchange rates for the given date"],
+          errors: [t("Unable to fetch the exchange rates for the given date")],
         },
       ]);
     }
@@ -180,7 +180,7 @@ export default function DividendsTransactionAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
       confirmLoading={isLoadingUpdate || isLoadindCreate}
@@ -189,7 +189,7 @@ export default function DividendsTransactionAddEditForm({
       {errorFetchingTransaction && (
         <Alert
           showIcon
-          message="Unable to load transaction"
+          message={t("Unable to load transaction")}
           description={errorFetchingTransaction.message}
           type="error"
         />
@@ -263,7 +263,7 @@ export default function DividendsTransactionAddEditForm({
               <Col span={12}>
                 <Form.Item
                   name="exchangeRate"
-                  label="Exchange rate"
+                  label={t("Exchange rate")}
                   rules={[
                     {
                       required: true,

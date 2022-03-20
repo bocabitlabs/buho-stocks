@@ -112,8 +112,8 @@ function PortfolioDetailsPageHeader({
     >
       {children}
       <CompanyAddEditForm
-        title="Add new company"
-        okText="Create"
+        title={t("Add new company")}
+        okText={t("Create")}
         portfolioId={+id!}
         isModalVisible={isModalVisible}
         onCreate={onCreate}

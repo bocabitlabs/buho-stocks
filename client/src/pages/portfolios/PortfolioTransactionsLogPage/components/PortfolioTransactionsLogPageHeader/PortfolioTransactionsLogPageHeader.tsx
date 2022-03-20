@@ -21,7 +21,7 @@ function PortfolioDetailsPageHeader({
   const routes = [
     {
       path: "/app/home",
-      breadcrumbName: "Home",
+      breadcrumbName: t("Home"),
     },
     {
       path: `/app/portfolios/${id}`,

@@ -1,5 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import React, { ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Col, Row, Statistic, Typography } from "antd";
 
@@ -12,6 +13,8 @@ export default function StatsContent({
   stats,
   stockPrice,
 }: Props): ReactElement {
+  const { t } = useTranslation();
+
   const columnProps = {
     xs: { span: 12 },
     md: { span: 6 },
@@ -22,7 +25,7 @@ export default function StatsContent({
     <Row gutter={24}>
       <Col {...columnProps}>
         <Statistic
-          title="Invested"
+          title={t("Invested")}
           value={stats?.invested}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -33,7 +36,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Accum. Investment"
+          title={t("Accum. Investment")}
           value={stats?.accumulatedInvestment}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -41,7 +44,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Dividends"
+          title={t("Dividends")}
           value={stats?.dividends}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -52,7 +55,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Dividends Yield"
+          title={t("Dividends Yield")}
           value={stats?.dividendsYield ? stats.dividendsYield : 0}
           precision={2}
           suffix="%"
@@ -60,7 +63,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Portfolio Value"
+          title={t("Portfolio Value")}
           value={stats?.portfolioValue}
           valueStyle={{
             color:
@@ -74,7 +77,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Return"
+          title={t("Return")}
           value={stats?.returnValue}
           precision={2}
           valueStyle={{
@@ -89,7 +92,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Return with Div."
+          title={t("Return + Div.")}
           value={stats?.returnWithDividends}
           precision={2}
           valueStyle={{
@@ -113,7 +116,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title="Last stock price"
+          title={t("Last stock price")}
           value={stockPrice?.price}
           precision={2}
           suffix={stockPrice?.priceCurrency}

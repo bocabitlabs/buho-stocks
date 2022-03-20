@@ -23,8 +23,7 @@ export default function DividendsTabPane({
     setIsDividendsModalVisible(true);
   };
 
-  const onDividendsCreate = (values: any) => {
-    console.log("Received values of form: ", values);
+  const onDividendsCreate = () => {
     setIsDividendsModalVisible(false);
   };
 
@@ -42,8 +41,8 @@ export default function DividendsTabPane({
         {t("+ Dividends")}
       </Button>
       <DividendsTransactionAddEditForm
-        title="Add dividends transaction"
-        okText="Create"
+        title={t("Add dividends transaction")}
+        okText={t("Create")}
         companyId={+companyId!}
         isModalVisible={isDividendsModalVisible}
         onCreate={onDividendsCreate}

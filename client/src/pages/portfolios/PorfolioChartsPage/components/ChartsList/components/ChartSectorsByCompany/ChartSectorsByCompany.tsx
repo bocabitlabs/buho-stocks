@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import { hexToRgb } from "utils/colors";
 
 const groupBy = (arr: any[], key: string) => {
@@ -14,6 +15,7 @@ interface Props {
   statsData: any;
 }
 export default function ChartValueByCompany({ statsData }: Props) {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
 
   const options = {
@@ -24,7 +26,7 @@ export default function ChartValueByCompany({ statsData }: Props) {
       },
       title: {
         display: true,
-        text: "Sectors",
+        text: t("Sectors"),
       },
     },
   };
@@ -36,7 +38,7 @@ export default function ChartValueByCompany({ statsData }: Props) {
         labels: [],
         datasets: [
           {
-            label: "Sectors",
+            label: t("Sectors"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -49,7 +51,6 @@ export default function ChartValueByCompany({ statsData }: Props) {
       const borders: any = [];
 
       const res = groupBy(statsData, "sectorName");
-      console.log("group by:", res);
 
       Object.entries(res).forEach(([k, v]) => {
         sectors.push(k);
@@ -69,10 +70,10 @@ export default function ChartValueByCompany({ statsData }: Props) {
       setData(tempData);
     }
     loadInitialStats();
-  }, [statsData]);
+  }, [statsData, t]);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Pie options={options} data={data} />;
 }

@@ -163,7 +163,7 @@ function CompanyAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >
@@ -171,7 +171,7 @@ function CompanyAddEditForm({
       {errorFetching && (
         <Alert
           showIcon
-          message="Unable to load company"
+          message={t("Unable to load company")}
           description={errorFetching.message}
           type="error"
         />
@@ -199,7 +199,7 @@ function CompanyAddEditForm({
           <Form.Item name="isin" label={t("ISIN")}>
             <Input type="text" />
           </Form.Item>
-          <Form.Item name="logo" label="Company Logo">
+          <Form.Item name="logo" label={t("Company Logo")}>
             <Upload
               showUploadList={false}
               name="logo"
@@ -210,8 +210,8 @@ function CompanyAddEditForm({
               {company?.logo && !fileName && (
                 <Avatar src={company.logo} style={{ marginRight: 10 }} />
               )}
-              <Button icon={<PlusOutlined />}>Upload</Button>{" "}
-              {fileName ? `Selected ${fileName}` : ""}
+              <Button icon={<PlusOutlined />}>{t("Upload")}</Button>{" "}
+              {fileName ? `${t("Selected")} ${fileName}` : ""}
             </Upload>
           </Form.Item>
           <Form.Item name="baseCurrency" label={t("Currency")}>

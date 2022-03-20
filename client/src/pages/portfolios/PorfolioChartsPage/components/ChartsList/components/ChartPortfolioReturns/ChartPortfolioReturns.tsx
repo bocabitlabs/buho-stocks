@@ -1,9 +1,11 @@
 import React, { ReactElement } from "react";
 import { Line } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 export default function ChartPortfolioReturns(): ReactElement {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>();
 
@@ -15,7 +17,7 @@ export default function ChartPortfolioReturns(): ReactElement {
       },
       title: {
         display: true,
-        text: "Portfolio Returns",
+        text: t("Portfolio Returns"),
       },
     },
     scales: {
@@ -40,14 +42,14 @@ export default function ChartPortfolioReturns(): ReactElement {
       labels: [],
       datasets: [
         {
-          label: "Return Percent",
+          label: t("Return Percent"),
           data: [],
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
           yAxisID: "y",
         },
         {
-          label: "Return w.d. Percent",
+          label: t("Return + dividends"),
           data: [],
           borderColor: "rgb(53, 162, 235)",
           backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -96,7 +98,7 @@ export default function ChartPortfolioReturns(): ReactElement {
   });
 
   if (!chartData || loading) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Line options={options} data={chartData} />;
 }

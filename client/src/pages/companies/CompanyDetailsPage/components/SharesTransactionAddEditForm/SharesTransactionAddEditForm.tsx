@@ -74,7 +74,6 @@ export default function SharesTransactionAddEditForm({
     isSuccess,
   } = useSharesTransaction(companyId, transactionId, {
     onSuccess: (data: ISharesTransaction) => {
-      console.log("onSuccess: ", data);
       form.setFieldsValue({
         count: data.count,
         grossPricePerShare: data.grossPricePerShare,
@@ -97,7 +96,7 @@ export default function SharesTransactionAddEditForm({
       form.setFields([
         {
           name: "exchangeRate",
-          errors: ["Unable to fetch the exchange rates for the given date"],
+          errors: [t("Unable to fetch the exchange rates for the given date")],
         },
       ]);
     }
@@ -196,7 +195,7 @@ export default function SharesTransactionAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
       confirmLoading={isCreateLoading || isUpdateLoading}
@@ -205,7 +204,7 @@ export default function SharesTransactionAddEditForm({
       {errorFetchingTransaction && (
         <Alert
           showIcon
-          message="Unable to load transaction"
+          message={t("Unable to load transaction")}
           description={errorFetchingTransaction.message}
           type="error"
         />
@@ -293,7 +292,7 @@ export default function SharesTransactionAddEditForm({
               <Col span={12}>
                 <Form.Item
                   name="exchangeRate"
-                  label="Exchange rate"
+                  label={t("Exchange rate")}
                   rules={[
                     {
                       required: true,

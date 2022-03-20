@@ -1,9 +1,11 @@
 import React, { ReactElement } from "react";
 import { Bar } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 export default function ChartPortfolioDividends(): ReactElement {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>(null);
 
@@ -15,7 +17,7 @@ export default function ChartPortfolioDividends(): ReactElement {
       },
       title: {
         display: true,
-        text: "Portfolio Dividends",
+        text: t("Portfolio Dividends"),
       },
     },
   };
@@ -24,7 +26,7 @@ export default function ChartPortfolioDividends(): ReactElement {
       labels: [],
       datasets: [
         {
-          label: "Dividends",
+          label: t("Dividends"),
           data: [],
           borderColor: "rgb(255, 99, 132)",
           backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -66,7 +68,7 @@ export default function ChartPortfolioDividends(): ReactElement {
   });
 
   if (!chartData || loading) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Bar options={options} data={chartData} />;
 }

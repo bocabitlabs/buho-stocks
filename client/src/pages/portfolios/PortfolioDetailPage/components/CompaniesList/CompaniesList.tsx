@@ -142,7 +142,7 @@ export default function CompaniesList({
       sorter: (a: any, b: any) => +a.dividendsYield - +b.dividendsYield,
     },
     {
-      title: t("Last"),
+      title: t("Last buy"),
       dataIndex: "lastTransactionMonth",
       key: "lastTransactionMonth",
       render: (text: string) => <Tag>{text}</Tag>,
@@ -164,10 +164,10 @@ export default function CompaniesList({
           />
           <Popconfirm
             key={`delete-${record.key}`}
-            title={`Delete company ${record.name}?`}
+            title={`${t("Delete company")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button type="text" danger icon={<DeleteOutlined />} />
           </Popconfirm>

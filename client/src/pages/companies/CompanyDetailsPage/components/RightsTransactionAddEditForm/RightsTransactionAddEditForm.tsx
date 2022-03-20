@@ -83,7 +83,7 @@ export default function RightsTransactionAddEditForm({
       form.setFields([
         {
           name: "exchangeRate",
-          errors: ["Unable to fetch the exchange rates for the given date"],
+          errors: [t("Unable to fetch the exchange rates for the given date")],
         },
       ]);
     }
@@ -182,7 +182,7 @@ export default function RightsTransactionAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
       confirmLoading={isCreateLoading || isUpdateLoading}
@@ -191,7 +191,7 @@ export default function RightsTransactionAddEditForm({
       {errorFetchingTransaction && (
         <Alert
           showIcon
-          message="Unable to load transaction"
+          message={t("Unable to load transaction")}
           description={errorFetchingTransaction.message}
           type="error"
         />
@@ -279,7 +279,7 @@ export default function RightsTransactionAddEditForm({
               <Col span={12}>
                 <Form.Item
                   name="exchangeRate"
-                  label="Exchange rate"
+                  label={t("Exchange rate")}
                   rules={[
                     {
                       required: true,

@@ -2,7 +2,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Button, Form, Input, PageHeader } from "antd";
+import { Avatar, Button, Form, Input, PageHeader } from "antd";
 import { IRegistrationData } from "api/api-client";
 import { useRegisterUser } from "hooks/use-auth/use-auth";
 
@@ -53,7 +53,11 @@ function RegisterForm() {
     >
       <PageHeader
         className="site-page-header-responsive"
-        title="Buho Stocks"
+        title={
+          <>
+            <Avatar src="/icons/android-icon-72x72.png" /> Buho Stocks
+          </>
+        }
         subTitle={t("Register")}
       >
         <Form.Item

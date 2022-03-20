@@ -41,11 +41,11 @@ function SettingsForm(): ReactElement | null {
   };
 
   if (isFetching) {
-    return <div>Fetching settings...</div>;
+    return <div>{t("Fetching settings...")}</div>;
   }
 
   if (error) {
-    return <div>Unable to fetch settings.</div>;
+    return <div>{t("Unable to fetch settings.")}</div>;
   }
 
   return (
@@ -82,7 +82,7 @@ function SettingsForm(): ReactElement | null {
           showSearch
           loading={timezonesLoading}
           style={{ width: 200 }}
-          placeholder="Search to Select"
+          placeholder={t("Search to Select")}
           optionFilterProp="children"
           filterOption={(input: any, option: any) =>
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0

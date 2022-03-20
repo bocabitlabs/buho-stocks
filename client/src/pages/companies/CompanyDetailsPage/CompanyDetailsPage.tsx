@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Alert } from "antd";
 import Charts from "./components/Charts/Charts";
@@ -11,6 +12,7 @@ import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useCompany } from "hooks/use-companies/use-companies";
 
 export default function CompanyDetailsPage(): ReactElement {
+  const { t } = useTranslation();
   const { id, companyId } = useParams();
   const { data: company, isFetching, error } = useCompany(+id!, +companyId!);
 
@@ -23,7 +25,7 @@ export default function CompanyDetailsPage(): ReactElement {
       <Alert
         style={{ marginTop: 20 }}
         showIcon
-        message="Unable to load company"
+        message={t("Unable to load company")}
         description={error.message}
         type="error"
       />

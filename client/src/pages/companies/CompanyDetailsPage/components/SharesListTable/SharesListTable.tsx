@@ -57,7 +57,7 @@ export default function SharesListTable({
       });
       toast.success(t("Shares transaction deleted successfully"));
     } catch (error) {
-      toast.error(t(`Error deleting shares transaction: ${error}`));
+      toast.error(`${t("Error deleting shares transaction:")} ${error}`);
     }
   };
 
@@ -119,10 +119,10 @@ export default function SharesListTable({
           />
           <Popconfirm
             key={`delete-${record.key}`}
-            title={`Delete transaction ${record.name}?`}
+            title={`${t("Delete transaction")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>

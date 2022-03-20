@@ -11,7 +11,7 @@ import ChartPortfolioDividends from "./components/ChartPortfolioDividends/ChartP
 import ChartPortfolioDividendsPerMonth from "./components/ChartPortfolioDividendsPerMonth/ChartPortfolioDividendsPerMonth";
 import ChartPortfolioReturns from "./components/ChartPortfolioReturns/ChartPortfolioReturns";
 import ChartSectorsByCompany from "./components/ChartSectorsByCompany/ChartSectorsByCompany";
-import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany copy/ChartSuperSectorsByCompany";
+import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany/ChartSuperSectorsByCompany";
 import ChartValueByCompany from "./components/ChartValueByCompany/ChartValueByCompany";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 

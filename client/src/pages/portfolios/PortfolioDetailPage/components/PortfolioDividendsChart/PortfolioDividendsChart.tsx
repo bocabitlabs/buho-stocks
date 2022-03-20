@@ -43,13 +43,13 @@ export default function PortfolioDividendsChart({
         labels: [],
         datasets: [
           {
-            label: "Dividends",
+            label: t("Dividends"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
           {
-            label: "Accum. Dividends",
+            label: t("Accum. Dividends"),
             data: [],
             borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -87,10 +87,10 @@ export default function PortfolioDividendsChart({
       setData(tempData);
       setIsDataSet(true);
     }
-  }, [stats]);
+  }, [stats, t]);
 
   if (!isDataSet || !data) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Bar options={options} data={data} />;
 }

@@ -49,8 +49,8 @@ function MarketsPageHeader({ children }: Props) {
     >
       {children}
       <MarketAddEditForm
-        title="Add new market"
-        okText="Create"
+        title={t("Add new market")}
+        okText={t("Create")}
         isModalVisible={isModalVisible}
         onCreate={onCreate}
         onCancel={handleCancel}

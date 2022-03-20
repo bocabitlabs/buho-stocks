@@ -1,5 +1,6 @@
 import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function ReturnsChart({ stats }: Props): ReactElement {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
   const options = {
@@ -17,7 +19,7 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
       },
       title: {
         display: true,
-        text: "Returns",
+        text: t("Returns"),
       },
     },
   };
@@ -27,13 +29,13 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
         labels: [],
         datasets: [
           {
-            label: "Return Percent",
+            label: t("Return Percent"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
           {
-            label: "Return w.d. Percent",
+            label: t("Return + dividend"),
             data: [],
             borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
@@ -74,7 +76,7 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
       setData(tempData);
       setIsDataSet(true);
     }
-  }, [stats]);
+  }, [stats, t]);
 
   if (!isDataSet || !data) {
     return <LoadingSpin />;

@@ -76,10 +76,10 @@ export default function SuperSectorsTable() {
           </Link>
           <Popconfirm
             key={`market-delete-${record.key}`}
-            title={`Delete super sector ${record.name}?`}
+            title={`${t("Delete super sector")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
@@ -110,7 +110,7 @@ export default function SuperSectorsTable() {
     return (
       <Alert
         showIcon
-        message="Unable to load sectors"
+        message={t("Unable to load sectors")}
         description={error.message}
         type="error"
       />
@@ -126,8 +126,8 @@ export default function SuperSectorsTable() {
         dataSource={getData()}
       />
       <SuperSectorAddEditForm
-        title="Update super sector"
-        okText="Update"
+        title={t("Update super sector")}
+        okText={t("Update")}
         sectorId={selectedSectorId}
         isModalVisible={isModalVisible}
         onCreate={onCreate}

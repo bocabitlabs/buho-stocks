@@ -86,7 +86,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Return with Div.")}`}
+          title={`${t("Return + dividends")}`}
           value={stats?.returnWithDividends}
           precision={2}
           valueStyle={{

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import { hexToRgb } from "utils/colors";
 
 const groupBy = (arr: any[], key: string) => {
@@ -14,6 +15,7 @@ interface Props {
   statsData: any;
 }
 export default function ChartSuperSectorsByCompany({ statsData }: Props) {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
 
   const options = {
@@ -25,7 +27,7 @@ export default function ChartSuperSectorsByCompany({ statsData }: Props) {
       },
       title: {
         display: true,
-        text: "Super Sectors",
+        text: t("Super Sectors"),
       },
     },
   };
@@ -36,7 +38,7 @@ export default function ChartSuperSectorsByCompany({ statsData }: Props) {
         labels: [],
         datasets: [
           {
-            label: "Super Sectors",
+            label: t("Super Sectors"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -49,7 +51,6 @@ export default function ChartSuperSectorsByCompany({ statsData }: Props) {
       const borders: any = [];
 
       const res = groupBy(statsData, "superSectorName");
-      console.log("group by:", res);
 
       Object.entries(res).forEach(([k, v]) => {
         sectors.push(k);
@@ -69,7 +70,7 @@ export default function ChartSuperSectorsByCompany({ statsData }: Props) {
       setData(tempData);
     }
     loadInitialStats();
-  }, [statsData]);
+  }, [statsData, t]);
 
   if (!data) {
     return <div>Loading...</div>;

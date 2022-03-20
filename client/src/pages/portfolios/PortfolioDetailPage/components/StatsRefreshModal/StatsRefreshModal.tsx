@@ -61,9 +61,9 @@ export default function StatsRefreshModal({
       try {
         await updateCompanyStats({ companyId: +companyId, year: selectedYear });
         setUpdateMessage(
-          `${t(
-            "Stats updated for company",
-          )} #${companyId} and year ${selectedYear}`,
+          `${t("Stats updated for company")} #${companyId} ${t(
+            "and year",
+          )} ${selectedYear}`,
         );
       } catch (e) {
         setUpdateMessage(

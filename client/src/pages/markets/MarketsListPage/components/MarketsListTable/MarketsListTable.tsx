@@ -131,10 +131,10 @@ export default function MarketsListTable() {
           />
           <Popconfirm
             key={`market-delete-${record.key}`}
-            title={`Delete market ${record.name}?`}
+            title={`${t("Delete market")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>
@@ -168,7 +168,7 @@ export default function MarketsListTable() {
     return (
       <Alert
         showIcon
-        message="Unable to load markets"
+        message={t("Unable to load markets")}
         description={error.message}
         type="error"
       />
@@ -184,8 +184,8 @@ export default function MarketsListTable() {
         dataSource={getData()}
       />{" "}
       <MarketAddEditForm
-        title="Update market"
-        okText="Update"
+        title={t("Update market")}
+        okText={t("Update")}
         marketId={selectedMarketId}
         isModalVisible={isModalVisible}
         onCreate={onCreate}

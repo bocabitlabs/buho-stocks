@@ -47,8 +47,8 @@ function PortfoliosPageHeader({ children }: Props) {
     >
       {children}
       <PortfolioAddEditForm
-        title="Add new portfolio"
-        okText="Create"
+        title={t("Add new portfolio")}
+        okText={t("Create")}
         isModalVisible={isModalVisible}
         onCreate={onCreate}
         onCancel={onCancel}

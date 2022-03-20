@@ -42,8 +42,8 @@ export default function SharesTabPane({
         {t("+ Shares")}
       </Button>
       <SharesTransactionAddEditForm
-        title="Add shares transaction"
-        okText="Create"
+        title={t("Add shares transaction")}
+        okText={t("Create")}
         companyId={+companyId!}
         isModalVisible={isModalVisible}
         onCreate={onCreate}

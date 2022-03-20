@@ -29,7 +29,7 @@ export default function LogMessagesList() {
 
   const columns: any = [
     {
-      title: "Type",
+      title: t("Type"),
       dataIndex: "messageType",
       key: "messageType",
     },
@@ -54,10 +54,10 @@ export default function LogMessagesList() {
         <Space size="middle">
           <Popconfirm
             key={`market-delete-${record.key}`}
-            title={`Delete message ${record.name}?`}
+            title={`${t("Delete message")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>

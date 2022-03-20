@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import { allColors, hexToRgb } from "utils/colors";
 
 interface Props {
   statsData: any;
 }
 export default function ChartDividendsByCompany({ statsData }: Props) {
+  const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
 
   const options = {
@@ -16,7 +18,7 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
       },
       title: {
         display: true,
-        text: "Dividends by company",
+        text: t("Dividends by company"),
       },
       tooltip: {
         callbacks: {
@@ -48,7 +50,7 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
         labels: [],
         datasets: [
           {
-            label: "Dividends",
+            label: t("Dividends"),
             data: [],
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
@@ -84,7 +86,7 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
       setData(tempData);
     }
     loadInitialStats();
-  }, [statsData]);
+  }, [statsData, t]);
 
   if (!data) {
     return <div>Loading...</div>;

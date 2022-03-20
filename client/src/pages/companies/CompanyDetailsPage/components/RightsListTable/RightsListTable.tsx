@@ -39,8 +39,7 @@ export default function RightsListTable({
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
+  const onCreate = () => {
     setIsModalVisible(false);
   };
 
@@ -117,10 +116,10 @@ export default function RightsListTable({
           />
           <Popconfirm
             key={`delete-${record.key}`}
-            title={`Delete transaction ${record.name}?`}
+            title={`${t("Delete transaction")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t("Yes")}
+            cancelText={t("No")}
           >
             <Button danger icon={<DeleteOutlined />} />
           </Popconfirm>

@@ -94,7 +94,7 @@ function PortfolioAddEditForm({
     return (
       <Alert
         showIcon
-        message="Unable to load portfolio"
+        message={t("Unable to load portfolio")}
         description={errorFetchingPortfolio.message}
         type="error"
       />
@@ -106,7 +106,7 @@ function PortfolioAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >

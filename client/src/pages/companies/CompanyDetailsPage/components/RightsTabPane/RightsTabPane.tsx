@@ -23,8 +23,7 @@ export default function RightsTabPane({
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
+  const onCreate = () => {
     setIsModalVisible(false);
   };
 
@@ -42,8 +41,8 @@ export default function RightsTabPane({
         {t("+ Rights")}
       </Button>
       <RightsTransactionAddEditForm
-        title="Add rights transaction"
-        okText="Create"
+        title={t("Add rights transaction")}
+        okText={t("Create")}
         companyId={+companyId!}
         isModalVisible={isModalVisible}
         onCreate={onCreate}

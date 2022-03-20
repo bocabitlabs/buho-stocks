@@ -1,10 +1,12 @@
 import React, { ReactElement } from "react";
 import { Bar } from "react-chartjs-2";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { allColors, hexToRgb } from "utils/colors";
 
 export default function ChartPortfolioDividendsPerMonth(): ReactElement {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>(null);
 
@@ -16,7 +18,7 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement {
       },
       title: {
         display: true,
-        text: "Portfolio Dividends",
+        text: t("Portfolio Dividends"),
       },
     },
   };
@@ -24,18 +26,18 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement {
   function getChartData() {
     return {
       labels: [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
+        t("January"),
+        t("February"),
+        t("March"),
+        t("April"),
+        t("May"),
+        t("June"),
+        t("July"),
+        t("August"),
+        t("September"),
+        t("October"),
+        t("November"),
+        t("December"),
       ],
       datasets: [],
     };
@@ -71,7 +73,7 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement {
   });
 
   if (!chartData || loading) {
-    return <div>Loading...</div>;
+    return <div>{t("Loading...")}</div>;
   }
   return <Bar options={options} data={chartData} />;
 }

@@ -114,7 +114,7 @@ function MarketAddEditForm({
     return (
       <Alert
         showIcon
-        message="Unable to load market"
+        message={t("Unable to load market")}
         description={errorFetchingMarket.message}
         type="error"
       />
@@ -126,7 +126,7 @@ function MarketAddEditForm({
       visible={isModalVisible}
       title={title}
       okText={okText}
-      cancelText="Cancel"
+      cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
     >
@@ -241,7 +241,7 @@ function MarketAddEditForm({
                 showSearch
                 loading={timezonesLoading}
                 style={{ width: 200 }}
-                placeholder="Search to Select"
+                placeholder={t("Search to Select")}
                 optionFilterProp="children"
                 filterOption={(input: any, option: any) =>
                   option.children.toLowerCase().indexOf(input.toLowerCase()) >=

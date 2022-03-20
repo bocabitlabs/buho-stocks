@@ -65,23 +65,23 @@ export default function SectorsListTable() {
           </>
         }
       >
-        <Tabs.TabPane tab="Sectors" key="1">
+        <Tabs.TabPane tab={t("Sectors")} key="1">
           <SectorsTable />
         </Tabs.TabPane>
-        <Tabs.TabPane tab="Super sectors" key="2">
+        <Tabs.TabPane tab={t("Super sectors")} key="2">
           <SuperSectorsTable />
         </Tabs.TabPane>
       </Tabs>
       <SectorAddEditForm
-        title="Add new sector"
-        okText="Create"
+        title={t("Add new sector")}
+        okText={t("Create")}
         isModalVisible={isModalVisible}
         onCreate={onCreate}
         onCancel={handleCancel}
       />
       <SuperSectorAddEditForm
-        title="Add new super sector"
-        okText="Create"
+        title={t("Add new super sector")}
+        okText={t("Create")}
         isModalVisible={isSuperSectorModalVisible}
         onCreate={onCreateSuperSector}
         onCancel={handleSuperSectorCancel}
