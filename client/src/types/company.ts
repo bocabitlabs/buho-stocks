@@ -52,6 +52,7 @@ export interface ICompany extends ICompanyItemBase {
 export interface ICompanyListItem extends ICompanyItemBase {
   baseCurrency: string;
   dividendsCurrency: string;
+  sectorName: string;
 }
 
 export interface ICompanyRouteParams {
