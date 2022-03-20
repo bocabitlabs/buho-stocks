@@ -119,7 +119,12 @@ export default function SuperSectorsTable() {
 
   return (
     <div>
-      <Table columns={columns} dataSource={getData()} />
+      <Table
+        scroll={{ x: 600 }}
+        style={{ marginTop: 16 }}
+        columns={columns}
+        dataSource={getData()}
+      />
       <SuperSectorAddEditForm
         title="Update super sector"
         okText="Update"

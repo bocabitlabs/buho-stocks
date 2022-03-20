@@ -177,7 +177,12 @@ export default function MarketsListTable() {
 
   return (
     <div>
-      <Table columns={columns} dataSource={getData()} />{" "}
+      <Table
+        scroll={{ x: 600 }}
+        style={{ marginTop: 16 }}
+        columns={columns}
+        dataSource={getData()}
+      />{" "}
       <MarketAddEditForm
         title="Update market"
         okText="Update"

@@ -112,7 +112,12 @@ export default function SectorsTable() {
 
   return (
     <div>
-      <Table columns={columns} dataSource={getData()} />
+      <Table
+        scroll={{ x: 600 }}
+        style={{ marginTop: 16 }}
+        columns={columns}
+        dataSource={getData()}
+      />
       <SectorAddEditForm
         title="Update sector"
         okText="Update"

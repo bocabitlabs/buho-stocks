@@ -213,6 +213,7 @@ export default function CompaniesList({
       <Table
         pagination={{ defaultPageSize: 60 }}
         columns={columns}
+        size="small"
         dataSource={getData()}
         scroll={{ x: 600 }}
         style={{ marginTop: 16 }}
