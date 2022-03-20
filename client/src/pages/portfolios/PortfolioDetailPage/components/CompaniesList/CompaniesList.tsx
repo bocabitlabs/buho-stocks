@@ -2,16 +2,29 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Avatar, Button, Popconfirm, Space, Table, Typography } from "antd";
+import {
+  Avatar,
+  Button,
+  Popconfirm,
+  Space,
+  Table,
+  Tag,
+  Typography,
+} from "antd";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
 import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
 import { ICompanyListItem } from "types/company";
+import { ICurrency } from "types/currency";
 
 interface IProps {
   companies: ICompanyListItem[];
+  portfolioBaseCurrency: ICurrency;
 }
 
-export default function CompaniesList({ companies }: IProps) {
+export default function CompaniesList({
+  companies,
+  portfolioBaseCurrency,
+}: IProps) {
   const { t } = useTranslation();
   const { id } = useParams();
   const { mutate: deleteCompany } = useDeleteCompany();
@@ -56,9 +69,9 @@ export default function CompaniesList({ companies }: IProps) {
               <Typography.Text
                 type="secondary"
                 style={{ fontSize: "0.8em" }}
-                title={record.sector.name}
+                title={record.sectorName}
               >
-                {t(record.sector.name)}
+                {t(record.sectorName)}
               </Typography.Text>
             </>
           )}
@@ -92,8 +105,8 @@ export default function CompaniesList({ companies }: IProps) {
       title: t("Invested"),
       dataIndex: "accumulatedInvestment",
       key: "accumulatedInvestment",
-      render: (text: string, record: any) =>
-        `${(+text).toFixed(2)} ${record.portfolioCurrency}`,
+      render: (text: string) =>
+        `${(+text).toFixed(2)} ${portfolioBaseCurrency.symbol}`,
       sorter: (a: any, b: any) =>
         +a.accumulatedInvestment - +b.accumulatedInvestment,
     },
@@ -101,15 +114,19 @@ export default function CompaniesList({ companies }: IProps) {
       title: t("Portfolio value"),
       dataIndex: "portfolioValue",
       key: "portfolioValue",
-      render: (text: string, record: any) =>
-        `${(+text).toFixed(2)} ${record.portfolioCurrency}`,
+      render: (text: string) =>
+        `${(+text).toFixed(2)} ${portfolioBaseCurrency.symbol}`,
       sorter: (a: any, b: any) => +a.portfolioValue - +b.portfolioValue,
     },
     {
-      title: t("Return w.d. %"),
+      title: t("Return + div"),
       dataIndex: "returnWithDividendsPercent",
       key: "returnWithDividendsPercent",
-      render: (text: string) => `${(+text).toFixed(2)} %`,
+      render: (text: string) => (
+        <Typography.Text type={Number(text) < 0 ? "danger" : "success"}>
+          {(+text).toFixed(2)} %
+        </Typography.Text>
+      ),
       sorter: (a: any, b: any) =>
         +a.returnWithDividendsPercent - +b.returnWithDividendsPercent,
     },
@@ -117,13 +134,18 @@ export default function CompaniesList({ companies }: IProps) {
       title: t("Dividends yield"),
       dataIndex: "dividendsYield",
       key: "dividendsYield",
-      render: (text: string) => `${(+text).toFixed(2)} %`,
+      render: (text: string) => (
+        <Typography.Text type={Number(text) < 0 ? "danger" : "success"}>
+          {(+text).toFixed(2)} %
+        </Typography.Text>
+      ),
       sorter: (a: any, b: any) => +a.dividendsYield - +b.dividendsYield,
     },
     {
       title: t("Last"),
       dataIndex: "lastTransactionMonth",
       key: "lastTransactionMonth",
+      render: (text: string) => <Tag>{text}</Tag>,
       sorter: (a: ICompanyListItem, b: ICompanyListItem) => {
         return (
           Date.parse(b.lastTransactionMonth) -
@@ -168,6 +190,7 @@ export default function CompaniesList({ companies }: IProps) {
       logo: element.logo,
       countryCode: element.countryCode,
       sector: element.sector,
+      sectorName: element.sectorName,
       broker: element.broker,
       accumulatedInvestment: element.allStats
         ? element.allStats.accumulatedInvestment

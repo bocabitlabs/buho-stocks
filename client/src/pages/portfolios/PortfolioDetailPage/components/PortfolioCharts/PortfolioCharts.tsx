@@ -9,7 +9,11 @@ import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 Chart.register(...registerables);
 
-export default function Charts() {
+interface Props {
+  portfolioCurrency: string;
+}
+
+export default function Charts({ portfolioCurrency }: Props) {
   const { id } = useParams();
   const { data: stats, isFetching } = usePortfolioAllYearStats(+id!, undefined);
 
@@ -23,7 +27,10 @@ export default function Charts() {
         <PortfolioReturnsChart stats={stats} />
       </Col>
       <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <PortfolioDividendsChart stats={stats} />
+        <PortfolioDividendsChart
+          stats={stats}
+          portfolioCurrency={portfolioCurrency}
+        />
       </Col>
     </Row>
   );

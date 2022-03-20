@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Form, Select } from "antd";
 import PortfolioCharts from "../PortfolioCharts/PortfolioCharts";
 import StatsContent from "../StatsContent/StatsContent";
@@ -10,13 +11,17 @@ interface Props {
   id: string | undefined;
   firstYear: number | null;
   companies: ICompanyListItem[];
+  portfolioCurrency: string;
 }
 
 export default function YearSelector({
   id,
   firstYear,
   companies,
+  portfolioCurrency,
 }: Props): ReactElement {
+  const { t } = useTranslation();
+
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
   const [years, setYears] = useState<any[]>([]);
   const { data: stats, isFetching: loadingStats } = usePortfolioYearStats(
@@ -54,7 +59,7 @@ export default function YearSelector({
           disabled={loadingStats}
           loading={loadingStats}
         >
-          <Select.Option value="all">All</Select.Option>
+          <Select.Option value="all">{`${t("All")}`}</Select.Option>
           {years.map((yearItem: any) => (
             <Select.Option key={yearItem} value={yearItem}>
               {yearItem}
@@ -70,7 +75,7 @@ export default function YearSelector({
       <div style={{ marginTop: 16 }}>
         <StatsContent stats={stats} />
       </div>
-      <PortfolioCharts />
+      <PortfolioCharts portfolioCurrency={portfolioCurrency} />
     </div>
   );
 }

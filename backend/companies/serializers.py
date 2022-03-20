@@ -38,6 +38,8 @@ class CompanySerializer(serializers.ModelSerializer):
     logo = Base64ImageField(max_length=None, use_url=True, allow_null = True, required=False)
     all_stats = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
+    sector_name = serializers.CharField(source='sector.name')
+
 
     class Meta:
         model = Company
@@ -57,6 +59,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "name",
             "portfolio",
             "sector",
+            "sector_name",
             "ticker",
             "url",
             "all_stats",
