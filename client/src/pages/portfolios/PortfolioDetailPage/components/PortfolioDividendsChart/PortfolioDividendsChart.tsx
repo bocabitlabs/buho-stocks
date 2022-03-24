@@ -27,10 +27,9 @@ export default function PortfolioDividendsChart({
       tooltip: {
         callbacks: {
           label(context: any) {
-            console.log(context);
-            const percentage = `${context.dataset.label}: ${Number(
-              context.formattedValue,
-            ).toFixed(2)} ${portfolioCurrency}`;
+            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
+              2,
+            )} ${portfolioCurrency}`;
             return percentage;
           },
         },

@@ -23,9 +23,9 @@ export default function PortfolioReturnsChart({ stats }: Props): ReactElement {
       tooltip: {
         callbacks: {
           label(context: any) {
-            const percentage = `${context.dataset.label}: ${Number(
-              context.formattedValue,
-            ).toFixed(2)}%`;
+            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
+              2,
+            )}%`;
             return percentage;
           },
         },
