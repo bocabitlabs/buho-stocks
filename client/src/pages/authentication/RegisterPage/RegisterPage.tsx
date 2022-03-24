@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { Navigate } from "react-router-dom";
-import { Col, Layout, Row } from "antd";
+import { Card, Col, Layout, Row } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import RegisterForm from "./components/RegisterForm";
 import AlertMessages from "components/AlertMessages/AlertMessages";
@@ -20,10 +20,10 @@ export default function RegisterPage(): ReactElement {
       <Row>
         <Col xs={{ span: 24, offset: 0 }} lg={{ span: 12, offset: 6 }}>
           <Content style={{ padding: "40px 50px" }}>
-            <div className="site-layout-content">
+            <Card>
               <AlertMessages />
               <RegisterForm />
-            </div>
+            </Card>
           </Content>
           <PageFooter />
         </Col>
