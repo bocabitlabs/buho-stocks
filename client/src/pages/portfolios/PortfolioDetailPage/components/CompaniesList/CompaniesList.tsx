@@ -105,8 +105,19 @@ export default function CompaniesList({
       title: t("Invested"),
       dataIndex: "accumulatedInvestment",
       key: "accumulatedInvestment",
-      render: (text: string) =>
-        `${(+text).toFixed(2)} ${portfolioBaseCurrency.symbol}`,
+      render: (text: string) => (
+        <>
+          {(+text).toFixed(2)}
+          <br />
+          <Typography.Text
+            type="secondary"
+            style={{ fontSize: "0.8em" }}
+            title={portfolioBaseCurrency.code}
+          >
+            {t(portfolioBaseCurrency.code)}
+          </Typography.Text>
+        </>
+      ),
       sorter: (a: any, b: any) =>
         +a.accumulatedInvestment - +b.accumulatedInvestment,
     },
@@ -114,8 +125,19 @@ export default function CompaniesList({
       title: t("Portfolio value"),
       dataIndex: "portfolioValue",
       key: "portfolioValue",
-      render: (text: string) =>
-        `${(+text).toFixed(2)} ${portfolioBaseCurrency.symbol}`,
+      render: (text: string) => (
+        <>
+          {(+text).toFixed(2)}
+          <br />
+          <Typography.Text
+            type="secondary"
+            style={{ fontSize: "0.8em" }}
+            title={portfolioBaseCurrency.code}
+          >
+            {t(portfolioBaseCurrency.code)}
+          </Typography.Text>
+        </>
+      ),
       sorter: (a: any, b: any) => +a.portfolioValue - +b.portfolioValue,
     },
     {
@@ -192,6 +214,7 @@ export default function CompaniesList({
       sector: element.sector,
       sectorName: element.sectorName,
       broker: element.broker,
+      baseCurrency: element.baseCurrency,
       accumulatedInvestment: element.allStats
         ? element.allStats.accumulatedInvestment
         : 0,
