@@ -54,6 +54,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "description",
             "dividends_currency",
             "is_closed",
+            'isin',
             "logo",
             "market",
             "name",

@@ -84,7 +84,7 @@ export const useUpdateCompany = () => {
   const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
-      axios.put(
+      axios.patch(
         `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
         newCompany,
         getAxiosOptionsWithAuth(),
@@ -92,7 +92,11 @@ export const useUpdateCompany = () => {
     {
       onSuccess: (data, variables) => {
         toast.success(t("Company has been updated"));
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+        queryClient.invalidateQueries([
+          "companies",
+          variables.portfolioId,
+          variables.companyId,
+        ]);
       },
       onError: () => {
         toast.error(t("Unable to update company"));

@@ -22,6 +22,7 @@ import {
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import { useMarkets } from "hooks/use-markets/use-markets";
 import { useSectors } from "hooks/use-sectors/use-sectors";
+import { ICompanyFormFields } from "types/company";
 import { ICurrency } from "types/currency";
 import { IMarket } from "types/market";
 import { ISector } from "types/sector";
@@ -85,7 +86,7 @@ function CompanyAddEditForm({
       isClosed,
       isin,
     } = values;
-    const newCompany = {
+    const newCompany: ICompanyFormFields = {
       name,
       color: "#2196F3",
       description,
@@ -93,7 +94,6 @@ function CompanyAddEditForm({
       dividendsCurrency,
       sector,
       market,
-      logo: base64File,
       portfolio: +portfolioId,
       ticker,
       altTickers,
@@ -103,6 +103,10 @@ function CompanyAddEditForm({
       isClosed,
       isin,
     };
+
+    if (base64File) {
+      newCompany.logo = base64File;
+    }
 
     if (companyId) {
       updateCompany({

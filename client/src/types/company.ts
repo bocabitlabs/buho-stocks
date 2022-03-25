@@ -17,7 +17,7 @@ interface ICompanyBase {
   countryCode: string;
   isClosed: boolean;
   isin: string;
-  logo: string;
+  logo?: string;
 }
 
 export interface ICompanyFormFields extends ICompanyBase {
