@@ -1,17 +1,7 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import {
-  Avatar,
-  Button,
-  Popconfirm,
-  Space,
-  Table,
-  Tag,
-  Typography,
-} from "antd";
-import { useDeleteCompany } from "hooks/use-companies/use-companies";
+import { Avatar, Table, Tag, Typography } from "antd";
 import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
 import { ICompanyListItem } from "types/company";
 import { ICurrency } from "types/currency";
@@ -27,14 +17,7 @@ export default function CompaniesList({
 }: IProps) {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { mutate: deleteCompany } = useDeleteCompany();
-  const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const showModal = (recordId: number) => {
-    setSelectedId(recordId);
-    setIsModalVisible(true);
-  };
 
   const onCreate = (values: any) => {
     console.log("Received values of form: ", values);
@@ -43,10 +26,6 @@ export default function CompaniesList({
 
   const onCancel = () => {
     setIsModalVisible(false);
-  };
-
-  const confirmDelete = async (recordId: number) => {
-    deleteCompany({ portfolioId: +id!, companyId: recordId });
   };
 
   const columns: any = [
@@ -175,27 +154,6 @@ export default function CompaniesList({
         );
       },
     },
-    {
-      key: "action",
-      render: (text: string, record: any) => (
-        <Space size="middle">
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => showModal(record.id)}
-          />
-          <Popconfirm
-            key={`delete-${record.key}`}
-            title={`${t("Delete company")} ${record.name}?`}
-            onConfirm={() => confirmDelete(record.id)}
-            okText={t("Yes")}
-            cancelText={t("No")}
-          >
-            <Button type="text" danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
-      ),
-    },
   ];
 
   const getData = () => {
@@ -245,7 +203,6 @@ export default function CompaniesList({
         title="Update company"
         okText="Update"
         portfolioId={+id!}
-        companyId={selectedId}
         isModalVisible={isModalVisible}
         onCreate={onCreate}
         onCancel={onCancel}

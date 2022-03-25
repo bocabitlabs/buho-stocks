@@ -47,6 +47,7 @@ export default function CompanyDetailsPage(): ReactElement {
         marketName={company.market.name}
         currencySymbol={company.baseCurrency.symbol}
         dividendsCurrencySymbol={company.dividendsCurrency.symbol}
+        isin={company.isin}
       />
       <YearSelector companyId={companyId} firstYear={company.firstYear} />
       <Charts stats={company.stats} />

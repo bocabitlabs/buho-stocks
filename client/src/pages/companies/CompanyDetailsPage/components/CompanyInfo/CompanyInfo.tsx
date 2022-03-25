@@ -1,10 +1,11 @@
 import React, { ReactElement } from "react";
 import {
   BankOutlined,
+  BarcodeOutlined,
   ClusterOutlined,
   DollarCircleOutlined,
 } from "@ant-design/icons";
-import { Badge, Tag, Typography } from "antd";
+import { Badge, Descriptions } from "antd";
 
 interface Props {
   companySectorName: string;
@@ -12,6 +13,7 @@ interface Props {
   marketName: string;
   currencySymbol: string;
   dividendsCurrencySymbol: string;
+  isin: string;
 }
 
 export default function CompanyInfo({
@@ -20,15 +22,57 @@ export default function CompanyInfo({
   marketName,
   currencySymbol,
   dividendsCurrencySymbol,
+  isin,
 }: Props): ReactElement {
   return (
-    <Typography.Paragraph>
-      <Badge count={<ClusterOutlined />} /> <Tag>{companySectorName} </Tag>{" "}
-      {companySuperSectorName ? <Tag>{companySuperSectorName}</Tag> : null}{" "}
-      <Badge count={<BankOutlined />} /> <Tag>{marketName}</Tag>{" "}
-      <Badge count={<DollarCircleOutlined />} /> <Tag>{currencySymbol}</Tag>{" "}
-      <Tag>{dividendsCurrencySymbol}</Tag>
-    </Typography.Paragraph>
+    <Descriptions size="small" column={3}>
+      <Descriptions.Item
+        label={
+          <strong>
+            <Badge count={<ClusterOutlined />} /> Sector
+          </strong>
+        }
+      >
+        {companySectorName}
+        {companySuperSectorName && ` - ${companySuperSectorName}`}
+      </Descriptions.Item>
+      <Descriptions.Item
+        label={
+          <strong>
+            <Badge count={<BankOutlined />} /> Market
+          </strong>
+        }
+      >
+        {marketName}
+      </Descriptions.Item>
+      <Descriptions.Item
+        label={
+          <strong>
+            <Badge count={<BarcodeOutlined />} /> ISIN
+          </strong>
+        }
+      >
+        {isin}
+      </Descriptions.Item>
+      <Descriptions.Item
+        label={
+          <strong>
+            <Badge count={<DollarCircleOutlined />} /> Base currency
+          </strong>
+        }
+      >
+        {currencySymbol}
+      </Descriptions.Item>
+      <Descriptions.Item
+        label={
+          <strong>
+            <Badge count={<DollarCircleOutlined />} /> Dividends currency
+          </strong>
+        }
+      >
+        {dividendsCurrencySymbol}
+      </Descriptions.Item>
+    </Descriptions>
   );
 }
 

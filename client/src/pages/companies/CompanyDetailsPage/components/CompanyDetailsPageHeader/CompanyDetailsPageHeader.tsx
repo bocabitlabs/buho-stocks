@@ -1,16 +1,17 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { DeleteOutlined, LinkOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
 import { Button, PageHeader, Popconfirm, Tag } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
+import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
 
 interface Props {
   companyName: string;
   companyTicker: string;
-  companyLogo: string;
+  companyLogo: string | undefined;
   companyCountryCode: string;
   portfolioName: string;
   companyUrl: string;
@@ -28,6 +29,7 @@ function CompanyDetailsPageHeader({
 }: Props) {
   const { t } = useTranslation();
   const { id, companyId } = useParams();
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const routes = [
     {
@@ -44,6 +46,19 @@ function CompanyDetailsPageHeader({
   function confirmDelete() {
     deleteCompany({ portfolioId: +id!, companyId: +companyId! });
   }
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const onCancel = () => {
+    setIsModalVisible(false);
+  };
 
   return (
     <PageHeader
@@ -62,8 +77,14 @@ function CompanyDetailsPageHeader({
         </Tag>,
       ]}
       extra={[
+        <Button
+          key="company-edit-header"
+          type="text"
+          icon={<EditOutlined />}
+          onClick={() => showModal()}
+        />,
         <Popconfirm
-          key="portfolio-delete-header"
+          key="company-delete-header"
           title={t("Delete this company?")}
           onConfirm={() => confirmDelete()}
           okText={t("Yes")}
@@ -74,6 +95,15 @@ function CompanyDetailsPageHeader({
       ]}
     >
       {children}
+      <CompanyAddEditForm
+        title="Update company"
+        okText="Update"
+        portfolioId={+id!}
+        companyId={+companyId!}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={onCancel}
+      />
     </PageHeader>
   );
 }
