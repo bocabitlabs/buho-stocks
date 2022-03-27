@@ -9,13 +9,17 @@
 </p>
 
 <p align="center">
-  <a href="#features">Features</a> •
+  • <a href="#features">Features</a> •
   <a href="#install">Install</a> •
   <a href="#development">Development</a> •
   <a href="#links">Links</a> •
   <a href="#attributions">Attributions</a> •
   <a href="#screenshots">Screenshots</a> •
 </p>
+
+## Motivation
+
+Using a spreadsheet to manage a portfolio can become a complicated and tedious task, as well as calculating investment returns. That's why I decided to create this application, to simplify these periodic and monotonous tasks of portfolio management.
 
 ## 🎁 Features
 
@@ -36,26 +40,7 @@
 
 ## 🔧 Install
 
-### 0. Requirements
 
-- Docker
-
-### 1. Configuring the volumes
-
-Before starting, keep in mind that the application uses 2 volumes to persist the config and the uploads. Create a volume for each of these folders and map them to the following locations.
-
-- `/usr/src/app/config`: Folder with the configuration files (application and DB)
-- `/usr/src/media`: Folder for the uploads
-
-### 2. Chosing a Database
-
-- `sqlite`: Default configuration.
-- `mysql`: Best configuration to prevent data loss. You will need to create the database manually and them point the configuration files to it.
-
-### 3. Update the config files and put them in the volumes
-
-- `backend/config/config.sample.py` -> `/usr/src/app/config/config.py`
-- `backend/config/mysql.conf` -> `/usr/src/app/config/mysql.conf`
 
 ## 🧑‍💻 Development
 
@@ -67,38 +52,9 @@ Before starting, keep in mind that the application uses 2 volumes to persist the
 - Ant Design (UI)
 - Docker
 
-### Dev. Requirements
-
-- Python 3.9
-- Node 14
-- Yarn 1.22
-
 ### How to contribute
 
 If you want to participate on the project, please take a look at
 the [CONTRIBUTING file](/docs/CONTRIBUTING.md) as it includes information about the branching and commit guideliness.
 
-
-
-```bash
-docker-compose exec app python manage.py flush --no-input
-```
-
-```bash
-docker-compose exec app python manage.py makemigrations
-```
-
-```bash
-docker-compose exec app python manage.py migrate
-```
-
-## Dev
-
-```bash
-docker-compose build
-```
-
-```bash
-docker-compose up --remove-orphans
-```
-
+You can find information about how to configure the development environment on the [DEVELOPMENT file](/docs/development.md)
