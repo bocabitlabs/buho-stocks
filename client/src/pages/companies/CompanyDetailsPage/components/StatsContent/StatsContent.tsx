@@ -31,12 +31,12 @@ export default function StatsContent({
           suffix={stats?.portfolioCurrency}
         />
         <Typography.Text type="secondary">
-          {stats?.sharesCount} shares
+          {stats?.sharesCount} {t("shares")}
         </Typography.Text>
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={t("Accum. Investment")}
+          title={t("Accum. investment")}
           value={stats?.accumulatedInvestment}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -50,12 +50,12 @@ export default function StatsContent({
           suffix={stats?.portfolioCurrency}
         />
         <Typography.Text type="secondary">
-          Accum. {stats?.accumulatedDividends} {stats?.portfolioCurrency}
+          {t("Accum.")} {stats?.accumulatedDividends} {stats?.portfolioCurrency}
         </Typography.Text>
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={t("Dividends Yield")}
+          title={t("Dividends yield")}
           value={stats?.dividendsYield ? stats.dividendsYield : 0}
           precision={2}
           suffix="%"
@@ -63,7 +63,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={t("Portfolio Value")}
+          title={t("Portfolio value")}
           value={stats?.portfolioValue}
           valueStyle={{
             color:
@@ -92,7 +92,7 @@ export default function StatsContent({
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={t("Return + Div.")}
+          title={t("Return + dividends")}
           value={stats?.returnWithDividends}
           precision={2}
           valueStyle={{

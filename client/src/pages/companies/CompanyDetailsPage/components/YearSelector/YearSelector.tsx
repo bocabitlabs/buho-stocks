@@ -1,4 +1,5 @@
 import React, { ReactElement, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Form, Select } from "antd";
 import StatsContent from "../StatsContent/StatsContent";
 import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
@@ -16,7 +17,7 @@ export default function YearSelector({
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
   const [years, setYears] = useState<number[]>([]);
   const [stockPrice, setStockPrice] = useState<any | null>(null);
-
+  const { t } = useTranslation();
   const { data: stats, isFetching: loadingStats } = useCompanyYearStats(
     +companyId!,
     selectedYear,
@@ -60,7 +61,7 @@ export default function YearSelector({
             disabled={loadingStats}
             loading={loadingStats}
           >
-            <Select.Option value="all">All</Select.Option>
+            <Select.Option value="all">{t("All")}</Select.Option>
             {years.map((yearItem: any) => (
               <Select.Option key={yearItem} value={yearItem}>
                 {yearItem}

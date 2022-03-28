@@ -1,4 +1,5 @@
 import React, { ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import {
   BankOutlined,
   BarcodeOutlined,
@@ -24,12 +25,13 @@ export default function CompanyInfo({
   dividendsCurrencySymbol,
   isin,
 }: Props): ReactElement {
+  const { t } = useTranslation();
   return (
     <Descriptions size="small" column={3}>
       <Descriptions.Item
         label={
           <strong>
-            <Badge count={<ClusterOutlined />} /> Sector
+            <Badge count={<ClusterOutlined />} /> {t("Sector")}
           </strong>
         }
       >
@@ -39,7 +41,7 @@ export default function CompanyInfo({
       <Descriptions.Item
         label={
           <strong>
-            <Badge count={<BankOutlined />} /> Market
+            <Badge count={<BankOutlined />} /> {t("Market")}
           </strong>
         }
       >
@@ -48,7 +50,7 @@ export default function CompanyInfo({
       <Descriptions.Item
         label={
           <strong>
-            <Badge count={<BarcodeOutlined />} /> ISIN
+            <Badge count={<BarcodeOutlined />} /> {t("ISIN")}
           </strong>
         }
       >
@@ -57,7 +59,7 @@ export default function CompanyInfo({
       <Descriptions.Item
         label={
           <strong>
-            <Badge count={<DollarCircleOutlined />} /> Base currency
+            <Badge count={<DollarCircleOutlined />} /> {t("Base currency")}
           </strong>
         }
       >
@@ -66,7 +68,7 @@ export default function CompanyInfo({
       <Descriptions.Item
         label={
           <strong>
-            <Badge count={<DollarCircleOutlined />} /> Dividends currency
+            <Badge count={<DollarCircleOutlined />} /> {t("Dividends currency")}
           </strong>
         }
       >

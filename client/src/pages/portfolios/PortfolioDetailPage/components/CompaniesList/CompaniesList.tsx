@@ -120,7 +120,7 @@ export default function CompaniesList({
       sorter: (a: any, b: any) => +a.portfolioValue - +b.portfolioValue,
     },
     {
-      title: t("Return + div"),
+      title: t("Return + dividends"),
       dataIndex: "returnWithDividendsPercent",
       key: "returnWithDividendsPercent",
       render: (text: string) => (

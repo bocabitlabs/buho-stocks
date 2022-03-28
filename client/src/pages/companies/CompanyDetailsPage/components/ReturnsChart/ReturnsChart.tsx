@@ -35,7 +35,7 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
             backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
           {
-            label: t("Return + dividend"),
+            label: t("Return + dividends"),
             data: [],
             borderColor: "rgb(53, 162, 235)",
             backgroundColor: "rgba(53, 162, 235, 0.5)",
