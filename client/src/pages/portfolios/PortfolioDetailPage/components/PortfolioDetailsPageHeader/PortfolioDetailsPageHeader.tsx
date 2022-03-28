@@ -12,7 +12,7 @@ import { Button, PageHeader, Popconfirm } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeletePortfolio } from "hooks/use-portfolios/use-portfolios";
-import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
+import CompanyAddEditForm from "pages/companies/CompanyDetailsPage/components/CompanyAddEditForm/CompanyAddEditForm";
 
 interface Props {
   portfolioName: string;

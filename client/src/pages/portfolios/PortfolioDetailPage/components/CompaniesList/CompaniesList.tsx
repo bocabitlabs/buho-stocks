@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { Avatar, Table, Tag, Typography } from "antd";
-import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
+import CompanyAddEditForm from "pages/companies/CompanyDetailsPage/components/CompanyAddEditForm/CompanyAddEditForm";
 import { ICompanyListItem } from "types/company";
 import { ICurrency } from "types/currency";
 

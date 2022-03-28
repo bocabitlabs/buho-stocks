@@ -197,13 +197,13 @@ function CompanyAddEditForm({
           <Form.Item name="ticker" label={t("Ticker")}>
             <Input type="text" />
           </Form.Item>
-          <Form.Item name="altTickers" label={t("Altnernative tickers")}>
+          <Form.Item name="altTickers" label={t("Alternative tickers")}>
             <Input type="text" />
           </Form.Item>
           <Form.Item name="isin" label={t("ISIN")}>
             <Input type="text" />
           </Form.Item>
-          <Form.Item name="logo" label={t("Company Logo")}>
+          <Form.Item name="logo" label={t("Company logo")}>
             <Upload
               showUploadList={false}
               name="logo"
@@ -236,7 +236,7 @@ function CompanyAddEditForm({
                 ))}
             </Select>
           </Form.Item>
-          <Form.Item name="dividendsCurrency" label={t("Dividends Currency")}>
+          <Form.Item name="dividendsCurrency" label={t("Dividends currency")}>
             <Select
               showSearch
               placeholder={t("Select a currency for the dividends")}

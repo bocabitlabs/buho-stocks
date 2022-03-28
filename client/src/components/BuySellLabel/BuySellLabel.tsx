@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Tag } from "antd";
 
 interface Props {
@@ -6,13 +7,15 @@ interface Props {
 }
 
 export function BuySellLabel({ value }: Props) {
+  const { t } = useTranslation();
+
   let color = "green";
   if (value === "SELL") {
     color = "volcano";
   }
   return (
     <Tag color={color} key={value}>
-      {value}
+      {t(value)}
     </Tag>
   );
 }

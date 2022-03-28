@@ -6,7 +6,7 @@ import { Button, PageHeader, Popconfirm, Tag } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
-import CompanyAddEditForm from "pages/portfolios/PortfolioDetailPage/components/CompanyAddEditForm/CompanyAddEditForm";
+import CompanyAddEditForm from "pages/companies/CompanyDetailsPage/components/CompanyAddEditForm/CompanyAddEditForm";
 
 interface Props {
   companyName: string;
@@ -96,8 +96,8 @@ function CompanyDetailsPageHeader({
     >
       {children}
       <CompanyAddEditForm
-        title="Update company"
-        okText="Update"
+        title={t("Update company")}
+        okText={t("Update")}
         portfolioId={+id!}
         companyId={+companyId!}
         isModalVisible={isModalVisible}
