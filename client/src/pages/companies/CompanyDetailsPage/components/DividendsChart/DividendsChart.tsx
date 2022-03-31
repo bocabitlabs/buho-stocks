@@ -5,9 +5,13 @@ import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 
 interface Props {
   stats: any;
+  portfolioCurrency: string;
 }
 
-export default function DividendsChart({ stats }: Props): ReactElement {
+export default function DividendsChart({
+  stats,
+  portfolioCurrency,
+}: Props): ReactElement {
   const { t } = useTranslation();
 
   const [data, setData] = React.useState<any>(null);
@@ -21,6 +25,16 @@ export default function DividendsChart({ stats }: Props): ReactElement {
       title: {
         display: true,
         text: t("Dividends"),
+      },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
+              2,
+            )} ${portfolioCurrency}`;
+            return percentage;
+          },
+        },
       },
     },
   };

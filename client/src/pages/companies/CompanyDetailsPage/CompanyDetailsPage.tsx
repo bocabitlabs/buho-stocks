@@ -50,7 +50,10 @@ export default function CompanyDetailsPage(): ReactElement {
         isin={company.isin}
       />
       <YearSelector companyId={companyId} firstYear={company.firstYear} />
-      <Charts stats={company.stats} />
+      <Charts
+        stats={company.stats}
+        portfolioCurrency={company.portfolio.baseCurrency}
+      />
       <TransactionsTabs
         companyBaseCurrency={company.baseCurrency}
         companyDividendsCurrency={company.dividendsCurrency}

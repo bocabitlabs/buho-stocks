@@ -50,14 +50,14 @@ export default function SectorsTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string) => <strong>{text}</strong>,
+      render: (text: string) => <strong>{t(text)}</strong>,
       sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name),
     },
     {
       title: t("Super sector"),
       dataIndex: "superSector",
       key: "superSector",
-      render: (text: string) => text,
+      render: (text: string) => t(text),
     },
     {
       title: t("Action"),

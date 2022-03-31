@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Button, Popconfirm, Space, Spin, Table } from "antd";
+import { Button, Popconfirm, Space, Spin, Table, Typography } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import NotesRow from "components/NotesRow/NotesRow";
@@ -87,15 +87,40 @@ export default function DividendsListTable({
       title: t("Total commission"),
       dataIndex: "totalCommission",
       key: "totalCommission",
-      render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.totalCommissionCurrency}`,
+      render: (text: number, record: any) => (
+        <>
+          {(+text).toFixed(2)} {record.totalCommissionCurrency}
+          <>
+            <br />
+            <Typography.Text type="secondary" style={{ fontSize: "0.8em" }}>
+              {record.commissionPercentage} %
+            </Typography.Text>
+          </>
+        </>
+      ),
     },
     {
       title: t("Total"),
       dataIndex: "transactionTotal",
       key: "transactionTotal",
-      render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
+      render: (text: number, record: any) => (
+        <>
+          {(+text).toFixed(2)} {record.grossPricePerShareCurrency}
+          {record.grossPricePerShareCurrency !== portfolioBaseCurrency && (
+            <>
+              <br />
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: "0.8em" }}
+                title={portfolioBaseCurrency}
+              >
+                {record.transactionTotalPortfolioCurrency}{" "}
+                {portfolioBaseCurrency}
+              </Typography.Text>
+            </>
+          )}
+        </>
+      ),
     },
     {
       title: t("Action"),
@@ -135,7 +160,19 @@ export default function DividendsListTable({
         transactionTotal:
           +transaction.count * +transaction.grossPricePerShare -
           +transaction.totalCommission,
+        transactionTotalPortfolioCurrency: (
+          +transaction.exchangeRate *
+            +transaction.count *
+            +transaction.grossPricePerShare -
+          +transaction.totalCommission * +transaction.exchangeRate
+        ).toFixed(2),
         notes: transaction.notes,
+        exchangeRate: transaction.exchangeRate,
+        commissionPercentage: (
+          (+transaction.totalCommission /
+            (+transaction.count * +transaction.grossPricePerShare)) *
+          100
+        ).toFixed(2),
       }))
     );
   };

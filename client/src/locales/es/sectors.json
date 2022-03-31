@@ -1,8 +1,9 @@
 {
+  "Aerospace & Defense": "Aerospacio y Defensa",
   "Agricultural Products": "Productos de Agricultura",
   "Air Freight and Logistics": "Carga Aérea y Logística",
   "Apparel Retail": "Venta de ropa",
-  "Asset Management and Custody Banks": "Bancos de gestión y custodia de activos",
+  "Asset Management and custody banks": "Bancos de gestión y custodia de activos",
   "Automobiles and Components": "Automóviles y Componentes",
   "Automobile Manufacturers": "Fabricantes de Automóviles",
   "Banks": "Bancos",
@@ -38,6 +39,7 @@
   "Movies and Entertainment": "Cine y entretenimiento",
   "Multi-line Insurance": "Reaseguros",
   "Multi Utilities": "Servicios públicos múltiples",
+  "Office REITs": "REITs de oficinas",
   "Packaged Foods and Meats": "Alimentos y carnes envasados",
   "Personal Products": "Productos personales",
   "Pharmaceuticals": "Farmacéuticas",
