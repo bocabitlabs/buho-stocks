@@ -40,8 +40,6 @@ Using a spreadsheet to manage a portfolio can become a complicated and tedious t
 
 ## 🔧 Install
 
-
-
 ## 🧑‍💻 Development
 
 ### Technologies used
