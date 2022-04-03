@@ -7,7 +7,7 @@ On Visual Studio Code, open the the command palette and select "Reopen on Contai
 
 Then, from inside of the container you can run the application as usual.
 
-If you need more Docker documentation, check the [DOCKER file](/docs/docker.md)
+If you need more Docker documentation, check the [DOCKER docs](/development/other-docker-commands.md)
 
 
 ## Configuring the volumes
