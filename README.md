@@ -17,32 +17,28 @@
   <a href="#screenshots">Screenshots</a> •
 </p>
 
-## Motivation
+## 🚀 Motivation
 
 Using a spreadsheet to manage a portfolio can become a complicated and tedious task, as well as calculating investment returns. That's why I decided to create this application, to simplify these periodic and monotonous tasks of portfolio management.
 
 ## 🎁 Features
 
-| Feature  |
-|---|
-| Unlimited portfolios  |
-| Unlimited companies per portfolio  |
-| Support for stock transactions, dividends and rights |
-| Unlimited sectors and subsectors |
-| Historical Exchange rates from ECB |
-| Import CSV files from Interactive Brokers and ING (Spain) |
-| ~~Export data to CSV~~ |
-| Fetch stock prices and exchange rates from a external source in real time. |
-| Multiple charts: dividends, returns, sectors, currencies... |
-| ~~Database backup~~ |
+| Feature  | Implemented |
+|---| --- |
+| Unlimited portfolios  | ✅ |
+| Unlimited companies per portfolio  | ✅ |
+| Support for stock transactions, dividends and rights | ✅ |
+| Unlimited sectors and subsectors | ✅ |
+| Import CSV files from Interactive Brokers and ING (Spain) | ✅ |
+| Fetch stock prices and exchange rates from a external source in real time. | ✅ |
+| Multiple charts: dividends, returns, sectors, currencies... | ✅ |
+| Support for multiple languages | ✅ |
 
-- Planned: Support for multiple languages
+## 📚 Documentation
 
-## 🔧 Install
+Documentation is available on [Github Pages](https://bocabitlabs.github.io/buho-stocks/).
 
-## 🧑‍💻 Development
-
-### Technologies used
+## ⚛️ Technologies used
 
 - React
 - Django
@@ -50,9 +46,24 @@ Using a spreadsheet to manage a portfolio can become a complicated and tedious t
 - Ant Design (UI)
 - Docker
 
-### How to contribute
+## 🫂 How to contribute
 
 If you want to participate on the project, please take a look at
-the [CONTRIBUTING file](/docs/CONTRIBUTING.md) as it includes information about the branching and commit guideliness.
+the [CONTRIBUTING file](https://github.com/bocabitlabs/buho-stocks/blob/main/.github/CONTRIBUTING.md) as it includes information about the branching and commit guideliness.
 
-You can find information about how to configure the development environment on the [DEVELOPMENT file](/docs/development.md)
+You can find information about how to configure the development environment on the [DEVELOPMENT docs](https://bocabitlabs.github.io/buho-stocks/)
+
+## 📘 Usage and deployment guides
+
+Usage and deployment guides are available on the [Documentation](https://bocabitlabs.github.io/buho-stocks/)
+
+## 🙏 Attributions
+
+- Illustrations: https://undraw.co/search
+- Logo by [lavarmsg](https://www.vecteezy.com/members/lavarmsg)
+
+## 📝 License
+
+[GPL 3](LICENSE)
+
+All 3rd party logos are property of their owners.
