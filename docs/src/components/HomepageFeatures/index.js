@@ -4,32 +4,56 @@ import styles from './styles.module.css';
 
 const FeatureList = [
   {
-    title: 'Easy to Use',
-    Svg: require('@site/static/img/undraw_docusaurus_mountain.svg').default,
+    title: 'Manage your portfolio(s)',
+    Svg: require('@site/static/img/undraw_finance_re_gnv2.svg').default,
     description: (
       <>
-        Docusaurus was designed from the ground up to be easily installed and
-        used to get your website up and running quickly.
+        Buho Stocks was created to make managing your portfolio(s) easier.
       </>
     ),
   },
   {
-    title: 'Focus on What Matters',
-    Svg: require('@site/static/img/undraw_docusaurus_tree.svg').default,
+    title: 'Track their performance',
+    Svg: require('@site/static/img/undraw_chart_86kg.svg').default,
     description: (
       <>
-        Docusaurus lets you focus on your docs, and we&apos;ll do the chores. Go
-        ahead and move your docs into the <code>docs</code> directory.
+        Track the performance of your portfolio with stats and charts.
       </>
     ),
   },
   {
-    title: 'Powered by React',
-    Svg: require('@site/static/img/undraw_docusaurus_react.svg').default,
+    title: 'Register your icome',
+    Svg: require('@site/static/img/undraw_personal_finance_re_ie6k.svg').default,
     description: (
       <>
-        Extend or customize your website layout by reusing React. Docusaurus can
-        be extended while reusing the same header and footer.
+        Register your transactions and dividends and get a report of your income.
+      </>
+    ),
+  },
+  {
+    title: 'Multiple markets and sectors',
+    Svg: require('@site/static/img/undraw_connected_world_wuay.svg').default,
+    description: (
+      <>
+        You can register your portfolio and companies in multiple markets and sectors.
+      </>
+    ),
+  },
+  {
+    title: 'Multiple currencies',
+    Svg: require('@site/static/img/undraw_savings_re_eq4w.svg').default,
+    description: (
+      <>
+        Support for a wide range of currencies.
+      </>
+    ),
+  },
+  {
+    title: 'Real exchange rates and stock prices',
+    Svg: require('@site/static/img/undraw_stock_prices_re_js33.svg').default,
+    description: (
+      <>
+        Obtain real exchange rates and stock prices for your transactions and companies.
       </>
     ),
   },

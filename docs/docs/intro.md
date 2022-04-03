@@ -2,46 +2,28 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introduction
 
-Let's discover **Docusaurus in less than 5 minutes**.
+<p align="center"><img src="/buho-stocks/img/logo.png" alt="Buho-Stocks logo" style={{width: 200 }}/></p>
 
-## Getting Started
+<p align="center">Application to manage and track a stocks portfolio with dividends and return for a <a href="https://en.wikipedia.org/wiki/Buy_and_hold" title="Wikipedia">Buy & Hold investment</a> investment strategy.</p>
 
-Get started by **creating a new site**.
+<p align="center">
+<img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks-docker" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks-docker/branch/main/graph/badge.svg" alt="codecov"/></a>
+</p>
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+## Motivation
 
-### What you'll need
+Using a spreadsheet to manage a portfolio can become a complicated and tedious task, as well as calculating investment returns. That's why I decided to create this application, to simplify these periodic and monotonous tasks of portfolio management.
 
-- [Node.js](https://nodejs.org/en/download/) version 14 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Development
 
-## Generate a new site
+If you are a developer and want to contribute, please check the [Contribution guideliness](https://github.com/bocabitlabs/buho-stocks/blob/main/.github/CONTRIBUTING.md) and the [Development guides](/docs/development/requirements)
 
-Generate a new Docusaurus site using the **classic template**.
+## Deployment
 
-The classic template will automatically be added to your project after you run the command:
+Do you want to deploy the application in production? The documentation to it is available on [Deploy application](/docs/deploy-application/introduction)
 
-```bash
-npm init docusaurus@latest my-website classic
-```
+## User guides
 
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
+User guides will be added to this section when available.
