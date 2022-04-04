@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -18,7 +17,7 @@ export default function MarketsListTable() {
   const { data: markets, error, isFetching } = useMarkets();
   const { data: settings } = useSettings();
 
-  const { mutateAsync: deleteMarket } = useDeleteMarket();
+  const { mutate: deleteMarket } = useDeleteMarket();
   const [selectedMarketId, setSelectedMarketId] = useState<number | undefined>(
     undefined,
   );
@@ -39,12 +38,7 @@ export default function MarketsListTable() {
   };
 
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteMarket(recordId);
-      toast.success(t("Market deleted successfully"));
-    } catch (errorDelete) {
-      toast.error(t(`Error deleting market: ${errorDelete}`));
-    }
+    deleteMarket(recordId);
   };
 
   const columns: any = [

@@ -65,7 +65,7 @@ export default function IBTradesImportForm({
     transactionDate,
   );
 
-  const { mutateAsync: createSharesTransaction, isLoading: loading } =
+  const { mutate: createSharesTransaction, isLoading: loading } =
     useAddSharesTransaction();
 
   const onCompanyChange = (value: string) => {
@@ -118,16 +118,11 @@ export default function IBTradesImportForm({
       company,
       type: "BUY",
     };
-    console.debug(transaction);
-    try {
-      await createSharesTransaction({
-        companyId: selectedCompany.id,
-        newTransaction: transaction,
-      });
-      setFormSent(true);
-    } catch (e) {
-      console.error(e);
-    }
+    createSharesTransaction({
+      companyId: selectedCompany.id,
+      newTransaction: transaction,
+    });
+    setFormSent(true);
   };
 
   const fetchExchangeRate = async () => {

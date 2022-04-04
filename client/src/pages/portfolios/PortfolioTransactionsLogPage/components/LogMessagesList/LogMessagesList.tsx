@@ -16,15 +16,11 @@ export default function LogMessagesList() {
   const { t } = useTranslation();
   const { id } = useParams();
   const { data: messages } = useLogMessages(+id!);
-  const { mutateAsync: deleteMessage } = useDeleteLogMessages();
+  const { mutate: deleteMessage } = useDeleteLogMessages();
 
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteMessage({ portfolioId: +id!, logMessageId: recordId });
-      toast.success(t("Log message deleted successfully"));
-    } catch (error) {
-      toast.error(t(`Error deleting log message: ${error}`));
-    }
+    deleteMessage({ portfolioId: +id!, logMessageId: recordId });
+    toast.success(t("Log message deleted successfully"));
   };
 
   const columns: any = [

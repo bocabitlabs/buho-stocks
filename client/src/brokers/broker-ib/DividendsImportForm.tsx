@@ -84,7 +84,7 @@ export default function IBDividendsImportForm({
     portfolioCurrency,
     transactionDate,
   );
-  const { mutateAsync: createDividendsTransaction, isLoading: loading } =
+  const { mutate: createDividendsTransaction, isLoading: loading } =
     useAddDividendsTransaction();
 
   const onCompanyChange = (value: string) => {
@@ -136,15 +136,11 @@ export default function IBDividendsImportForm({
       company,
     };
     console.debug(transaction);
-    try {
-      await createDividendsTransaction({
-        companyId: selectedCompany.id,
-        newTransaction: transaction,
-      });
-      setFormSent(true);
-    } catch (e) {
-      console.error(e);
-    }
+    createDividendsTransaction({
+      companyId: selectedCompany.id,
+      newTransaction: transaction,
+    });
+    setFormSent(true);
   };
 
   const fetchExchangeRate = async () => {

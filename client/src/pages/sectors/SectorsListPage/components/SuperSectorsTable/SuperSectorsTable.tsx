@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Button, Popconfirm, Space, Table } from "antd";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
@@ -17,7 +16,7 @@ export default function SuperSectorsTable() {
   const { t } = useTranslation();
 
   const { data: sectors, error, isFetching } = useSuperSectors();
-  const { mutateAsync: deleteSector } = useDeleteSuperSector();
+  const { mutate: deleteSector } = useDeleteSuperSector();
   const [selectedSectorId, setSelectedSectorId] = useState<number | undefined>(
     undefined,
   );
@@ -36,12 +35,7 @@ export default function SuperSectorsTable() {
     setIsModalVisible(false);
   };
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteSector(recordId);
-      toast.success(t("Super sector deleted successfully"));
-    } catch (err) {
-      toast.error(t(`Error deleting super sector: ${err}`));
-    }
+    deleteSector(recordId);
   };
 
   const columns: any = [

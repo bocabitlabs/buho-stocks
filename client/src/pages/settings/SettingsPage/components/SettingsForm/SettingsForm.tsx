@@ -11,7 +11,7 @@ import { ISettingsFormFields } from "types/settings";
 function SettingsForm(): ReactElement | null {
   const [form] = Form.useForm();
   const { isFetching, data, error } = useSettings();
-  const { mutateAsync: updateSettingsAsync } = useUpdateSettings();
+  const { mutate: updateSettings } = useUpdateSettings();
   const { t, i18n } = useTranslation();
   const { data: timezones, isLoading: timezonesLoading } = useTimezones();
 
@@ -35,7 +35,7 @@ function SettingsForm(): ReactElement | null {
       portfolioSortBy: "TODO",
     };
     if (data) {
-      updateSettingsAsync({ id: data.id, newSettings });
+      updateSettings({ id: data.id, newSettings });
       i18n.changeLanguage(newSettings.language);
     }
   };

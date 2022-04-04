@@ -1,7 +1,6 @@
 import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import {
   DeleteOutlined,
   LineChartOutlined,
@@ -30,7 +29,7 @@ function PortfolioDetailsPageHeader({
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
-  const { mutateAsync: deletePortfolio } = useDeletePortfolio();
+  const { mutate: deletePortfolio } = useDeletePortfolio();
   const routes = [
     {
       path: `/app/portfolios/${id}`,
@@ -53,13 +52,8 @@ function PortfolioDetailsPageHeader({
   };
 
   const confirmDelete = async () => {
-    try {
-      await deletePortfolio({ portfolioId: +id! });
-      toast.success(t("Portfolio deleted successfully"));
-      navigate(-1);
-    } catch (error) {
-      toast.error(t("Error deleting portfolio"));
-    }
+    deletePortfolio({ portfolioId: +id! });
+    navigate(-1);
   };
 
   return (

@@ -53,7 +53,7 @@ export default function DividendsImportForm({
   const [transactionDate, setTransactionDate] = useState(
     initialTransactionDate.format("YYYY-MM-DD"),
   );
-  const { mutateAsync: createDividendsTransaction, isLoading: loading } =
+  const { mutate: createDividendsTransaction, isLoading: loading } =
     useAddDividendsTransaction();
   const { isFetching: currenciesLoading, data: currencies } = useCurrencies();
   const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
@@ -134,15 +134,11 @@ export default function DividendsImportForm({
       )}`,
       company,
     };
-    try {
-      await createDividendsTransaction({
-        companyId: selectedCompany.id,
-        newTransaction: transaction,
-      });
-      setFormSent(true);
-    } catch (e) {
-      console.log(e);
-    }
+    createDividendsTransaction({
+      companyId: selectedCompany.id,
+      newTransaction: transaction,
+    });
+    setFormSent(true);
   };
 
   const getPriceInCompanyCurrency = useCallback(async () => {
