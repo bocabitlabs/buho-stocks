@@ -1,7 +1,6 @@
 import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -30,7 +29,7 @@ export default function RightsListTable({
   const { isFetching: loading, data: transactions } = useRightsTransactions(
     +companyId!,
   );
-  const { mutateAsync: deleteTransaction } = useDeleteRightsTransaction();
+  const { mutate: deleteTransaction } = useDeleteRightsTransaction();
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -47,15 +46,10 @@ export default function RightsListTable({
     setIsModalVisible(false);
   };
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteTransaction({
-        companyId: +companyId!,
-        transactionId: recordId,
-      });
-      toast.success(t("Rights transaction deleted successfully"));
-    } catch (error) {
-      toast.error(t(`Error deleting rights transaction: ${error}`));
-    }
+    deleteTransaction({
+      companyId: +companyId!,
+      transactionId: recordId,
+    });
   };
 
   if (loading) {

@@ -59,9 +59,9 @@ export default function TradesImportForm({
   const [transactionDate, setTransactionDate] = useState(
     initialTransactionDate.format("YYYY-MM-DD"),
   );
-  const { mutateAsync: createSharesTransaction, isLoading: loadingShares } =
+  const { mutate: createSharesTransaction, isLoading: loadingShares } =
     useAddSharesTransaction();
-  const { mutateAsync: createRightsTransaction, isLoading: loadingRights } =
+  const { mutate: createRightsTransaction, isLoading: loadingRights } =
     useAddRightsTransaction();
   const { isFetching: currenciesLoading, data: currencies } = useCurrencies();
   const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
@@ -146,25 +146,17 @@ export default function TradesImportForm({
       type: formTransactionType,
     };
     if (isRightsTransaction) {
-      try {
-        await createRightsTransaction({
-          companyId: selectedCompany.id,
-          newTransaction: transaction,
-        });
-        setFormSent(true);
-      } catch (e) {
-        console.error(e);
-      }
+      createRightsTransaction({
+        companyId: selectedCompany.id,
+        newTransaction: transaction,
+      });
+      setFormSent(true);
     } else {
-      try {
-        await createSharesTransaction({
-          companyId: selectedCompany.id,
-          newTransaction: transaction,
-        });
-        setFormSent(true);
-      } catch (e) {
-        console.error(e);
-      }
+      createSharesTransaction({
+        companyId: selectedCompany.id,
+        newTransaction: transaction,
+      });
+      setFormSent(true);
     }
   };
 

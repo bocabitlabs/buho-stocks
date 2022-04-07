@@ -21,7 +21,7 @@ export default function StatsRefreshModal({
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
 
-  const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
+  const { mutate: updateStockPrice } = useUpdateCompanyStockPrice();
   const { mutate: updateStats } = useUpdateYearStatsForced();
 
   const showModal = () => {
@@ -37,11 +37,7 @@ export default function StatsRefreshModal({
     if (selectedYear === "all") {
       tempYear = new Date().getFullYear().toString();
     }
-    try {
-      await updateStockPrice({ companyId: +companyId!, year: tempYear });
-    } catch (e) {
-      console.error(`Error updating stock price for ${companyId}`);
-    }
+    updateStockPrice({ companyId: +companyId!, year: tempYear });
   }, [companyId, selectedYear, updateStockPrice]);
 
   const handleOk = async () => {

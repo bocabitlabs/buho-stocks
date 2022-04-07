@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -30,7 +29,7 @@ export default function SharesListTable({
   const { isFetching: loading, data: transactions } = useSharesTransactions(
     +companyId!,
   );
-  const { mutateAsync: deleteTransaction } = useDeleteSharesTransaction();
+  const { mutate: deleteTransaction } = useDeleteSharesTransaction();
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -50,15 +49,10 @@ export default function SharesListTable({
   };
 
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteTransaction({
-        companyId: +companyId!,
-        transactionId: recordId,
-      });
-      toast.success(t("Shares transaction deleted successfully"));
-    } catch (error) {
-      toast.error(`${t("Error deleting shares transaction:")} ${error}`);
-    }
+    deleteTransaction({
+      companyId: +companyId!,
+      transactionId: recordId,
+    });
   };
 
   if (loading) {
