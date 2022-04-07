@@ -11,14 +11,12 @@ interface Props {
   id: string | undefined;
   firstYear: number | null;
   companies: ICompanyListItem[];
-  portfolioCurrency: string;
 }
 
 export default function YearSelector({
   id,
   firstYear,
   companies,
-  portfolioCurrency,
 }: Props): ReactElement {
   const { t } = useTranslation();
 
@@ -75,7 +73,7 @@ export default function YearSelector({
       <div style={{ marginTop: 16 }}>
         <StatsContent stats={stats} />
       </div>
-      <PortfolioCharts portfolioCurrency={portfolioCurrency} />
+      <PortfolioCharts />
     </div>
   );
 }

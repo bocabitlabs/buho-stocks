@@ -312,7 +312,7 @@ export const mapColorsToLabels = (labels: any[]) => {
     }
 
     // add color for new label to array that we will push to Chart.js
-    chartColors.push(hexToRgb(labelColors[label], 0.5));
+    chartColors.push(hexToRgb(labelColors[label], 1));
     chartBorders.push(hexToRgb(labelColors[label], 0.8));
   });
 

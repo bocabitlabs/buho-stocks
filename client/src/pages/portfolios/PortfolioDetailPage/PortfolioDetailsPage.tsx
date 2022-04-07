@@ -40,7 +40,6 @@ export default function PortfolioDetailsPage() {
         id={id}
         firstYear={portfolio.firstYear}
         companies={portfolio ? portfolio.companies : []}
-        portfolioCurrency={portfolio.baseCurrency.code}
       />
       <CompaniesList
         companies={portfolio ? portfolio.companies : []}

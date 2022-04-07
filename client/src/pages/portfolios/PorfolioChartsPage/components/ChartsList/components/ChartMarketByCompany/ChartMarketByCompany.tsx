@@ -22,6 +22,14 @@ export default function ChartMarketByCompany({ statsData }: Props) {
         display: true,
         text: t("Markets"),
       },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const count = `${context.label}: ${context.raw} ${t("companies")}`;
+            return count;
+          },
+        },
+      },
     },
   };
 

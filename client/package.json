@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.0.49-alpha",
+  "version": "0.0.50-alpha",
   "homepage": "/",
   "proxy": "http://localhost:8001/",
   "private": true,
@@ -12,7 +12,8 @@
     "@testing-library/user-event": "^13.5.0",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
     "@typescript-eslint/parser": "^5.3.0",
-    "antd": "^4.18.3",
+    "@types/lodash": "^4.14.181",
+    "antd": "^4.19.5",
     "axios": "^0.24.0",
     "chart.js": "^3.7.0",
     "country-flag-icons": "^1.4.19",
@@ -77,7 +78,6 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.181",
     "@types/jest": "^27.4.0",
     "@types/node": "^16.11.19",
     "@types/react": "^17.0.38",

@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { mapColorsToLabels } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
@@ -21,6 +22,14 @@ export default function ChartSuperSectorsByCompany({ statsData }: Props) {
       title: {
         display: true,
         text: t("Super Sectors"),
+      },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const count = `${context.label}: ${context.raw} ${t("companies")}`;
+            return count;
+          },
+        },
       },
     },
   };
@@ -61,7 +70,7 @@ export default function ChartSuperSectorsByCompany({ statsData }: Props) {
   }, [statsData, t]);
 
   if (!data) {
-    return <div>Loading...</div>;
+    return <LoadingSpin />;
   }
   return <Pie options={options} data={data} />;
 }

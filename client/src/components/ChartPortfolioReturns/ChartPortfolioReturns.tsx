@@ -1,13 +1,16 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { hexToRgb, manyColors } from "utils/colors";
 
 export default function ChartPortfolioReturns(): ReactElement {
   const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>();
+  const { data, isFetching: loading } = usePortfolioAllYearStats(+id!);
 
   const options = {
     responsive: true,
@@ -18,6 +21,16 @@ export default function ChartPortfolioReturns(): ReactElement {
       title: {
         display: true,
         text: t("Portfolio Returns"),
+      },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
+              2,
+            )}%`;
+            return percentage;
+          },
+        },
       },
     },
     scales: {
@@ -37,37 +50,36 @@ export default function ChartPortfolioReturns(): ReactElement {
     },
   };
 
-  function getChartData() {
-    return {
-      labels: [],
-      datasets: [
-        {
-          label: t("Return Percent"),
-          data: [],
-          borderColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
-          yAxisID: "y",
-        },
-        {
-          label: t("Return + dividends"),
-          data: [],
-          borderColor: "rgb(53, 162, 235)",
-          backgroundColor: "rgba(53, 162, 235, 0.5)",
-          yAxisID: "y",
-        },
-      ],
-    };
-  }
-
-  const { isFetching: loading } = usePortfolioAllYearStats(+id!, {
-    onSuccess: (responseData: any) => {
+  useEffect(() => {
+    function getChartData() {
+      return {
+        labels: [],
+        datasets: [
+          {
+            label: t("Return Percent"),
+            data: [],
+            borderColor: hexToRgb(manyColors[10], 1),
+            backgroundColor: hexToRgb(manyColors[10], 1),
+            yAxisID: "y",
+          },
+          {
+            label: t("Return + dividends"),
+            data: [],
+            borderColor: hexToRgb(manyColors[16], 1),
+            backgroundColor: hexToRgb(manyColors[16], 1),
+            yAxisID: "y",
+          },
+        ],
+      };
+    }
+    if (data) {
       const tempChartData = getChartData();
 
       const newYears: any = [];
       const returnsPercent: any = [];
       const returnsWithDividendsPercent: any = [];
 
-      responseData.sort((a: any, b: any) => {
+      data.sort((a: any, b: any) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -76,7 +88,7 @@ export default function ChartPortfolioReturns(): ReactElement {
         }
         return 0;
       });
-      responseData.forEach((year: any) => {
+      data.forEach((year: any) => {
         if (
           !newYears.includes(year.year) &&
           year.year !== "all" &&
@@ -94,11 +106,11 @@ export default function ChartPortfolioReturns(): ReactElement {
       tempChartData.datasets[1].data = returnsWithDividendsPercent;
 
       setChartData(tempChartData);
-    },
-  });
+    }
+  }, [data, t]);
 
   if (!chartData || loading) {
-    return <div>{t("Loading...")}</div>;
+    return <LoadingSpin />;
   }
   return <Line options={options} data={chartData} />;
 }

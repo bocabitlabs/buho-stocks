@@ -1,7 +1,9 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
+import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
 
@@ -9,6 +11,8 @@ export default function ChartPortfolioDividends(): ReactElement {
   const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>(null);
+  const { data, isFetching: loading } = usePortfolioAllYearStats(+id!);
+  const { data: portfolio } = usePortfolio(+id!);
 
   const options = {
     responsive: true,
@@ -20,29 +24,40 @@ export default function ChartPortfolioDividends(): ReactElement {
         display: true,
         text: t("Portfolio Dividends"),
       },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
+              2,
+            )} ${portfolio?.baseCurrency.code}`;
+            return percentage;
+          },
+        },
+      },
     },
   };
-  function getChartData() {
-    return {
-      labels: [],
-      datasets: [
-        {
-          label: t("Dividends"),
-          data: [],
-          borderColor: "rgb(255, 99, 132)",
-          backgroundColor: "rgba(255, 99, 132, 0.5)",
-        },
-      ],
-    };
-  }
-  const { isFetching: loading } = usePortfolioAllYearStats(+id!, {
-    onSuccess: (responseData: any) => {
+
+  useEffect(() => {
+    function getChartData() {
+      return {
+        labels: [],
+        datasets: [
+          {
+            label: t("Dividends"),
+            data: [],
+            borderColor: "rgb(255, 99, 132)",
+            backgroundColor: "rgba(255, 99, 132, 0.5)",
+          },
+        ],
+      };
+    }
+    if (data) {
       const tempChartData = getChartData();
 
       const newYears: any = [];
       const dividends: any = [];
 
-      responseData.sort((a: any, b: any) => {
+      data.sort((a: any, b: any) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -51,7 +66,7 @@ export default function ChartPortfolioDividends(): ReactElement {
         }
         return 0;
       });
-      responseData.forEach((year: any) => {
+      data.forEach((year: any) => {
         if (
           !newYears.includes(year.year) &&
           year.year !== "all" &&
@@ -68,11 +83,11 @@ export default function ChartPortfolioDividends(): ReactElement {
       tempChartData.datasets[0].backgroundColor = chartColors;
 
       setChartData(tempChartData);
-    },
-  });
+    }
+  }, [data, t]);
 
   if (!chartData || loading) {
-    return <div>{t("Loading...")}</div>;
+    return <LoadingSpin />;
   }
   return <Bar options={options} data={chartData} />;
 }

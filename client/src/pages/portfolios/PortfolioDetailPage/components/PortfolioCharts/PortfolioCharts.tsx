@@ -1,36 +1,16 @@
 import React from "react";
-import { useParams } from "react-router-dom";
 import { Col, Row } from "antd";
-import { Chart, registerables } from "chart.js";
-import PortfolioDividendsChart from "../PortfolioDividendsChart/PortfolioDividendsChart";
-import PortfolioReturnsChart from "../PortfolioReturnsChart/PortfolioReturnsChart";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
+import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
+import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";
 
-Chart.register(...registerables);
-
-interface Props {
-  portfolioCurrency: string;
-}
-
-export default function Charts({ portfolioCurrency }: Props) {
-  const { id } = useParams();
-  const { data: stats, isFetching } = usePortfolioAllYearStats(+id!, undefined);
-
-  if (isFetching) {
-    return <LoadingSpin />;
-  }
-
+export default function Charts() {
   return (
     <Row style={{ marginTop: 16, marginBottom: 16 }}>
       <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <PortfolioReturnsChart stats={stats} />
+        <ChartPortfolioReturns />
       </Col>
       <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <PortfolioDividendsChart
-          stats={stats}
-          portfolioCurrency={portfolioCurrency}
-        />
+        <ChartPortfolioDividends />
       </Col>
     </Row>
   );

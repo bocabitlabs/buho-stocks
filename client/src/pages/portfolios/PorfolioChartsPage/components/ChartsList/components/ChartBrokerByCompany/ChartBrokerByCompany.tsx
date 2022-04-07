@@ -22,6 +22,14 @@ export default function ChartBrokerByCompany({ statsData }: Props) {
         display: true,
         text: t("Brokers"),
       },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const amount = `${context.label}: ${context.raw} ${t("companies")}`;
+            return amount;
+          },
+        },
+      },
     },
   };
 

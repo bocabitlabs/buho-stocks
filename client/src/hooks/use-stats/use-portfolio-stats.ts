@@ -13,7 +13,7 @@ export const fetchYearStats = async (
   if (groupBy) {
     grouping = `?groupBy=${groupBy}`;
   }
-  const { data } = await axios.get<IPortfolioYearStats>(
+  const { data } = await axios.get<IPortfolioYearStats[]>(
     `/api/v1/stats/portfolio/${portfolioId}/year/${year}/${grouping}`,
     getAxiosOptionsWithAuth(),
   );
@@ -34,7 +34,7 @@ export function usePortfolioYearStats(
   groupBy: string | undefined,
   otherOptions?: any,
 ) {
-  return useQuery<IPortfolioYearStats, Error>(
+  return useQuery<IPortfolioYearStats[], Error>(
     ["portfolioYearStats", portfolioId, year, groupBy],
     () => fetchYearStats(portfolioId, year, groupBy),
     {

@@ -22,6 +22,14 @@ export default function ChartCurrenciesByCompany({ statsData }: Props) {
         display: true,
         text: t("Currencies"),
       },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const amount = `${context.label}: ${context.raw} ${t("companies")}`;
+            return amount;
+          },
+        },
+      },
     },
   };
 

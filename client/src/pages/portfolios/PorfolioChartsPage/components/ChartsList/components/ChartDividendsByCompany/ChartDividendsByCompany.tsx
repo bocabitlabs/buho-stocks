@@ -42,7 +42,7 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
   };
 
   useEffect(() => {
-    async function loadInitialStats() {
+    function loadInitialStats() {
       console.log(
         `ChartDividendsByCompany: Loading stats data for ${statsData.length} companies`,
       );

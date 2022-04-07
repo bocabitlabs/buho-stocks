@@ -21,6 +21,16 @@ export default function ChartValueByCompany({ statsData }: Props) {
         display: true,
         text: t("Sectors"),
       },
+      tooltip: {
+        callbacks: {
+          label(context: any) {
+            const percentage = `${context.label}: ${context.raw} ${t(
+              "companies",
+            )}`;
+            return percentage;
+          },
+        },
+      },
     },
   };
 
