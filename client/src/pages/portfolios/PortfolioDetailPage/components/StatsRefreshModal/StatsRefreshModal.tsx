@@ -233,8 +233,8 @@ export default function StatsRefreshModal({
             valuePropName="checked"
           >
             <Checkbox.Group onChange={onChange} value={checkedList}>
-              {checkboxes.map((company, index: number) => (
-                <div key={index.toString()}>
+              {checkboxes.map((company) => (
+                <div key={company.toString()}>
                   <Checkbox value={company}>{company}</Checkbox>
                 </div>
               ))}

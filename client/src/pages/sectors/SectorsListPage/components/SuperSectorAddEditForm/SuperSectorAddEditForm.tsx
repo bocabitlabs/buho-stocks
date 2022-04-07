@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Form, Input, Modal } from "antd";
-import ColorSelector from "components/ColorSelector/ColorSelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import {
   useAddSuperSector,
@@ -27,7 +26,6 @@ function SuperSectorAddEditForm({
   onCancel,
 }: AddEditFormProps) {
   const [form] = Form.useForm();
-  const [color, setColor] = useState("#607d8b");
   const { t } = useTranslation();
 
   const { mutate: createSuperSector } = useAddSuperSector();
@@ -38,15 +36,7 @@ function SuperSectorAddEditForm({
     error: errorFetching,
     isFetching,
     isSuccess,
-  } = useSuperSector(sectorId, {
-    onSuccess: (data: any) => {
-      setColor(data.color);
-    },
-  });
-
-  const handleColorChange = (newColor: any) => {
-    setColor(newColor.hex);
-  };
+  } = useSuperSector(sectorId);
 
   const handleSuperSectorSubmit = async (newSector: any) => {
     if (sectorId) {
@@ -60,7 +50,7 @@ function SuperSectorAddEditForm({
     const { name, isSuperSector, superSectorId } = values;
     const newSector = {
       name,
-      color,
+      color: "#607d8b",
       superSector: superSectorId,
       isSuperSector,
     };
@@ -121,34 +111,6 @@ function SuperSectorAddEditForm({
             <Input
               type="text"
               placeholder={t("REIT, Banks, Semiconductors,...")}
-            />
-          </Form.Item>
-          <Form.Item
-            label={
-              <div>
-                {t("Color")}:{" "}
-                <svg
-                  width="35"
-                  height="35"
-                  viewBox="0 0 35 35"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <rect
-                    x="10"
-                    y="10"
-                    width="25"
-                    height="25"
-                    rx="5"
-                    ry="5"
-                    fill={color}
-                  />
-                </svg>
-              </div>
-            }
-          >
-            <ColorSelector
-              color={color}
-              handleColorChange={handleColorChange}
             />
           </Form.Item>
         </Form>

@@ -3,7 +3,7 @@ import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { allColors, hexToRgb } from "utils/colors";
+import { manyColors, hexToRgb } from "utils/colors";
 
 export default function ChartPortfolioDividendsPerMonth(): ReactElement {
   const { t } = useTranslation();
@@ -54,7 +54,7 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement {
         Object.entries(v as object).forEach(([k1, v1]) => {
           const monthIndex = tempChartData.labels.indexOf(k1);
           monthlyValues[monthIndex] = v1;
-          colorsArray[monthIndex] = hexToRgb(allColors[index]);
+          colorsArray[monthIndex] = hexToRgb(manyColors[index]);
         });
         const newDataset = {
           label: k,

@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { mapColorsToLabels } from "utils/colors";
 
 export default function ChartPortfolioDividends(): ReactElement {
   const { t } = useTranslation();
@@ -61,7 +62,10 @@ export default function ChartPortfolioDividends(): ReactElement {
         }
       });
       tempChartData.labels = newYears;
+      const { chartColors } = mapColorsToLabels(newYears);
+
       tempChartData.datasets[0].data = dividends;
+      tempChartData.datasets[0].backgroundColor = chartColors;
 
       setChartData(tempChartData);
     },

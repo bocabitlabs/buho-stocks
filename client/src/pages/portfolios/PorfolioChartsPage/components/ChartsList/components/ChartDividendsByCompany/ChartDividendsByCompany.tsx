@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
-import { allColors, hexToRgb } from "utils/colors";
+import { mapColorsToLabels } from "utils/colors";
 
 interface Props {
   statsData: any;
@@ -59,8 +59,6 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
       };
       const companies: any = [];
       const accumulatedDividends: any = [];
-      const colors: any = [];
-      const borders: any = [];
 
       statsData.sort((a: any, b: any) => {
         if (Number(a.accumulatedDividends) < Number(b.accumulatedDividends)) {
@@ -71,17 +69,16 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
         }
         return 0;
       });
-      statsData.forEach((stat: any, index: number) => {
+      statsData.forEach((stat: any) => {
         companies.push(stat.company.name);
         accumulatedDividends.push(Number(stat.accumulatedDividends));
-        const color = allColors[index];
-        colors.push(hexToRgb(color, 0.5));
-        borders.push(hexToRgb(color, 0.8));
       });
       tempData.labels = companies;
       tempData.datasets[0].data = accumulatedDividends;
-      tempData.datasets[0].backgroundColor = colors;
-      tempData.datasets[0].borderColor = borders;
+      const { chartColors, chartBorders } = mapColorsToLabels(companies);
+
+      tempData.datasets[0].backgroundColor = chartColors;
+      tempData.datasets[0].borderColor = chartBorders;
 
       setData(tempData);
     }

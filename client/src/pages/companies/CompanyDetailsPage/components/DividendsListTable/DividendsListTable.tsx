@@ -1,7 +1,6 @@
 import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Button, Popconfirm, Space, Spin, Table, Typography } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -29,7 +28,7 @@ export default function DividendsListTable({
   const { isFetching: loading, data: transactions } = useDividendsTransactions(
     +companyId!,
   );
-  const { mutateAsync: deleteTransaction } = useDeleteDividendsTransaction();
+  const { mutate: deleteTransaction } = useDeleteDividendsTransaction();
   const [selectedId, setSelectedId] = useState<number | undefined>(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -47,15 +46,10 @@ export default function DividendsListTable({
   };
 
   const confirmDelete = async (recordId: number) => {
-    try {
-      await deleteTransaction({
-        companyId: +companyId!,
-        transactionId: recordId,
-      });
-      toast.success(t("Dividends transaction deleted successfully"));
-    } catch (error) {
-      toast.error(t(`Error deleting dividends transaction: ${error}`));
-    }
+    deleteTransaction({
+      companyId: +companyId!,
+      transactionId: recordId,
+    });
   };
 
   if (loading) {

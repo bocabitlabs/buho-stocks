@@ -155,10 +155,10 @@ export default function Form(): ReactElement {
               <Typography.Title level={4}>
                 Importing trades from Interactive Brokers:
               </Typography.Title>
-              {data.map((element: any, index: number) => {
+              {data.map((element: any) => {
                 return (
                   <TradesImportForm
-                    key={index.toString()}
+                    key={selectedPortfolio.id}
                     inputData={element.data}
                     portfolio={selectedPortfolio}
                   />
@@ -173,10 +173,10 @@ export default function Form(): ReactElement {
                 <Typography.Title level={4}>
                   Importing dividends from Interactive Brokers:
                 </Typography.Title>
-                {data.map((element: any, index: number) => {
+                {data.map((element: any) => {
                   return (
                     <DividendsImportForm
-                      key={index.toString()}
+                      key={selectedPortfolio.id}
                       inputData={element}
                       portfolio={selectedPortfolio}
                     />

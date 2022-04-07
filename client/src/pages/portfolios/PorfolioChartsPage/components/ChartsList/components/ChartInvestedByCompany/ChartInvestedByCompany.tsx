@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
+import { mapColorsToLabels } from "utils/colors";
 
 interface Props {
   statsData: any;
@@ -61,7 +62,10 @@ export default function ChartInvestedByCompany({ statsData }: Props) {
         accumulatedInvestment.push(Number(stat.accumulatedInvestment));
       });
       tempData.labels = companies;
+      const { chartColors } = mapColorsToLabels(companies);
+
       tempData.datasets[0].data = accumulatedInvestment;
+      tempData.datasets[0].backgroundColor = chartColors;
 
       setData(tempData);
     }

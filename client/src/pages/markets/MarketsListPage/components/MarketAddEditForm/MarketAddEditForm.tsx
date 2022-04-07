@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Alert, Col, Form, Input, Modal, Row, Select, TimePicker } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import {
@@ -31,7 +30,6 @@ function MarketAddEditForm({
   onCancel,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
-  const [color, setColor] = useState("#607d8b");
   const [region, setRegion] = useState("");
   const { t } = useTranslation();
   const { data: timezones, isLoading: timezonesLoading } = useTimezones();
@@ -43,17 +41,15 @@ function MarketAddEditForm({
     isFetching: fetchingMarket,
   } = useMarket(marketId, {
     onSuccess: (data: any) => {
-      setColor(data.color);
       setRegion(data.region);
     },
   });
 
   useEffect(() => {
-    if (color && region) {
-      setColor(color);
+    if (region) {
       setRegion(region);
     }
-  }, [color, region]);
+  }, [region]);
 
   const handleSubmit = async (values: any) => {
     const { name, description, openTime, closeTime, timezone } = values;
@@ -61,7 +57,7 @@ function MarketAddEditForm({
       name,
       description,
       region,
-      color,
+      color: "#607d8b",
       openTime: openTime.format("HH:mm"),
       closeTime: closeTime.format("HH:mm"),
       timezone,
@@ -71,10 +67,6 @@ function MarketAddEditForm({
     } else {
       createMarket(newMarket);
     }
-  };
-
-  const handleColorChange = (newColor: any) => {
-    setColor(newColor.hex);
   };
 
   const handleCountryChange = (code: string) => {
@@ -179,36 +171,6 @@ function MarketAddEditForm({
               />
             </Form.Item>
           </Col>
-          <Col span={24}>
-            <Form.Item
-              label={
-                <div>
-                  {t("Color")}:{" "}
-                  <svg
-                    width="35"
-                    height="35"
-                    viewBox="0 0 35 35"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect
-                      x="10"
-                      y="10"
-                      width="25"
-                      height="25"
-                      rx="5"
-                      ry="5"
-                      fill={color}
-                    />
-                  </svg>
-                </div>
-              }
-            >
-              <ColorSelector
-                color={color}
-                handleColorChange={handleColorChange}
-              />
-            </Form.Item>
-          </Col>
           <Col span={12}>
             <Form.Item
               name="openTime"
@@ -248,8 +210,8 @@ function MarketAddEditForm({
                   0
                 }
               >
-                {timezones?.map((timezone: any, index: number) => (
-                  <Select.Option value={timezone.name} key={index.toString()}>
+                {timezones?.map((timezone: any) => (
+                  <Select.Option value={timezone.name} key={timezone.name}>
                     {timezone.name}
                   </Select.Option>
                 ))}

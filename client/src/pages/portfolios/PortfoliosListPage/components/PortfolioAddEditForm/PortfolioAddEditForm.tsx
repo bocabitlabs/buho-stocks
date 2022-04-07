@@ -1,7 +1,6 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Form, Input, Modal, Select, Switch } from "antd";
-import ColorSelector from "components/ColorSelector/ColorSelector";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
@@ -30,7 +29,6 @@ function PortfolioAddEditForm({
   portfolioId,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
-  const [color, setColor] = useState("#607d8b");
   const [countryCode, setCountryCode] = useState("");
   const { t } = useTranslation();
   const { mutate: createPortfolio } = useAddPortfolio();
@@ -44,7 +42,6 @@ function PortfolioAddEditForm({
 
   useEffect(() => {
     if (portfolio) {
-      setColor(portfolio.color);
       setCountryCode(portfolio.countryCode);
     }
   }, [portfolio]);
@@ -53,7 +50,7 @@ function PortfolioAddEditForm({
     const { name, description, baseCurrencyId, hideClosedCompanies } = values;
     const newPortfolio = {
       name,
-      color,
+      color: "#607d8b",
       description,
       baseCurrency: baseCurrencyId,
       hideClosedCompanies: !!hideClosedCompanies,
@@ -65,10 +62,6 @@ function PortfolioAddEditForm({
     } else {
       createPortfolio(newPortfolio);
     }
-  };
-
-  const handleColorChange = (newColor: any) => {
-    setColor(newColor.hex);
   };
 
   const handleCountryChange = (newValue: string) => {
@@ -133,31 +126,6 @@ function PortfolioAddEditForm({
           ]}
         >
           <Input type="text" />
-        </Form.Item>
-        <Form.Item
-          label={
-            <div>
-              {t("Color")}:{" "}
-              <svg
-                width="35"
-                height="35"
-                viewBox="0 0 35 35"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <rect
-                  x="10"
-                  y="10"
-                  width="25"
-                  height="25"
-                  rx="5"
-                  ry="5"
-                  fill={color}
-                />
-              </svg>
-            </div>
-          }
-        >
-          <ColorSelector color={color} handleColorChange={handleColorChange} />
         </Form.Item>
         <Form.Item name="baseCurrencyId" label={t("Base currency")}>
           <Select

@@ -88,8 +88,8 @@ function SettingsForm(): ReactElement | null {
             option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
           }
         >
-          {timezones?.map((timezone: any, index: number) => (
-            <Select.Option value={timezone.name} key={index.toString()}>
+          {timezones?.map((timezone: any) => (
+            <Select.Option value={timezone.name} key={timezone.name}>
               {timezone.name}
             </Select.Option>
           ))}
