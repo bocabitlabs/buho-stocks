@@ -2,15 +2,14 @@ import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { hexToRgb, manyColors } from "utils/colors";
 
-export default function ChartPortfolioReturns(): ReactElement {
+export default function ChartPortfolioReturns(): ReactElement | null {
   const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>();
-  const { data, isFetching: loading } = usePortfolioAllYearStats(+id!);
+  const { data } = usePortfolioAllYearStats(+id!);
 
   const options = {
     responsive: true,
@@ -109,8 +108,8 @@ export default function ChartPortfolioReturns(): ReactElement {
     }
   }, [data, t]);
 
-  if (!chartData || loading) {
-    return <LoadingSpin />;
+  if (chartData) {
+    return <Line options={options} data={chartData} />;
   }
-  return <Line options={options} data={chartData} />;
+  return null;
 }

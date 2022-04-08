@@ -1,19 +1,22 @@
 import React, { useEffect } from "react";
 import { Pie } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
+import { useParams } from "react-router-dom";
+import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
 
-interface Props {
-  statsData: any;
-}
-export default function ChartDividendsByCompany({ statsData }: Props) {
+export default function ChartDividendsByCompany() {
   const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
+  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
+  const { id } = useParams();
+  const { data: statsData } = usePortfolioYearStats(+id!, "all", "company");
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
+        display: false,
         position: "bottom" as const,
       },
       title: {
@@ -42,51 +45,60 @@ export default function ChartDividendsByCompany({ statsData }: Props) {
   };
 
   useEffect(() => {
+    if (statsData) {
+      const tempData: any = statsData.filter((item: any) => {
+        return item.sharesCount > 0;
+      });
+
+      setFilteredChartData(tempData);
+    }
+  }, [statsData]);
+
+  useEffect(() => {
     function loadInitialStats() {
-      console.log(
-        `ChartDividendsByCompany: Loading stats data for ${statsData.length} companies`,
-      );
-      const tempData = {
-        labels: [],
-        datasets: [
-          {
-            label: t("Dividends"),
-            data: [],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-          },
-        ],
-      };
-      const companies: any = [];
-      const accumulatedDividends: any = [];
+      if (filteredChartData) {
+        const tempData = {
+          labels: [],
+          datasets: [
+            {
+              label: t("Dividends"),
+              data: [],
+              borderColor: "rgb(255, 99, 132)",
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+            },
+          ],
+        };
+        const companies: any = [];
+        const accumulatedDividends: any = [];
 
-      statsData.sort((a: any, b: any) => {
-        if (Number(a.accumulatedDividends) < Number(b.accumulatedDividends)) {
-          return 1;
-        }
-        if (Number(a.accumulatedDividends) > Number(b.accumulatedDividends)) {
-          return -1;
-        }
-        return 0;
-      });
-      statsData.forEach((stat: any) => {
-        companies.push(stat.company.name);
-        accumulatedDividends.push(Number(stat.accumulatedDividends));
-      });
-      tempData.labels = companies;
-      tempData.datasets[0].data = accumulatedDividends;
-      const { chartColors, chartBorders } = mapColorsToLabels(companies);
+        filteredChartData.sort((a: any, b: any) => {
+          if (Number(a.accumulatedDividends) < Number(b.accumulatedDividends)) {
+            return 1;
+          }
+          if (Number(a.accumulatedDividends) > Number(b.accumulatedDividends)) {
+            return -1;
+          }
+          return 0;
+        });
+        filteredChartData.forEach((stat: any) => {
+          companies.push(stat.company.name);
+          accumulatedDividends.push(Number(stat.accumulatedDividends));
+        });
+        tempData.labels = companies;
+        tempData.datasets[0].data = accumulatedDividends;
+        const { chartColors, chartBorders } = mapColorsToLabels(companies);
 
-      tempData.datasets[0].backgroundColor = chartColors;
-      tempData.datasets[0].borderColor = chartBorders;
+        tempData.datasets[0].backgroundColor = chartColors;
+        tempData.datasets[0].borderColor = chartBorders;
 
-      setData(tempData);
+        setData(tempData);
+      }
     }
     loadInitialStats();
-  }, [statsData, t]);
+  }, [filteredChartData, t]);
 
-  if (!data) {
-    return <div>Loading...</div>;
+  if (data) {
+    return <Pie options={options} data={data} />;
   }
-  return <Pie options={options} data={data} />;
+  return null;
 }

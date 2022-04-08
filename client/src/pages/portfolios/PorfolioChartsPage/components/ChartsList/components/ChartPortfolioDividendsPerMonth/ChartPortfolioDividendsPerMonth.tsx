@@ -6,17 +6,13 @@ import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { manyColors, hexToRgb } from "utils/colors";
 
-export default function ChartPortfolioDividendsPerMonth(): ReactElement {
+export default function ChartPortfolioDividendsPerMonth(): ReactElement | null {
   const { t } = useTranslation();
   const { id } = useParams();
   const { data: portfolio } = usePortfolio(+id!);
 
   const [chartData, setChartData] = React.useState<any>(null);
-  const { data, isFetching: loading } = usePortfolioYearStats(
-    +id!,
-    "all",
-    "month",
-  );
+  const { data } = usePortfolioYearStats(+id!, "all", "month");
 
   const options = {
     responsive: true,
@@ -90,8 +86,8 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement {
     }
   }, [data, t]);
 
-  if (!chartData || loading) {
-    return <div>{t("Loading...")}</div>;
+  if (chartData) {
+    return <Bar options={options} data={chartData} />;
   }
-  return <Bar options={options} data={chartData} />;
+  return null;
 }

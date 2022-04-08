@@ -3,7 +3,6 @@ import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Form, Select, Space } from "antd";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
@@ -130,26 +129,29 @@ export default function ChartInvestedByCompany() {
     loadFirstYear();
   }, [portfolio]);
 
-  return (
-    <Space direction="vertical" style={{ width: "100%" }}>
-      <Form layout="inline">
-        <Form.Item label={t("Year")}>
-          <Select
-            placeholder="Select a year"
-            defaultValue={selectedYear}
-            style={{ width: 120 }}
-            onChange={handleYearChange}
-          >
-            <Select.Option value="all">All</Select.Option>
-            {years.map((yearItem: any) => (
-              <Select.Option key={yearItem} value={yearItem}>
-                {yearItem}
-              </Select.Option>
-            ))}
-          </Select>
-        </Form.Item>
-      </Form>
-      {data ? <Bar options={options} data={data} /> : <LoadingSpin />}
-    </Space>
-  );
+  if (data) {
+    return (
+      <Space direction="vertical" style={{ width: "100%" }}>
+        <Form layout="inline">
+          <Form.Item label={t("Year")}>
+            <Select
+              placeholder="Select a year"
+              defaultValue={selectedYear}
+              style={{ width: 120 }}
+              onChange={handleYearChange}
+            >
+              <Select.Option value="all">All</Select.Option>
+              {years.map((yearItem: any) => (
+                <Select.Option key={yearItem} value={yearItem}>
+                  {yearItem}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        </Form>
+        <Bar options={options} data={data} />
+      </Space>
+    );
+  }
+  return null;
 }

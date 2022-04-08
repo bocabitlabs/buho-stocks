@@ -1,5 +1,5 @@
-import React, { ReactElement, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import React, { ReactElement } from "react";
+import { useTranslation } from "react-i18next";
 import { Col, Row } from "antd";
 import ChartBrokerByCompany from "./components/ChartBrokerByCompany/ChartBrokerByCompany";
 import ChartCurrenciesByCompany from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompany";
@@ -13,31 +13,25 @@ import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany/
 import ChartValueByCompany from "./components/ChartValueByCompany/ChartValueByCompany";
 import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
 import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
+import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 
 export default function ChartsList(): ReactElement {
-  // Params
-  const { id } = useParams();
+  const { t } = useTranslation();
+
   // States
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  // Hooks
-  const { data } = usePortfolioYearStats(+id!, "all", "company");
   const rowStyle = {
     marginTop: 20,
   };
 
-  useEffect(() => {
-    if (data) {
-      const tempData: any = data.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
-
-      setFilteredChartData(tempData);
-    }
-  }, [data]);
-
   return (
-    <div>
+    <React.Suspense
+      fallback={
+        <LoadingSpin
+          text={`${t("Loading charts...")}`}
+          style={{ marginTop: 20 }}
+        />
+      }
+    >
       <Row>
         <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
           <ChartPortfolioReturns />
@@ -52,49 +46,46 @@ export default function ChartsList(): ReactElement {
           <ChartPortfolioDividendsPerMonth />
         </Col>
       </Row>
-      {filteredChartData && (
-        <>
-          <Row style={rowStyle}>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
-              <ChartInvestedByCompany />
-            </Col>
-          </Row>
-          <Row style={rowStyle}>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
-              <ChartInvestedByCompanyYearly />
-            </Col>
-          </Row>
-          <Row style={rowStyle}>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
-              <ChartValueByCompany statsData={filteredChartData} />
-            </Col>
-          </Row>
-          <Row style={rowStyle}>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 16, offset: 4 }}>
-              <ChartDividendsByCompany statsData={filteredChartData} />
-            </Col>
-          </Row>
-          <Row style={rowStyle}>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-              <ChartSectorsByCompany statsData={filteredChartData} />
-            </Col>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-              <ChartSuperSectorsByCompany statsData={filteredChartData} />
-            </Col>
-          </Row>
-          <Row style={rowStyle}>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-              <ChartCurrenciesByCompany statsData={filteredChartData} />
-            </Col>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-              <ChartBrokerByCompany statsData={filteredChartData} />
-            </Col>
-            <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-              <ChartMarketByCompany statsData={filteredChartData} />
-            </Col>
-          </Row>
-        </>
-      )}
-    </div>
+
+      <Row style={rowStyle}>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
+          <ChartInvestedByCompany />
+        </Col>
+      </Row>
+      <Row style={rowStyle}>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
+          <ChartInvestedByCompanyYearly />
+        </Col>
+      </Row>
+      <Row style={rowStyle}>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
+          <ChartValueByCompany />
+        </Col>
+      </Row>
+      <Row style={rowStyle}>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 16, offset: 4 }}>
+          <ChartDividendsByCompany />
+        </Col>
+      </Row>
+      <Row style={rowStyle}>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
+          <ChartSectorsByCompany />
+        </Col>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
+          <ChartSuperSectorsByCompany />
+        </Col>
+      </Row>
+      <Row style={rowStyle}>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
+          <ChartCurrenciesByCompany />
+        </Col>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
+          <ChartBrokerByCompany />
+        </Col>
+        <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
+          <ChartMarketByCompany />
+        </Col>
+      </Row>
+    </React.Suspense>
   );
 }

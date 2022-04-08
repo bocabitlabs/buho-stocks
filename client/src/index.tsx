@@ -1,10 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Chart, registerables } from "chart.js";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "./i18n";
 import reportWebVitals from "./reportWebVitals";
 import Main from "Main";
+
+Chart.register(...registerables);
 
 ReactDOM.render(
   <React.StrictMode>

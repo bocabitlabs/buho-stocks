@@ -54,11 +54,13 @@ export default function CompanyDetailsPage(): ReactElement {
         stats={company.stats}
         portfolioCurrency={company.portfolio.baseCurrency}
       />
-      <TransactionsTabs
-        companyBaseCurrency={company.baseCurrency}
-        companyDividendsCurrency={company.dividendsCurrency}
-        portfolioBaseCurrency={company.portfolio.baseCurrency}
-      />
+      <React.Suspense fallback={<LoadingSpin />}>
+        <TransactionsTabs
+          companyBaseCurrency={company.baseCurrency}
+          companyDividendsCurrency={company.dividendsCurrency}
+          portfolioBaseCurrency={company.portfolio.baseCurrency}
+        />
+      </React.Suspense>
       <CompanyExtraInfo companyDescription={company.description} />
     </CompanyDetailsPageHeader>
   );
