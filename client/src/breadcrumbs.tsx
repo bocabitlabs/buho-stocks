@@ -1,11 +1,12 @@
 import React from "react";
+import { Translation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Breadcrumb } from "antd";
 
 export default function breadCrumbRender(props: any, originBreadcrumb: any) {
   const homeRoute = {
     path: "/app/home",
-    breadcrumbName: "Home",
+    breadcrumbName: <Translation>{(t) => <>{t("Home")}</>}</Translation>,
   };
   return (
     <Breadcrumb>

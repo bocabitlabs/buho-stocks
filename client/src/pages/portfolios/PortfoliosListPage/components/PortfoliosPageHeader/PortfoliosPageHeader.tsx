@@ -12,7 +12,7 @@ function PortfoliosPageHeader({ children }: Props) {
   const routes = [
     {
       path: "/app/home",
-      breadcrumbName: "Home",
+      breadcrumbName: t("Home"),
     },
   ];
   const [isModalVisible, setIsModalVisible] = useState(false);
