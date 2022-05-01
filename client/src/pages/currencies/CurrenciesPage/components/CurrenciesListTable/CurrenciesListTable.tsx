@@ -10,6 +10,11 @@ export default function CurrenciesListTable() {
 
   const columns: any = [
     {
+      title: "#",
+      dataIndex: "count",
+      key: "count",
+    },
+    {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
@@ -29,21 +34,14 @@ export default function CurrenciesListTable() {
       render: (text: string) => text,
       sorter: (a: ICurrency, b: ICurrency) => a.symbol.localeCompare(b.symbol),
     },
-    {
-      title: t("Countries"),
-      dataIndex: "countries",
-      key: "countries",
-      render: (text: string[]) => text.join(", "),
-      sorter: (a: ICurrency, b: ICurrency) =>
-        a.countries.localeCompare(b.countries),
-    },
   ];
 
   const getData = () => {
     return (
       data &&
-      data.map((currency: ICurrency) => ({
+      data.map((currency: ICurrency, index: number) => ({
         id: currency.code,
+        count: index + 1,
         key: currency.code,
         name: currency.name,
         code: currency.code,

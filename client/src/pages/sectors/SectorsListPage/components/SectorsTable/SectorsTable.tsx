@@ -37,14 +37,9 @@ export default function SectorsTable() {
 
   const columns: any = [
     {
-      title: "",
-      dataIndex: "color",
-      key: "color",
-      render: (text: string) => (
-        <svg height="20" width="20">
-          <circle cx="10" cy="10" r="10" fill={text} />
-        </svg>
-      ),
+      title: "#",
+      dataIndex: "count",
+      key: "count",
     },
     {
       title: t("Name"),
@@ -85,8 +80,9 @@ export default function SectorsTable() {
   const getData = () => {
     return (
       sectors &&
-      sectors.map((element: ISector) => ({
+      sectors.map((element: ISector, index: number) => ({
         id: element.id,
+        count: index + 1,
         key: element.id,
         name: element.name,
         color: element.color,
