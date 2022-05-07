@@ -15,7 +15,7 @@ export const fetchExchangeRate = async (
   }
 
   const { data } = await axios.get<IExchangeRate>(
-    `/api/v1/exchange-rates/${fromCurrencyCode}/${toCurrencyCode}/${transactionDate}`,
+    `/api/v1/exchange-rates/${fromCurrencyCode}/${toCurrencyCode}/${transactionDate}/`,
     getAxiosOptionsWithAuth(),
   );
   return data;
@@ -31,6 +31,7 @@ export function useExchangeRate(
     () => fetchExchangeRate(fromCurrencyCode, toCurrencyCode, transactionDate),
     {
       enabled: false,
+      useErrorBoundary: false,
     },
   );
 }
