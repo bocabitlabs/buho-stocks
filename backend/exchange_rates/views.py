@@ -1,3 +1,4 @@
+import logging
 from rest_framework.response import Response
 from rest_framework.authentication import (
     TokenAuthentication,
@@ -13,7 +14,7 @@ from exchange_rates.utils import ExchangeRatesUtils
 
 from forex_python.converter import RatesNotAvailableError
 
-
+logger = logging.getLogger("buho_backend")
 class ExchangeRateListAPIView(APIView):
     """Get all the exchange rates from a user"""
 
@@ -68,10 +69,11 @@ class ExchangeRateDetailAPIView(APIView):
                         {"res": "Exchange rate does not exists"},
                         status=status.HTTP_400_BAD_REQUEST,
                     )
-            except RatesNotAvailableError as error:
+            except Exception as error:
+                logger.debug(f"Error: {error}")
                 return Response(
-                    {"error": True, "message": str(error)},
-                    status=status.HTTP_404_NOT_FOUND,
+                    {"error": True, "message": "Server error"},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 )
         else:
             serializer = ExchangeRateSerializer(todo_instance)
