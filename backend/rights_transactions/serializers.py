@@ -16,6 +16,7 @@ class RightsTransactionSerializer(serializers.ModelSerializer):
     total_commission = MoneyField(max_digits=12, decimal_places=3)
     total_commission_currency = serializers.CharField(max_length=50)
 
+    notes = serializers.CharField(allow_null = True, required=False)
     class Meta:
         model = RightsTransaction
         fields = [
