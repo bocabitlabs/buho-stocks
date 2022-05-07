@@ -17,7 +17,6 @@ const queryCache = new QueryCache({
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      suspense: true,
       retry: 2,
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60, // 60 seconds

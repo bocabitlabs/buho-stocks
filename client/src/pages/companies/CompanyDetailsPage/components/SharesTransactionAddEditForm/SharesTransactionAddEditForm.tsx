@@ -56,7 +56,11 @@ export default function SharesTransactionAddEditForm({
     moment(new Date()).format(dateFormat),
   );
   const { t } = useTranslation();
-  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+  const {
+    data: exchangeRateData,
+    isRefetching: exchangeRateLoading,
+    refetch,
+  } = useExchangeRate(
     companyBaseCurrency.code,
     portfolioBaseCurrency,
     currentTransactionDate,
@@ -86,20 +90,7 @@ export default function SharesTransactionAddEditForm({
     },
   });
   const fetchExchangeRate = async () => {
-    const { data: exchangeRateResult } = await refetch();
-    if (exchangeRateResult) {
-      console.debug(exchangeRateResult);
-      form.setFieldsValue({
-        exchangeRate: exchangeRateResult.exchangeRate,
-      });
-    } else {
-      form.setFields([
-        {
-          name: "exchangeRate",
-          errors: [t("Unable to fetch the exchange rates for the given date")],
-        },
-      ]);
-    }
+    refetch();
   };
 
   const handleSubmit = async (values: any) => {
@@ -146,25 +137,6 @@ export default function SharesTransactionAddEditForm({
     setCurrentTransactionDate(dateString);
   };
 
-  // const updateFieldsForING = () => {
-  //   const count = form.getFieldValue("count");
-  //   const price = form.getFieldValue("price");
-  //   let total = form.getFieldValue("total");
-  //   const exchangeRate = form.getFieldValue("exchangeRate");
-
-  //   total *= 1 / exchangeRate;
-  //   const totalInvested = +count * +price;
-  //   let newCommission = total - totalInvested;
-
-  //   if (newCommission < 0) {
-  //     newCommission *= -1;
-  //   }
-
-  //   form.setFieldsValue({
-  //     commission: newCommission
-  //   });
-  // };
-
   const handleFormSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -175,6 +147,22 @@ export default function SharesTransactionAddEditForm({
       console.log("Validate Failed:", error);
     }
   };
+
+  useEffect(() => {
+    if (exchangeRateData) {
+      console.debug(exchangeRateData);
+      form.setFieldsValue({
+        exchangeRate: exchangeRateData.exchangeRate,
+      });
+    } else {
+      form.setFields([
+        {
+          name: "exchangeRate",
+          errors: [t("Unable to fetch the exchange rates for the given date")],
+        },
+      ]);
+    }
+  }, [exchangeRateData, form, t]);
 
   useEffect(() => {
     if (transaction) {
@@ -292,7 +280,9 @@ export default function SharesTransactionAddEditForm({
               <Col span={12}>
                 <Form.Item
                   name="exchangeRate"
-                  label={t("Exchange rate")}
+                  label={`${t("Exchange rate")} (${
+                    companyBaseCurrency.code
+                  } to ${portfolioBaseCurrency})`}
                   rules={[
                     {
                       required: true,
@@ -316,8 +306,7 @@ export default function SharesTransactionAddEditForm({
                     onClick={fetchExchangeRate}
                     loading={exchangeRateLoading}
                   >
-                    {t("Get exchange rate")} ({companyBaseCurrency.code} to{" "}
-                    {portfolioBaseCurrency})
+                    {t("Get exchange rate")}
                   </Button>
                 </Form.Item>
               </Col>

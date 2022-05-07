@@ -1,5 +1,4 @@
 import React, { ReactElement } from "react";
-import { useTranslation } from "react-i18next";
 import { Col, Row } from "antd";
 import ChartBrokerByCompany from "./components/ChartBrokerByCompany/ChartBrokerByCompany";
 import ChartCurrenciesByCompany from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompany";
@@ -13,25 +12,15 @@ import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany/
 import ChartValueByCompany from "./components/ChartValueByCompany/ChartValueByCompany";
 import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
 import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 
 export default function ChartsList(): ReactElement {
-  const { t } = useTranslation();
-
   // States
   const rowStyle = {
     marginTop: 20,
   };
 
   return (
-    <React.Suspense
-      fallback={
-        <LoadingSpin
-          text={`${t("Loading charts...")}`}
-          style={{ marginTop: 20 }}
-        />
-      }
-    >
+    <>
       <Row>
         <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
           <ChartPortfolioReturns />
@@ -86,6 +75,6 @@ export default function ChartsList(): ReactElement {
           <ChartMarketByCompany />
         </Col>
       </Row>
-    </React.Suspense>
+    </>
   );
 }

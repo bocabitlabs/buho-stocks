@@ -36,31 +36,15 @@ export default function PortfolioDetailsPage() {
       portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
-      <React.Suspense
-        fallback={
-          <>
-            <LoadingSpin /> Loading stats...
-          </>
-        }
-      >
-        <YearSelector
-          id={id}
-          firstYear={portfolio.firstYear}
-          companies={portfolio ? portfolio.companies : []}
-        />
-      </React.Suspense>
-      <React.Suspense
-        fallback={
-          <>
-            <LoadingSpin /> Loading companies...
-          </>
-        }
-      >
-        <CompaniesList
-          companies={portfolio ? portfolio.companies : []}
-          portfolioBaseCurrency={portfolio.baseCurrency}
-        />
-      </React.Suspense>
+      <YearSelector
+        id={id}
+        firstYear={portfolio.firstYear}
+        companies={portfolio ? portfolio.companies : []}
+      />
+      <CompaniesList
+        companies={portfolio ? portfolio.companies : []}
+        portfolioBaseCurrency={portfolio.baseCurrency}
+      />
     </PortfolioDetailsPageHeader>
   );
 }
