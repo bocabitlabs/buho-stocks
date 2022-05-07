@@ -20,10 +20,11 @@ class ExchangeRatesUtils:
         if isinstance(exchange_date, str):
             exchange_date = datetime.datetime.strptime(exchange_date, "%Y-%m-%d").date()
 
-        currency_rates = CurrencyRates()
+        currency_rates_api = CurrencyRates()
         logger.debug(f"Making request: {exchange_from} {exchange_date}")
-        rates = currency_rates.get_rates(exchange_from, exchange_date)
+        rates = currency_rates_api.get_rates(exchange_from, exchange_date)
         desired_exchange = None
+        formatted_rates = []
         for key in rates:
             data = {
                 "exchange_from": exchange_from,
@@ -31,7 +32,11 @@ class ExchangeRatesUtils:
                 "exchange_date": exchange_date,
                 "exchange_rate": round(rates[key], 3),
             }
-            serializer = ExchangeRateSerializer(data=data)
+            formatted_rates.append(data)
+        logger.debug(f"Formatted rates: {formatted_rates}")
+
+        for rate in formatted_rates:
+            serializer = ExchangeRateSerializer(data=rate)
             if serializer.is_valid():
                 serializer.save()
                 if key == exchange_to:
@@ -39,6 +44,7 @@ class ExchangeRatesUtils:
             else:
                 logger.debug("Serializer is not valid")
                 logger.debug(serializer.errors)
+
         return desired_exchange
 
 
