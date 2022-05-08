@@ -23,7 +23,7 @@ class ExchangeRatesUtils:
         currency_rates_api = CurrencyRates()
         logger.debug(f"Making request: {exchange_from} {exchange_date}")
         rates = currency_rates_api.get_rates(exchange_from, exchange_date)
-        desired_exchange = None
+        wanted_exchange = None
         formatted_rates = []
         for key in rates:
             data = {
@@ -33,40 +33,40 @@ class ExchangeRatesUtils:
                 "exchange_rate": round(rates[key], 3),
             }
             formatted_rates.append(data)
-        logger.debug(f"Formatted rates: {formatted_rates}")
 
         for rate in formatted_rates:
             serializer = ExchangeRateSerializer(data=rate)
             if serializer.is_valid():
                 serializer.save()
                 if key == exchange_to:
-                    desired_exchange = serializer
+                    wanted_exchange = serializer
             else:
                 logger.debug("Serializer is not valid")
                 logger.debug(serializer.errors)
 
-        return desired_exchange
+        return wanted_exchange
 
 
     def get_exchange_rate_for_date(self, from_currency: str, to_currency: str, transaction_date: str):
         exchange_rate_value = 1
-        if self.use_currency == "portfolio":
-            if from_currency != to_currency:
-                try:
-                    exchange_rate = ExchangeRate.objects.get(
-                        exchange_from=from_currency,
-                        exchange_to=to_currency,
-                        exchange_date=transaction_date,
-                    )
-                    exchange_rate_value = exchange_rate.exchange_rate
-                except ExchangeRate.DoesNotExist:
-                    try:
-                        exchange_rate = self.get_exchange_rates_from_api(
-                            from_currency,
-                            to_currency,
-                            transaction_date,
+
+        try:
+            if self.use_currency == "portfolio":
+                if from_currency != to_currency:
+                        exchange_rate = ExchangeRate.objects.get(
+                            exchange_from=from_currency,
+                            exchange_to=to_currency,
+                            exchange_date=transaction_date,
                         )
-                        exchange_rate_value = exchange_rate["exchange_rate"].value
-                    except RatesNotAvailableError as error:
-                        logger.debug(str(error))
+                        exchange_rate_value = exchange_rate.exchange_rate
+        except ExchangeRate.DoesNotExist:
+            exchange_rate = self.get_exchange_rates_from_api(
+                from_currency,
+                to_currency,
+                transaction_date,
+            )
+            if exchange_rate:
+                exchange_rate_value = exchange_rate["exchange_rate"].value
+        except RatesNotAvailableError as error:
+            logger.debug(str(error))
         return exchange_rate_value

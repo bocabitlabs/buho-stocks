@@ -3,10 +3,8 @@ from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
-import factory
 from auth.tests.factory import UserFactory
 from django.contrib.auth.models import User
-
 
 class UserSettingsListTestCase(APITestCase):
     @classmethod
@@ -46,14 +44,17 @@ class UserSettingsDetailTestCase(APITestCase):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_update_settings(self):
-        temp_data = {"language": "en"}
+        temp_data = {"language": "en", "timezone": "Europe/Paris"}
         url = reverse("user-settings-detail", args=[self.user_saved.usersettings.id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(len(User.objects.all()), 1)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["language"],
             temp_data["language"],
+        )
+        self.assertEqual(
+            response.data["timezone"],
+            temp_data["timezone"],
         )

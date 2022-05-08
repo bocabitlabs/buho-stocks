@@ -79,7 +79,7 @@ class ExchangeRateUtilsTestCase(APITestCase):
         "forex_python.converter.CurrencyRates.get_rates"
     )
     def test_get_exchange_rate_not_found(self, mock_request):
-        expected_eur_value = "0.882"
+        expected_eur_value = 1
         with open(f"{pathlib.Path(__file__).parent.resolve()}/api_response.json") as f:
             response_text = json.load(f)
         mock_request.return_value = response_text

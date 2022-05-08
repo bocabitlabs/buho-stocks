@@ -14,7 +14,6 @@ class RightsTransactionFactory(django.DjangoModelFactory):
 
     total_commission = Faker('pydecimal', left_digits=4, right_digits=3, positive=True)
     exchange_rate = Faker('pydecimal', left_digits=1, right_digits=3, positive=True)
-    color = Faker("color")
     transaction_date = Faker('date_object')
     notes = Faker("paragraph")
 

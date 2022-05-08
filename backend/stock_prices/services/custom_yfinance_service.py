@@ -64,7 +64,7 @@ class CustomYFinanceService(StockPriceServiceBase):
 
         return prices
 
-    def request_from_api(self, ticker, from_date, to_date):
+    def request_from_api(self, ticker: str, from_date: str, to_date: str):
         # Convert from_date to datetime
         from_date_datetime = datetime.strptime(from_date, "%Y-%m-%d")
         # Convert to_date to datetime
