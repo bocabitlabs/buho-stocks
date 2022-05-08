@@ -5,7 +5,7 @@
 <p align="center">Application to manage and track a stocks portfolio with dividends and return for a <a href="https://en.wikipedia.org/wiki/Buy_and_hold" title="Wikipedia">Buy & Hold investment</a> investment strategy.</p>
 
 <p align="center">
-<img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks-docker/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks-docker" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks-docker/branch/main/graph/badge.svg" alt="codecov"/></a>
+<img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks/branch/main/graph/badge.svg" alt="codecov"/></a>
 </p>
 
 <p align="center">
