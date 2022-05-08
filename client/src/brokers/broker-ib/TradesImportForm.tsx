@@ -103,9 +103,10 @@ export default function IBTradesImportForm({
       formattedCommission *= -1;
     }
 
+    const grossPrice = (+grossPricePerShare).toFixed(3);
     const transaction: ISharesTransactionFormFields = {
       count,
-      grossPricePerShare: grossPricePerShare.toFixed(3),
+      grossPricePerShare: Number(grossPrice),
       grossPricePerShareCurrency: selectedCompany.baseCurrency,
       totalCommission: formattedCommission.toFixed(3),
       totalCommissionCurrency: selectedCompany.baseCurrency,
