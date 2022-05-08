@@ -42,6 +42,7 @@ export interface ICompanyItemBase extends ICompanyBase {
   stats: any;
   firstYear: number;
   lastTransactionMonth: string;
+  lastDividendMonth: string;
 }
 
 export interface ICompany extends ICompanyItemBase {

@@ -1,5 +1,6 @@
 from rest_framework.fields import SerializerMethodField
 from rest_framework import serializers
+from dividends_transactions.models import DividendsTransaction
 
 from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from buho_backend.validators import validate_ownership
@@ -38,6 +39,7 @@ class CompanySerializer(serializers.ModelSerializer):
     logo = Base64ImageField(max_length=None, use_url=True, allow_null = True, required=False)
     all_stats = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
+    last_dividend_month = serializers.SerializerMethodField()
     sector_name = serializers.CharField(source='sector.name', read_only=True)
 
 
@@ -67,6 +69,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "date_created",
             "last_updated",
             "last_transaction_month",
+            "last_dividend_month",
         ]
 
     def validate(self, attrs):
@@ -93,7 +96,17 @@ class CompanySerializer(serializers.ModelSerializer):
             company_id=obj.id, user=obj.user
         ).order_by("transaction_date")
         if query.exists():
-            return f"{query[len(query)-1].transaction_date.year}-{query[len(query)-1].transaction_date.month}"
+            last_element = query[len(query)-1]
+            return last_element.transaction_date
+        return None
+
+    def get_last_dividend_month(self, obj):
+        query = DividendsTransaction.objects.filter(
+            company_id=obj.id, user=obj.user
+        ).order_by("transaction_date")
+        if query.exists():
+            last_element = query[len(query)-1]
+            return last_element.transaction_date
         return None
 
 

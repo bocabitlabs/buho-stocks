@@ -154,6 +154,17 @@ export default function CompaniesList({
         );
       },
     },
+    {
+      title: t("Last dividend"),
+      dataIndex: "lastDividendMonth",
+      key: "lastDividendMonth",
+      render: (text: string) => <Tag>{text}</Tag>,
+      sorter: (a: ICompanyListItem, b: ICompanyListItem) => {
+        return (
+          Date.parse(b.lastDividendMonth) - Date.parse(a.lastDividendMonth)
+        );
+      },
+    },
   ];
 
   const getData = () => {
@@ -185,6 +196,9 @@ export default function CompaniesList({
         : 0,
       lastTransactionMonth: element.lastTransactionMonth
         ? element.lastTransactionMonth
+        : "",
+      lastDividendMonth: element.lastDividendMonth
+        ? element.lastDividendMonth
         : "",
     }));
   };
