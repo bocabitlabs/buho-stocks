@@ -133,19 +133,26 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
  * @returns
  */
 export function formatINGRowForDividends(inputData: string[]): FormattedINGRow {
+  console.log("inputData", inputData);
+  // Date
   const transactionDate = moment(inputData[0], "DD/MM/YYYY");
+  // Company name
   const companyName = inputData[3];
+  // Number of shares
   const count = +inputData[6];
-  const price = +inputData[7];
-  const total = +inputData[9].replace("'", "");
+  // Price per share: 2,22
+  const price = +inputData[7].replace("'", "").replace(",", ".");
+  // Total amount including commission: 10,22
+  const total = +inputData[9].replace("'", "").replace(",", ".");
 
-  return {
+  const formattedRowValues = {
     companyName,
     total,
     transactionDate,
     count,
     price,
   };
+  return formattedRowValues;
 }
 
 export default { getCompanyFromTransaction };
