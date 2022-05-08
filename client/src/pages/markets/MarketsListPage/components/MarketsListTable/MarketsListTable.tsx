@@ -43,14 +43,9 @@ export default function MarketsListTable() {
 
   const columns: any = [
     {
-      title: "",
-      dataIndex: "color",
-      key: "color",
-      render: (text: string) => (
-        <svg height="20" width="20">
-          <circle cx="10" cy="10" r="10" fill={text} />
-        </svg>
-      ),
+      title: "#",
+      dataIndex: "count",
+      key: "count",
     },
     {
       title: t("Name"),
@@ -140,8 +135,9 @@ export default function MarketsListTable() {
   const getData = () => {
     return (
       markets &&
-      markets.map((market: IMarket) => ({
+      markets.map((market: IMarket, index: number) => ({
         id: market.id,
+        count: index + 1,
         key: market.id,
         name: market.name,
         description: market.description,
