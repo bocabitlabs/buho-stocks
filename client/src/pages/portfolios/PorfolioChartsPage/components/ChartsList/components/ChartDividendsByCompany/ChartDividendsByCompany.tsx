@@ -34,9 +34,14 @@ export default function ChartDividendsByCompany() {
               return null;
             });
             const percentage = `${label}: ${(
-              (Number(context.formattedValue) * 100) /
+              (Number(context.parsed) * 100) /
               sum
             ).toFixed(2)}%`;
+            // eslint-disable-next-line no-restricted-globals
+            // if (isNaN(context.formattedValue)) {
+            //   console.log(context);
+            //   // console.log(Number(context.formattedValue));
+            // }
             return percentage;
           },
         },
