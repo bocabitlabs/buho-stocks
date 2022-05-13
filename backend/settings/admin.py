@@ -1,3 +1,4 @@
 from django.contrib import admin
+from settings.models import UserSettings
 
-# Register your models here.
+admin.site.register(UserSettings)

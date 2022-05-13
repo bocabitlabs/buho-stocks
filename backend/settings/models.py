@@ -13,6 +13,8 @@ class UserSettings(models.Model):
     company_display_mode = models.CharField(max_length = 200)
     timezone = models.CharField(max_length=200, choices=TIMEZONES, default="UTC")
 
+    allow_fetch = models.BooleanField(default=False)
+
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
