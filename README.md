@@ -67,3 +67,7 @@ Usage and deployment guides are available on the [Documentation](https://bocabit
 [GPL 3](LICENSE)
 
 All 3rd party logos are property of their owners.
+
+## 🍺 Donate
+<a href="https://paypal.me/renefs/"><img src="donate-blue.svg" height="40"></a>
+If you like this project — or just feeling generous, consider buying me a beer. Cheers! 🍻
