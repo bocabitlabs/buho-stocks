@@ -47,7 +47,13 @@ class CompanyStatsAPIView(APIView):
         """
         Update the company stats for a given year
         """
-        instance = self.get_object(company_id, year, request.user.id, force=True)
+        if request.user.allow_fetch:
+            instance = self.get_object(company_id, year, request.user.id, force=True)
+        else:
+            return Response(
+                {"res": "You don't have permission to fetch data"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},

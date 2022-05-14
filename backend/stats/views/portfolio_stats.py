@@ -75,9 +75,15 @@ class PortfolioStatsAPIView(APIView):
     @swagger_auto_schema(tags=["portfolio_stats"])
     def put(self, request, portfolio_id, year, *args, **kwargs):
         """
-        Retrieve the company item with given id
+        Update the portfolio item with given id
         """
-        stats = self.get_object(portfolio_id, year, request.user.id, force=True)
+        if request.user.allow_fetch:
+            stats = self.get_object(portfolio_id, year, request.user.id, force=True)
+        else:
+            return Response(
+                {"res": "You don't have permission to fetch data"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
         if not stats:
             return Response(
                 {"res": "Object with id does not exists"},

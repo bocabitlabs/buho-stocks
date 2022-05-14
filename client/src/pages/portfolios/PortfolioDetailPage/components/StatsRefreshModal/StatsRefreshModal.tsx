@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
+import { useSettings } from "hooks/use-settings/use-settings";
 import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
 import { useUpdatePortfolioYearStatsForced } from "hooks/use-stats/use-portfolio-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
@@ -38,6 +39,7 @@ export default function StatsRefreshModal({
   const [checkedList, setCheckedList] = React.useState<CheckboxValueType[]>([]);
   const [indeterminate, setIndeterminate] = React.useState(false);
   const [checkboxes, setCheckboxes] = useState<CheckboxValueType[]>([]);
+  const { data: settings } = useSettings();
 
   useEffect(() => {
     const tempCheckboxes = companies.map((company: ICompanyListItem) => {
@@ -201,15 +203,17 @@ export default function StatsRefreshModal({
       >
         <Form form={form} layout="vertical">
           {t("For each company:")}
-          <Form.Item
-            name="updateStockPrice"
-            valuePropName="checked"
-            style={{ marginBottom: 0 }}
-          >
-            <Checkbox onChange={onStockPriceChange}>
-              {t("Update the stock price from API")}
-            </Checkbox>
-          </Form.Item>
+          {settings && settings.allowFetch && (
+            <Form.Item
+              name="updateStockPrice"
+              valuePropName="checked"
+              style={{ marginBottom: 0 }}
+            >
+              <Checkbox onChange={onStockPriceChange}>
+                {t("Update the stock price from API")}
+              </Checkbox>
+            </Form.Item>
+          )}
           <Form.Item name="updateStats" valuePropName="checked">
             <Checkbox onChange={onStatsChange}>
               {t("Update the stats for the year")} {selectedYear}

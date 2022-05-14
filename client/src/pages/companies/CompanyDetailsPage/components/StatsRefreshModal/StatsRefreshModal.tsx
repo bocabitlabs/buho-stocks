@@ -2,6 +2,7 @@ import React, { ReactElement, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal } from "antd";
+import { useSettings } from "hooks/use-settings/use-settings";
 import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 
@@ -23,6 +24,7 @@ export default function StatsRefreshModal({
 
   const { mutate: updateStockPrice } = useUpdateCompanyStockPrice();
   const { mutate: updateStats } = useUpdateYearStatsForced();
+  const { data: settings } = useSettings();
 
   const showModal = () => {
     setVisible(true);
@@ -85,11 +87,13 @@ export default function StatsRefreshModal({
       >
         <Form>
           {t("Do you want to update the stats and the stock price?")}
-          <Form.Item style={{ marginBottom: 0 }}>
-            <Checkbox onChange={onStockPriceChange}>
-              {t("Update the stock price from API")}
-            </Checkbox>
-          </Form.Item>
+          {settings && settings.allowFetch && (
+            <Form.Item style={{ marginBottom: 0 }}>
+              <Checkbox onChange={onStockPriceChange}>
+                {t("Update the stock price from API")}
+              </Checkbox>
+            </Form.Item>
+          )}
           <Form.Item>
             <Checkbox onChange={onStatsChange}>
               {t("Update the stats for the year")} {selectedYear}

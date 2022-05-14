@@ -9,6 +9,7 @@ const settingsMock: ISettings = {
   mainPortfolio: "1",
   portfolioDisplayMode: "grid",
   companyDisplayMode: "grid",
+  allowFetch: true,
   dateCreated: "2020-01-01T00:00:00.000Z",
   lastUpdated: "2020-01-01T00:00:00.000Z",
 };
