@@ -36,7 +36,10 @@ class StockPricesYearAPIView(APIView):
         """
         Update last stock price of a company for a given year
         """
-        instance = self.get_update_object(company_id, year, request.user.id)
+        try:
+            instance = self.get_update_object(company_id, year, request.user.id)
+        except Exception as error:
+            logger.exception(error)
         if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},

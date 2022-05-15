@@ -6,11 +6,11 @@ from markets.models import TIMEZONES
 # Create your models here.
 class UserSettings(models.Model):
     language = models.CharField(max_length = 200)
-    main_portfolio = models.CharField(max_length = 200)
-    portfolio_sort_by = models.CharField(max_length = 200)
-    portfolio_display_mode = models.CharField(max_length = 200)
-    company_sort_by = models.CharField(max_length = 200)
-    company_display_mode = models.CharField(max_length = 200)
+    main_portfolio = models.CharField(max_length = 200, null=True, blank=True)
+    portfolio_sort_by = models.CharField(max_length = 200, null=True, blank=True)
+    portfolio_display_mode = models.CharField(max_length = 200, null=True, blank=True)
+    company_sort_by = models.CharField(max_length = 200, null=True, blank=True)
+    company_display_mode = models.CharField(max_length = 200, null=True, blank=True)
     timezone = models.CharField(max_length=200, choices=TIMEZONES, default="UTC")
 
     allow_fetch = models.BooleanField(default=False)

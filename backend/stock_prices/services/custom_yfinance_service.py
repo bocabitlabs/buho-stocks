@@ -59,9 +59,8 @@ class CustomYFinanceService(StockPriceServiceBase):
                 }
                 prices.append(data)
             except (KeyError,TypeError) as error:
-                logger.warning(f"{ticker}: KeyError: {error}. Skipping.")
+                logger.warning(f"{ticker}: close or date fields not found: {error}. Skipping.")
         prices.sort(key=lambda x: x["transaction_date"], reverse=False)
-
         return prices
 
     def request_from_api(self, ticker: str, from_date: str, to_date: str):
