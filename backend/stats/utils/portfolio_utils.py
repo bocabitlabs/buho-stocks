@@ -17,7 +17,7 @@ logger = logging.getLogger("buho_backend")
 class PortfolioUtils:
     def get_portfolio_first_year(self, portfolio_id, user_id):
         query = SharesTransaction.objects.filter(
-            company__portfolio=portfolio_id, user=user_id
+            company__portfolio=portfolio_id, user=user_id, company__is_closed=False
         ).order_by("transaction_date")
         if query.exists():
             return query[0].transaction_date.year
@@ -45,6 +45,9 @@ class PortfolioStatsUtils:
     def _get_total_invested_in_rights(self):
         total = 0
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             query = company.rights_transactions
             if self.year == "all":
                 query = query.all()
@@ -66,6 +69,8 @@ class PortfolioStatsUtils:
     def _get_total_invested_in_shares(self):
         total = 0
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
 
             query = company.shares_transactions
             if self.year == "all":
@@ -87,6 +92,9 @@ class PortfolioStatsUtils:
     def _get_accumulated_invested_in_shares_until_year(self):
         total = 0
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             query = company.shares_transactions
             if self.year == "all":
                 query = query.filter(type=TransactionType.BUY)
@@ -107,6 +115,9 @@ class PortfolioStatsUtils:
     def _get_accumulated_invested_in_rights_until_year(self):
         total = 0
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             query = company.rights_transactions
             if self.year == "all":
                 query = query.filter(type=TransactionType.BUY)
@@ -127,6 +138,9 @@ class PortfolioStatsUtils:
     def get_dividends(self):
         total = 0
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             query = company.dividends_transactions
             if self.year == "all":
                 query = query.all()
@@ -145,6 +159,9 @@ class PortfolioStatsUtils:
     def get_accumulated_dividends_until_year(self):
         total = 0
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             query = company.dividends_transactions
             if self.year == "all":
                 query = query.all()
@@ -304,6 +321,9 @@ class PortfolioStatsUtils:
     def get_stats_for_year_by_company(self):
         results = []
         for company in self.portfolio.companies.all():
+            if company.is_closed:
+                continue
+
             company_stats = CompanyStatsUtils(
                 company.id, self.user_id, year=self.year, force=self.force
             )
@@ -314,7 +334,7 @@ class PortfolioStatsUtils:
 
     def get_portfolio_first_year(self):
         transactions = SharesTransaction.objects.filter(
-            company__portfolio=self.portfolio.id, user=self.user_id
+            company__portfolio=self.portfolio.id, user=self.user_id, company__is_closed=False
         )
         first_year = transactions.order_by("transaction_date").first()
         if not first_year:
@@ -349,6 +369,9 @@ class PortfolioStatsUtils:
             }
 
             for company in self.portfolio.companies.all():
+                if company.is_closed:
+                    continue
+
                 company_stats = CompanyStatsUtils(company.id, self.user_id, year=year)
                 instance = company_stats.get_stats_for_year()
                 data["invested"] += instance.invested
