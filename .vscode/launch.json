@@ -14,13 +14,11 @@
     },
     {
       "name": "Yarn: React",
-      "type": "pwa-chrome",
+      "type": "node",
       "request": "launch",
       "runtimeArgs": ["start"],
       "runtimeExecutable": "yarn",
       "cwd": "${workspaceRoot}/client",
-      "url": "http://localhost:3000",
-      "webRoot": "${workspaceFolder}/client"
     }
   ]
 }
