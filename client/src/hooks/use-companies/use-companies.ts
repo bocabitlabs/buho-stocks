@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
@@ -62,6 +63,8 @@ export const useAddCompany = () => {
 
 export const useDeleteCompany = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+
   return useMutation(
     ({ portfolioId, companyId }: DeleteMutationProps) =>
       axios.delete(
@@ -71,7 +74,12 @@ export const useDeleteCompany = () => {
     {
       onSuccess: (data, variables) => {
         toast.success(`${t("Company has been deleted")}`);
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+        navigate(-1);
+        queryClient.invalidateQueries([
+          "portfolios",
+          variables.portfolioId,
+          variables.companyId,
+        ]);
       },
       onError: () => {
         toast.error(t("Unable to create company"));
@@ -93,7 +101,7 @@ export const useUpdateCompany = () => {
       onSuccess: (data, variables) => {
         toast.success(t("Company has been updated"));
         queryClient.invalidateQueries([
-          "companies",
+          "portfolios",
           variables.portfolioId,
           variables.companyId,
         ]);
@@ -106,7 +114,7 @@ export const useUpdateCompany = () => {
 };
 
 export function useCompanies(portfolioId: number | undefined) {
-  return useQuery<ICompany[], Error>(["companies", portfolioId], () =>
+  return useQuery<ICompany[], Error>(["portfolios", portfolioId], () =>
     fetchCompanies(portfolioId),
   );
 }
@@ -117,7 +125,7 @@ export function useCompany(
   options?: any,
 ) {
   return useQuery<ICompany, Error>(
-    ["companies", portfolioId, companyId],
+    ["portfolios", portfolioId, companyId],
     () => fetchCompany(portfolioId, companyId),
     {
       // The query will not execute until the userId exists
