@@ -45,8 +45,8 @@ export default function CompanyDetailsPage(): ReactElement {
         companySectorName={company.sector.name}
         companySuperSectorName={company.sector.superSector?.name}
         marketName={company.market.name}
-        currencySymbol={company.baseCurrency.symbol}
-        dividendsCurrencySymbol={company.dividendsCurrency.symbol}
+        currencyCode={company.baseCurrency.code}
+        dividendsCurrencyCode={company.dividendsCurrency.code}
         isin={company.isin}
       />
       <YearSelector companyId={companyId} firstYear={company.firstYear} />

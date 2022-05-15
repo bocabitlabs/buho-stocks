@@ -12,8 +12,8 @@ interface Props {
   companySectorName: string;
   companySuperSectorName?: string;
   marketName: string;
-  currencySymbol: string;
-  dividendsCurrencySymbol: string;
+  currencyCode: string;
+  dividendsCurrencyCode: string;
   isin: string;
 }
 
@@ -21,8 +21,8 @@ export default function CompanyInfo({
   companySectorName,
   companySuperSectorName,
   marketName,
-  currencySymbol,
-  dividendsCurrencySymbol,
+  currencyCode,
+  dividendsCurrencyCode,
   isin,
 }: Props): ReactElement {
   const { t } = useTranslation();
@@ -63,7 +63,7 @@ export default function CompanyInfo({
           </strong>
         }
       >
-        {currencySymbol}
+        {currencyCode}
       </Descriptions.Item>
       <Descriptions.Item
         label={
@@ -72,7 +72,7 @@ export default function CompanyInfo({
           </strong>
         }
       >
-        {dividendsCurrencySymbol}
+        {dividendsCurrencyCode}
       </Descriptions.Item>
     </Descriptions>
   );
