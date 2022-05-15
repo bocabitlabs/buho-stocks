@@ -2,23 +2,33 @@ import React, { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
 
-export default function ChartValueByCompany() {
+interface ChartProps {
+  selectedYear: string;
+  currency: string | undefined;
+}
+
+export default function ChartValueByCompany({
+  selectedYear,
+  currency,
+}: ChartProps): React.ReactElement | null {
   const { id } = useParams();
   const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { data: portfolio } = usePortfolio(+id!);
-  const { data: statsData } = usePortfolioYearStats(+id!, "all", "company");
+  const { data: statsData } = usePortfolioYearStats(
+    +id!,
+    selectedYear,
+    "company",
+  );
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false,
       },
       title: {
         display: true,
@@ -29,7 +39,7 @@ export default function ChartValueByCompany() {
           label(context: any) {
             const percentage = `${context.dataset.label}: ${context.raw.toFixed(
               2,
-            )} ${portfolio?.baseCurrency.code}`;
+            )} ${currency}`;
             return percentage;
           },
         },
