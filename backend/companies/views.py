@@ -80,9 +80,15 @@ class CompanyViewSet(viewsets.ModelViewSet):
         user = self.request.user
         company_id = self.kwargs.get("company_id")
         portfolio_id = self.kwargs.get("portfolio_id")
+        closed = self.request.query_params.get('closed')
+
+        if closed == 'true':
+            closed = True
+        else:
+            closed = False
 
         if self.action == "list" or self.action == "create":
-            return Company.objects.filter(portfolio=portfolio_id, user=user.id)
+            return Company.objects.filter(portfolio=portfolio_id, user=user.id, is_closed=closed)
 
         return Company.objects.filter(
             id=company_id, portfolio=portfolio_id, user=user.id
@@ -100,6 +106,8 @@ class CompanyViewSet(viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.action == "list" or self.action == "retrieve":
+        if self.action == "list":
+            return CompanySerializer
+        elif self.action == "retrieve":
             return CompanySerializerGet
         return super().get_serializer_class()

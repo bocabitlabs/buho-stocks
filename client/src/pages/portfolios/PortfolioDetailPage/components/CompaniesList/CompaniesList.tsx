@@ -18,7 +18,6 @@ export default function CompaniesList({
   const { t } = useTranslation();
   const { id } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
   const onCreate = (values: any) => {
     console.log("Received values of form: ", values);
     setIsModalVisible(false);
@@ -166,7 +165,6 @@ export default function CompaniesList({
       },
     },
   ];
-
   const getData = () => {
     return companies.map((element: ICompanyListItem) => ({
       id: element.id,

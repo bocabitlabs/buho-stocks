@@ -4,7 +4,6 @@ from rest_framework import serializers
 from companies.serializers_lite import CompanySerializerLite
 from currencies.models import get_currency_details
 from portfolios.models import Portfolio
-from companies.serializers import CompanySerializer
 from shares_transactions.models import SharesTransaction
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 
@@ -29,7 +28,7 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 class PortfolioSerializerGet(PortfolioSerializer):
     base_currency = SerializerMethodField()
-    companies = CompanySerializer(many=True, read_only=True)
+    #companies = CompanySerializer(many=True, read_only=True)
     first_year = serializers.SerializerMethodField()
     stats = PortfolioStatsForYearSerializer(many=True, read_only=True)
 
@@ -63,10 +62,3 @@ class PortfolioSerializerGet(PortfolioSerializer):
             return query[0].transaction_date.year
         return None
 
-    # def get_all_stats(self, obj):
-    #     query = Portfolio.objects.filter(
-    #         company__portfolio=obj.id, user=obj.user
-    #     ).order_by("transaction_date")
-    #     if query.exists():
-    #         return query[0].transaction_date.year
-    #     return None

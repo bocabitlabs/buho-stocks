@@ -72,6 +72,8 @@
   "Delete": "Borrar",
   "Delete stock price?": "¿Deseas eliminar este precio de la acción?",
   "Delete this company? All it's content will be removed too.": "¿Deseas borrar esta empresa? Todo su contenido será eliminado también.",
+  "Displaying open companies": "Mostrando empresas abiertas",
+  "Displaying closed companies": "Mostrando empresas cerradas",
   "Dividends": "Dividendos",
   "Dividends yield": "Rendimiento de dividendos",
   "Description": "Descripción",

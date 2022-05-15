@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { getAxiosOptionsWithAuth } from "api/api-client";
 import queryClient from "api/query-client";
-import { ICompany, ICompanyFormFields } from "types/company";
+import { ICompany, ICompanyFormFields, ICompanyListItem } from "types/company";
 
 interface AddMutationProps {
   newCompany: ICompanyFormFields;
@@ -23,9 +23,12 @@ interface DeleteMutationProps {
   companyId: number | undefined;
 }
 
-export const fetchCompanies = async (portfolioId: number | undefined) => {
-  const { data } = await axios.get<ICompany[]>(
-    `/api/v1/portfolios/${portfolioId}/companies/`,
+export const fetchCompanies = async (
+  portfolioId: number | undefined,
+  closed: boolean,
+) => {
+  const { data } = await axios.get<ICompanyListItem[]>(
+    `/api/v1/portfolios/${portfolioId}/companies/?closed=${closed}`,
     getAxiosOptionsWithAuth(),
   );
   return data;
@@ -113,9 +116,13 @@ export const useUpdateCompany = () => {
   );
 };
 
-export function useCompanies(portfolioId: number | undefined) {
-  return useQuery<ICompany[], Error>(["portfolios", portfolioId], () =>
-    fetchCompanies(portfolioId),
+export function useCompanies(
+  portfolioId: number | undefined,
+  closed: boolean = false,
+) {
+  return useQuery<ICompanyListItem[], Error>(
+    ["portfolios", portfolioId, closed],
+    () => fetchCompanies(portfolioId, closed),
   );
 }
 

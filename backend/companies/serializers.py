@@ -23,12 +23,6 @@ import logging
 
 logger = logging.getLogger("buho_backend")
 
-class FilteredCompanySerializer(serializers.ListSerializer):
-    def to_representation(self, data):
-        # qry_exam = self.context['request'].GET.get('exam')
-        data = data.filter(is_closed=False)
-        return super(FilteredCompanySerializer,  self).to_representation(data)
-
 class CompanySerializer(serializers.ModelSerializer):
     market = UserFilteredPrimaryKeyRelatedField(queryset=Market.objects, many=False, read_only=False)
     sector = UserFilteredPrimaryKeyRelatedField(queryset=Sector.objects,many=False, read_only=False)
@@ -45,7 +39,6 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        list_serializer_class = FilteredCompanySerializer
         fields = [
             "id",
             "alt_tickers",
