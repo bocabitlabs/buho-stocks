@@ -22,7 +22,7 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement | null {
       },
       title: {
         display: true,
-        text: t("Portfolio Dividends"),
+        text: t("Portfolio Dividends per month"),
       },
       tooltip: {
         callbacks: {

@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
+import { mapColorsToLabels } from "utils/colors";
 
 interface Props {
   stats: any;
@@ -49,17 +50,10 @@ export default function DividendsChart({
             borderColor: "rgb(255, 99, 132)",
             backgroundColor: "rgba(255, 99, 132, 0.5)",
           },
-          {
-            label: t("Accum. Dividends"),
-            data: [],
-            borderColor: "rgb(53, 162, 235)",
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
-          },
         ],
       };
       const newYears: any = [];
       const dividends: any = [];
-      const accumulatedDividends: any = [];
 
       stats.sort((a: any, b: any) => {
         if (a.year > b.year) {
@@ -79,12 +73,14 @@ export default function DividendsChart({
         ) {
           newYears.push(year.year);
           dividends.push(Number(year.dividends));
-          accumulatedDividends.push(Number(year.accumulatedDividends));
         }
       });
       tempData.labels = newYears;
       tempData.datasets[0].data = dividends;
-      tempData.datasets[1].data = accumulatedDividends;
+
+      const { chartColors } = mapColorsToLabels(newYears);
+
+      tempData.datasets[0].backgroundColor = chartColors;
 
       setData(tempData);
       setIsDataSet(true);

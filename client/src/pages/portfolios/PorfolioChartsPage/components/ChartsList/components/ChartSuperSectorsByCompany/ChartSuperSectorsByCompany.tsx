@@ -6,12 +6,22 @@ import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
-export default function ChartSuperSectorsByCompany() {
+interface ChartProps {
+  selectedYear: string;
+}
+
+export default function ChartSuperSectorsByCompany({
+  selectedYear,
+}: ChartProps): React.ReactElement | null {
   const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
   const { id } = useParams();
-  const { data: statsData } = usePortfolioYearStats(+id!, "all", "company");
+  const { data: statsData } = usePortfolioYearStats(
+    +id!,
+    selectedYear,
+    "company",
+  );
 
   const options = {
     responsive: true,

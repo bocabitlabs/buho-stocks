@@ -2,19 +2,23 @@ import React, { useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Form, Select, Space } from "antd";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
 
-export default function ChartInvestedByCompany() {
+interface ChartProps {
+  selectedYear: string;
+  currency: string | undefined;
+}
+
+export default function ChartInvestedByCompany({
+  selectedYear,
+  currency,
+}: ChartProps): React.ReactElement | null {
   const { id } = useParams();
   const { t } = useTranslation();
-  const [years, setYears] = React.useState<any[]>([]);
   const [data, setData] = React.useState<any>(null);
-  const [selectedYear, setSelectedYear] = React.useState<any | null>("all");
+
   const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { data: portfolio } = usePortfolio(+id!);
   const { data: statsData } = usePortfolioYearStats(
     +id!,
     selectedYear,
@@ -25,7 +29,7 @@ export default function ChartInvestedByCompany() {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false,
       },
       title: {
         display: true,
@@ -34,9 +38,9 @@ export default function ChartInvestedByCompany() {
       tooltip: {
         callbacks: {
           label(context: any) {
-            const percentage = `${context.label}: ${context.raw.toFixed(2)} ${
-              portfolio?.baseCurrency.code
-            }`;
+            const percentage = `${context.label}: ${context.raw.toFixed(
+              2,
+            )} ${currency}`;
             return percentage;
           },
         },
@@ -51,10 +55,6 @@ export default function ChartInvestedByCompany() {
         },
       },
     },
-  };
-
-  const handleYearChange = (value: string) => {
-    setSelectedYear(value);
   };
 
   useEffect(() => {
@@ -111,47 +111,8 @@ export default function ChartInvestedByCompany() {
     loadInitialStats();
   }, [filteredChartData, t]);
 
-  useEffect(() => {
-    async function loadFirstYear() {
-      const currentYear = new Date().getFullYear();
-      const newYears = [];
-      if (portfolio && portfolio.firstYear != null) {
-        for (
-          let index = +currentYear;
-          index >= +portfolio.firstYear;
-          index -= 1
-        ) {
-          newYears.push(index);
-        }
-        setYears(newYears);
-      }
-    }
-    loadFirstYear();
-  }, [portfolio]);
-
   if (data) {
-    return (
-      <Space direction="vertical" style={{ width: "100%" }}>
-        <Form layout="inline">
-          <Form.Item label={t("Year")}>
-            <Select
-              placeholder="Select a year"
-              defaultValue={selectedYear}
-              style={{ width: 120 }}
-              onChange={handleYearChange}
-            >
-              <Select.Option value="all">All</Select.Option>
-              {years.map((yearItem: any) => (
-                <Select.Option key={yearItem} value={yearItem}>
-                  {yearItem}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-        </Form>
-        <Bar options={options} data={data} />
-      </Space>
-    );
+    return <Bar options={options} data={data} />;
   }
   return null;
 }

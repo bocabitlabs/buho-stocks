@@ -17,7 +17,7 @@ export default function ChartPortfolioDividends(): ReactElement | null {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
+        display: false,
       },
       title: {
         display: true,
