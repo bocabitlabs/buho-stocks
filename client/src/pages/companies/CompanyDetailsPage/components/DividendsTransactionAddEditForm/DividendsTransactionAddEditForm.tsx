@@ -128,29 +128,6 @@ export default function DividendsTransactionAddEditForm({
     setCurrentTransactionDate(dateString);
   };
 
-  // const updateFieldsForING = () => {
-  //   const count = form.getFieldValue("count");
-  //   const price = form.getFieldValue("price");
-  //   let total = form.getFieldValue("total");
-  //   const exchangeRate = form.getFieldValue("exchangeRate");
-
-  //   total *= 1 / exchangeRate;
-  //   const totalInvested = +count * +price;
-  //   let newCommission = total - totalInvested;
-
-  //   if (newCommission < 0) {
-  //     newCommission *= -1;
-  //   }
-
-  //   form.setFieldsValue({
-  //     commission: newCommission
-  //   });
-  // };
-
-  // if (!portfolio || !company || (transactionId && !transaction)) {
-  //   return <Spin />;
-  // }
-
   const handleFormSubmit = async () => {
     try {
       const values = await form.validateFields();
@@ -172,6 +149,7 @@ export default function DividendsTransactionAddEditForm({
         notes: transaction.notes,
         transactionDate: moment(transaction.transactionDate),
       });
+      setCurrentTransactionDate(transaction.transactionDate);
     }
   }, [form, transaction]);
 

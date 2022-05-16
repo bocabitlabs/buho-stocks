@@ -175,6 +175,7 @@ export default function SharesTransactionAddEditForm({
         transactionDate: moment(transaction.transactionDate),
         type: transaction.type,
       });
+      setCurrentTransactionDate(transaction.transactionDate);
     }
   }, [form, transaction]);
 
