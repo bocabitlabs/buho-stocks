@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal } from "antd";
 import { useSettings } from "hooks/use-settings/use-settings";
-import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
+import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 
 interface Props {
@@ -23,7 +23,7 @@ export default function StatsRefreshModal({
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
 
   const { mutate: updateStockPrice } = useUpdateCompanyStockPrice();
-  const { mutate: updateStats } = useUpdateYearStatsForced();
+  const { mutate: updateStats } = useUpdateYearStats();
   const { data: settings } = useSettings();
 
   const showModal = () => {
@@ -31,7 +31,11 @@ export default function StatsRefreshModal({
   };
 
   const getStatsForced = async () => {
-    updateStats({ companyId: +companyId!, year: selectedYear });
+    updateStats({
+      companyId: +companyId!,
+      year: selectedYear,
+      forced: updateStockPriceSwitch,
+    });
   };
 
   const getStockPrice = useCallback(async () => {

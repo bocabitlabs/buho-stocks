@@ -4,7 +4,7 @@ import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
 import { useSettings } from "hooks/use-settings/use-settings";
-import { useUpdateYearStatsForced } from "hooks/use-stats/use-company-stats";
+import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 import { useUpdatePortfolioYearStatsForced } from "hooks/use-stats/use-portfolio-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 import { ICompanyListItem } from "types/company";
@@ -49,7 +49,7 @@ export default function StatsRefreshModal({
   }, [companies]);
 
   const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
-  const { mutateAsync: updateCompanyStats } = useUpdateYearStatsForced();
+  const { mutateAsync: updateCompanyStats } = useUpdateYearStats();
   const { mutateAsync: updatePortfolioStats } =
     useUpdatePortfolioYearStatsForced();
 
@@ -61,7 +61,11 @@ export default function StatsRefreshModal({
     async (companyId: string) => {
       setUpdateMessage(`${t("Updating stats for company")} #${companyId}`);
       try {
-        await updateCompanyStats({ companyId: +companyId, year: selectedYear });
+        await updateCompanyStats({
+          companyId: +companyId,
+          year: selectedYear,
+          forced: updateStockPriceSwitch,
+        });
         setUpdateMessage(
           `${t("Stats updated for company")} #${companyId} ${t(
             "and year",

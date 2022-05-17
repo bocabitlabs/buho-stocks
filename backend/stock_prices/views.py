@@ -4,6 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from settings.models import UserSettings
 from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
 from stock_prices.api import StockPricesApi
@@ -36,10 +37,10 @@ class StockPricesYearAPIView(APIView):
         """
         Update last stock price of a company for a given year
         """
-        try:
+        settings = UserSettings.objects.get(user=request.user)
+        if settings.allow_fetch:
             instance = self.get_update_object(company_id, year, request.user.id)
-        except Exception as error:
-            logger.exception(error)
+
         if not instance:
             return Response(
                 {"res": "Object with transaction id does not exists"},

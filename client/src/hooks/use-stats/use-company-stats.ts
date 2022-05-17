@@ -32,13 +32,14 @@ export function useCompanyYearStats(
 interface IUpdateYearStatsMutationProps {
   companyId: number | undefined;
   year: string | undefined;
+  forced: boolean | undefined;
 }
 
-export const useUpdateYearStatsForced = () => {
+export const useUpdateYearStats = () => {
   return useMutation(
-    ({ companyId, year }: IUpdateYearStatsMutationProps) =>
+    ({ companyId, year, forced }: IUpdateYearStatsMutationProps) =>
       axios.put(
-        `/api/v1/stats/company/${companyId}/year/${year}/`,
+        `/api/v1/stats/company/${companyId}/year/${year}/?forced=${forced}`,
         {},
         getAxiosOptionsWithAuth(),
       ),

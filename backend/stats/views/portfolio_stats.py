@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
+from settings.models import UserSettings
 from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
@@ -77,13 +78,14 @@ class PortfolioStatsAPIView(APIView):
         """
         Update the portfolio item with given id
         """
-        if request.user.allow_fetch:
-            stats = self.get_object(portfolio_id, year, request.user.id, force=True)
+        settings = UserSettings.objects.get(user=request.user)
+        if settings.allow_fetch:
+            forced = self.request.query_params.get('force')
+            if forced == "true":
+                forced = True
         else:
-            return Response(
-                {"res": "You don't have permission to fetch data"},
-                status=status.HTTP_403_FORBIDDEN,
-            )
+            forced = False
+        stats = self.get_object(portfolio_id, year, request.user.id, force=forced)
         if not stats:
             return Response(
                 {"res": "Object with id does not exists"},
