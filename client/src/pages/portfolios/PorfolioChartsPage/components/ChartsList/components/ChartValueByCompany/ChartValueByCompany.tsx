@@ -32,7 +32,7 @@ export default function ChartValueByCompany({
       },
       title: {
         display: true,
-        text: t("Portfolio value by company"),
+        text: t("Portfolio value by company (accumulated)"),
       },
       tooltip: {
         callbacks: {

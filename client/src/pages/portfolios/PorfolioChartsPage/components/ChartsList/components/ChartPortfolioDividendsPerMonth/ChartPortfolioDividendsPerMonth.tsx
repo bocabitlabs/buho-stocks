@@ -38,21 +38,37 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement | null {
   };
 
   useEffect(() => {
+    function getTranslatedLabels() {
+      return [
+        t("January"),
+        t("February"),
+        t("March"),
+        t("April"),
+        t("May"),
+        t("June"),
+        t("July"),
+        t("August"),
+        t("September"),
+        t("October"),
+        t("November"),
+        t("December"),
+      ];
+    }
     function getChartData() {
       return {
         labels: [
-          t("January"),
-          t("February"),
-          t("March"),
-          t("April"),
-          t("May"),
-          t("June"),
-          t("July"),
-          t("August"),
-          t("September"),
-          t("October"),
-          t("November"),
-          t("December"),
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
         ],
         datasets: [],
       };
@@ -82,6 +98,7 @@ export default function ChartPortfolioDividendsPerMonth(): ReactElement | null {
         return b.label > a.label;
       });
       tempChartData.datasets = sortedArrayOfObj;
+      tempChartData.labels = getTranslatedLabels();
       setChartData(tempChartData);
     }
   }, [data, t]);

@@ -35,8 +35,8 @@ export default function CompanyInfo({
           </strong>
         }
       >
-        {companySectorName}
-        {companySuperSectorName && ` - ${companySuperSectorName}`}
+        {t(companySectorName)}
+        {companySuperSectorName && ` - ${t(companySuperSectorName)}`}
       </Descriptions.Item>
       <Descriptions.Item
         label={

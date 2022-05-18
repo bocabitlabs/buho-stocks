@@ -32,7 +32,7 @@ export default function ChartSuperSectorsByCompany({
       },
       title: {
         display: true,
-        text: t("Super Sectors"),
+        text: t("Super sectors"),
       },
       tooltip: {
         callbacks: {
@@ -62,7 +62,7 @@ export default function ChartSuperSectorsByCompany({
           labels: [],
           datasets: [
             {
-              label: t("Super Sectors"),
+              label: t("Super sectors"),
               data: [],
               borderColor: "rgb(255, 99, 132)",
               backgroundColor: "rgba(255, 99, 132, 0.5)",
