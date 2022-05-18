@@ -16,9 +16,10 @@
       "name": "Yarn: React",
       "type": "node",
       "request": "launch",
-      "runtimeArgs": ["start"],
       "runtimeExecutable": "yarn",
+      "runtimeArgs": ["start"],
       "cwd": "${workspaceRoot}/client",
+      "console": "integratedTerminal",
     }
   ]
 }
