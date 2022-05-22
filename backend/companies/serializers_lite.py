@@ -12,4 +12,6 @@ class CompanySerializerLite(serializers.ModelSerializer):
             "id",
             "name",
             "ticker",
+            "base_currency",
+            "dividends_currency",
         ]
