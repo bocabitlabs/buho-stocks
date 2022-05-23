@@ -21,20 +21,21 @@ export default function YearSelector({
   const { data: stats, isFetching: loadingStats } = useCompanyYearStats(
     +companyId!,
     selectedYear,
-    {
-      onSuccess: (data: any) => {
-        setStockPrice({
-          price: data.stockPriceValue,
-          priceCurrency: data.stockPriceCurrency,
-          transactionDate: data.stockPriceTransactionDate,
-        });
-      },
-    },
   );
 
   const handleYearChange = (value: string) => {
     setSelectedYear(value);
   };
+
+  useEffect(() => {
+    if (stats) {
+      setStockPrice({
+        price: stats.stockPriceValue,
+        priceCurrency: stats.stockPriceCurrency,
+        transactionDate: stats.stockPriceTransactionDate,
+      });
+    }
+  }, [stats]);
 
   useEffect(() => {
     async function loadInitialYears() {

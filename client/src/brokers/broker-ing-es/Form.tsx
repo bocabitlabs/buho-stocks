@@ -19,8 +19,8 @@ export default function Form(): ReactElement {
   const { t } = useTranslation();
 
   const options1 = [
-    { label: "Import Shares/Rights", value: "shares" },
-    { label: "Import Dividends", value: "dividends" },
+    { label: t("Import shares/rights"), value: "shares" },
+    { label: t("Import dividends"), value: "dividends" },
   ];
 
   const importDividendsChange = (e: any) => {
@@ -50,6 +50,7 @@ export default function Form(): ReactElement {
       );
     });
     setData(filteredData);
+    console.log(filteredData);
   };
 
   const handleDividendsFileLoad = (fileData: any) => {
@@ -108,10 +109,12 @@ export default function Form(): ReactElement {
               noDrag
             >
               {defaultImport === "shares" ? (
-                <span>Click to upload a trades file from ING ES.</span>
+                <span>{t("Click to upload a trades file from ING ES.")}</span>
               ) : (
                 <span>
-                  Click to upload a csv file with dividends data from ING ES.
+                  {t(
+                    "Click to upload a csv file with dividends data from ING ES.",
+                  )}
                 </span>
               )}
             </CSVReader>
@@ -119,12 +122,14 @@ export default function Form(): ReactElement {
           {defaultImport === "shares" && data.length > 0 && selectedPortfolio && (
             <div>
               <Typography.Title level={4}>
-                Importing trades from ING ES:
+                {t("Importing trades from ING ES")}
               </Typography.Title>
               {data.map((element: any) => {
                 return (
                   <TradesImportForm
-                    key={selectedPortfolio.id}
+                    key={
+                      selectedPortfolio.id + element.data[3] + element.data[1]
+                    }
                     inputData={element.data}
                     portfolio={selectedPortfolio}
                   />

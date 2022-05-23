@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import {
@@ -64,14 +64,21 @@ export default function TradesImportForm({
   const { mutate: createRightsTransaction, isLoading: loadingRights } =
     useAddRightsTransaction();
   const { isFetching: currenciesLoading, data: currencies } = useCurrencies();
-  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+  const {
+    isFetching: exchangeRateLoading,
+    refetch,
+    data: exchangeRateData,
+    error: errorFetchingExchangeRate,
+  } = useExchangeRate(
     selectedCompanyCurrency,
     portfolioCurrency,
     transactionDate,
   );
 
-  const onCompanyChange = (value: string) => {
-    const tempCompany = getCompanyFromTransaction(value, portfolio);
+  const onCompanyChange = (value: number) => {
+    const tempCompany = portfolio.companies.find(
+      (element) => element.id === value,
+    );
     if (tempCompany) {
       setSelectedCompany(tempCompany);
       setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
@@ -83,19 +90,7 @@ export default function TradesImportForm({
 
   const fetchExchangeRate = async () => {
     if (selectedCompany && portfolio) {
-      const { data: exchangeRateResult } = await refetch();
-      if (exchangeRateResult) {
-        form.setFieldsValue({
-          exchangeRate: exchangeRateResult.exchangeRate,
-        });
-      } else {
-        form.setFields([
-          {
-            name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"],
-          },
-        ]);
-      }
+      refetch();
     }
   };
 
@@ -163,29 +158,37 @@ export default function TradesImportForm({
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.baseCurrency === "EUR") {
-        form.setFieldsValue({
-          commissionInCompanyCurrency: total - price * initialCount,
-        });
-      } else {
-        const { data: exchangeRateResult } = await refetch();
-        if (exchangeRateResult) {
-          form.setFieldsValue({
-            commissionInCompanyCurrency:
-              exchangeRateResult.exchangeRate * total - price * initialCount,
-          });
-        } else {
-          form.setFields([
-            {
-              name: "commissionInCompanyCurrency",
-              errors: ["Unable to fetch the exchange rates for the given date"],
-            },
-          ]);
-        }
+      if (selectedCompany?.baseCurrency !== "EUR") {
+        refetch();
       }
     }
     setCommissionLoading(false);
   };
+
+  useEffect(() => {
+    if (exchangeRateData) {
+      form.setFieldsValue({
+        exchangeRate: exchangeRateData.exchangeRate,
+        commissionInCompanyCurrency:
+          exchangeRateData.exchangeRate * total - price * initialCount,
+      });
+    } else if (errorFetchingExchangeRate) {
+      form.setFields([
+        {
+          name: "exchangeRate",
+          errors: [t("Unable to fetch the exchange rates for the given date")],
+        },
+      ]);
+    }
+  }, [
+    errorFetchingExchangeRate,
+    exchangeRateData,
+    form,
+    initialCount,
+    price,
+    t,
+    total,
+  ]);
 
   return (
     <Form
@@ -214,7 +217,7 @@ export default function TradesImportForm({
             rules={[
               { required: true, message: t("Please input the shares count") },
             ]}
-            help={`Received: ${inputData[6]}`}
+            help={`${t("Received")}: ${inputData[6]}`}
           >
             <Input placeholder={t("Count")} />
           </Form.Item>
@@ -222,11 +225,11 @@ export default function TradesImportForm({
         <Col span={12}>
           <Form.Item
             name="grossPricePerShare"
-            label={t("Price")}
+            label={t("Gross price per share")}
             rules={[{ required: true, message: t("Please input the price") }]}
-            help={`Received: ${inputData[7]}`}
+            help={`${t("Received")}: ${inputData[7]}`}
           >
-            <Input placeholder="Price" />
+            <Input placeholder={t("Gross price per share")} />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -247,7 +250,7 @@ export default function TradesImportForm({
         <Col span={6}>
           <Form.Item
             name="commissionInCompanyCurrency"
-            label="Commission in company currency"
+            label={t("Commission in company currency")}
             rules={[
               {
                 required: true,
@@ -269,7 +272,7 @@ export default function TradesImportForm({
             <Button
               disabled={
                 initialTransactionDate === null ||
-                selectedCompany?.dividendsCurrency === undefined
+                selectedCompany?.baseCurrency === undefined
               }
               onClick={getCommissionInCompanyCurrency}
               loading={commissionLoading}
@@ -300,11 +303,11 @@ export default function TradesImportForm({
         <Col span={12}>
           <Form.Item
             name="transactionDate"
-            label="Date"
-            rules={[{ required: true, message: "Please input the date" }]}
-            help={`Received: ${inputData[0]}`}
+            label={t("Date")}
+            rules={[{ required: true, message: t("Please input the date") }]}
+            help={`${t("Received")}: ${inputData[0]}`}
           >
-            <Input onChange={onDateChange} placeholder="Date" />
+            <Input onChange={onDateChange} placeholder={t("Date")} />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -330,13 +333,18 @@ export default function TradesImportForm({
             <Col span={6}>
               <Form.Item
                 name="exchangeRate"
-                label="Exchange rate"
+                label={t("Exchange rate")}
                 rules={[
                   {
                     required: true,
                     message: t("Please input the exchange rate"),
                   },
                 ]}
+                help={
+                  selectedCompany?.baseCurrency &&
+                  portfolio.baseCurrency.code &&
+                  `${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`
+                }
               >
                 <InputNumber
                   decimalSeparator="."
@@ -367,7 +375,7 @@ export default function TradesImportForm({
             valuePropName="checked"
             label="&nbsp;"
           >
-            <Checkbox>{t("Is a rights transaction")}</Checkbox>
+            <Checkbox>{t("It is a rights transaction")}</Checkbox>
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -379,7 +387,7 @@ export default function TradesImportForm({
               loading={loadingShares || loadingRights}
               icon={formSent ? <CheckOutlined /> : null}
             >
-              Add transaction
+              {t("Add transaction")}
             </Button>
           </Form.Item>
         </Col>

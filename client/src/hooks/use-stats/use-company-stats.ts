@@ -39,7 +39,7 @@ export const useUpdateYearStats = () => {
   return useMutation(
     ({ companyId, year, forced }: IUpdateYearStatsMutationProps) =>
       axios.put(
-        `/api/v1/stats/company/${companyId}/year/${year}/?forced=${forced}`,
+        `/api/v1/stats/company/${companyId}/year/${year}/?force=${forced}`,
         {},
         getAxiosOptionsWithAuth(),
       ),

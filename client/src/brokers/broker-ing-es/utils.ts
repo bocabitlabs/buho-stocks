@@ -11,6 +11,9 @@ export const sharesTransactionTypes = ["VENTA"].concat(
 export const dividendsTransactionTypes = ["DIVIDENDO"];
 
 const normalizeAndRemoveAccents = (inputString: string) => {
+  if (inputString === undefined) {
+    return "";
+  }
   return inputString.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 };
 
@@ -18,14 +21,16 @@ export const getCompanyFromTransaction = (
   name: string,
   portfolio: IPortfolio,
 ): ICompanyListItem | undefined => {
-  const found = portfolio.companies.find((element) =>
-    normalizeAndRemoveAccents(element.name)
-      .toLowerCase()
-      .includes(normalizeAndRemoveAccents(name).toLowerCase()),
-  );
-  if (found) {
-    return found;
-  }
+  const found = portfolio.companies.find((element) => {
+    // console.log(`Element name ${element.name}`);
+    const normalizedlementName = normalizeAndRemoveAccents(
+      element.name,
+    ).toLowerCase();
+    // console.log(`Name ${name}`);
+    const normalizedName = normalizeAndRemoveAccents(name).toLowerCase();
+
+    return normalizedlementName === normalizedName;
+  });
   return found;
 };
 
@@ -101,8 +106,8 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
   let transactionType = inputData[1];
   const companyName = inputData[3];
   const count = +inputData[6];
-  const price = +inputData[7];
-  const total = +inputData[9].replace("'", "");
+  const price = +inputData[7].replace("'", "").replace(",", ".");
+  const total = +inputData[9].replace("'", "").replace(",", ".");
 
   transactionType = sharesBuyTransactionTypes.includes(transactionType)
     ? "BUY"
@@ -116,6 +121,7 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
     price,
     transactionType: transactionType as TransactionType,
   };
+  console.log(result);
   return result;
 }
 

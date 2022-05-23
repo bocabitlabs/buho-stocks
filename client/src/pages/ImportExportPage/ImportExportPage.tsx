@@ -35,7 +35,7 @@ export default function ImportExportPage(): ReactElement {
 
   const options2 = [
     { label: t("Import from App"), value: "import-app", disabled: true },
-    { label: t("Import from Broker"), value: "import-broker" },
+    { label: t("Import from broker"), value: "import-broker" },
   ];
 
   return (

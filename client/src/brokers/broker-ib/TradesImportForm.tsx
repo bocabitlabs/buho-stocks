@@ -1,5 +1,6 @@
 import React, {
   ReactElement,
+  useEffect,
   useState,
   //  useContext, useState
 } from "react";
@@ -59,7 +60,12 @@ export default function IBTradesImportForm({
   const [transactionDate, setTransactionDate] = useState(
     initialTransactionDate.format("YYYY-MM-DD"),
   );
-  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+  const {
+    isRefetching: exchangeRateLoading,
+    refetch,
+    data: exchangeRateData,
+    error: errorFetchingExchangeRate,
+  } = useExchangeRate(
     selectedCompanyCurrency,
     portfolioCurrency,
     transactionDate,
@@ -84,7 +90,6 @@ export default function IBTradesImportForm({
   };
 
   const onFinish = async (values: any) => {
-    console.log("Success:", values);
     if (!selectedCompany) {
       console.error("No company selected");
       return;
@@ -130,23 +135,25 @@ export default function IBTradesImportForm({
     console.log("fetching exchange rate");
     console.log(form.getFieldValue("transactionDate"));
     if (selectedCompany && portfolio) {
-      const { data: exchangeRateResult } = await refetch();
-
-      if (exchangeRateResult) {
-        console.debug(exchangeRateResult);
-        form.setFieldsValue({
-          exchangeRate: exchangeRateResult.exchangeRate,
-        });
-      } else {
-        form.setFields([
-          {
-            name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"],
-          },
-        ]);
-      }
+      refetch();
     }
   };
+
+  useEffect(() => {
+    if (exchangeRateData) {
+      form.setFieldsValue({
+        exchangeRate: exchangeRateData.exchangeRate,
+      });
+    } else if (errorFetchingExchangeRate) {
+      form.setFields([
+        {
+          name: "exchangeRate",
+          errors: [t("Unable to fetch the exchange rates for the given date")],
+        },
+      ]);
+    }
+  }, [errorFetchingExchangeRate, exchangeRateData, form, t]);
+
   return (
     <Form
       form={form}
@@ -171,41 +178,43 @@ export default function IBTradesImportForm({
         <Col span={12}>
           <Form.Item
             name="count"
-            label="Count"
-            rules={[{ required: true, message: "Please input the company" }]}
-            help={`Received: ${inputData[7]}`}
+            label={t("Count")}
+            rules={[{ required: true, message: t("Please input the company") }]}
+            help={`${t("Received")}: ${inputData[7]}`}
           >
-            <Input placeholder="Count" />
+            <Input placeholder={t("Count")} />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item
             name="grossPricePerShare"
-            label="Gross price per share"
-            rules={[{ required: true, message: "Please input the price" }]}
-            help={`Received: ${inputData[8]}`}
+            label={t("Gross price per share")}
+            rules={[{ required: true, message: t("Please input the price") }]}
+            help={`${t("Received")}: ${inputData[8]}`}
           >
-            <Input placeholder="Price" />
+            <Input placeholder={t("Price")} />
           </Form.Item>
         </Col>
 
         <Col span={12}>
           <Form.Item
             name="commission"
-            label="Commission"
-            rules={[{ required: true, message: "Please input the commission" }]}
-            help={`Received: ${inputData[11]}`}
+            label={t("Commission")}
+            rules={[
+              { required: true, message: t("Please input the commission") },
+            ]}
+            help={`${t("Received")}: ${inputData[11]}`}
           >
-            <Input placeholder="Commission" />
+            <Input placeholder={t("Commission")} />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item
             name="company"
-            label="Company"
-            rules={[{ required: true, message: "Please select a company" }]}
+            label={t("Company")}
+            rules={[{ required: true, message: t("Please select a company") }]}
           >
-            <Select placeholder="Company" onChange={onCompanyChange}>
+            <Select placeholder={t("Company")} onChange={onCompanyChange}>
               {portfolio.companies.map((element) => (
                 <Select.Option key={element.id} value={element.id}>
                   {element.name} ({element.ticker})
@@ -218,11 +227,11 @@ export default function IBTradesImportForm({
         <Col span={12}>
           <Form.Item
             name="transactionDate"
-            label="Date"
-            rules={[{ required: true, message: "Please input the date" }]}
-            help={`Received: ${inputData[6]}`}
+            label={t("Date")}
+            rules={[{ required: true, message: t("Please input the date") }]}
+            help={`${t("Received")}: ${inputData[6]}`}
           >
-            <Input onChange={onDateChange} placeholder="Date" />
+            <Input onChange={onDateChange} placeholder={t("Date")} />
           </Form.Item>
         </Col>
         {selectedCompany?.baseCurrency !== portfolio.baseCurrency.code && (
@@ -230,13 +239,18 @@ export default function IBTradesImportForm({
             <Col span={6}>
               <Form.Item
                 name="exchangeRate"
-                label="Exchange rate"
+                label={t("Exchange rate")}
                 rules={[
                   {
                     required: true,
                     message: t("Please input the exchange rate"),
                   },
                 ]}
+                help={
+                  selectedCompany?.baseCurrency &&
+                  portfolio.baseCurrency.code &&
+                  `${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`
+                }
               >
                 <InputNumber
                   decimalSeparator="."
@@ -270,7 +284,7 @@ export default function IBTradesImportForm({
               loading={loading}
               icon={formSent ? <CheckOutlined /> : null}
             >
-              Add transaction
+              {t("Add transaction")}
             </Button>
           </Form.Item>
         </Col>

@@ -198,7 +198,7 @@ export default function DividendsTransactionAddEditForm({
           >
             <InputNumber
               decimalSeparator="."
-              addonAfter={`${companyDividendsCurrency.symbol}`}
+              addonAfter={`${companyDividendsCurrency.code}`}
               min={0}
               step={0.001}
             />
@@ -215,7 +215,7 @@ export default function DividendsTransactionAddEditForm({
             ]}
           >
             <InputNumber
-              addonAfter={`${companyDividendsCurrency.symbol}`}
+              addonAfter={`${companyDividendsCurrency.code}`}
               decimalSeparator="."
               min={0}
               step={0.001}
@@ -248,6 +248,8 @@ export default function DividendsTransactionAddEditForm({
                       message: t("Please input the exchange rate"),
                     },
                   ]}
+                  help={`${companyDividendsCurrency.code} ${t("to")}
+                  ${portfolioBaseCurrency}`}
                 >
                   <InputNumber
                     decimalSeparator="."
@@ -265,8 +267,7 @@ export default function DividendsTransactionAddEditForm({
                     onClick={fetchExchangeRate}
                     loading={exchangeRateLoading}
                   >
-                    {t("Get exchange rate")} ({companyDividendsCurrency.code} to{" "}
-                    {portfolioBaseCurrency})
+                    {t("Get exchange rate")}
                   </Button>
                 </Form.Item>
               </Col>

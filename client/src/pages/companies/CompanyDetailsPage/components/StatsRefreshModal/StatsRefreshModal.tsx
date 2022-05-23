@@ -8,7 +8,7 @@ import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-pri
 
 interface Props {
   companyId: string | undefined;
-  selectedYear: string | undefined;
+  selectedYear: string;
 }
 
 export default function StatsRefreshModal({
@@ -22,16 +22,25 @@ export default function StatsRefreshModal({
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
 
-  const { mutate: updateStockPrice } = useUpdateCompanyStockPrice();
-  const { mutate: updateStats } = useUpdateYearStats();
+  const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
+  const { mutateAsync: updateStats } = useUpdateYearStats();
   const { data: settings } = useSettings();
 
   const showModal = () => {
     setVisible(true);
   };
 
+  const onStockPriceChange = (e: any) => {
+    setUpdateStockPriceSwitch(e.target.checked);
+  };
+
+  const onStatsChange = (e: any) => {
+    console.log("onStatsChange", e.target.checked);
+    setUpdateStatsSwitch(e.target.checked);
+  };
+
   const getStatsForced = async () => {
-    updateStats({
+    await updateStats({
       companyId: +companyId!,
       year: selectedYear,
       forced: updateStockPriceSwitch,
@@ -43,33 +52,29 @@ export default function StatsRefreshModal({
     if (selectedYear === "all") {
       tempYear = new Date().getFullYear().toString();
     }
-    updateStockPrice({ companyId: +companyId!, year: tempYear });
+    await updateStockPrice({ companyId: +companyId!, year: tempYear });
   }, [companyId, selectedYear, updateStockPrice]);
 
   const handleOk = async () => {
+    console.log("handleOk");
+    setConfirmLoading(true);
+
     if (updateStockPriceSwitch) {
-      setConfirmLoading(true);
       await getStockPrice();
       setConfirmLoading(false);
     }
     if (updateStatsSwitch) {
       setConfirmLoading(true);
-      getStatsForced();
+      await getStatsForced();
     }
-    setVisible(false);
     setConfirmLoading(false);
+
+    onStockPriceChange({ target: { checked: false } });
+    onStatsChange({ target: { checked: false } });
   };
 
   const handleCancel = () => {
     setVisible(false);
-  };
-
-  const onStockPriceChange = (e: any) => {
-    setUpdateStockPriceSwitch(e.target.checked);
-  };
-
-  const onStatsChange = (e: any) => {
-    setUpdateStatsSwitch(e.target.checked);
   };
 
   return (
@@ -87,20 +92,25 @@ export default function StatsRefreshModal({
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         okText={t("Update stats")}
-        cancelText={t("Cancel")}
+        cancelText={t("Close")}
+        cancelButtonProps={{ disabled: confirmLoading }}
+        closable={!confirmLoading}
       >
         <Form>
           {t("Do you want to update the stats and the stock price?")}
           {settings && settings.allowFetch && (
             <Form.Item style={{ marginBottom: 0 }}>
-              <Checkbox onChange={onStockPriceChange}>
+              <Checkbox
+                onChange={onStockPriceChange}
+                checked={updateStockPriceSwitch}
+              >
                 {t("Update the stock price from API")}
               </Checkbox>
             </Form.Item>
           )}
           <Form.Item>
-            <Checkbox onChange={onStatsChange}>
-              {t("Update the stats for the year")} {selectedYear}
+            <Checkbox onChange={onStatsChange} checked={updateStatsSwitch}>
+              {t("Update the stats for the year")} &quot;{t(selectedYear)}&quot;
             </Checkbox>
           </Form.Item>
         </Form>

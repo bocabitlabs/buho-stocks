@@ -32,8 +32,8 @@ export default function Form(): ReactElement {
   const { t } = useTranslation();
 
   const options1 = [
-    { label: "Import Shares/Rights", value: "shares" },
-    { label: "Import Dividends", value: "dividends" },
+    { label: t("Import shares/rights"), value: "shares" },
+    { label: t("Import dividends"), value: "dividends" },
   ];
 
   const importDividendsChange = (e: any) => {
@@ -140,12 +140,13 @@ export default function Form(): ReactElement {
             >
               {defaultImport === "shares" ? (
                 <span>
-                  Click to upload a trades file from Interactive Brokers.
+                  {t("Click to upload a trades file from Interactive Brokers.")}
                 </span>
               ) : (
                 <span>
-                  Click to upload a csv file with dividends data from
-                  Interactive Brokers.
+                  {t(
+                    "Click to upload a csv file with dividends data from Interactive Brokers.",
+                  )}
                 </span>
               )}
             </CSVReader>
@@ -153,7 +154,7 @@ export default function Form(): ReactElement {
           {defaultImport === "shares" && data.length > 0 && selectedPortfolio && (
             <div>
               <Typography.Title level={4}>
-                Importing trades from Interactive Brokers:
+                {t("Importing trades from Interactive Brokers")}
               </Typography.Title>
               {data.map((element: any) => {
                 return (
@@ -171,7 +172,7 @@ export default function Form(): ReactElement {
             selectedPortfolio && (
               <div>
                 <Typography.Title level={4}>
-                  Importing dividends from Interactive Brokers:
+                  {t("Importing dividends from Interactive Brokers")}
                 </Typography.Title>
                 {data.map((element: any) => {
                   return (

@@ -34,7 +34,7 @@ describe("CurrenciesPage tests", () => {
     });
 
     await waitFor(() => {
-      const element = screen.getByText("Symbol");
+      const element = screen.getByText("code");
       expect(element).toBeInTheDocument();
     });
 

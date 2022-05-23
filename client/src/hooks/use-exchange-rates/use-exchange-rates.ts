@@ -13,7 +13,7 @@ export const fetchExchangeRate = async (
       "fromCurrencyCode, toCurrencyCode and transactionDate are required",
     );
   }
-
+  console.log("Making exchange-rates call");
   const { data } = await axios.get<IExchangeRate>(
     `/api/v1/exchange-rates/${fromCurrencyCode}/${toCurrencyCode}/${transactionDate}/`,
     getAxiosOptionsWithAuth(),

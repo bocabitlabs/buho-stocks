@@ -11,7 +11,7 @@ import { ICompanyListItem } from "types/company";
 
 interface Props {
   id: string | undefined;
-  selectedYear: string | undefined;
+  selectedYear: string;
   companies: ICompanyListItem[];
 }
 
@@ -56,9 +56,22 @@ export default function StatsRefreshModal({
   const showModal = () => {
     setVisible(true);
   };
+  const onCheckAllChange = (e: any) => {
+    setCheckedList(e.target.checked ? checkboxes : []);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+  };
+
+  const onChange = (checkedValue: CheckboxValueType[]) => {
+    setCheckedList(checkedValue);
+    setIndeterminate(
+      !!checkedValue.length && checkedValue.length < checkboxes.length,
+    );
+    setCheckAll(checkedValue.length === checkboxes.length);
+  };
 
   const getStatsForced = useCallback(
-    async (companyId: string) => {
+    async (companyId: string, companyName: string) => {
       setUpdateMessage(`${t("Updating stats for company")} #${companyId}`);
       try {
         await updateCompanyStats({
@@ -67,38 +80,38 @@ export default function StatsRefreshModal({
           forced: updateStockPriceSwitch,
         });
         setUpdateMessage(
-          `${t("Stats updated for company")} #${companyId} ${t(
+          `${t("Stats updated for company")}: ${companyName} ${t(
             "and year",
           )} ${selectedYear}`,
         );
       } catch (e) {
         setUpdateMessage(
-          `${t("Error updating stats for company")} #${companyId} ${t(
+          `${t("Error updating stats for company")}: ${companyName} ${t(
             "and year",
           )} ${selectedYear}`,
         );
       }
     },
-    [selectedYear, t, updateCompanyStats],
+    [selectedYear, t, updateCompanyStats, updateStockPriceSwitch],
   );
 
   const getStockPrice = useCallback(
-    async (companyId: string) => {
+    async (companyId: string, companyName: string) => {
       let tempYear = selectedYear;
       if (selectedYear === "all") {
         tempYear = new Date().getFullYear().toString();
       }
-      setUpdateMessage(`${t("Updating price for company")} #${companyId}`);
+      setUpdateMessage(`${t("Updating price for company")}: ${companyName}`);
       try {
         await updateStockPrice({ companyId: +companyId, year: tempYear });
         setUpdateMessage(
-          `${t("Price updated for company")} #${companyId} ${t(
+          `${t("Price updated for company")}: ${companyName} ${t(
             "and year",
           )} ${tempYear}`,
         );
       } catch (e) {
         setUpdateMessage(
-          `${t("Error updating price for company")} #${companyId} ${t(
+          `${t("Error updating price for company")}: ${companyName} ${t(
             "and year",
           )} ${tempYear}`,
         );
@@ -136,7 +149,7 @@ export default function StatsRefreshModal({
       await asyncForEach(checkedList, async (checkboxName: string) => {
         // eslint-disable-next-line prefer-destructuring
         companyId = checkboxName.split("-")[1].split("#")[1];
-        await getStockPrice(companyId);
+        await getStockPrice(companyId, checkboxName);
       });
       setConfirmLoading(false);
     }
@@ -145,12 +158,13 @@ export default function StatsRefreshModal({
       await asyncForEach(checkedList, async (checkboxName: string) => {
         // eslint-disable-next-line prefer-destructuring
         companyId = checkboxName.split("-")[1].split("#")[1];
-        await getStatsForced(companyId);
+        await getStatsForced(companyId, checkboxName);
       });
       setConfirmLoading(false);
     }
     await updatePortfolioStatsForced();
     setConfirmLoading(false);
+    onCheckAllChange({ target: { checked: false } });
   };
 
   const handleCancel = () => {
@@ -163,20 +177,6 @@ export default function StatsRefreshModal({
 
   const onStatsChange = (e: any) => {
     setUpdateStatsSwitch(e.target.checked);
-  };
-
-  const onCheckAllChange = (e: any) => {
-    setCheckedList(e.target.checked ? checkboxes : []);
-    setIndeterminate(false);
-    setCheckAll(e.target.checked);
-  };
-
-  const onChange = (checkedValue: CheckboxValueType[]) => {
-    setCheckedList(checkedValue);
-    setIndeterminate(
-      !!checkedValue.length && checkedValue.length < checkboxes.length,
-    );
-    setCheckAll(checkedValue.length === checkboxes.length);
   };
 
   const handleFormSubmit = async () => {
@@ -197,13 +197,17 @@ export default function StatsRefreshModal({
         icon={<SyncOutlined />}
       />
       <Modal
-        title={`${t("Refresh stats and stock prices for")} ${selectedYear}`}
+        title={`${t("Refresh stats and stock prices for")} &quot;${t(
+          selectedYear,
+        )}&quot;`}
         visible={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         okText={`${t("Update stats")}`}
         cancelText={`${t("Close")}`}
         onOk={handleFormSubmit}
+        cancelButtonProps={{ disabled: confirmLoading }}
+        closable={!confirmLoading}
       >
         <Form form={form} layout="vertical">
           {t("For each company:")}
@@ -220,7 +224,7 @@ export default function StatsRefreshModal({
           )}
           <Form.Item name="updateStats" valuePropName="checked">
             <Checkbox onChange={onStatsChange}>
-              {t("Update the stats for the year")} {selectedYear}
+              {t("Update the stats for the year")} &quot;{t(selectedYear)}&quot;
             </Checkbox>
           </Form.Item>
           <Typography.Title level={5}>

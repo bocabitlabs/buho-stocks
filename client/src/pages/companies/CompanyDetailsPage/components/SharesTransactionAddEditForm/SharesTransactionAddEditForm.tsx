@@ -60,6 +60,7 @@ export default function SharesTransactionAddEditForm({
     data: exchangeRateData,
     isRefetching: exchangeRateLoading,
     refetch,
+    error: errorFetchingExchangeRate,
   } = useExchangeRate(
     companyBaseCurrency.code,
     portfolioBaseCurrency,
@@ -154,7 +155,7 @@ export default function SharesTransactionAddEditForm({
       form.setFieldsValue({
         exchangeRate: exchangeRateData.exchangeRate,
       });
-    } else {
+    } else if (errorFetchingExchangeRate) {
       form.setFields([
         {
           name: "exchangeRate",
@@ -162,7 +163,7 @@ export default function SharesTransactionAddEditForm({
         },
       ]);
     }
-  }, [exchangeRateData, form, t]);
+  }, [errorFetchingExchangeRate, exchangeRateData, form, t]);
 
   useEffect(() => {
     if (transaction) {
@@ -224,7 +225,7 @@ export default function SharesTransactionAddEditForm({
           >
             <InputNumber
               decimalSeparator="."
-              addonAfter={`${companyBaseCurrency.symbol}`}
+              addonAfter={`${companyBaseCurrency.code}`}
               min={0}
               step={0.001}
             />
@@ -255,7 +256,7 @@ export default function SharesTransactionAddEditForm({
             ]}
           >
             <InputNumber
-              addonAfter={`${companyBaseCurrency.symbol}`}
+              addonAfter={`${companyBaseCurrency.code}`}
               decimalSeparator="."
               min={0}
               step={0.001}

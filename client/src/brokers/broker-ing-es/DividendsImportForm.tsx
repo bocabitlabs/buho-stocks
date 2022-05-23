@@ -56,14 +56,21 @@ export default function DividendsImportForm({
   const { mutate: createDividendsTransaction, isLoading: loading } =
     useAddDividendsTransaction();
   const { isFetching: currenciesLoading, data: currencies } = useCurrencies();
-  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+  const {
+    isFetching: exchangeRateLoading,
+    refetch,
+    error: errorFetchingExchangeRate,
+    data: exchangeRateData,
+  } = useExchangeRate(
     selectedCompanyCurrency,
     portfolioCurrency,
     transactionDate,
   );
 
-  const onCompanyChange = (value: string) => {
-    const tempCompany = getCompanyFromTransaction(value, portfolio);
+  const onCompanyChange = (value: number) => {
+    const tempCompany = portfolio.companies.find(
+      (element) => element.id === value,
+    );
     if (tempCompany) {
       setSelectedCompany(tempCompany);
       setSelectedCompanyCurrency(tempCompany.dividendsCurrency);
@@ -81,19 +88,7 @@ export default function DividendsImportForm({
     console.log("fetching exchange rate");
     console.log(form.getFieldValue("transactionDate"));
     if (selectedCompany && portfolio) {
-      const { data: exchangeRateResult } = await refetch();
-      if (exchangeRateResult) {
-        form.setFieldsValue({
-          exchangeRate: exchangeRateResult,
-        });
-      } else {
-        form.setFields([
-          {
-            name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"],
-          },
-        ]);
-      }
+      refetch();
     }
   };
 
@@ -181,29 +176,8 @@ export default function DividendsImportForm({
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.dividendsCurrency === "EUR") {
-        form.setFieldsValue({
-          commissionInCompanyCurrency: (price * initialCount - total).toFixed(
-            3,
-          ),
-        });
-      } else {
-        const { data: exchangeRateResult } = await refetch();
-        if (exchangeRateResult) {
-          form.setFieldsValue({
-            commissionInCompanyCurrency: (
-              price * initialCount * exchangeRateResult.exchangeRate -
-              total
-            ).toFixed(3),
-          });
-        } else {
-          form.setFields([
-            {
-              name: "commissionInCompanyCurrency",
-              errors: ["Unable to fetch the exchange rates for the given date"],
-            },
-          ]);
-        }
+      if (selectedCompany?.baseCurrency !== "EUR") {
+        refetch();
       }
     }
     setCommissionLoading(false);
@@ -212,6 +186,21 @@ export default function DividendsImportForm({
   useEffect(() => {
     getPriceInCompanyCurrency();
   }, [getPriceInCompanyCurrency]);
+
+  useEffect(() => {
+    if (exchangeRateData) {
+      form.setFieldsValue({
+        exchangeRate: exchangeRateData.exchangeRate,
+      });
+    } else if (errorFetchingExchangeRate) {
+      form.setFields([
+        {
+          name: "exchangeRate",
+          errors: [t("Unable to fetch the exchange rates for the given date")],
+        },
+      ]);
+    }
+  }, [errorFetchingExchangeRate, exchangeRateData, form, t]);
 
   return (
     <Form
@@ -239,7 +228,7 @@ export default function DividendsImportForm({
             rules={[
               { required: true, message: t("Please input the shares count") },
             ]}
-            help={`Received: ${inputData[6]}`}
+            help={`${t("Received")}: ${inputData[6]}`}
           >
             <Input placeholder={t("Count")} />
           </Form.Item>
@@ -247,12 +236,12 @@ export default function DividendsImportForm({
         <Col span={6}>
           <Form.Item
             name="grossPricePerShare"
-            label={t("Price")}
+            label={t("Gross price per share")}
             rules={[{ required: true, message: t("Please input the price") }]}
-            help={`Received: ${inputData[7]}`}
+            help={`${t("Received")}: ${inputData[7]}`}
           >
             <Input
-              placeholder="Price"
+              placeholder={t("Gross price per share")}
               addonAfter={`${selectedCompany?.dividendsCurrency}`}
             />
           </Form.Item>
@@ -266,7 +255,7 @@ export default function DividendsImportForm({
               }
               onClick={getPriceInCompanyCurrency}
               loading={priceLoading}
-              title={`EUR to ${selectedCompany?.dividendsCurrency}`}
+              title={`EUR ${t("to")} ${selectedCompany?.dividendsCurrency}`}
             >
               {t("Get price")}
             </Button>
@@ -290,14 +279,14 @@ export default function DividendsImportForm({
         <Col span={6}>
           <Form.Item
             name="commissionInCompanyCurrency"
-            label="Commission in company currency"
+            label={t("Commission in company currency")}
             rules={[
               {
                 required: true,
                 message: t("Please input the commission of the transaction"),
               },
             ]}
-            help={`Received: Total = ${inputData[9]}`}
+            help={`${t("Received")}: ${t("Total")} = ${inputData[9]}`}
           >
             <InputNumber
               decimalSeparator="."
@@ -318,7 +307,7 @@ export default function DividendsImportForm({
               }
               onClick={getCommissionInCompanyCurrency}
               loading={commissionLoading}
-              title={`EUR to ${selectedCompany?.dividendsCurrency}`}
+              title={`EUR ${t("to")} ${selectedCompany?.dividendsCurrency}`}
             >
               {t("Get commission")}
             </Button>
@@ -345,11 +334,11 @@ export default function DividendsImportForm({
         <Col span={12}>
           <Form.Item
             name="transactionDate"
-            label="Date"
-            rules={[{ required: true, message: "Please input the date" }]}
-            help={`Received: ${inputData[0]}`}
+            label={t("Date")}
+            rules={[{ required: true, message: t("Please input the date") }]}
+            help={`${t("Received")}: ${inputData[0]}`}
           >
-            <Input onChange={onDateChange} placeholder="Date" />
+            <Input onChange={onDateChange} placeholder={t("Date")} />
           </Form.Item>
         </Col>
         {selectedCompany?.dividendsCurrency !== portfolio.baseCurrency.code && (
@@ -357,13 +346,18 @@ export default function DividendsImportForm({
             <Col span={6}>
               <Form.Item
                 name="exchangeRate"
-                label="Exchange rate"
+                label={t("Exchange rate")}
                 rules={[
                   {
                     required: true,
                     message: t("Please input the exchange rate"),
                   },
                 ]}
+                help={
+                  selectedCompany?.dividendsCurrency &&
+                  portfolio.baseCurrency.code &&
+                  `${selectedCompany?.dividendsCurrency} to ${portfolio.baseCurrency.code}`
+                }
               >
                 <InputNumber
                   decimalSeparator="."
@@ -397,7 +391,7 @@ export default function DividendsImportForm({
               loading={loading}
               icon={formSent ? <CheckOutlined /> : null}
             >
-              Add dividends
+              {t("Add dividends")}
             </Button>
           </Form.Item>
         </Col>

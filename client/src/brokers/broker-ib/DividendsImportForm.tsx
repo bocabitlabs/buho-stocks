@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from "react";
+import React, { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import {
@@ -79,7 +79,12 @@ export default function IBDividendsImportForm({
     initialTransactionDate.format("YYYY-MM-DD"),
   );
 
-  const { isFetching: exchangeRateLoading, refetch } = useExchangeRate(
+  const {
+    isRefetching: exchangeRateLoading,
+    refetch,
+    data: exchangeRateData,
+    error: errorFetchingExchangeRate,
+  } = useExchangeRate(
     selectedCompanyCurrency,
     portfolioCurrency,
     transactionDate,
@@ -144,34 +149,26 @@ export default function IBDividendsImportForm({
   };
 
   const fetchExchangeRate = async () => {
-    console.log("fetching exchange rate");
-    console.log(form.getFieldValue("transactionDate"));
-    form.setFields([
-      {
-        name: "exchangeRate",
-        errors: undefined,
-      },
-    ]);
     if (selectedCompany && portfolio) {
       console.debug(`fetching exchange rate for ${selectedCompany.ticker}`);
-      const { data: exchangeRateResult } = await refetch();
-      if (exchangeRateResult) {
-        console.debug(exchangeRateResult);
-        form.setFieldsValue({
-          exchangeRate: exchangeRateResult.exchangeRate,
-        });
-      } else {
-        form.setFields([
-          {
-            name: "exchangeRate",
-            errors: ["Unable to fetch the exchange rates for the given date"],
-          },
-        ]);
-      }
-    } else {
-      console.error(`No company selected`);
+      refetch();
     }
   };
+
+  useEffect(() => {
+    if (exchangeRateData) {
+      form.setFieldsValue({
+        exchangeRate: exchangeRateData.exchangeRate,
+      });
+    } else if (errorFetchingExchangeRate) {
+      form.setFields([
+        {
+          name: "exchangeRate",
+          errors: [t("Unable to fetch the exchange rates for the given date")],
+        },
+      ]);
+    }
+  }, [exchangeRateData, t, errorFetchingExchangeRate, form]);
 
   return (
     <Form
@@ -197,47 +194,53 @@ export default function IBDividendsImportForm({
         <Col span={12}>
           <Form.Item
             name="count"
-            label="Count"
-            rules={[{ required: true, message: "Please input the company" }]}
-            help={`Received: ${initialCount} = ${totalValue} (total) / ${initialGrossPricePerShare} (price per share)`}
+            label={t("Count")}
+            rules={[{ required: true, message: t("Please input the company") }]}
+            help={`${t(
+              "Received",
+            )}: ${initialCount} = ${totalValue} (total) / ${initialGrossPricePerShare} (${t(
+              "price per share",
+            )})`}
           >
-            <Input placeholder="Count" />
+            <Input placeholder={t("Count")} />
           </Form.Item>
         </Col>
 
         <Col span={12}>
           <Form.Item
             name="grossPricePerShare"
-            label="Gross price per share"
-            rules={[{ required: true, message: "Please input the price" }]}
-            help={`Received: ${inputData.data[indexes.notes]}`}
+            label={t("Gross price per share")}
+            rules={[{ required: true, message: t("Please input the price") }]}
+            help={`${t("Received")}: ${inputData.data[indexes.notes]}`}
           >
-            <Input placeholder="Price" />
+            <Input placeholder={t("Price")} />
           </Form.Item>
         </Col>
 
         <Col span={12}>
           <Form.Item
             name="commission"
-            label="Commission"
-            rules={[{ required: true, message: "Please input the commission" }]}
-            help={`Received: ${
+            label={t("Commission")}
+            rules={[
+              { required: true, message: t("Please input the commission") },
+            ]}
+            help={`${t("Received")}: ${
               inputData.commissions
                 ? `${inputData.commissions[4]} ${inputData.commissions[5]}`
-                : "Nothing"
+                : t("Nothing")
             }`}
           >
-            <Input placeholder="Commission" />
+            <Input placeholder={t("Commission")} />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item
             name="company"
-            label="Company"
-            rules={[{ required: true, message: "Please select a company" }]}
-            help={`Received: ${initialCompanyTicker}`}
+            label={t("Company")}
+            rules={[{ required: true, message: t("Please select a company") }]}
+            help={`${t("Received")}: ${initialCompanyTicker}`}
           >
-            <Select placeholder="Company" onChange={onCompanyChange}>
+            <Select placeholder={t("Company")} onChange={onCompanyChange}>
               {portfolio.companies.map((element) => (
                 <Select.Option key={element.id} value={element.id}>
                   {element.name} ({element.ticker})
@@ -249,11 +252,13 @@ export default function IBDividendsImportForm({
         <Col span={12}>
           <Form.Item
             name="transactionDate"
-            label="Date"
-            rules={[{ required: true, message: "Please input the date" }]}
-            help={`Received: ${inputData.data[indexes.transactionDate]}`}
+            label={t("Date")}
+            rules={[{ required: true, message: t("Please input the date") }]}
+            help={`${t("Received")}: ${
+              inputData.data[indexes.transactionDate]
+            }`}
           >
-            <Input onChange={onDateChange} placeholder="Date" />
+            <Input onChange={onDateChange} placeholder={t("Date")} />
           </Form.Item>
         </Col>
 
@@ -262,13 +267,18 @@ export default function IBDividendsImportForm({
             <Col span={6}>
               <Form.Item
                 name="exchangeRate"
-                label="Exchange rate"
+                label={t("Exchange rate")}
                 rules={[
                   {
                     required: true,
                     message: t("Please input the exchange rate"),
                   },
                 ]}
+                help={
+                  selectedCompany?.dividendsCurrency &&
+                  portfolio.baseCurrency.code &&
+                  `${selectedCompany?.dividendsCurrency} to ${portfolio.baseCurrency.code}`
+                }
               >
                 <InputNumber
                   decimalSeparator="."
@@ -302,7 +312,7 @@ export default function IBDividendsImportForm({
               loading={loading}
               icon={formSent ? <CheckOutlined /> : null}
             >
-              Add transaction
+              {t("Add dividend")}
             </Button>
           </Form.Item>
         </Col>

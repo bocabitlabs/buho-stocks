@@ -29,7 +29,7 @@ export default function ImportDataSelector({
         icon={<DownloadOutlined />}
         size="large"
       >
-        {t("Import from Broker")}
+        {t("Import from broker")}
       </Button>
     </div>
   );

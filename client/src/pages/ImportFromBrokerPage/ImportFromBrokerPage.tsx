@@ -12,14 +12,14 @@ export default function ImportFromBrokerPage(): ReactElement {
 
   if (!broker) {
     return (
-      <ImportFromBrokerPageHeader>
+      <ImportFromBrokerPageHeader title="Broker not found">
         {t("Broker not found")}
       </ImportFromBrokerPageHeader>
     );
   }
 
   return (
-    <ImportFromBrokerPageHeader>
+    <ImportFromBrokerPageHeader title={`${t("Import from")} ${broker.name}`}>
       <ImportForm />
     </ImportFromBrokerPageHeader>
   );
