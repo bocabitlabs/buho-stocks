@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug React: Edge",
+      "request": "launch",
+      "type": "pwa-msedge",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/client",
+      "preLaunchTask": "npm: start",
+      "postDebugTask": "postdebugKill",
+    },
+    {
       "name": "Python: Django",
       "type": "python",
       "request": "launch",
@@ -12,8 +21,9 @@
       "args": ["runserver", "0.0.0.0:8001"],
       "django": true
     },
+
     {
-      "name": "Yarn: React",
+      "name": "Run React: React",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "yarn",
