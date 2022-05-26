@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ILogMessage } from "types/log-messages";
 
@@ -11,9 +10,8 @@ interface DeleteMutationProps {
 
 export const fetchLogMessages = async (portfolioId: number | undefined) => {
   console.log(`fetchLogMessages from portfolioId: ${portfolioId}`);
-  const { data } = await axios.get<ILogMessage[]>(
-    `/api/v1/portfolios/${portfolioId}/messages/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<ILogMessage[]>(
+    `/portfolios/${portfolioId}/messages/`,
   );
   return data;
 };
@@ -21,10 +19,7 @@ export const fetchLogMessages = async (portfolioId: number | undefined) => {
 export const useDeleteLogMessages = () => {
   return useMutation(
     ({ portfolioId, logMessageId }: DeleteMutationProps) =>
-      axios.delete(
-        `/api/v1/portfolios/${portfolioId}/messages/${logMessageId}`,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.delete(`/portfolios/${portfolioId}/messages/${logMessageId}`),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries(["messages", variables.portfolioId]);

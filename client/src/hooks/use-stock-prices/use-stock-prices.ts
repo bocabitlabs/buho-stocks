@@ -1,6 +1,5 @@
 import { useMutation } from "react-query";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 
 interface IUpdateYearStatsMutationProps {
@@ -11,11 +10,7 @@ interface IUpdateYearStatsMutationProps {
 export const useUpdateCompanyStockPrice = () => {
   return useMutation(
     ({ companyId, year }: IUpdateYearStatsMutationProps) =>
-      axios.put(
-        `/api/v1/companies/${companyId}/stock-prices/${year}/`,
-        {},
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.put(`/companies/${companyId}/stock-prices/${year}/`, {}),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries([

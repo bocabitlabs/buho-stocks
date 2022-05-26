@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IMarket, IMarketFormFields, ITimezone } from "types/market";
 
@@ -12,18 +11,12 @@ interface UpdateMarketMutationProps {
 }
 
 export const fetchMarkets = async () => {
-  const { data } = await axios.get<IMarket[]>(
-    "/api/v1/markets/",
-    getAxiosOptionsWithAuth(),
-  );
+  const { data } = await apiClient.get<IMarket[]>("/markets/");
   return data;
 };
 
 export const fetchTimezones = async () => {
-  const { data } = await axios.get<IMarket[]>(
-    "/api/v1/markets/timezones/",
-    getAxiosOptionsWithAuth(),
-  );
+  const { data } = await apiClient.get<IMarket[]>("/markets/timezones/");
   return data;
 };
 
@@ -31,10 +24,7 @@ export const fetchMarket = async (marketId: number | undefined) => {
   if (!marketId) {
     throw new Error("marketId is required");
   }
-  const { data } = await axios.get<IMarket>(
-    `/api/v1/markets/${marketId}/`,
-    getAxiosOptionsWithAuth(),
-  );
+  const { data } = await apiClient.get<IMarket>(`/markets/${marketId}/`);
   return data;
 };
 
@@ -42,8 +32,7 @@ export const useAddMarket = (options?: any) => {
   const { t } = useTranslation();
 
   return useMutation(
-    (newMarket: IMarketFormFields) =>
-      axios.post("/api/v1/markets/", newMarket, getAxiosOptionsWithAuth()),
+    (newMarket: IMarketFormFields) => apiClient.post("/markets/", newMarket),
     {
       onSuccess: () => {
         toast.success(t("Market created"));
@@ -58,15 +47,11 @@ export const useAddMarket = (options?: any) => {
 };
 
 export const useDeleteMarket = () => {
-  return useMutation(
-    (id: number) =>
-      axios.delete(`/api/v1/markets/${id}/`, getAxiosOptionsWithAuth()),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries(["markets"]);
-      },
+  return useMutation((id: number) => apiClient.delete(`/markets/${id}/`), {
+    onSuccess: () => {
+      queryClient.invalidateQueries(["markets"]);
     },
-  );
+  });
 };
 
 export const useUpdateMarket = (options?: any) => {
@@ -74,11 +59,7 @@ export const useUpdateMarket = (options?: any) => {
 
   return useMutation(
     ({ marketId, newMarket }: UpdateMarketMutationProps) =>
-      axios.put(
-        `/api/v1/markets/${marketId}/`,
-        newMarket,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.put(`/markets/${marketId}/`, newMarket),
     {
       onSuccess: () => {
         toast.success(t("Market has been updated"));

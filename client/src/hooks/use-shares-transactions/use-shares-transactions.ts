@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import {
   ISharesTransaction,
@@ -30,9 +29,8 @@ export const fetchSharesTransactions = async (
   if (!companyId) {
     throw new Error("companyId is required");
   }
-  const { data } = await axios.get<ISharesTransaction[]>(
-    `/api/v1/companies/${companyId}/shares/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<ISharesTransaction[]>(
+    `/companies/${companyId}/shares/`,
   );
   return data;
 };
@@ -44,9 +42,8 @@ export const fetchSharesTransaction = async (
   if (!companyId && !transactionId) {
     throw new Error("companyId and transactionId are required");
   }
-  const { data } = await axios.get<ISharesTransaction>(
-    `/api/v1/companies/${companyId}/shares/${transactionId}/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<ISharesTransaction>(
+    `/companies/${companyId}/shares/${transactionId}/`,
   );
   return data;
 };
@@ -54,11 +51,7 @@ export const fetchSharesTransaction = async (
 export const useAddSharesTransaction = () => {
   return useMutation(
     ({ companyId, newTransaction }: IAddSharesMutationProps) =>
-      axios.post(
-        `/api/v1/companies/${companyId}/shares/`,
-        newTransaction,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.post(`/companies/${companyId}/shares/`, newTransaction),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries([
@@ -76,10 +69,7 @@ export const useAddSharesTransaction = () => {
 export const useDeleteSharesTransaction = () => {
   return useMutation(
     ({ companyId, transactionId }: DeleteTransactionMutationProps) =>
-      axios.delete(
-        `/api/v1/companies/${companyId}/shares/${transactionId}/`,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.delete(`/companies/${companyId}/shares/${transactionId}/`),
     {
       onSuccess: () => {
         toast.success("Shares transaction deleted successfully");
@@ -99,10 +89,9 @@ export const useUpdateSharesTransaction = () => {
       transactionId,
       newTransaction,
     }: IUpdateSharesMutationProps) =>
-      axios.put(
-        `/api/v1/companies/${companyId}/shares/${transactionId}/`,
+      apiClient.put(
+        `/companies/${companyId}/shares/${transactionId}/`,
         newTransaction,
-        getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {

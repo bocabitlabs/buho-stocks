@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from "react-query";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
@@ -13,17 +12,15 @@ export const fetchYearStats = async (
   if (groupBy) {
     grouping = `?groupBy=${groupBy}`;
   }
-  const { data } = await axios.get<IPortfolioYearStats[]>(
-    `/api/v1/stats/portfolio/${portfolioId}/year/${year}/${grouping}`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<IPortfolioYearStats[]>(
+    `/stats/portfolio/${portfolioId}/year/${year}/${grouping}`,
   );
   return data;
 };
 
 export const fetchAllYearsStats = async (portfolioId: number | undefined) => {
-  const { data } = await axios.get<IPortfolioYearStats[]>(
-    `/api/v1/stats/portfolio/${portfolioId}/all-years/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<IPortfolioYearStats[]>(
+    `/stats/portfolio/${portfolioId}/all-years/`,
   );
   return data;
 };
@@ -66,11 +63,7 @@ interface IUpdateYearStatsMutationProps {
 export const useUpdatePortfolioYearStatsForced = () => {
   return useMutation(
     ({ portfolioId, year }: IUpdateYearStatsMutationProps) =>
-      axios.put(
-        `/api/v1/stats/portfolio/${portfolioId}/year/${year}/`,
-        {},
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.put(`/stats/portfolio/${portfolioId}/year/${year}/`, {}),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries([

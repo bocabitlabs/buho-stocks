@@ -1,13 +1,9 @@
 import { useQuery } from "react-query";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import { ICurrency } from "types/currency";
 
 export const fetchCurrencies = async () => {
-  const { data } = await axios.get<ICurrency[]>(
-    "/api/v1/currencies/",
-    getAxiosOptionsWithAuth(),
-  );
+  const { data } = await apiClient.get<ICurrency[]>("/currencies/");
   return data;
 };
 export function useCurrencies() {

@@ -1,8 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IPortfolio, IPortfolioFormFields } from "types/portfolio";
 
@@ -16,10 +15,7 @@ interface DeleteMutationProps {
 }
 
 export const fetchPortfolios = async () => {
-  const { data } = await axios.get<IPortfolio[]>(
-    `/api/v1/portfolios/`,
-    getAxiosOptionsWithAuth(),
-  );
+  const { data } = await apiClient.get<IPortfolio[]>(`/portfolios/`);
   return data;
 };
 
@@ -27,9 +23,8 @@ export const fetchPortfolio = async (portfolioId: number | undefined) => {
   if (!portfolioId) {
     throw new Error("Id is required");
   }
-  const { data } = await axios.get<IPortfolio>(
-    `/api/v1/portfolios/${portfolioId}/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<IPortfolio>(
+    `/portfolios/${portfolioId}/`,
   );
   return data;
 };
@@ -39,11 +34,7 @@ export const useAddPortfolio = () => {
 
   return useMutation(
     (newPortfolio: IPortfolioFormFields) =>
-      axios.post(
-        `/api/v1/portfolios/`,
-        newPortfolio,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.post(`/portfolios/`, newPortfolio),
     {
       onSuccess: () => {
         toast.success(t("Portfolio created"));
@@ -62,10 +53,7 @@ export const useDeletePortfolio = () => {
 
   return useMutation(
     ({ portfolioId }: DeleteMutationProps) =>
-      axios.delete(
-        `/api/v1/portfolios/${portfolioId}/`,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.delete(`/portfolios/${portfolioId}/`),
     {
       onSuccess: (data, variables) => {
         toast.error(t("Portfolio deleted"));
@@ -84,11 +72,7 @@ export const useUpdatePortfolio = () => {
 
   return useMutation(
     ({ portfolioId, newPortfolio }: UpdateMutationProps) =>
-      axios.put(
-        `/api/v1/portfolios/${portfolioId}/`,
-        newPortfolio,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.put(`/portfolios/${portfolioId}/`, newPortfolio),
     {
       onSuccess: (data, variables) => {
         toast.success(t("Portfolio has been updated"));

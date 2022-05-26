@@ -1,6 +1,5 @@
 import { useQuery } from "react-query";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import { IExchangeRate } from "types/exchange-rate";
 
 export const fetchExchangeRate = async (
@@ -14,9 +13,8 @@ export const fetchExchangeRate = async (
     );
   }
   console.log("Making exchange-rates call");
-  const { data } = await axios.get<IExchangeRate>(
-    `/api/v1/exchange-rates/${fromCurrencyCode}/${toCurrencyCode}/${transactionDate}/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<IExchangeRate>(
+    `/exchange-rates/${fromCurrencyCode}/${toCurrencyCode}/${transactionDate}/`,
   );
   return data;
 };

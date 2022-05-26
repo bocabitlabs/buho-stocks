@@ -8,6 +8,7 @@ import App from "App";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import RequireAuth from "components/RequireAuth/RequireAuth";
 import ScrollToTop from "components/ScrollToTop/ScrollToTop";
+import SetupAxios from "components/SetupAxios/SetupAxios";
 import { AuthContext } from "contexts/auth";
 import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import getRoute, { HOME_ROUTE } from "routes";
@@ -63,6 +64,7 @@ export default function Main(): ReactElement {
       <QueryClientProvider client={queryClient}>
         <React.Suspense fallback={<LoadingSpin />}>
           <BrowserRouter>
+            <SetupAxios />
             <ScrollToTop />
             <Routes>
               <Route path="app-login" element={<LoginPage />} />

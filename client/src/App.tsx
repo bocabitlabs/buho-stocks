@@ -1,5 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import "./App.css";
+import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Layout } from "antd";
@@ -15,6 +16,7 @@ import i18n from "i18n";
 function App() {
   const { state } = useContext(AuthContext);
   const { isAuthenticated } = state;
+  const { t } = useTranslation();
 
   const [selectedKey, setSelectedKey] = useState<string>("0");
   const changeSelectedKey = useCallback((event: any) => {
@@ -34,12 +36,8 @@ function App() {
     }
   }, [data]);
 
-  if (errorSettings) {
-    return <div>Unable to fetch application&apos;s settings.</div>;
-  }
-
   if (!isAuthenticated) {
-    return <div>Login in...</div>;
+    return <div>{t("Login in...")}</div>;
   }
 
   const Menu = (
@@ -56,6 +54,9 @@ function App() {
       <Layout>
         <SideBar menu={Menu} />
         <Layout.Content>
+          {errorSettings && (
+            <div>Unable to fetch application&apos;s settings.</div>
+          )}
           <Outlet />
           <PageFooter />
         </Layout.Content>

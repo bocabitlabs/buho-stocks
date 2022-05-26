@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import {
   IRightsTransaction,
@@ -30,9 +29,8 @@ export const fetchRightsTransactions = async (
   if (!companyId) {
     throw new Error("companyId is required");
   }
-  const { data } = await axios.get<IRightsTransaction[]>(
-    `/api/v1/companies/${companyId}/rights/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<IRightsTransaction[]>(
+    `/companies/${companyId}/rights/`,
   );
   return data;
 };
@@ -44,9 +42,8 @@ export const fetchRightsTransaction = async (
   if (!companyId && !transactionId) {
     throw new Error("companyId and transactionId are required");
   }
-  const { data } = await axios.get<IRightsTransaction>(
-    `/api/v1/companies/${companyId}/rights/${transactionId}/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<IRightsTransaction>(
+    `/companies/${companyId}/rights/${transactionId}/`,
   );
   return data;
 };
@@ -54,11 +51,7 @@ export const fetchRightsTransaction = async (
 export const useAddRightsTransaction = () => {
   return useMutation(
     ({ companyId, newTransaction }: IAddRightsMutationProps) =>
-      axios.post(
-        `/api/v1/companies/${companyId}/rights/`,
-        newTransaction,
-        getAxiosOptionsWithAuth(),
-      ),
+      apiClient.post(`/companies/${companyId}/rights/`, newTransaction),
     {
       onSuccess: (data, variables) => {
         toast.success(`Rights added successfully`);
@@ -81,10 +74,9 @@ export const useUpdateRightsTransaction = () => {
       transactionId,
       newTransaction,
     }: IUpdateRightsMutationProps) =>
-      axios.put(
-        `/api/v1/companies/${companyId}/rights/${transactionId}/`,
+      apiClient.put(
+        `/companies/${companyId}/rights/${transactionId}/`,
         newTransaction,
-        getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {
@@ -104,9 +96,8 @@ export const useUpdateRightsTransaction = () => {
 export const useDeleteRightsTransaction = () => {
   return useMutation(
     ({ companyId, transactionId }: IDeleteTransactionMutationProps) =>
-      axios.delete(
+      apiClient.delete(
         `/api/v1/companies/${companyId}/rights/${transactionId}/`,
-        getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {

@@ -25,11 +25,10 @@ export function useAuthContext(): AuthContextType {
   }, []);
 
   const clearToken = useCallback(() => {
-    if (state.isAuthenticated) {
-      console.debug("useAuth: Calling clearToken");
-      setState({ isAuthenticated: false, token: null });
-    }
-  }, [state.isAuthenticated]);
+    console.debug("useAuth: Calling clearToken");
+    setState({ isAuthenticated: false, token: null });
+    localStorage.removeItem("token");
+  }, []);
 
   return {
     state,

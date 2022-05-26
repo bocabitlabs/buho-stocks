@@ -1,18 +1,18 @@
-import React, { useContext } from "react";
-import { useLocation, Navigate } from "react-router-dom";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "contexts/auth";
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  const { state } = useContext(AuthContext);
-  const location = useLocation();
+  const { state, clearToken } = useContext(AuthContext);
+  const navigate = useNavigate();
+  console.log(state);
 
-  if (!state.isAuthenticated) {
-    // Redirect them to the /login page, but save the current location they were
-    // trying to go to when they were redirected. This allows us to send them
-    // along to that page after they login, which is a nicer user experience
-    // than dropping them off on the home page.
-    return <Navigate to="/app-login" state={{ from: location }} />;
-  }
+  useEffect(() => {
+    if (!state.isAuthenticated) {
+      clearToken();
+      navigate("/app-login", { replace: true });
+    }
+  }, [state.isAuthenticated, navigate, clearToken]);
 
   return children;
 }

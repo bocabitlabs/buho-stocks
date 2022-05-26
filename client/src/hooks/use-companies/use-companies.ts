@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ICompany, ICompanyFormFields, ICompanyListItem } from "types/company";
 
@@ -27,9 +27,8 @@ export const fetchCompanies = async (
   portfolioId: number | undefined,
   closed: boolean,
 ) => {
-  const { data } = await axios.get<ICompanyListItem[]>(
-    `/api/v1/portfolios/${portfolioId}/companies/?closed=${closed}`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get<ICompanyListItem[]>(
+    `/portfolios/${portfolioId}/companies/?closed=${closed}`,
   );
   return data;
 };
@@ -42,8 +41,7 @@ export const fetchCompany = async (
     throw new Error("marketId is required");
   }
   const { data } = await axios.get<ICompany>(
-    `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
-    getAxiosOptionsWithAuth(),
+    `/portfolios/${portfolioId}/companies/${companyId}/`,
   );
   return data;
 };
@@ -51,11 +49,7 @@ export const fetchCompany = async (
 export const useAddCompany = () => {
   return useMutation(
     ({ portfolioId, newCompany }: AddMutationProps) =>
-      axios.post(
-        `/api/v1/portfolios/${portfolioId}/companies/`,
-        newCompany,
-        getAxiosOptionsWithAuth(),
-      ),
+      axios.post(`/portfolios/${portfolioId}/companies/`, newCompany),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
@@ -70,10 +64,7 @@ export const useDeleteCompany = () => {
 
   return useMutation(
     ({ portfolioId, companyId }: DeleteMutationProps) =>
-      axios.delete(
-        `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
-        getAxiosOptionsWithAuth(),
-      ),
+      axios.delete(`/portfolios/${portfolioId}/companies/${companyId}/`),
     {
       onSuccess: (data, variables) => {
         toast.success(`${t("Company has been deleted")}`);
@@ -95,10 +86,9 @@ export const useUpdateCompany = () => {
   const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
-      axios.patch(
-        `/api/v1/portfolios/${portfolioId}/companies/${companyId}/`,
+      apiClient.patch(
+        `/portfolios/${portfolioId}/companies/${companyId}/`,
         newCompany,
-        getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {

@@ -1,3 +1,5 @@
+import axios from "axios";
+
 export interface HttpRequestHeader {
   [key: string]: string;
 }
@@ -20,9 +22,20 @@ export interface IApiResponse {
   [key: string]: string;
 }
 
-export const getAxiosOptionsWithAuth = () => ({
+const getAxiosOptionsWithAuth = () => ({
   headers: {
     Accept: "application/json",
     Authorization: `Token ${localStorage.getItem("token")}`,
   },
 });
+
+export const getAxiosHeadersWithAuth = () => ({
+  Accept: "application/json",
+  Authorization: `Token ${localStorage.getItem("token")}`,
+});
+
+const apiClient = axios.create({
+  baseURL: `/api/v1/`,
+});
+
+export { apiClient, getAxiosOptionsWithAuth };

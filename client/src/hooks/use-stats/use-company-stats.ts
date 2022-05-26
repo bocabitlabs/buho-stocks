@@ -1,15 +1,13 @@
 import { useMutation, useQuery } from "react-query";
-import axios from "axios";
-import { getAxiosOptionsWithAuth } from "api/api-client";
+import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 
 export const fetchStats = async (
   companyId: number | undefined,
   year: string | undefined,
 ) => {
-  const { data } = await axios.get(
-    `/api/v1/stats/company/${companyId}/year/${year}/`,
-    getAxiosOptionsWithAuth(),
+  const { data } = await apiClient.get(
+    `/stats/company/${companyId}/year/${year}/`,
   );
   return data;
 };
@@ -38,10 +36,9 @@ interface IUpdateYearStatsMutationProps {
 export const useUpdateYearStats = () => {
   return useMutation(
     ({ companyId, year, forced }: IUpdateYearStatsMutationProps) =>
-      axios.put(
-        `/api/v1/stats/company/${companyId}/year/${year}/?force=${forced}`,
+      apiClient.put(
+        `/stats/company/${companyId}/year/${year}/?force=${forced}`,
         {},
-        getAxiosOptionsWithAuth(),
       ),
     {
       onSuccess: (data, variables) => {
