@@ -42,8 +42,12 @@ class Company(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
-    def __str___(self):
-        return f"{self.id} - {self.name} ({self.ticker})"
+    #def __str___(self):
+    #    return f"{self.id} - {self.name} ({self.ticker})"
+
+    def __str__(self):
+        return f"{self.name}, {self.ticker}"
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = "Companies"

@@ -16,8 +16,8 @@ class Portfolio(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
-    def __str___(self):
-        return self.name
+    def __str__(self):
+        return f"{self.name} ({self.base_currency})"
 
     class Meta:
         ordering = ['name']

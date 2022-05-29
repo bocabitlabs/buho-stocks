@@ -4,7 +4,6 @@ from djmoney.models.fields import MoneyField
 
 
 class StockPrice(models.Model):
-    company_name = models.CharField(max_length=200)
     price = MoneyField(max_digits=12, decimal_places=3, default_currency=None)
     transaction_date = models.DateField()
     ticker = models.CharField(max_length=100)
@@ -16,3 +15,4 @@ class StockPrice(models.Model):
 
     class Meta:
         unique_together = ("ticker", "transaction_date")
+
