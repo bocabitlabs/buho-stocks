@@ -95,13 +95,22 @@ export default function StatsRefreshModal({
     [selectedYear, t, updateCompanyStats, updateStockPriceSwitch],
   );
 
-  const getStockPrice = useCallback(
-    async (companyId: string, companyName: string) => {
+  const getCompanyStockPrice = useCallback(
+    async (
+      companyId: string,
+      companyName: string,
+      itemIndex: number,
+      companiesLength: number,
+    ) => {
       let tempYear = selectedYear;
       if (selectedYear === "all") {
         tempYear = new Date().getFullYear().toString();
       }
-      setUpdateMessage(`${t("Updating price for company")}: ${companyName}`);
+      setUpdateMessage(
+        `${t("Updating price for company")}: ${companyName} (${
+          itemIndex + 1
+        }/${companiesLength})`,
+      );
       try {
         await updateStockPrice({ companyId: +companyId, year: tempYear });
         setUpdateMessage(
@@ -113,7 +122,7 @@ export default function StatsRefreshModal({
         setUpdateMessage(
           `${t("Error updating price for company")}: ${companyName} ${t(
             "and year",
-          )} ${tempYear}`,
+          )} ${t(tempYear)}`,
         );
       }
     },
@@ -122,22 +131,22 @@ export default function StatsRefreshModal({
 
   const updatePortfolioStatsForced = useCallback(async () => {
     setUpdateMessage(
-      `${t("Updating stats for portfolio")} #${id} ${t(
-        "and year",
-      )} ${selectedYear}`,
+      `${t("Updating stats for portfolio")} #${id} ${t("and year")} ${t(
+        selectedYear,
+      )}`,
     );
     try {
       await updatePortfolioStats({ portfolioId: +id!, year: selectedYear });
       setUpdateMessage(
-        `${t("Stats updated for portfolio")} #${id} ${t(
-          "and year",
-        )} ${selectedYear}`,
+        `${t("Stats updated for portfolio")} #${id} ${t("and year")} ${t(
+          selectedYear,
+        )}`,
       );
     } catch (e) {
       setUpdateMessage(
-        `${t("Error updating stats for portfolio")} #${id} ${t(
-          "and year",
-        )} ${selectedYear}`,
+        `${t("Error updating stats for portfolio")} #${id} ${t("and year")} ${t(
+          selectedYear,
+        )}`,
       );
     }
   }, [t, id, selectedYear, updatePortfolioStats]);
@@ -146,11 +155,20 @@ export default function StatsRefreshModal({
     setConfirmLoading(true);
     let companyId;
     if (updateStockPriceSwitch) {
-      await asyncForEach(checkedList, async (checkboxName: string) => {
-        // eslint-disable-next-line prefer-destructuring
-        companyId = checkboxName.split("-")[1].split("#")[1];
-        await getStockPrice(companyId, checkboxName);
-      });
+      console.log("Will update stock price");
+      await asyncForEach(
+        checkedList,
+        async (checkboxName: string, index: number) => {
+          // eslint-disable-next-line prefer-destructuring
+          companyId = checkboxName.split("-")[1].split("#")[1];
+          await getCompanyStockPrice(
+            companyId,
+            checkboxName,
+            index,
+            checkedList.length,
+          );
+        },
+      );
       setConfirmLoading(false);
     }
     if (updateStatsSwitch) {
@@ -165,6 +183,8 @@ export default function StatsRefreshModal({
     await updatePortfolioStatsForced();
     setConfirmLoading(false);
     onCheckAllChange({ target: { checked: false } });
+    setUpdateStockPriceSwitch(false);
+    setUpdateStatsSwitch(false);
   };
 
   const handleCancel = () => {
