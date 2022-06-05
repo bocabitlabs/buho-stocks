@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import axios from "axios";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ICompany, ICompanyFormFields, ICompanyListItem } from "types/company";
@@ -38,9 +37,9 @@ export const fetchCompany = async (
   companyId: number | undefined,
 ) => {
   if (!companyId || !portfolioId) {
-    throw new Error("marketId is required");
+    throw new Error("companyId and portfolioId are required");
   }
-  const { data } = await axios.get<ICompany>(
+  const { data } = await apiClient.get<ICompany>(
     `/portfolios/${portfolioId}/companies/${companyId}/`,
   );
   return data;
@@ -49,7 +48,7 @@ export const fetchCompany = async (
 export const useAddCompany = () => {
   return useMutation(
     ({ portfolioId, newCompany }: AddMutationProps) =>
-      axios.post(`/portfolios/${portfolioId}/companies/`, newCompany),
+      apiClient.post(`/portfolios/${portfolioId}/companies/`, newCompany),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
@@ -64,7 +63,7 @@ export const useDeleteCompany = () => {
 
   return useMutation(
     ({ portfolioId, companyId }: DeleteMutationProps) =>
-      axios.delete(`/portfolios/${portfolioId}/companies/${companyId}/`),
+      apiClient.delete(`/portfolios/${portfolioId}/companies/${companyId}/`),
     {
       onSuccess: (data, variables) => {
         toast.success(`${t("Company has been deleted")}`);
