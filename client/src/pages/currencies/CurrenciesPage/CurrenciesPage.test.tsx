@@ -34,11 +34,6 @@ describe("CurrenciesPage tests", () => {
     });
 
     await waitFor(() => {
-      const element = screen.getByText("code");
-      expect(element).toBeInTheDocument();
-    });
-
-    await waitFor(() => {
       const element = screen.getByText("AUD");
       expect(element).toBeInTheDocument();
     });

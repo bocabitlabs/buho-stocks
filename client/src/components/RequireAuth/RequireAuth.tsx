@@ -5,7 +5,6 @@ import { AuthContext } from "contexts/auth";
 function RequireAuth({ children }: { children: JSX.Element }) {
   const { state, clearToken } = useContext(AuthContext);
   const navigate = useNavigate();
-  console.log(state);
 
   useEffect(() => {
     if (!state.isAuthenticated) {
