@@ -2,8 +2,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { Tag } from "antd";
 
+export type LabelType = "SELL" | "BUY";
+
 interface Props {
-  value: string;
+  value: LabelType;
 }
 
 export function BuySellLabel({ value }: Props) {
