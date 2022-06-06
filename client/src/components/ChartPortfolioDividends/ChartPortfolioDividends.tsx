@@ -2,6 +2,7 @@ import React, { ReactElement, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { Spin } from "antd";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
@@ -86,7 +87,7 @@ export default function ChartPortfolioDividends(): ReactElement | null {
   }, [data, t]);
 
   if (chartData) {
-    return <Bar options={options} data={chartData} />;
+    return <Bar data-testid="canvas" options={options} data={chartData} />;
   }
-  return null;
+  return <Spin data-testid="loader" />;
 }

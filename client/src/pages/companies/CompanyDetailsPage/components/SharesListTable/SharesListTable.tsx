@@ -6,7 +6,7 @@ import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import SharesTransactionAddEditForm from "../SharesTransactionAddEditForm/SharesTransactionAddEditForm";
-import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
+import { BuySellLabel, LabelType } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
 import {
   useDeleteSharesTransaction,
@@ -63,7 +63,7 @@ export default function SharesListTable({
       title: t("Type"),
       dataIndex: "type",
       key: "type",
-      render: (text: string) => <BuySellLabel value={text} />,
+      render: (text: LabelType) => <BuySellLabel value={text} />,
       sorter: (a: ISharesTransaction, b: ISharesTransaction) =>
         a.type.localeCompare(b.type),
     },

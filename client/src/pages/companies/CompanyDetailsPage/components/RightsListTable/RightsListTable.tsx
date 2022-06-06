@@ -6,7 +6,7 @@ import { Button, Popconfirm, Space, Spin, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import RightsTransactionAddEditForm from "../RightsTransactionAddEditForm/RightsTransactionAddEditForm";
-import { BuySellLabel } from "components/BuySellLabel/BuySellLabel";
+import { BuySellLabel, LabelType } from "components/BuySellLabel/BuySellLabel";
 import NotesRow from "components/NotesRow/NotesRow";
 import {
   useDeleteRightsTransaction,
@@ -60,7 +60,7 @@ export default function RightsListTable({
       title: t("Type"),
       dataIndex: "type",
       key: "type",
-      render: (text: string) => <BuySellLabel value={text} />,
+      render: (text: LabelType) => <BuySellLabel value={text} />,
       sorter: (a: IRightsTransaction, b: IRightsTransaction) =>
         a.type.localeCompare(b.type),
     },

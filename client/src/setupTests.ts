@@ -4,7 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 // eslint-disable-next-line import/no-extraneous-dependencies
 import "@testing-library/jest-dom";
-
+import "jest-canvas-mock";
 import { server } from "./mocks/server";
 // src/setupTests.js
 import "./i18n";
