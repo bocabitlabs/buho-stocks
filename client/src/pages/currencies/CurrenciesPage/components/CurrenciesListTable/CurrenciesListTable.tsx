@@ -6,7 +6,7 @@ import { ICurrency } from "types/currency";
 
 export default function CurrenciesListTable() {
   const { t } = useTranslation();
-  const { status, data, error, isFetching } = useCurrencies();
+  const { data: currencies, error, isFetching } = useCurrencies();
 
   const columns: any = [
     {
@@ -38,8 +38,8 @@ export default function CurrenciesListTable() {
 
   const getData = () => {
     return (
-      data &&
-      data.map((currency: ICurrency, index: number) => ({
+      currencies &&
+      currencies.map((currency: ICurrency, index: number) => ({
         id: currency.code,
         count: index + 1,
         key: currency.code,
@@ -51,21 +51,13 @@ export default function CurrenciesListTable() {
     );
   };
 
-  if (isFetching) {
-    return <div>{isFetching ? <div>Fetching data...</div> : <div />}</div>;
-  }
-
   if (error) {
     return <div>Error fetching the data from the API</div>;
   }
 
-  if (status === "loading") {
-    return <div>Loading</div>;
-  }
-
   return (
     <div>
-      <Table columns={columns} dataSource={getData()} />
+      <Table columns={columns} dataSource={getData()} loading={isFetching} />
     </div>
   );
 }

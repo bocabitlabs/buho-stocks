@@ -204,6 +204,7 @@ export default function CompaniesList({
   return (
     <div>
       <Table
+        loading={!companies}
         pagination={{ defaultPageSize: 60 }}
         columns={columns}
         size="small"

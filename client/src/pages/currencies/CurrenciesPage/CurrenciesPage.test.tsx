@@ -8,7 +8,7 @@ describe("CurrenciesPage tests", () => {
   it("renders expected texts when loading", async () => {
     renderWithRouterAndQueryClient(<CurrenciesPage />);
 
-    const element = screen.getByText(/Fetching data.../i);
+    const element = screen.getByText(/No data/i);
     expect(element).toBeInTheDocument();
 
     const elements = screen.getAllByText(/Currencies/i);
