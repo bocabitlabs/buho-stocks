@@ -90,14 +90,16 @@ export function LoginForm() {
         </Form.Item>
 
         <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            className="login-form-button"
-          >
-            {t("Sign in")}
-          </Button>{" "}
-          {t("Or")} <Link to="/app-register">{t("register")}</Link>
+          <div>
+            <Button
+              type="primary"
+              htmlType="submit"
+              className="login-form-button"
+            >
+              {t("Sign in")}
+            </Button>{" "}
+            {t("Or")} <Link to="/app-register">{t("register")}</Link>
+          </div>
         </Form.Item>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
           <Button onClick={onFinish}>Dev login</Button>

@@ -1,6 +1,6 @@
 import React from "react";
 import { QueryClient, QueryClientProvider, setLogger } from "react-query";
-import { renderHook } from "@testing-library/react-hooks";
+import { renderHook, waitFor } from "@testing-library/react";
 import { useCurrencies } from "./use-currencies";
 import currenciesList from "mocks/responses/currencies";
 
@@ -26,15 +26,21 @@ function wrapper({ children }: any) {
 
 describe("useCurrencies Hook tests", () => {
   it("Gets a list of currencies", async () => {
-    const { result, waitFor } = renderHook(() => useCurrencies(), { wrapper });
+    const { result } = renderHook(() => useCurrencies(), { wrapper });
     await waitFor(() => result.current.isSuccess);
-    const currencies = result.current.data;
-    expect(currencies?.length).toEqual(currenciesList.length);
-    expect(currencies).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({ name: "Canadian dollar" }),
-        expect.objectContaining({ symbol: "$" }),
-      ]),
-    );
+
+    await waitFor(() => {
+      const currencies = result.current.data;
+      expect(currencies?.length).toEqual(currenciesList.length);
+    });
+    await waitFor(() => {
+      const currencies = result.current.data;
+      expect(currencies).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ name: "Canadian dollar" }),
+          expect.objectContaining({ symbol: "$" }),
+        ]),
+      );
+    });
   });
 });

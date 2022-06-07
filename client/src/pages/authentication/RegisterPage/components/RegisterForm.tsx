@@ -164,11 +164,13 @@ function RegisterForm() {
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            {t("Register")}
-          </Button>{" "}
-          {t("Already registered?")}{" "}
-          <Link to="/app-login">{t("sign in")}.</Link>
+          <div>
+            <Button type="primary" htmlType="submit">
+              {t("Register")}
+            </Button>{" "}
+            {t("Already registered?")}{" "}
+            <Link to="/app-login">{t("sign in")}.</Link>
+          </div>
         </Form.Item>
         {(!process.env.NODE_ENV || process.env.NODE_ENV === "development") && (
           <Button onClick={onFinish}>{t("Dev register")}</Button>

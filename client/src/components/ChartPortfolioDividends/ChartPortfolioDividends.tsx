@@ -87,7 +87,14 @@ export default function ChartPortfolioDividends(): ReactElement | null {
   }, [data, t]);
 
   if (chartData) {
-    return <Bar data-testid="canvas" options={options} data={chartData} />;
+    return (
+      <Bar
+        id="portfolio-dividends"
+        data-testid="canvas"
+        options={options}
+        data={chartData}
+      />
+    );
   }
   return <Spin data-testid="loader" />;
 }

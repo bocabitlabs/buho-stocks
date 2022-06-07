@@ -1,6 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom";
 import { Chart, registerables } from "chart.js";
+import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "./i18n";
@@ -9,11 +9,14 @@ import Main from "Main";
 
 Chart.register(...registerables);
 
-ReactDOM.render(
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement,
+);
+
+root.render(
   <React.StrictMode>
     <Main />
   </React.StrictMode>,
-  document.getElementById("root"),
 );
 
 // If you want to start measuring performance in your app, pass a function

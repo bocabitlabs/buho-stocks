@@ -1,4 +1,4 @@
-import React, { lazy, ReactElement } from "react";
+import React, { lazy, ReactElement, Suspense } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import ImportFromBrokerPageHeader from "./components/ImportFromBrokerPageHeader/ImportFromBrokerPageHeader";
@@ -20,7 +20,9 @@ export default function ImportFromBrokerPage(): ReactElement {
 
   return (
     <ImportFromBrokerPageHeader title={`${t("Import from")} ${broker.name}`}>
-      <ImportForm />
+      <Suspense fallback={<div>Loading Import form....</div>}>
+        <ImportForm />
+      </Suspense>
     </ImportFromBrokerPageHeader>
   );
 }
