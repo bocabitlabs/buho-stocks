@@ -76,7 +76,7 @@ All 3rd party logos are property of their owners.
 
 If you like this project — or just feeling generous, consider buying me a beer. Cheers! 🍻
 
-## Screenshots
+## 🖼️ Screenshots
 
 <p align="center">
 <img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio.jpg" alt="Buho Stocks portfolio screen"/>
