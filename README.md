@@ -7,7 +7,9 @@
 <p align="center">
 <img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks/branch/main/graph/badge.svg" alt="codecov"/></a>
 </p>
-
+<p align="center">
+<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio.jpg" alt="Buho Stocks portfolio screen"/>
+</p>
 <p align="center">
   • <a href="#features">Features</a> •
   <a href="#install">Install</a> •
@@ -73,3 +75,21 @@ All 3rd party logos are property of their owners.
 <a href="https://paypal.me/renefs/"><img src="donate-blue.svg" height="40"></a>
 
 If you like this project — or just feeling generous, consider buying me a beer. Cheers! 🍻
+
+## Screenshots
+
+<p align="center">
+<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio.jpg" alt="Buho Stocks portfolio screen"/>
+</p>
+<p align="center">
+<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio-2.jpg" alt="Buho Stocks portfolio screen companies"/>
+</p>
+<p align="center">
+<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-company.jpg" alt="Buho Stocks company screen"/>
+</p>
+<p align="center">
+<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio-list.jpg" alt="Buho Stocks portfolio list screen"/>
+</p>
+<p align="center">
+<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-login.jpg" alt="Buho Stocks login screen"/>
+</p>
