@@ -6,7 +6,6 @@ import { Alert, Button, Popconfirm, Space, Table } from "antd";
 import moment from "moment";
 import momentTz from "moment-timezone";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
 import { useSettings } from "hooks/use-settings/use-settings";
 import MarketAddEditForm from "pages/markets/MarketsListPage/components/MarketAddEditForm/MarketAddEditForm";
@@ -115,6 +114,7 @@ export default function MarketsListTable() {
       render: (text: string, record: any) => (
         <Space size="middle">
           <Button
+            data-testid="editButton"
             icon={<EditOutlined />}
             onClick={() => showModal(record.id)}
           />
@@ -125,7 +125,11 @@ export default function MarketsListTable() {
             okText={t("Yes")}
             cancelText={t("No")}
           >
-            <Button danger icon={<DeleteOutlined />} />
+            <Button
+              data-testid="deleteButton"
+              danger
+              icon={<DeleteOutlined />}
+            />
           </Popconfirm>
         </Space>
       ),
@@ -150,10 +154,6 @@ export default function MarketsListTable() {
     );
   };
 
-  if (isFetching) {
-    return <LoadingSpin />;
-  }
-
   if (error) {
     return (
       <Alert
@@ -172,7 +172,8 @@ export default function MarketsListTable() {
         style={{ marginTop: 16 }}
         columns={columns}
         dataSource={getData()}
-      />{" "}
+        loading={isFetching}
+      />
       <MarketAddEditForm
         title={t("Update market")}
         okText={t("Update")}
