@@ -39,17 +39,7 @@ function MarketAddEditForm({
     data: market,
     error: errorFetchingMarket,
     isFetching: fetchingMarket,
-  } = useMarket(marketId, {
-    onSuccess: (data: any) => {
-      setRegion(data.region);
-    },
-  });
-
-  useEffect(() => {
-    if (region) {
-      setRegion(region);
-    }
-  }, [region]);
+  } = useMarket(marketId);
 
   const handleSubmit = async (values: any) => {
     const { name, description, openTime, closeTime, timezone } = values;
@@ -95,6 +85,7 @@ function MarketAddEditForm({
         closeTime: market ? moment(market?.closeTime, "HH:mm") : "",
         timezone: market?.timezone,
       });
+      setRegion(market.region);
     }
   }, [form, market]);
 
