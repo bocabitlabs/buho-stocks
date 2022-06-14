@@ -35,8 +35,8 @@ export default function CountrySelector({
       optionLabelProp="label"
       value={initialValue}
       defaultValue={initialValue}
+      data-testid="country-selector"
     >
-      {JSON.stringify(initialValue)}
       {Object.keys(countries).map((key: string) => {
         const element = countries[key];
         return (
