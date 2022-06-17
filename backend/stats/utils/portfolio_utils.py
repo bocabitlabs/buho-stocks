@@ -253,6 +253,22 @@ class PortfolioStatsUtils:
         if not self.force and results:
             return results
 
+        results = self.update_stats_for_year()
+
+        return results
+
+    def update_stats_for_year(self):
+
+        temp_year = self.year_for_all if self.year == "all" else self.year
+
+        results = None
+        if PortfolioStatsForYear.objects.filter(
+            portfolio=self.portfolio, year=temp_year
+        ).exists():
+            results = PortfolioStatsForYear.objects.get(
+                portfolio=self.portfolio, year=temp_year
+            )
+
         data = {
             "invested": 0,
             "dividends": 0,

@@ -55,6 +55,16 @@ class PortfolioStatsAPIView(APIView):
             stats = serializer.data
         return stats
 
+    def update_object(self, portfolio_id, year, user_id):
+        logger.debug("Updating portfolio stats")
+        try:
+            portfolio_stats = PortfolioStatsUtils(portfolio_id, user_id, year=year)
+            stats = portfolio_stats.update_stats_for_year()
+            serializer = PortfolioStatsForYearSerializer(stats)
+            return serializer.data
+        except PortfolioStatsForYear.DoesNotExist:
+            return None
+
     # 3. Retrieve
     @swagger_auto_schema(tags=["portfolio_stats"])
     def get(self, request, portfolio_id, year, *args, **kwargs):
@@ -85,7 +95,7 @@ class PortfolioStatsAPIView(APIView):
                 forced = True
         else:
             forced = False
-        stats = self.get_object(portfolio_id, year, request.user.id, force=forced)
+        stats = self.update_object(portfolio_id, year, request.user.id)
         if not stats:
             return Response(
                 {"res": "Object with id does not exists"},
