@@ -106,8 +106,8 @@ export function formatINGRowForShares(inputData: string[]): FormattedINGRow {
   let transactionType = inputData[1];
   const companyName = inputData[3];
   const count = +inputData[6];
-  const price = +inputData[7].replace("'", "").replace(",", ".");
-  const total = +inputData[9].replace("'", "").replace(",", ".");
+  const price = +inputData[7].replace(/'/g, "").replace(",", ".");
+  const total = +inputData[9].replace(/'/g, "").replace(",", ".");
 
   transactionType = sharesBuyTransactionTypes.includes(transactionType)
     ? "BUY"
@@ -147,9 +147,9 @@ export function formatINGRowForDividends(inputData: string[]): FormattedINGRow {
   // Number of shares
   const count = +inputData[6];
   // Price per share: 2,22
-  const price = +inputData[7].replace("'", "").replace(",", ".");
+  const price = +inputData[7].replace(/'/g, "").replace(",", ".");
   // Total amount including commission: 10,22
-  const total = +inputData[9].replace("'", "").replace(",", ".");
+  const total = +inputData[9].replace(/'/g, "").replace(",", ".");
 
   const formattedRowValues = {
     companyName,
