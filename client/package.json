@@ -1,6 +1,6 @@
 {
   "name": "client",
-  "version": "0.0.63-alpha",
+  "version": "0.0.64-alpha",
   "homepage": "/",
   "proxy": "http://localhost:8001/",
   "private": true,

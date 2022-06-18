@@ -31,6 +31,7 @@ window.ResizeObserver = function () {
     disconnect: jest.fn(),
   };
 };
+
 // Establish API mocking before all tests.
 beforeAll(() => server.listen());
 // Reset any request handlers that we may add during the tests,
