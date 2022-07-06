@@ -25,7 +25,7 @@ const setupInterceptors = (clearToken: any) => {
         toast.error("Session expired. You need to login again.");
         clearToken();
       }
-      return error;
+      return Promise.reject(error);
     },
   );
 };

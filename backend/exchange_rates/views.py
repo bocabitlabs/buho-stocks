@@ -12,8 +12,6 @@ from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
 from exchange_rates.utils import ExchangeRatesUtils
 
-from forex_python.converter import RatesNotAvailableError
-
 logger = logging.getLogger("buho_backend")
 class ExchangeRateListAPIView(APIView):
     """Get all the exchange rates from a user"""
