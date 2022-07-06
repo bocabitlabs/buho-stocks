@@ -61,10 +61,12 @@ export default function IBTradesImportForm({
     initialTransactionDate.format("YYYY-MM-DD"),
   );
   const {
-    isRefetching: exchangeRateLoading,
+    isRefetching: exchangeRateRefetching,
+    isFetching: exchangeRateFetching,
     refetch,
     data: exchangeRateData,
     error: errorFetchingExchangeRate,
+    isRefetchError: errorRefetchingExchangeRate,
   } = useExchangeRate(
     selectedCompanyCurrency,
     portfolioCurrency,
@@ -144,7 +146,13 @@ export default function IBTradesImportForm({
       form.setFieldsValue({
         exchangeRate: exchangeRateData.exchangeRate,
       });
-    } else if (errorFetchingExchangeRate) {
+    }
+  }, [exchangeRateData, form]);
+
+  useEffect(() => {
+    console.log("Calling useEffect");
+    if (errorFetchingExchangeRate || errorRefetchingExchangeRate) {
+      console.log(t("Unable to fetch the exchange rates for the given date"));
       form.setFields([
         {
           name: "exchangeRate",
@@ -152,8 +160,7 @@ export default function IBTradesImportForm({
         },
       ]);
     }
-  }, [errorFetchingExchangeRate, exchangeRateData, form, t]);
-
+  }, [errorFetchingExchangeRate, errorRefetchingExchangeRate, form, t]);
   return (
     <Form
       form={form}
@@ -239,25 +246,24 @@ export default function IBTradesImportForm({
             <Col span={6}>
               <Form.Item
                 name="exchangeRate"
-                label={t("Exchange rate")}
+                label={`${t("Exchange rate")} ${
+                  selectedCompany?.baseCurrency &&
+                  portfolio.baseCurrency.code &&
+                  `(${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`
+                })`}
                 rules={[
                   {
                     required: true,
                     message: t("Please input the exchange rate"),
                   },
                 ]}
-                help={
-                  selectedCompany?.baseCurrency &&
-                  portfolio.baseCurrency.code &&
-                  `${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`
-                }
               >
                 <InputNumber
                   decimalSeparator="."
                   min={0}
                   step={0.001}
                   style={{ width: "100%" }}
-                  disabled={exchangeRateLoading}
+                  disabled={exchangeRateFetching || exchangeRateRefetching}
                 />
               </Form.Item>
             </Col>
@@ -266,7 +272,7 @@ export default function IBTradesImportForm({
                 <Button
                   disabled={initialTransactionDate === null || !selectedCompany}
                   onClick={fetchExchangeRate}
-                  loading={exchangeRateLoading}
+                  loading={exchangeRateFetching || exchangeRateRefetching}
                   title={`${selectedCompany?.baseCurrency} to ${portfolio.baseCurrency.code}`}
                 >
                   {t("Get exchange rate")}
