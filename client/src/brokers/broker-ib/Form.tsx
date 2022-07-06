@@ -159,7 +159,7 @@ export default function Form(): ReactElement {
               {data.map((element: any) => {
                 return (
                   <TradesImportForm
-                    key={selectedPortfolio.id}
+                    key={`${element.data[5]}_${element.data[6]}`}
                     inputData={element.data}
                     portfolio={selectedPortfolio}
                   />
