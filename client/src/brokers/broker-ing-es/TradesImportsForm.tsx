@@ -16,6 +16,7 @@ import {
 import moment from "moment";
 import {
   formatINGRowForShares,
+  getCommission,
   // getCommission,
   getCompanyFromTransaction,
 } from "./utils";
@@ -158,8 +159,15 @@ export default function TradesImportForm({
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.baseCurrency !== "EUR") {
-        refetch();
+      const commission = getCommission(
+        total,
+        form.getFieldValue("count"),
+        form.getFieldValue("grossPricePerShare"),
+      );
+      if (commission) {
+        form.setFieldsValue({
+          commissionInCompanyCurrency: commission,
+        });
       }
     }
     setCommissionLoading(false);

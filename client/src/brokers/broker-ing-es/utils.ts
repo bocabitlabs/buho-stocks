@@ -81,6 +81,7 @@ export const getPriceInCompanyCurrency = (
 };
 
 export function getCommission(total: number, count: number, price: number) {
+  console.log(`Getting commision for: ${total} - ${count} * ${price}`);
   let commission = total - count * price;
   if (commission < 0) {
     commission *= -1;

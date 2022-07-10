@@ -13,7 +13,11 @@ import {
 } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import { formatINGRowForDividends, getCompanyFromTransaction } from "./utils";
+import {
+  formatINGRowForDividends,
+  getCommission,
+  getCompanyFromTransaction,
+} from "./utils";
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import { useAddDividendsTransaction } from "hooks/use-dividends-transactions/use-dividends-transactions";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
@@ -175,9 +179,18 @@ export default function DividendsImportForm({
 
   const getCommissionInCompanyCurrency = async () => {
     setCommissionLoading(true);
+    console.log("Getting commission for transaction...");
     if (selectedCompany && portfolio) {
-      if (selectedCompany?.baseCurrency !== "EUR") {
-        refetch();
+      const commission = getCommission(
+        total,
+        form.getFieldValue("count"),
+        form.getFieldValue("grossPricePerShare"),
+      );
+      console.log(commission);
+      if (commission) {
+        form.setFieldsValue({
+          commissionInCompanyCurrency: commission,
+        });
       }
     }
     setCommissionLoading(false);
@@ -307,7 +320,6 @@ export default function DividendsImportForm({
               }
               onClick={getCommissionInCompanyCurrency}
               loading={commissionLoading}
-              title={`EUR ${t("to")} ${selectedCompany?.dividendsCurrency}`}
             >
               {t("Get commission")}
             </Button>

@@ -135,7 +135,6 @@ export default function IBTradesImportForm({
 
   const fetchExchangeRate = async () => {
     console.log("fetching exchange rate");
-    console.log(form.getFieldValue("transactionDate"));
     if (selectedCompany && portfolio) {
       refetch();
     }

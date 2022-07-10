@@ -175,9 +175,10 @@ export default function Form(): ReactElement {
                   {t("Importing dividends from Interactive Brokers")}
                 </Typography.Title>
                 {data.map((element: any) => {
+                  console.log(element.data);
                   return (
                     <DividendsImportForm
-                      key={selectedPortfolio.id}
+                      key={`${element.data[3]}_${element.data[4]}`}
                       inputData={element}
                       portfolio={selectedPortfolio}
                     />
