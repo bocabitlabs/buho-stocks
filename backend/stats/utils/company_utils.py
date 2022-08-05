@@ -1,10 +1,9 @@
 from decimal import Decimal
 import logging
 from django.contrib.auth.models import User
-from django.utils import timezone
+from exchange_rates.ecb_api_client import EcbApiClient
 from companies.models import Company
 from companies.utils import CompanyUtils
-from exchange_rates.utils import ExchangeRatesUtils
 from stats.models.company_stats import CompanyStatsForYear
 from stock_prices.utils import StockPricesUtils
 
@@ -35,7 +34,7 @@ class CompanyStatsUtils:
         )
 
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
-        self.exchange_rates_utils = ExchangeRatesUtils(use_currency=self.use_currency)
+        self.exchange_rates_utils = EcbApiClient()
 
     def get_portfolio_value(self, stock_price, shares_count):
         price = 0
