@@ -11,7 +11,7 @@ from companies.tests.factory import CompanyFactory
 import logging
 import factory
 import responses
-from stock_prices.services.custom_yfinance_service import CustomYFinanceService
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 from stock_prices.tests.factory import StockPriceTransactionFactory
 
@@ -30,15 +30,15 @@ class CustomYServiceTestCase(APITestCase):
     ):
         response_text = ""
         with open(f"{pathlib.Path(__file__).parent.resolve()}/resp_text.txt") as f:
-          response_text = [x.strip() for x in f.readlines()]
+            response_text = [x.strip() for x in f.readlines()]
         responses.add(
             responses.GET,
             "https://finance.yahoo.com/quote/CSCO/history",
             body=str(response_text),
             status=200,
         )
-        service = CustomYFinanceService(wait_time=0)
-        results, currency = service.request_from_api("CSCO", "2022-01-16","2022-01-31")
+        service = YFinanceApiClient(wait_time=0)
+        results, currency = service.request_from_api("CSCO", "2022-01-16", "2022-01-31")
         self.assertEqual(currency, "USD")
         self.assertEqual(len(results), 9)
         result = results[4]

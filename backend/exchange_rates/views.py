@@ -10,9 +10,11 @@ from drf_yasg.utils import swagger_auto_schema
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from exchange_rates.utils import ExchangeRatesUtils
+from exchange_rates.services.exchange_rate_service import ExchangeRateService
 
 logger = logging.getLogger("buho_backend")
+
+
 class ExchangeRateListAPIView(APIView):
     """Get all the exchange rates from a user"""
 
@@ -40,39 +42,21 @@ class ExchangeRateDetailAPIView(APIView):
     ]
     permission_classes = [IsAuthenticated]
 
-    def get_object(self, exchange_from, exchange_to, exchange_date):
-        try:
-            return ExchangeRate.objects.get(
-                exchange_from=exchange_from,
-                exchange_to=exchange_to,
-                exchange_date=exchange_date,
-            )
-        except ExchangeRate.DoesNotExist:
-            return None
-
-    # 3. Retrieve
     @swagger_auto_schema(tags=["exchange_rates"])
     def get(self, request, exchange_from, exchange_to, exchange_date, *args, **kwargs):
         """
         Retrieve the market item with given exchange_name
         """
-        todo_instance = self.get_object(exchange_from, exchange_to, exchange_date)
-        if not todo_instance:
-            try:
-                serializer = ExchangeRatesUtils().get_exchange_rates_from_api(
-                    exchange_from, exchange_to, exchange_date
-                )
-                if not serializer:
-                    return Response(
-                        {"res": "Exchange rate does not exists"},
-                        status=status.HTTP_400_BAD_REQUEST,
-                    )
-            except Exception as error:
-                logger.debug(f"Error: {error}")
-                return Response(
-                    {"error": True, "message": "Server error"},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                )
-        else:
-            serializer = ExchangeRateSerializer(todo_instance)
+        service = ExchangeRateService()
+        exchange_rate = service.get_exchange_rate_for_date(
+            exchange_from, exchange_to, exchange_date
+        )
+        serializer = ExchangeRateSerializer(exchange_rate)
+
+        if not serializer:
+            return Response(
+                {"res": "Exchange rate does not exists"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         return Response(serializer.data, status=status.HTTP_200_OK)

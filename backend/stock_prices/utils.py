@@ -1,7 +1,7 @@
 from companies.models import Company
 from companies.utils import CompanyUtils
 from stock_prices.api import StockPricesApi
-from stock_prices.services.custom_yfinance_service import CustomYFinanceService
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 
 class StockPricesUtils:
@@ -9,8 +9,17 @@ class StockPricesUtils:
         self.company = company
         self.year = year
 
-    def get_stock_price_for_tickers(self, tickers: list):
-        api_service = CustomYFinanceService()
+    def get_stock_price_for_tickers(self, tickers: list[str]) -> dict:
+        """Get the stock price for a list of tickers.
+        It will only return the first ticker that has a stock price.
+
+        Args:
+            tickers (list[str]): List of tickers (strings)
+
+        Returns:
+            dict: The dictionary with the stock price
+        """
+        api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
         for ticker in tickers.split(","):
             stock_price = api.get_last_data_from_last_month(ticker)
@@ -19,7 +28,7 @@ class StockPricesUtils:
         return None
 
     def get_year_last_stock_price(self):
-        api_service = CustomYFinanceService()
+        api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
         if self.year == "all":
             stock_price = api.get_last_data_from_last_month(self.company.ticker)
@@ -36,4 +45,3 @@ class StockPricesUtils:
             if not stock_price:
                 stock_price = self.get_stock_price_for_tickers(self.company.alt_tickers)
         return stock_price
-

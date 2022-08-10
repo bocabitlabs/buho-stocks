@@ -9,7 +9,7 @@ from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
 from stock_prices.api import StockPricesApi
 from stock_prices.serializers import StockPriceSerializer
-from stock_prices.services.custom_yfinance_service import CustomYFinanceService
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 logger = logging.getLogger("buho_backend")
 
@@ -22,7 +22,7 @@ class StockPricesYearAPIView(APIView):
 
     def get_update_object(self, company_id, year, user_id):
         company = Company.objects.get(id=company_id, user=user_id)
-        api_service = CustomYFinanceService()
+        api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
         data = api.get_last_data_from_year(company.ticker, year, only_api=True)
         return data
@@ -43,7 +43,9 @@ class StockPricesYearAPIView(APIView):
 
         if not instance:
             return Response(
-                {"res": "Object with transaction id does not exists"},
+                {
+                    "res": f"Object with id {company_id} does not exists. Allow fetch was: {settings.allow_fetch}"
+                },
                 status=status.HTTP_400_BAD_REQUEST,
             )
 

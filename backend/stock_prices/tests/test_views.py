@@ -33,8 +33,9 @@ class StockPricesTransactionsDetailTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
+
 """     @patch(
-        "stock_prices.services.custom_yfinance_service.CustomYFinanceService.request_from_api"
+        "stock_prices.services.custom_yfinance_service.YFinanceApiClient.request_from_api"
     )
     def test_update_stock_price_transaction(
         self,

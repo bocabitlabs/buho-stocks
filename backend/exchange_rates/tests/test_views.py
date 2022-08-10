@@ -1,14 +1,13 @@
+import logging
 from decimal import Decimal
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.authtoken.models import Token
-import factory
 from auth.tests.factory import UserFactory
 from exchange_rates.models import ExchangeRate
 from exchange_rates.tests.factory import ExchangeRateFactory
-import logging
 
 logger = logging.getLogger("buho_backend")
 

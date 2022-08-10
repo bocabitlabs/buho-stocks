@@ -1,7 +1,7 @@
 from decimal import Decimal
 import logging
 from django.contrib.auth.models import User
-from exchange_rates.ecb_api_client import EcbApiClient
+from exchange_rates.services.exchange_rate_service import ExchangeRateService
 from companies.models import Company
 from companies.utils import CompanyUtils
 from stats.models.company_stats import CompanyStatsForYear
@@ -14,7 +14,6 @@ logger = logging.getLogger("buho_backend")
 class CompanyStatsUtils:
 
     year_for_all = 9999
-
 
     def __init__(
         self,
@@ -34,21 +33,24 @@ class CompanyStatsUtils:
         )
 
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
-        self.exchange_rates_utils = EcbApiClient()
+        self.exchange_rates_utils = ExchangeRateService()
 
     def get_portfolio_value(self, stock_price, shares_count):
         price = 0
-        exchange_rate_value = 0
+        exchange_rate = None
         if shares_count > 0 and stock_price:
             price = stock_price["price"]
             transaction_date = stock_price["transaction_date"]
-            exchange_rate_value = self.exchange_rates_utils.get_exchange_rate_for_date(
+            exchange_rate = self.exchange_rates_utils.get_exchange_rate_for_date(
                 self.company.base_currency,
                 self.company.portfolio.base_currency,
                 transaction_date,
             )
-        total = Decimal(price) * shares_count * Decimal(exchange_rate_value)
+        total = Decimal(price) * shares_count * Decimal(exchange_rate.exchange_rate)
         return total
+
+    def get_shares_count(self, year):
+        return self.company_utils.get_accumulated_shares_count_until_year(year)
 
     def get_return_with_dividends(
         self, portfolio_value, accumulated_dividends, total_invested
@@ -89,8 +91,8 @@ class CompanyStatsUtils:
 
     def calculate_stats_for_year(self, year: int):
 
-        accum_shares_count = (
-            self.company_utils.get_accumulated_shares_count_until_year(year)
+        accum_shares_count = self.company_utils.get_accumulated_shares_count_until_year(
+            year
         )
         total_invested = self.company_utils.get_total_invested_on_year(year)
         dividends = self.company_utils.dividends_utils.get_dividends_of_year(year)
@@ -98,7 +100,9 @@ class CompanyStatsUtils:
             self.company_utils.get_accumulated_investment_until_year(year)
         )
         accumulated_dividends = (
-            self.company_utils.dividends_utils.get_accumulated_dividends_until_year(year)
+            self.company_utils.dividends_utils.get_accumulated_dividends_until_year(
+                year
+            )
         )
         last_stock_price = self.stock_prices_utils.get_year_last_stock_price()
         # Calculated values
@@ -112,7 +116,9 @@ class CompanyStatsUtils:
             return_with_dividends, accumulated_investment
         )
         if year == self.year_for_all:
-            dividends_yield = self.get_dividends_yield(accumulated_dividends, portfolio_value)
+            dividends_yield = self.get_dividends_yield(
+                accumulated_dividends, portfolio_value
+            )
         else:
             dividends_yield = self.get_dividends_yield(dividends, portfolio_value)
 

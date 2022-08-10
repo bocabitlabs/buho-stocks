@@ -2,7 +2,7 @@ import datetime
 import logging
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
-from stock_prices.services.service_base import StockPriceServiceBase
+from stock_prices.services.stock_price_service_base import StockPriceServiceBase
 
 logger = logging.getLogger("buho_backend")
 
@@ -13,28 +13,6 @@ class StockPricesApi:
         stock_prices_service: StockPriceServiceBase,
     ):
         self.stock_prices_service = stock_prices_service
-
-    def get_current_data(self, ticker):
-
-        try:
-            data = StockPrice.objects.get(
-                ticker=ticker, transaction_date=datetime.date.today()
-            )
-        except StockPrice.DoesNotExist:
-            data = self.stock_prices_service.get_current_data(ticker)
-
-            data = {
-                "company_name": data["company_name"],
-                "price": data["price"],
-                "price_currency": data["price_currency"],
-                "ticker": ticker,
-                "transaction_date": data["transaction_date"],
-            }
-
-        serializer = StockPriceSerializer(data=data)
-        if serializer.is_valid():
-            serializer.save()
-            return serializer.data
 
     def get_historical_data(
         self,
@@ -99,7 +77,7 @@ class StockPricesApi:
                     if not dry_run:
                         serializer.save()
                     else:
-                        logger.debug(f"Dry run. Not saving element.")
+                        logger.debug("Dry run. Not saving element.")
                 else:
                     logger.debug(
                         f"{ticker} - {serialized_date}. Error on price :{serializer.errors}"
@@ -110,40 +88,24 @@ class StockPricesApi:
             serializer = StockPriceSerializer(instance=prices, many=True)
             return serializer.data
 
-    def get_monthly_data(self, ticker: str, year: int, month: int) -> dict:
-        from_date = f"{year}-{month}-01"
-
-        end_day = 31
-        if month in [4, 6, 9, 11]:
-            end_day = 30
-        elif month == 2:
-            end_day = 28
-
-        to_date = f"{year}-{month}-{end_day}"
-        return self.get_historical_data(ticker, from_date, to_date)
-
     def get_last_data_from_year(self, ticker: str, year: int, only_api=False) -> dict:
         from_date, to_date = self.get_start_end_dates_for_year(year)
-        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1, only_api=only_api)
+        results = self.get_historical_data(
+            ticker, from_date, to_date, minimum_values=1, only_api=only_api
+        )
         if len(results) > 0:
             return results[-1]
-
-    def update_last_data_from_year(self, ticker: str, year: int) -> dict:
-        result = self.get_last_data_from_year(ticker, year, only_api=True)
-        return result
 
     def get_start_end_dates_for_year(self, year: int):
         todays_date = datetime.date.today()
         if todays_date.year == int(year):
             # Get today minus 15 days
-            from_date = (todays_date - datetime.timedelta(days=15)).strftime(
-                "%Y-%m-%d"
-            )
+            from_date = (todays_date - datetime.timedelta(days=15)).strftime("%Y-%m-%d")
             to_date = todays_date.strftime("%Y-%m-%d")
         else:
             from_date = f"{year}-12-01"
             to_date = f"{year}-12-31"
-        return from_date,to_date
+        return from_date, to_date
 
     def get_last_data_from_last_month(self, ticker: str) -> dict:
         from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime(

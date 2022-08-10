@@ -6,7 +6,7 @@ from companies.utils import CompanyUtils
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.utils.company_utils import CompanyStatsUtils
 from stock_prices.api import StockPricesApi
-from stock_prices.services.custom_yfinance_service import CustomYFinanceService
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
 from dividends_transactions.models import DividendsTransaction
@@ -196,9 +196,7 @@ class PortfolioStatsUtils:
             if company.is_closed:
                 continue
 
-            first_year = CompanyUtils(self.company.id).get_company_first_year(
-                company.user
-            )
+            first_year = CompanyUtils(company.id).get_company_first_year(company.user)
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
             if self.year != "all":
                 if not first_year or first_year > int(self.year):
@@ -208,8 +206,8 @@ class PortfolioStatsUtils:
             company_stats = CompanyStatsUtils(
                 company.id, self.user_id, self.year, use_currency=self.use_currency
             )
-            shares_count = company_stats.get_shares_count()
-            api_service = CustomYFinanceService()
+            shares_count = company_stats.get_shares_count(self.year)
+            api_service = YFinanceApiClient()
             api = StockPricesApi(api_service)
             if self.year == "all":
                 stock_price = api.get_last_data_from_last_month(company.ticker)
@@ -350,7 +348,9 @@ class PortfolioStatsUtils:
 
     def get_portfolio_first_year(self):
         transactions = SharesTransaction.objects.filter(
-            company__portfolio=self.portfolio.id, user=self.user_id, company__is_closed=False
+            company__portfolio=self.portfolio.id,
+            user=self.user_id,
+            company__is_closed=False,
         )
         first_year = transactions.order_by("transaction_date").first()
         if not first_year:
