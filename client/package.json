@@ -2,7 +2,6 @@
   "name": "client",
   "version": "0.0.68-alpha",
   "homepage": "/",
-  "proxy": "http://localhost:8001/",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
@@ -86,6 +85,7 @@
     "@types/react-dom": "^18.0.5",
     "@types/react-router-dom": "^5.3.3",
     "canvas": "^2.9.1",
+    "http-proxy-middleware": "^2.0.6",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.0",
     "msw": "^0.42.0",
