@@ -5,7 +5,6 @@ djangorestframework==3.12.4
 djangorestframework-camel-case==1.2.0
 drf-extra-fields==3.2.1
 drf-yasg==1.20.0
-forex-python==1.6
 mysqlclient==2.1.0
 pandas==1.4.3
 Pillow==9.0.1
