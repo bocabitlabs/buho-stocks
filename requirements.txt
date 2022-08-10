@@ -1,4 +1,4 @@
-Django==3.2.13
+Django==3.2.14
 django-filter==21.1
 django-money==2.1
 djangorestframework==3.12.4
