@@ -40,7 +40,8 @@ export default function StatsContent({ stats }: Props): ReactElement {
           value={stats?.portfolioValue}
           valueStyle={{
             color:
-              stats?.portfolioValue < stats?.accumulatedInvestment
+              Number(stats?.portfolioValue) <
+              Number(stats?.accumulatedInvestment)
                 ? "#cf1322"
                 : "",
           }}

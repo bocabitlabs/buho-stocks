@@ -39,7 +39,8 @@ export default function PortfolioCard({ portfolio }: Props): ReactElement {
       <Typography.Text
         type={stats?.returnWithDividendsPercent < 0 ? "danger" : "success"}
       >
-        {stats?.portfolioValue < stats?.accumulatedInvestment ? (
+        {Number(stats?.portfolioValue) <
+        Number(stats?.accumulatedInvestment) ? (
           <ArrowDownOutlined />
         ) : (
           <ArrowUpOutlined />
