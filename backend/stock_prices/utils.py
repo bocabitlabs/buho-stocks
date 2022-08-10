@@ -30,15 +30,15 @@ class StockPricesUtils:
     def get_year_last_stock_price(self):
         api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
+
         if self.year == "all":
             stock_price = api.get_last_data_from_last_month(self.company.ticker)
             if not stock_price:
                 stock_price = self.get_stock_price_for_tickers(self.company.alt_tickers)
 
         else:
-            first_year = CompanyUtils(self.company.id).get_company_first_year(
-                self.company.user
-            )
+            company_utils = CompanyUtils(self.company.id)
+            first_year = company_utils.get_company_first_year(self.company.user)
             if not first_year or first_year > int(self.year):
                 return None
             stock_price = api.get_last_data_from_year(self.company.ticker, self.year)

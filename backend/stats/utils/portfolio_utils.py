@@ -3,25 +3,16 @@ import logging
 from django.contrib.auth.models import User
 from buho_backend.transaction_types import TransactionType
 from companies.utils import CompanyUtils
+from portfolios.models import Portfolio
+from portfolios.utils import PortfolioUtils
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.utils.company_utils import CompanyStatsUtils
 from stock_prices.api import StockPricesApi
 from stock_prices.services.yfinance_api_client import YFinanceApiClient
-from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
 from dividends_transactions.models import DividendsTransaction
 
 logger = logging.getLogger("buho_backend")
-
-
-class PortfolioUtils:
-    def get_portfolio_first_year(self, portfolio_id, user_id):
-        query = SharesTransaction.objects.filter(
-            company__portfolio=portfolio_id, user=user_id, company__is_closed=False
-        ).order_by("transaction_date")
-        if query.exists():
-            return query[0].transaction_date.year
-        return None
 
 
 class PortfolioStatsUtils:
@@ -33,12 +24,12 @@ class PortfolioStatsUtils:
         portfolio_id: int,
         user_id: int,
         year: int = "all",
-        use_currency="portfolio",
+        use_portfolio_currency: bool = True,
         force: bool = False,
     ):
         self.portfolio = Portfolio.objects.get(id=portfolio_id, user=user_id)
         self.year = year
-        self.use_currency = use_currency
+        self.use_portfolio_currency = use_portfolio_currency
         self.user_id = user_id
         self.force = force
 
@@ -58,7 +49,7 @@ class PortfolioStatsUtils:
                 )
             for item in query:
                 exchange_rate = 1
-                if self.use_currency == "portfolio":
+                if self.use_portfolio_currency:
                     exchange_rate = item.exchange_rate
                 total += (
                     item.gross_price_per_share.amount * item.count * exchange_rate
@@ -81,7 +72,7 @@ class PortfolioStatsUtils:
                 )
             for item in query:
                 exchange_rate = 1
-                if self.use_currency == "portfolio":
+                if self.use_portfolio_currency:
                     exchange_rate = item.exchange_rate
                 total += (
                     item.gross_price_per_share.amount * exchange_rate * item.count
@@ -104,7 +95,7 @@ class PortfolioStatsUtils:
                 )
             for item in query:
                 exchange_rate = 1
-                if self.use_currency == "portfolio":
+                if self.use_portfolio_currency:
                     exchange_rate = item.exchange_rate
                 total += (
                     item.gross_price_per_share.amount * exchange_rate * item.count
@@ -127,7 +118,7 @@ class PortfolioStatsUtils:
                 )
             for item in query:
                 exchange_rate = 1
-                if self.use_currency == "portfolio":
+                if self.use_portfolio_currency:
                     exchange_rate = item.exchange_rate
                 total += (
                     item.gross_price_per_share.amount * exchange_rate * item.count
@@ -138,8 +129,6 @@ class PortfolioStatsUtils:
     def get_dividends(self):
         total = 0
         for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
 
             query = company.dividends_transactions
             if self.year == "all":
@@ -148,7 +137,7 @@ class PortfolioStatsUtils:
                 query = query.filter(transaction_date__year=self.year)
             for item in query:
                 exchange_rate = 1
-                if self.use_currency == "portfolio":
+                if self.use_portfolio_currency:
                     exchange_rate = item.exchange_rate
                 total += (
                     item.gross_price_per_share.amount * exchange_rate * item.count
@@ -169,7 +158,7 @@ class PortfolioStatsUtils:
                 query = query.filter(transaction_date__year__lte=self.year)
             for item in query:
                 exchange_rate = 1
-                if self.use_currency == "portfolio":
+                if self.use_portfolio_currency:
                     exchange_rate = item.exchange_rate
                 total += (
                     item.gross_price_per_share.amount * exchange_rate * item.count
@@ -193,6 +182,7 @@ class PortfolioStatsUtils:
         total = 0
         logger.debug("Get portfolio value")
         for company in self.portfolio.companies.all():
+
             if company.is_closed:
                 continue
 
@@ -204,7 +194,10 @@ class PortfolioStatsUtils:
                     continue
 
             company_stats = CompanyStatsUtils(
-                company.id, self.user_id, self.year, use_currency=self.use_currency
+                company.id,
+                self.user_id,
+                self.year,
+                use_portfolio_currency=self.use_portfolio_currency,
             )
             shares_count = company_stats.get_shares_count(self.year)
             api_service = YFinanceApiClient()
@@ -278,18 +271,17 @@ class PortfolioStatsUtils:
         }
 
         for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
 
             company_stats = CompanyStatsUtils(
                 company.id, self.user_id, year=self.year, force=self.force
             )
             instance = company_stats.get_stats_for_year()
-            data["invested"] += instance.invested
             data["dividends"] += instance.dividends
-            data["accumulated_investment"] += instance.accumulated_investment
             data["accumulated_dividends"] += instance.accumulated_dividends
-            data["portfolio_value"] += instance.portfolio_value
+            if not company.is_closed:
+                data["invested"] += instance.invested
+                data["accumulated_investment"] += instance.accumulated_investment
+                data["portfolio_value"] += instance.portfolio_value
 
         data["return_value"] = self.get_return(
             data["portfolio_value"], data["accumulated_investment"]
@@ -335,8 +327,6 @@ class PortfolioStatsUtils:
     def get_stats_for_year_by_company(self):
         results = []
         for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
 
             company_stats = CompanyStatsUtils(
                 company.id, self.user_id, year=self.year, force=self.force
@@ -385,8 +375,6 @@ class PortfolioStatsUtils:
             }
 
             for company in self.portfolio.companies.all():
-                if company.is_closed:
-                    continue
 
                 company_stats = CompanyStatsUtils(company.id, self.user_id, year=year)
                 instance = company_stats.get_stats_for_year()
@@ -456,9 +444,10 @@ class PortfolioStatsUtils:
         return result
 
     def get_dividends_for_all_years_monthly(self):
-        logger.debug(f"Get dividends for all years monthly")
+        logger.debug("Get dividends for all years monthly")
         years = {}
-        first_year = PortfolioUtils().get_portfolio_first_year(
+        portolio_utils = PortfolioUtils()
+        first_year = portolio_utils.get_portfolio_first_year(
             self.portfolio, self.user_id
         )
 

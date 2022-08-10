@@ -4,11 +4,15 @@ from dividends_transactions.models import DividendsTransaction
 
 
 class DividendsTransactionsUtils:
-    def __init__(self, transactions: list[DividendsTransaction], use_currency: str = "portfolio"):
+    def __init__(
+        self,
+        transactions: list[DividendsTransaction],
+        use_portfolio_currency: bool = True,
+    ):
         self.transactions = transactions
-        self.use_currency = use_currency
+        self.use_portfolio_currency = use_portfolio_currency
 
-    def _get_transactions_query(self, year: int, filter: str = None):
+    def _get_transactions_query(self, year: int, use_accumulated: bool = False):
         """[summary]
 
         Args:
@@ -19,7 +23,7 @@ class DividendsTransactionsUtils:
             [type]: [description]
         """
         query = self.transactions
-        if filter == "accumulated":
+        if use_accumulated:
             query = query.filter(transaction_date__year__lte=year)
         else:
             query = query.filter(transaction_date__year=year)
@@ -28,7 +32,7 @@ class DividendsTransactionsUtils:
 
     def _get_transaction_amount(self, item: DividendsTransaction) -> Decimal:
         exchange_rate = 1
-        if self.use_currency == "portfolio":
+        if self.use_portfolio_currency:
             exchange_rate = item.exchange_rate
         total = (
             item.gross_price_per_share.amount * exchange_rate * item.count
@@ -50,7 +54,7 @@ class DividendsTransactionsUtils:
 
     def get_accumulated_dividends_until_year(self, year: int):
         total = 0
-        query = self._get_transactions_query(year, filter="accumulated")
+        query = self._get_transactions_query(year, use_accumulated=True)
         total = self._get_transactions_amount(query)
         return total
 

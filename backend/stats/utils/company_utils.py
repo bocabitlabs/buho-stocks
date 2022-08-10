@@ -20,16 +20,16 @@ class CompanyStatsUtils:
         company_id: int,
         user_id: int,
         year="all",
-        use_currency="portfolio",
+        use_portfolio_currency: bool = True,
         force: bool = False,
     ):
         self.company = Company.objects.get(id=company_id, user=user_id)
         self.year = year
-        self.use_currency = use_currency
+        self.use_portfolio_currency = use_portfolio_currency
         self.user_id = user_id
         self.force = force
         self.company_utils = CompanyUtils(
-            self.company.id, use_currency=self.use_currency
+            self.company.id, use_portfolio_currency=self.use_portfolio_currency
         )
 
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
@@ -38,6 +38,7 @@ class CompanyStatsUtils:
     def get_portfolio_value(self, stock_price, shares_count):
         price = 0
         exchange_rate = None
+        total = 0
         if shares_count > 0 and stock_price:
             price = stock_price["price"]
             transaction_date = stock_price["transaction_date"]
@@ -46,7 +47,7 @@ class CompanyStatsUtils:
                 self.company.portfolio.base_currency,
                 transaction_date,
             )
-        total = Decimal(price) * shares_count * Decimal(exchange_rate.exchange_rate)
+            total = Decimal(price) * shares_count * Decimal(exchange_rate.exchange_rate)
         return total
 
     def get_shares_count(self, year):
@@ -56,14 +57,28 @@ class CompanyStatsUtils:
         self, portfolio_value, accumulated_dividends, total_invested
     ):
         total = 0
-        if portfolio_value:
-            total = portfolio_value - total_invested + accumulated_dividends
+
+        if self.company.is_closed:
+            total = self.company_utils.get_accumulated_return_from_sales_until_year(
+                self.year
+            )
+            total += accumulated_dividends - total_invested
+        else:
+            if portfolio_value:
+                total = portfolio_value - total_invested + accumulated_dividends
+
         return total
 
     def get_return(self, portfolio_value, total_invested):
         total = 0
-        if portfolio_value:
-            total = portfolio_value - total_invested
+        if self.company.is_closed:
+            total = self.company_utils.get_accumulated_return_from_sales_until_year(
+                self.year
+            )
+            total -= total_invested
+        else:
+            if portfolio_value:
+                total = portfolio_value - total_invested
         return total
 
     def get_return_percent(self, total_return, total_invested):
