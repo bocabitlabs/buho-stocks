@@ -1,4 +1,11 @@
 {
   "python.formatting.provider": "black",
-  "eslint.workingDirectories": ["/workspace/client"]
+  "python.autoComplete.extraPaths": ["/backend"],
+  "eslint.workingDirectories": ["/client"],
+  "python.analysis.extraPaths": ["backend"],
+  "python.analysis.autoSearchPaths": true,
+  "editor.formatOnSave": true,
+  "python.linting.enabled": true,
+  "python.linting.pylintEnabled": true,
+  "python.linting.pylintPath": "venv/bin/pylint"
 }
