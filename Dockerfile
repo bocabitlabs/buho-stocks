@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx:python3.9
+FROM tiangolo/uwsgi-nginx:python3.10
 
 RUN apt-get update
 RUN apt-get -y install curl gnupg

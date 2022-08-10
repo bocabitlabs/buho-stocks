@@ -1,4 +1,4 @@
-FROM tiangolo/uwsgi-nginx:python3.9
+FROM tiangolo/uwsgi-nginx:python3.10
 EXPOSE 8000 3000
 
 # https://github.com/microsoft/vscode-dev-containers/blob/main/script-library/docs/common.md
