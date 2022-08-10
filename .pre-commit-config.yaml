@@ -1,10 +1,10 @@
 repos:
   - repo: https://github.com/pycqa/pylint
-    rev: "v2.11.1"
+    rev: "v2.14.5"
     hooks:
       - id: pylint
         exclude: "[a-zA-Z]*/(migrations)/(.)*"
-        args: ["--rcfile=/workspace/.pylintrc"]
+        args: ["--rcfile=./backend/.pylintrc"]
         additional_dependencies: [
             # pylint dependency
             pylint_django,
@@ -13,6 +13,6 @@ repos:
             drf_yasg
           ]
   - repo: https://github.com/psf/black
-    rev: 21.9b0
+    rev: 22.6.0
     hooks:
       - id: black
