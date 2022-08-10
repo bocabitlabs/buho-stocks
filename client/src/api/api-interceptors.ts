@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 import { apiClient, getAxiosHeadersWithAuth } from "./api-client";
 
 const setupInterceptors = (clearToken: any) => {
@@ -22,7 +21,6 @@ const setupInterceptors = (clearToken: any) => {
     (error) => {
       if (error.response.status === 401) {
         console.error("You need to login again");
-        toast.error("Session expired. You need to login again.");
         clearToken();
       }
       return Promise.reject(error);
