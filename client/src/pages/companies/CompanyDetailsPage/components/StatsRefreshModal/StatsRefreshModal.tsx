@@ -1,7 +1,8 @@
 import React, { ReactElement, useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Modal } from "antd";
+import { Button, Checkbox, Form, Modal, Typography } from "antd";
+import axios from "axios";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
@@ -21,6 +22,7 @@ export default function StatsRefreshModal({
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
+  const [errorsList, setErrorsList] = useState<string[]>([]);
 
   const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
   const { mutateAsync: updateStats } = useUpdateYearStats();
@@ -40,11 +42,20 @@ export default function StatsRefreshModal({
   };
 
   const getStatsForced = async () => {
-    await updateStats({
-      companyId: +companyId!,
-      year: selectedYear,
-      forced: updateStockPriceSwitch,
-    });
+    try {
+      await updateStats({
+        companyId: +companyId!,
+        year: selectedYear,
+        forced: updateStockPriceSwitch,
+      });
+      return { result: true, message: "" };
+    } catch (error: any) {
+      let message = error;
+      if (axios.isAxiosError(error)) {
+        message = error.message;
+      }
+      return { result: false, message };
+    }
   };
 
   const getStockPrice = useCallback(async () => {
@@ -52,21 +63,40 @@ export default function StatsRefreshModal({
     if (selectedYear === "all") {
       tempYear = new Date().getFullYear().toString();
     }
-    await updateStockPrice({ companyId: +companyId!, year: tempYear });
+    try {
+      await updateStockPrice({ companyId: +companyId!, year: tempYear });
+      return { result: true, message: "" };
+    } catch (error: any) {
+      let message = error;
+      if (axios.isAxiosError(error)) {
+        message = error.message;
+      }
+      return { result: false, message };
+    }
   }, [companyId, selectedYear, updateStockPrice]);
 
   const handleOk = async () => {
     console.log("handleOk");
     setConfirmLoading(true);
+    setErrorsList([]);
+    const updatesErrorList: string[] = [];
 
     if (updateStockPriceSwitch) {
-      await getStockPrice();
+      const result = await getStockPrice();
+      if (!result.result) {
+        updatesErrorList.push(result.message);
+      }
       setConfirmLoading(false);
     }
     if (updateStatsSwitch) {
       setConfirmLoading(true);
-      await getStatsForced();
+      const result = await getStatsForced();
+      console.log(result);
+      if (!result.result) {
+        updatesErrorList.push(result.message);
+      }
     }
+    setErrorsList(updatesErrorList);
     setConfirmLoading(false);
 
     onStockPriceChange({ target: { checked: false } });
@@ -114,6 +144,18 @@ export default function StatsRefreshModal({
             </Checkbox>
           </Form.Item>
         </Form>
+        <Typography.Paragraph type="danger">
+          {errorsList.length > 0 ? (
+            <ul>
+              {errorsList.length &&
+                errorsList.map((item: string) => (
+                  <li key={encodeURI(item)}>{item}</li>
+                ))}
+            </ul>
+          ) : (
+            ""
+          )}
+        </Typography.Paragraph>
       </Modal>
     </>
   );

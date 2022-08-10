@@ -15,6 +15,12 @@ interface Props {
   companies: ICompanyListItem[];
 }
 
+interface CheckboxesProps {
+  id: number;
+  name: string;
+  ticker: string;
+}
+
 async function asyncForEach(array: any[], callback: Function) {
   for (let index = 0; index < array.length; index += 1) {
     // eslint-disable-next-line no-await-in-loop
@@ -35,15 +41,17 @@ export default function StatsRefreshModal({
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
   const [updateMessage, setUpdateMessage] = useState("");
+  const [errorsList, setErrorsList] = useState<string[]>([]);
+
   const [checkAll, setCheckAll] = useState(false);
   const [checkedList, setCheckedList] = React.useState<CheckboxValueType[]>([]);
   const [indeterminate, setIndeterminate] = React.useState(false);
-  const [checkboxes, setCheckboxes] = useState<CheckboxValueType[]>([]);
+  const [checkboxes, setCheckboxes] = useState<CheckboxesProps[]>([]);
   const { data: settings } = useSettings();
 
   useEffect(() => {
     const tempCheckboxes = companies.map((company: ICompanyListItem) => {
-      return `${company.name} (${company.ticker}) - #${company.id}`;
+      return { name: company.name, ticker: company.ticker, id: company.id };
     });
     setCheckboxes(tempCheckboxes);
   }, [companies]);
@@ -57,12 +65,15 @@ export default function StatsRefreshModal({
     setVisible(true);
   };
   const onCheckAllChange = (e: any) => {
-    setCheckedList(e.target.checked ? checkboxes : []);
+    setCheckedList(
+      e.target.checked ? checkboxes.map((company) => company.id) : [],
+    );
     setIndeterminate(false);
     setCheckAll(e.target.checked);
   };
 
   const onChange = (checkedValue: CheckboxValueType[]) => {
+    console.log(checkedValue);
     setCheckedList(checkedValue);
     setIndeterminate(
       !!checkedValue.length && checkedValue.length < checkboxes.length,
@@ -71,7 +82,7 @@ export default function StatsRefreshModal({
   };
 
   const getStatsForced = useCallback(
-    async (companyId: string, companyName: string) => {
+    async (companyId: number, companyName: string) => {
       setUpdateMessage(`${t("Updating stats for company")} #${companyId}`);
       try {
         await updateCompanyStats({
@@ -84,12 +95,13 @@ export default function StatsRefreshModal({
             "and year",
           )} ${selectedYear}`,
         );
+        return { result: true, message: "" };
       } catch (e) {
-        setUpdateMessage(
-          `${t("Error updating stats for company")}: ${companyName} ${t(
-            "and year",
-          )} ${selectedYear}`,
-        );
+        const message = `${t(
+          "Error updating stats for company",
+        )}: ${companyName} ${t("and year")} ${selectedYear}`;
+        setUpdateMessage(message);
+        return { result: false, message };
       }
     },
     [selectedYear, t, updateCompanyStats, updateStockPriceSwitch],
@@ -97,7 +109,7 @@ export default function StatsRefreshModal({
 
   const getCompanyStockPrice = useCallback(
     async (
-      companyId: string,
+      companyId: number,
       companyName: string,
       itemIndex: number,
       companiesLength: number,
@@ -118,12 +130,13 @@ export default function StatsRefreshModal({
             "and year",
           )} ${tempYear}`,
         );
+        return { result: true, message: "" };
       } catch (e) {
-        setUpdateMessage(
-          `${t("Error updating price for company")}: ${companyName} ${t(
-            "and year",
-          )} ${t(tempYear)}`,
-        );
+        const message = `${t(
+          "Error updating price for company",
+        )}: ${companyName} ${t("and year")} ${t(tempYear)}`;
+        setUpdateMessage(message);
+        return { result: false, message };
       }
     },
     [selectedYear, t, updateStockPrice],
@@ -153,31 +166,45 @@ export default function StatsRefreshModal({
 
   const handleOk = async () => {
     setConfirmLoading(true);
-    let companyId;
+    setErrorsList([]);
+    const updatesErrorList: string[] = [];
     if (updateStockPriceSwitch) {
       console.log("Will update stock price");
       await asyncForEach(
         checkedList,
-        async (checkboxName: string, index: number) => {
-          // eslint-disable-next-line prefer-destructuring
-          companyId = checkboxName.split("-")[1].split("#")[1];
-          await getCompanyStockPrice(
+        async (companyId: number, index: number) => {
+          const companyName = checkboxes.filter(
+            (company) => company.id === companyId,
+          )[0].name;
+          console.log(`Company name: ${companyName}`);
+
+          const result = await getCompanyStockPrice(
             companyId,
-            checkboxName,
+            companyName,
             index,
             checkedList.length,
           );
+          if (!result.result) {
+            updatesErrorList.push(result.message);
+          }
         },
       );
       setConfirmLoading(false);
     }
     if (updateStatsSwitch) {
       setConfirmLoading(true);
-      await asyncForEach(checkedList, async (checkboxName: string) => {
-        // eslint-disable-next-line prefer-destructuring
-        companyId = checkboxName.split("-")[1].split("#")[1];
-        await getStatsForced(companyId, checkboxName);
+      await asyncForEach(checkedList, async (companyId: number) => {
+        const companyName = checkboxes.filter(
+          (company) => company.id === companyId,
+        )[0].name;
+        console.log(`updateStatsSwitch: Company name: ${companyName}`);
+
+        const result = await getStatsForced(companyId, companyName);
+        if (!result.result) {
+          updatesErrorList.push(result.message);
+        }
       });
+      setErrorsList(updatesErrorList);
       setConfirmLoading(false);
     }
     await updatePortfolioStatsForced();
@@ -265,14 +292,28 @@ export default function StatsRefreshModal({
             valuePropName="checked"
           >
             <Checkbox.Group onChange={onChange} value={checkedList}>
-              {checkboxes.map((company) => (
-                <div key={company.toString()}>
-                  <Checkbox value={company}>{company}</Checkbox>
+              {checkboxes.map((company: CheckboxesProps) => (
+                <div key={company.id}>
+                  <Checkbox value={company.id}>
+                    {company.ticker} - {company.name}
+                  </Checkbox>
                 </div>
               ))}
             </Checkbox.Group>
           </Form.Item>
           <Typography.Paragraph>{updateMessage}</Typography.Paragraph>
+          <Typography.Paragraph type="danger">
+            {errorsList.length > 0 ? (
+              <ul>
+                {errorsList.length &&
+                  errorsList.map((item: string) => (
+                    <li key={encodeURI(item)}>{item}</li>
+                  ))}
+              </ul>
+            ) : (
+              ""
+            )}
+          </Typography.Paragraph>
         </Form>
       </Modal>
     </>
