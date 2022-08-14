@@ -18,11 +18,15 @@ class SectorBase(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
+    def __str__(self):
+        return self.name
+
 
 class SuperSector(SectorBase):
     """Super sector model class"""
+
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]
 
 
 class Sector(SectorBase):
@@ -32,8 +36,5 @@ class Sector(SectorBase):
         SuperSector, on_delete=models.SET_NULL, related_name="sectors", null=True
     )
 
-    def __str___(self):
-        return self.name
-
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]

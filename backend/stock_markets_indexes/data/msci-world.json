@@ -1,0 +1,38 @@
+[
+  {
+    "value_currency": "EUR",
+    "value": 169.54,
+    "year": 2016,
+    "return_percentage": 8.15
+  },
+  {
+    "value_currency": "EUR",
+    "value": 178.872,
+    "year": 2017,
+    "return_percentage": 23.07
+  },
+  {
+    "value_currency": "EUR",
+    "value": 168.281,
+    "year": 2018,
+    "return_percentage": -8.2
+  },
+  {
+    "value_currency": "EUR",
+    "value": 214.548,
+    "year": 2019,
+    "return_percentage": 28.4
+  },
+  {
+    "value_currency": "EUR",
+    "value": 224.501,
+    "year": 2020,
+    "return_percentage": 16.5
+  },
+  {
+    "value_currency": "EUR",
+    "value": 290.188,
+    "year": 2021,
+    "return_percentage": 22.35
+  }
+]

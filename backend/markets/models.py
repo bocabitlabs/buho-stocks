@@ -23,11 +23,12 @@ class Market(models.Model):
 
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
-    def __str___(self):
-        return f"{self.name} {self.region} ({self.open_time}-{self.close_time})"
+    def __str__(self):
+        return f"{self.name} ({self.region})"
 
     class Meta:
         ordering = ["name"]
+
 
 def get_all_timezones():
     return [{"name": name} for name in pytz.all_timezones]

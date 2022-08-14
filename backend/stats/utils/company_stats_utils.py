@@ -50,7 +50,7 @@ class CompanyStatsUtils:
             total = Decimal(price) * shares_count * Decimal(exchange_rate.exchange_rate)
         return total
 
-    def get_shares_count(self, year):
+    def get_accumulated_shares_count_until_year(self, year):
         return self.company_utils.get_accumulated_shares_count_until_year(year)
 
     def get_return_with_dividends(

@@ -10,6 +10,7 @@ export default function PortfolioReturnsChart({ stats }: Props): ReactElement {
   const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
+  console.log("PortfolioReturnsChart");
   const options = {
     responsive: true,
     plugins: {

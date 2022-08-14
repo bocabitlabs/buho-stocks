@@ -6,7 +6,7 @@ from companies.utils import CompanyUtils
 from portfolios.models import Portfolio
 from portfolios.utils import PortfolioUtils
 from stats.models.portfolio_stats import PortfolioStatsForYear
-from stats.utils.company_utils import CompanyStatsUtils
+from stats.utils.company_stats_utils import CompanyStatsUtils
 from stock_prices.api import StockPricesApi
 from stock_prices.services.yfinance_api_client import YFinanceApiClient
 from shares_transactions.models import SharesTransaction
@@ -199,7 +199,9 @@ class PortfolioStatsUtils:
                 self.year,
                 use_portfolio_currency=self.use_portfolio_currency,
             )
-            shares_count = company_stats.get_shares_count(self.year)
+            shares_count = company_stats.get_accumulated_shares_count_until_year(
+                self.year
+            )
             api_service = YFinanceApiClient()
             api = StockPricesApi(api_service)
             if self.year == "all":
@@ -414,7 +416,7 @@ class PortfolioStatsUtils:
 
     def get_dividends_for_year_monthly(self, year=None):
         logger.debug(f"Get dividends for year {year}")
-        if year == None:
+        if year is None:
             year = self.year
         transactions = DividendsTransaction.objects.filter(
             company__portfolio=self.portfolio, transaction_date__year=year
@@ -433,7 +435,7 @@ class PortfolioStatsUtils:
 
         for transaction in transactions:
             month = str(transaction.transaction_date.strftime("%B"))
-            if month in result.keys():
+            if month in result:
                 current_value = get_transaction_value(transaction)
                 result[month] = result[month] + current_value
             else:

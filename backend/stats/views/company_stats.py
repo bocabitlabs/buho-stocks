@@ -12,9 +12,10 @@ from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 
-from stats.utils.company_utils import CompanyStatsUtils
+from stats.utils.company_stats_utils import CompanyStatsUtils
 
-logger =logging.getLogger("buho_backend")
+logger = logging.getLogger("buho_backend")
+
 
 class CompanyStatsAPIView(APIView):
     authentication_classes = [ExpiringTokenAuthentication]
@@ -22,7 +23,9 @@ class CompanyStatsAPIView(APIView):
 
     def get_object(self, company_id, year, user_id, force=False):
         try:
-            company_stats = CompanyStatsUtils(company_id, user_id, year=year, force=force)
+            company_stats = CompanyStatsUtils(
+                company_id, user_id, year=year, force=force
+            )
             instance = company_stats.get_stats_for_year()
             return instance
         except Company.DoesNotExist:
@@ -50,7 +53,7 @@ class CompanyStatsAPIView(APIView):
         """
         settings = UserSettings.objects.get(user=request.user)
         if settings.allow_fetch:
-            forced = self.request.query_params.get('force')
+            forced = self.request.query_params.get("force")
             if forced == "true":
                 forced = True
         else:

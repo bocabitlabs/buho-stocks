@@ -2,7 +2,12 @@ import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { Select } from "antd";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
+import {
+  useStockMarketIndexes,
+  useStockMarketIndexValues,
+} from "hooks/use-stock-market-indexes/use-stock-market-indexes";
 import { hexToRgb, manyColors } from "utils/colors";
 
 export default function ChartPortfolioReturns(): ReactElement | null {
@@ -10,6 +15,16 @@ export default function ChartPortfolioReturns(): ReactElement | null {
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>();
   const { data } = usePortfolioAllYearStats(+id!);
+
+  const { data: indexes, isFetching } = useStockMarketIndexes();
+
+  const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(
+    undefined,
+  );
+  const { data: indexData, isFetching: indexIsFetching } =
+    useStockMarketIndexValues(
+      selectedIndex !== undefined ? indexes[selectedIndex].id : undefined,
+    );
 
   const options = {
     responsive: true,
@@ -38,15 +53,11 @@ export default function ChartPortfolioReturns(): ReactElement | null {
         display: true,
         position: "left" as const,
       },
-      y1: {
-        type: "linear" as const,
-        display: true,
-        position: "right" as const,
-        grid: {
-          drawOnChartArea: false,
-        },
-      },
     },
+  };
+
+  const onChange = (value: number) => {
+    setSelectedIndex(value);
   };
 
   useEffect(() => {
@@ -59,14 +70,14 @@ export default function ChartPortfolioReturns(): ReactElement | null {
             data: [],
             borderColor: hexToRgb(manyColors[10], 1),
             backgroundColor: hexToRgb(manyColors[10], 1),
-            yAxisID: "y",
+            // yAxisID: "y",
           },
           {
             label: t("Return + dividends"),
             data: [],
             borderColor: hexToRgb(manyColors[16], 1),
             backgroundColor: hexToRgb(manyColors[16], 1),
-            yAxisID: "y",
+            // yAxisID: "y",
           },
         ],
       };
@@ -77,6 +88,7 @@ export default function ChartPortfolioReturns(): ReactElement | null {
       const newYears: any = [];
       const returnsPercent: any = [];
       const returnsWithDividendsPercent: any = [];
+      const indexPercents: any = [];
 
       data.sort((a: any, b: any) => {
         if (a.year > b.year) {
@@ -98,18 +110,57 @@ export default function ChartPortfolioReturns(): ReactElement | null {
           returnsWithDividendsPercent.push(
             Number(year.returnWithDividendsPercent),
           );
+          let indexValue = null;
+          if (indexData) {
+            indexValue = indexData.find(
+              (indexItem: any) => indexItem.year === year.year,
+            );
+            indexPercents.push(
+              indexValue ? Number(indexValue.returnPercentage) : 0,
+            );
+          }
         }
       });
       tempChartData.labels = newYears;
       tempChartData.datasets[0].data = returnsPercent;
       tempChartData.datasets[1].data = returnsWithDividendsPercent;
 
+      if (indexData && selectedIndex !== undefined && indexes.length > 0) {
+        tempChartData.datasets[2] = {
+          label: indexes[selectedIndex].name,
+          data: [],
+          borderColor: hexToRgb(manyColors[17], 1),
+          backgroundColor: hexToRgb(manyColors[17], 1),
+          // yAxisID: "y",
+        };
+        tempChartData.datasets[2].data = indexPercents;
+      }
+
       setChartData(tempChartData);
     }
-  }, [data, t]);
+  }, [data, indexData, indexes, selectedIndex, t]);
 
   if (chartData) {
-    return <Line options={options} data={chartData} />;
+    return (
+      <div>
+        {!indexIsFetching && <Line options={options} data={chartData} />}
+        {indexes.length > 0 && (
+          <Select
+            showSearch
+            placeholder="Select a index"
+            onChange={onChange}
+            loading={isFetching}
+            style={{ marginTop: 20, minWidth: 200 }}
+          >
+            {indexes.map((element: any, index: number) => (
+              <Select.Option key={element.id} value={index}>
+                {element.name}
+              </Select.Option>
+            ))}
+          </Select>
+        )}
+      </div>
+    );
   }
   return null;
 }

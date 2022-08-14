@@ -1,0 +1,38 @@
+[
+  {
+    "value_currency": "USD",
+    "value": 4766.18,
+    "year": 2021,
+    "return_percentage": 26.89
+  },
+  {
+    "value_currency": "USD",
+    "value": 3756.07,
+    "year": 2020,
+    "return_percentage": 16.26
+  },
+  {
+    "value_currency": "USD",
+    "value": 3230.78,
+    "year": 2019,
+    "return_percentage": 28.88
+  },
+  {
+    "value_currency": "USD",
+    "value": 2506.85,
+    "year": 2018,
+    "return_percentage": -6.24
+  },
+  {
+    "value_currency": "USD",
+    "value": 2673.61,
+    "year": 2017,
+    "return_percentage": 19.42
+  },
+  {
+    "value_currency": "USD",
+    "value": 2238.83,
+    "year": 2016,
+    "return_percentage": 9.54
+  }
+]

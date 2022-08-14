@@ -1,8 +1,5 @@
 import logging
 from rest_framework.response import Response
-from rest_framework.authentication import (
-    TokenAuthentication,
-)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework import status
@@ -13,9 +10,9 @@ from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 
-from stats.utils.portfolio_utils import PortfolioStatsUtils
+from stats.utils.portfolio_stats_utils import PortfolioStatsUtils
 
-logger =logging.getLogger("buho_backend")
+logger = logging.getLogger("buho_backend")
 
 
 class PortfolioStatsAPIView(APIView):
@@ -25,7 +22,9 @@ class PortfolioStatsAPIView(APIView):
     def get_object(self, portfolio_id, year, user_id, force=False, group_by=None):
         try:
             if group_by in ["month", "company"]:
-                stats = self.get_stats_grouped(portfolio_id, year, user_id, force, group_by)
+                stats = self.get_stats_grouped(
+                    portfolio_id, year, user_id, force, group_by
+                )
                 return stats
 
             stats = self.get_stats_for_year(portfolio_id, year, user_id, force)
@@ -34,7 +33,9 @@ class PortfolioStatsAPIView(APIView):
             return None
 
     def get_stats_for_year(self, portfolio_id, year, user_id, force):
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, user_id, year=year, force=force)
+        portfolio_stats = PortfolioStatsUtils(
+            portfolio_id, user_id, year=year, force=force
+        )
         stats = portfolio_stats.get_stats_for_year()
         logger.debug(stats)
         serializer = PortfolioStatsForYearSerializer(stats)
@@ -43,7 +44,9 @@ class PortfolioStatsAPIView(APIView):
         return stats
 
     def get_stats_grouped(self, portfolio_id, year, user_id, force, group_by):
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, user_id, year=year, force=force)
+        portfolio_stats = PortfolioStatsUtils(
+            portfolio_id, user_id, year=year, force=force
+        )
         if group_by == "month":
             if year == "all":
                 stats = portfolio_stats.get_dividends_for_all_years_monthly()
@@ -71,7 +74,7 @@ class PortfolioStatsAPIView(APIView):
         """
         Retrieve the company item with given id
         """
-        group_by = self.request.query_params.get('groupBy')
+        group_by = self.request.query_params.get("groupBy")
 
         stats = self.get_object(portfolio_id, year, request.user.id, group_by=group_by)
         if not stats:
@@ -90,7 +93,7 @@ class PortfolioStatsAPIView(APIView):
         """
         settings = UserSettings.objects.get(user=request.user)
         if settings.allow_fetch:
-            forced = self.request.query_params.get('force')
+            forced = self.request.query_params.get("force")
             if forced == "true":
                 forced = True
         else:
