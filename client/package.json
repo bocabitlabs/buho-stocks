@@ -1,10 +1,12 @@
 {
   "name": "client",
-  "version": "0.0.68-alpha",
+  "version": "0.0.69-alpha",
   "homepage": "/",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
+    "@sentry/react": "^7.10.0",
+    "@sentry/tracing": "^7.10.0",
     "@types/lodash": "^4.14.181",
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",

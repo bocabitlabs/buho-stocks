@@ -9,8 +9,10 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
 from pathlib import Path
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from config import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -43,6 +45,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
+    "django_object_actions",
     "companies",
     "currencies",
     "dividends_transactions",
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
     "shares_transactions",
     "stats",
     "stock_prices",
+    "stock_markets_indexes",
 ]
 
 MIDDLEWARE = [
@@ -199,7 +203,7 @@ LOGGING = {
             "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
             "backupCount": 10,
             "filename": config.LOGS_ROOT + "debug.log",
-        }
+        },
     },
     "loggers": {
         "buho_backend": {
@@ -209,3 +213,18 @@ LOGGING = {
         },
     },
 }
+
+if config.ENABLE_SENTRY:
+    sentry_sdk.init(
+        dsn=config.SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+        ],
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0,
+        # If you wish to associate users to errors (assuming you are using
+        # django.contrib.auth) you may enable sending PII data.
+        send_default_pii=True,
+    )

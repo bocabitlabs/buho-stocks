@@ -1,13 +1,26 @@
 import React from "react";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/tracing";
 import { Chart, registerables } from "chart.js";
 import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
 import "./index.css";
 import "./i18n";
 import reportWebVitals from "./reportWebVitals";
+import { sentryDsn } from "config";
 import Main from "Main";
 
 Chart.register(...registerables);
+
+Sentry.init({
+  dsn: sentryDsn,
+  integrations: [new BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 0.5,
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,

@@ -123,3 +123,4 @@ backend/config/config.py
 TOKEN.txt
 mysql.conf
 media
+client/src/config.js
