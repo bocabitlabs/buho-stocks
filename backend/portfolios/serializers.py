@@ -1,11 +1,17 @@
+from asyncio.log import logger
 from rest_framework.fields import SerializerMethodField
 from rest_framework import serializers
 
 from companies.serializers_lite import CompanySerializerLite
-from currencies.models import get_currency_details
+from currencies.models import Currency
+from currencies.serializers import CurrencySerializer
 from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
+
+import logging
+
+logger = logging.getLogger("buho_backend")
 
 
 class PortfolioSerializer(serializers.ModelSerializer):
@@ -26,9 +32,10 @@ class PortfolioSerializer(serializers.ModelSerializer):
             "companies",
         ]
 
+
 class PortfolioSerializerGet(PortfolioSerializer):
     base_currency = SerializerMethodField()
-    #companies = CompanySerializer(many=True, read_only=True)
+    # companies = CompanySerializer(many=True, read_only=True)
     first_year = serializers.SerializerMethodField()
     stats = PortfolioStatsForYearSerializer(many=True, read_only=True)
 
@@ -50,9 +57,12 @@ class PortfolioSerializerGet(PortfolioSerializer):
         ]
 
     def get_base_currency(self, obj):
-        return get_currency_details(
-            obj.base_currency
-        )  # access the price of the product associated with the order_unit object
+        logger.debug(f"obj.base_currency: {obj.base_currency}")
+        currency = Currency.objects.filter(code=obj.base_currency)[0]
+        logger.debug(f"currency: {currency}")
+        serialized_currency = CurrencySerializer(currency)
+        logger.debug(serialized_currency.data)
+        return serialized_currency.data
 
     def get_first_year(self, obj):
         query = SharesTransaction.objects.filter(
@@ -61,4 +71,3 @@ class PortfolioSerializerGet(PortfolioSerializer):
         if query.exists():
             return query[0].transaction_date.year
         return None
-

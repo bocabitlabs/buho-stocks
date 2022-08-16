@@ -1,15 +1,15 @@
 from django.urls import path
-from sectors import views
+from sectors.views import api
 
 urlpatterns = [
     path(
         "",
-        views.SectorViewSet.as_view({"get": "list", "post": "create"}),
+        api.SectorViewSet.as_view({"get": "list", "post": "create"}),
         name="sector-list",
     ),
     path(
         "<int:sector_id>/",
-        views.SectorViewSet.as_view(
+        api.SectorViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",
@@ -21,12 +21,12 @@ urlpatterns = [
     ),
     path(
         "super/",
-        views.SuperSectorViewSet.as_view({"get": "list", "post": "create"}),
+        api.SuperSectorViewSet.as_view({"get": "list", "post": "create"}),
         name="super-sector-list",
     ),
     path(
         "super/<int:sector_id>/",
-        views.SuperSectorViewSet.as_view(
+        api.SuperSectorViewSet.as_view(
             {
                 "get": "retrieve",
                 "put": "update",

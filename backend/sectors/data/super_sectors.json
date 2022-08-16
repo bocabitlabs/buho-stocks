@@ -1,0 +1,117 @@
+[
+  {
+    "id": 1,
+    "name": "Banks",
+    "color": "#607d8b"
+  },
+  {
+    "id": 3,
+    "name": "Insurance",
+    "color": "#e91e63"
+  },
+  {
+    "id": 4,
+    "name": "Telecommunication Services",
+    "color": "#2196f3"
+  },
+  {
+    "id": 5,
+    "name": "Utilities",
+    "color": "#4caf50"
+  },
+  {
+    "id": 6,
+    "name": "Energy",
+    "color": "#ff9800"
+  },
+  {
+    "id": 7,
+    "name": "Food, Beverage and Tobacco",
+    "color": "#a1887f"
+  },
+  {
+    "id": 8,
+    "name": "Capital Goods",
+    "color": "#00bcd4"
+  },
+  {
+    "id": 9,
+    "name": "Software and Services",
+    "color": "#2196f3"
+  },
+  {
+    "id": 10,
+    "name": "Retailing",
+    "color": "#ffeb3b"
+  },
+  {
+    "id": 12,
+    "name": "Automobiles and Components",
+    "color": "#cfd8dc"
+  },
+  {
+    "id": 13,
+    "name": "Pharmaceuticals, Biotechnology and Life Sciences",
+    "color": "#cddc39"
+  },
+  {
+    "id": 14,
+    "name": "Technology Hardware and Equipment",
+    "color": "#9c27b0"
+  },
+  {
+    "id": 15,
+    "name": "Industrials",
+    "color": "#607d8b"
+  },
+  {
+    "id": 16,
+    "name": "Transportation",
+    "color": "#03a9f4"
+  },
+  {
+    "id": 17,
+    "name": "Diversified financials",
+    "color": "#f44336"
+  },
+  {
+    "id": 18,
+    "name": "Consumer Services",
+    "color": "#9c27b0"
+  },
+  {
+    "id": 19,
+    "name": "Food and Staples Retailing",
+    "color": "#673ab7"
+  },
+  {
+    "id": 20,
+    "name": "Health Care Equipment and Services",
+    "color": "#2196f3"
+  },
+  {
+    "id": 21,
+    "name": "REIT",
+    "color": "#03a9f4"
+  },
+  {
+    "id": 22,
+    "name": "Household and Personal Products",
+    "color": "#00bcd4"
+  },
+  {
+    "id": 23,
+    "name": "Media and Entertainment",
+    "color": "#8bc34a"
+  },
+  {
+    "id": 24,
+    "name": "Semiconductors and Semiconductor Equipment",
+    "color": "#795548"
+  },
+  {
+    "id": 25,
+    "name": "ETF",
+    "color": "#607d8b"
+  }
+]
