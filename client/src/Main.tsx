@@ -16,9 +16,6 @@ import getRoute, { HOME_ROUTE } from "routes";
 const CompanyDetailsPage = React.lazy(
   () => import("pages/companies/CompanyDetailsPage/CompanyDetailsPage"),
 );
-const CurrenciesPage = React.lazy(
-  () => import("pages/currencies/CurrenciesPage/CurrenciesPage"),
-);
 const ImportExportPage = React.lazy(
   () => import("pages/ImportExportPage/ImportExportPage"),
 );
@@ -85,7 +82,6 @@ export default function Main(): ReactElement {
                   path=""
                   element={<Navigate to={getRoute(HOME_ROUTE)} />}
                 />
-                <Route path="currencies" element={<CurrenciesPage />} />
                 <Route path="home" element={<PortfoliosListPage />} />
                 <Route path="import-export" element={<ImportExportPage />} />
                 <Route

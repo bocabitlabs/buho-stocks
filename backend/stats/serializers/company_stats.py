@@ -6,13 +6,15 @@ from stats.models.company_stats import CompanyStatsForYear
 class CompanyStatsForYearSerializer(serializers.ModelSerializer):
 
     company = CompanySerializerLite(many=False, read_only=True)
-    sector_name = serializers.CharField(source='company.sector.name')
-    sector_color = serializers.CharField(source='company.sector.color')
-    super_sector_name = serializers.CharField(source='company.sector.super_sector.name', allow_null=True)
-    super_sector_color = serializers.CharField(source='company.sector.super_sector.color', allow_null=True)
-    currency_code = serializers.CharField(source='company.base_currency', allow_null=True)
-    broker = serializers.CharField(source='company.broker', allow_null=True)
-    market_name = serializers.CharField(source='company.market.name', allow_null=True)
+    sector_name = serializers.CharField(source="company.sector.name")
+    super_sector_name = serializers.CharField(
+        source="company.sector.super_sector.name", allow_null=True
+    )
+    currency_code = serializers.CharField(
+        source="company.base_currency", allow_null=True
+    )
+    broker = serializers.CharField(source="company.broker", allow_null=True)
+    market_name = serializers.CharField(source="company.market.name", allow_null=True)
 
     class Meta:
         model = CompanyStatsForYear
@@ -20,9 +22,7 @@ class CompanyStatsForYearSerializer(serializers.ModelSerializer):
             "year",
             "company",
             "sector_name",
-            "sector_color",
             "super_sector_name",
-            "super_sector_color",
             "currency_code",
             "market_name",
             "broker",

@@ -1,42 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Alert, Button, Popconfirm, Space, Table } from "antd";
+import { Alert, Table } from "antd";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import {
-  useSuperSectors,
-  useDeleteSuperSector,
-} from "hooks/use-sectors/use-super-sectors";
-import SuperSectorAddEditForm from "pages/sectors/SectorsListPage/components/SuperSectorAddEditForm/SuperSectorAddEditForm";
-import getRoute, { SECTORS_ROUTE } from "routes";
+import { useSuperSectors } from "hooks/use-sectors/use-super-sectors";
 import { ISector } from "types/sector";
 
 export default function SuperSectorsTable() {
   const { t } = useTranslation();
 
   const { data: sectors, error, isFetching } = useSuperSectors();
-  const { mutate: deleteSector } = useDeleteSuperSector();
-  const [selectedSectorId, setSelectedSectorId] = useState<number | undefined>(
-    undefined,
-  );
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const showSectorModal = (recordId: number) => {
-    setSelectedSectorId(recordId);
-    setIsModalVisible(true);
-  };
-
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-  };
-  const confirmDelete = async (recordId: number) => {
-    deleteSector(recordId);
-  };
 
   const columns: any = [
     {
@@ -48,32 +20,7 @@ export default function SuperSectorsTable() {
       title: t("Name"),
       dataIndex: "name",
       key: "name",
-      render: (text: string, record: ISector) => (
-        <Button type="link" onClick={() => showSectorModal(record.id)}>
-          {text}
-        </Button>
-      ),
       sorter: (a: ISector, b: ISector) => a.name.localeCompare(b.name),
-    },
-    {
-      title: t("Action"),
-      key: "action",
-      render: (text: string, record: any) => (
-        <Space size="middle">
-          <Link to={`${getRoute(SECTORS_ROUTE)}/super/${record.id}`}>
-            <Button icon={<EditOutlined />} />
-          </Link>
-          <Popconfirm
-            key={`market-delete-${record.key}`}
-            title={`${t("Delete super sector")} ${record.name}?`}
-            onConfirm={() => confirmDelete(record.id)}
-            okText={t("Yes")}
-            cancelText={t("No")}
-          >
-            <Button danger icon={<DeleteOutlined />} />
-          </Popconfirm>
-        </Space>
-      ),
     },
   ];
 
@@ -114,14 +61,6 @@ export default function SuperSectorsTable() {
         style={{ marginTop: 16 }}
         columns={columns}
         dataSource={getData()}
-      />
-      <SuperSectorAddEditForm
-        title={t("Update super sector")}
-        okText={t("Update")}
-        sectorId={selectedSectorId}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={handleCancel}
       />
     </div>
   );

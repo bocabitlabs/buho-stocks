@@ -1,13 +1,6 @@
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
+import { useQuery } from "react-query";
 import { apiClient } from "api/api-client";
-import queryClient from "api/query-client";
-import { ISector, ISectorFormFields } from "types/sector";
-
-interface UpdateSectorMutationProps {
-  newSector: ISectorFormFields;
-  sectorId: number;
-}
+import { ISector } from "types/sector";
 
 export const fetchSuperSectors = async () => {
   const { data } = await apiClient.get<ISector[]>("/sectors/super/");
@@ -20,53 +13,6 @@ export const fetchSuperSector = async (sectorId: number | undefined) => {
   }
   const { data } = await apiClient.get<ISector>(`/sectors/super/${sectorId}/`);
   return data;
-};
-
-export const useAddSuperSector = () => {
-  return useMutation(
-    (newSector: ISectorFormFields) =>
-      apiClient.post("/sectors/super/", newSector),
-    {
-      onSuccess: () => {
-        toast.success("Super sector has been added");
-        queryClient.invalidateQueries("superSectors");
-      },
-      onError: (err) => {
-        toast.error(`Cannot create super sector: ${err}`);
-      },
-    },
-  );
-};
-
-export const useDeleteSuperSector = () => {
-  return useMutation(
-    (id: number) => apiClient.delete(`/sectors/super/${id}/`),
-    {
-      onSuccess: () => {
-        toast.success("Super sector has been deleted");
-        queryClient.invalidateQueries("sectors");
-      },
-      onError: (err) => {
-        toast.error(`Cannot delete sector: ${err}`);
-      },
-    },
-  );
-};
-
-export const useUpdateSuperSector = () => {
-  return useMutation(
-    ({ sectorId, newSector }: UpdateSectorMutationProps) =>
-      apiClient.put(`/sectors/super/${sectorId}/`, newSector),
-    {
-      onSuccess: () => {
-        toast.success("Super sector has been updated");
-        queryClient.invalidateQueries("superSectors");
-      },
-      onError: (err) => {
-        toast.error(`Cannot update super sector: ${err}`);
-      },
-    },
-  );
 };
 
 export function useSuperSectors() {

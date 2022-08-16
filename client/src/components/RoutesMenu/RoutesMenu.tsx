@@ -4,7 +4,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   BankOutlined,
   ClusterOutlined,
-  DollarCircleOutlined,
   HomeOutlined,
   SettingOutlined,
   SyncOutlined,
@@ -54,10 +53,9 @@ function RoutesMenu({
   const items: MenuItem[] = [
     getItem(t("Home"), "0", getRoute(HOME_ROUTE), <HomeOutlined />),
     getItem(t("Markets"), "1", "/app/markets/", <BankOutlined />),
-    getItem(t("Currencies"), "2", "/app/currencies/", <DollarCircleOutlined />),
-    getItem(t("Sectors"), "3", "/app/sectors/", <ClusterOutlined />),
-    getItem(t("Import & Export"), "4", "/app/import-export/", <SyncOutlined />),
-    getItem(t("Settings"), "5", "/app/settings/", <SettingOutlined />),
+    getItem(t("Sectors"), "2", "/app/sectors/", <ClusterOutlined />),
+    getItem(t("Import & Export"), "3", "/app/import-export/", <SyncOutlined />),
+    getItem(t("Settings"), "4", "/app/settings/", <SettingOutlined />),
   ];
 
   const menuClickAction = useCallback(
