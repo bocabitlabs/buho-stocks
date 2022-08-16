@@ -12,32 +12,6 @@ from stock_markets_indexes.models import StockMarketIndex, StockMarketIndexYear
 
 logger = logging.getLogger("buho_backend")
 
-
-# def export_selected_objects(modeladmin, request, queryset):
-#     selected = queryset.values_list("pk", flat=True)
-#     content_type = ContentType.objects.get_for_model(queryset.model)
-#     return HttpResponseRedirect(
-#         "/export/?ct=%s&ids=%s"
-#         % (
-#             content_type.pk,
-#             ",".join(str(pk) for pk in selected),
-#         )
-#     )
-
-
-# admin.site.add_action(export_selected_objects)
-
-
-# @admin.action(
-#     description="Create Stock market indexes from and populate them with several years of data"
-# )
-# def create_indexes(modeladmin, request, queryset):
-#     # for person in queryset:
-#     #     s = StockMarketIndex(name = person.name, lastname=person.lastname)
-#     #     s.save()
-#     logger.debug("Creating indexes")
-
-
 # Register your models here.
 @admin.register(StockMarketIndex)
 class StockMarketIndexAdmin(DjangoObjectActions, BaseAdmin):
