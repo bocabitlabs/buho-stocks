@@ -1,14 +1,16 @@
+import logging
+
 from rest_framework.fields import SerializerMethodField
 from rest_framework import serializers
+from currencies.models import Currency
+from currencies.serializers import CurrencySerializer
 from dividends_transactions.models import DividendsTransaction
-
+from dividends_transactions.serializers import DividendsTransactionSerializer
 from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
 from buho_backend.validators import validate_ownership
-from currencies.models import get_currency_details
-from dividends_transactions.serializers import DividendsTransactionSerializer
 from portfolios.models import Portfolio
-from companies.models import Company
 from portfolios.serializers_lite import PortfolioSerializerLite
+from companies.models import Company
 from rights_transactions.serializers import RightsTransactionSerializer
 from sectors.models import Sector
 from sectors.serializers import SectorSerializerGet
@@ -19,23 +21,28 @@ from shares_transactions.models import SharesTransaction
 from drf_extra_fields.fields import Base64ImageField
 from stats.models.company_stats import CompanyStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
-import logging
 
 logger = logging.getLogger("buho_backend")
 
+
 class CompanySerializer(serializers.ModelSerializer):
-    market = UserFilteredPrimaryKeyRelatedField(queryset=Market.objects, many=False, read_only=False)
-    sector = UserFilteredPrimaryKeyRelatedField(queryset=Sector.objects,many=False, read_only=False)
+    market = serializers.PrimaryKeyRelatedField(
+        queryset=Market.objects, many=False, read_only=False
+    )
+    sector = serializers.PrimaryKeyRelatedField(
+        queryset=Sector.objects, many=False, read_only=False
+    )
     portfolio = UserFilteredPrimaryKeyRelatedField(
         queryset=Portfolio.objects, many=False, read_only=False
     )
 
-    logo = Base64ImageField(max_length=None, use_url=True, allow_null = True, required=False)
+    logo = Base64ImageField(
+        max_length=None, use_url=True, allow_null=True, required=False
+    )
     all_stats = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
     last_dividend_month = serializers.SerializerMethodField()
-    sector_name = serializers.CharField(source='sector.name', read_only=True)
-
+    sector_name = serializers.CharField(source="sector.name", read_only=True)
 
     class Meta:
         model = Company
@@ -49,7 +56,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "description",
             "dividends_currency",
             "is_closed",
-            'isin',
+            "isin",
             "logo",
             "market",
             "name",
@@ -66,13 +73,9 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        market = attrs["market"]
         portfolio = attrs["portfolio"]
-        sector = attrs["sector"]
 
-        validate_ownership(self.context, market, Market)
         validate_ownership(self.context, portfolio, Portfolio)
-        validate_ownership(self.context, sector, Sector)
         return attrs
 
     def get_all_stats(self, obj):
@@ -89,7 +92,7 @@ class CompanySerializer(serializers.ModelSerializer):
             company_id=obj.id, user=obj.user
         ).order_by("transaction_date")
         if query.exists():
-            last_element = query[len(query)-1]
+            last_element = query[len(query) - 1]
             return last_element.transaction_date
         return None
 
@@ -98,7 +101,7 @@ class CompanySerializer(serializers.ModelSerializer):
             company_id=obj.id, user=obj.user
         ).order_by("transaction_date")
         if query.exists():
-            last_element = query[len(query)-1]
+            last_element = query[len(query) - 1]
             return last_element.transaction_date
         return None
 
@@ -117,19 +120,18 @@ class CompanySerializerGet(CompanySerializer):
     last_transaction_month = serializers.SerializerMethodField()
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
 
-
     def get_base_currency(self, obj):
-        return get_currency_details(
-            obj.base_currency
-        )  # access the price of the product associated with the order_unit object
+        currency = Currency.objects.filter(code=obj.base_currency).first()
+        serialized_currency = CurrencySerializer(currency)
+        return serialized_currency.data
 
     def get_dividends_currency(self, obj):
-        return get_currency_details(
-            obj.dividends_currency
-        )  # access the price of the product associated with the order_unit object
+        currency = Currency.objects.filter(code=obj.dividends_currency).first()
+        serialized_currency = CurrencySerializer(currency)
+        return serialized_currency.data
 
     def get_logo(self, obj):
-        request = self.context.get('request')
+        request = self.context.get("request")
         photo_url = obj.fingerprint.url
         return request.build_absolute_uri(photo_url)
 

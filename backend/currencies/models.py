@@ -1,16 +1,16 @@
-from operator import itemgetter
-from currencies.data.currencies import currencies_list
+from django.db import models
 
+# Create your models here.
+class Currency(models.Model):
+    code = models.CharField(max_length=200, unique=True)
+    symbol = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
 
-def get_currency_details(currency_code):
-    currencies = [c for c in currencies_list if c["code"] == currency_code]
-    if len(currencies) == 1:
-        currency = currencies[0]
-        return currency
-    return None
+    date_created = models.DateTimeField(auto_now_add=True)
+    last_updated = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"{self.code} - {self.name}"
 
-def get_all_currencies():
-    currencies = currencies_list
-    sorted_list = sorted(currencies, key=itemgetter("code"))
-    return sorted_list
+    class Meta:
+        ordering = ["code"]
