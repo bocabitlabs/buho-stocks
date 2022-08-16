@@ -1,0 +1,58 @@
+[
+  {
+    "name": "NYSE",
+    "description": "New York stock exchange (NYSE)",
+    "region": "us",
+    "open_time": "09:30:00.000000",
+    "close_time": "16:00:00.000000",
+    "timezone": "America/New_York"
+  },
+  {
+    "name": "BME",
+    "description": "Spain stock exchange (BME)",
+    "region": "es",
+    "open_time": "09:00:00.000000",
+    "close_time": "17:30:00.000000",
+    "timezone": "Europe/Madrid"
+  },
+  {
+    "name": "XETRA",
+    "description": "Frankfurt Stock Exchange",
+    "region": "de",
+    "open_time": "09:00:00.000000",
+    "close_time": "17:30:00.000000",
+    "timezone": "CET"
+  },
+  {
+    "name": "NASDAQ",
+    "description": "United States stock exchange (NASDAQ)",
+    "region": "us",
+    "open_time": "09:30:00.000000",
+    "close_time": "16:00:00.000000",
+    "timezone": "America/New_York"
+  },
+  {
+    "name": "AMS",
+    "description": "Amsterdam stock exchange (AMS)",
+    "region": "nl",
+    "open_time": "09:00:00.000000",
+    "close_time": "17:30:00.000000",
+    "timezone": "Europe/Amsterdam"
+  },
+  {
+    "name": "LSE",
+    "description": "London stock exchange",
+    "region": "gb",
+    "open_time": "08:00:00.000000",
+    "close_time": "16:30:00.000000",
+    "timezone": "Etc/GMT+0"
+  },
+  {
+    "name": "SIX",
+    "description": "Swiss stock exchange",
+    "region": "ch",
+    "open_time": "09:00:00.000000",
+    "close_time": "17:30:00.000000",
+    "timezone": "CET"
+  }
+]
