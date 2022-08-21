@@ -64,12 +64,10 @@ urlpatterns = [
         name="stocks-prices",
     ),
     path("api/v1/currencies/", include("currencies.urls.api")),
-    path("currencies/", include("currencies.urls.admin")),
     path(
         "api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"
     ),
     path("api/v1/markets/", include("markets.urls.api")),
-    path("markets/", include("markets.urls.admin")),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
         "api/v1/portfolios/<int:portfolio_id>/messages/",
@@ -82,10 +80,12 @@ urlpatterns = [
         name="companies",
     ),
     path("api/v1/sectors/", include("sectors.urls.api")),
-    path("sectors/", include("sectors.urls.admin")),
     path("api/v1/settings/", include("settings.urls")),
     path("api/v1/stats/", include("stats.urls")),
     path("api/v1/stock-markets-indexes/", include("stock_markets_indexes.urls")),
+    path("admin-actions/currencies/", include("currencies.urls.admin")),
+    path("admin-actions/markets/", include("markets.urls.admin")),
+    path("admin-actions/sectors/", include("sectors.urls.admin")),
     url(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),
