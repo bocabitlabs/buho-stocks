@@ -87,12 +87,27 @@ class CompanyStatsUtils:
             total = total_return / total_invested * 100
         return total
 
+    def get_accumulated_return_percent(self, portfolio_value, accumulated_investment):
+        amount = 0
+        if accumulated_investment > 0:
+            amount = (portfolio_value - accumulated_investment) / accumulated_investment
+
+        return amount * 100
+
+    def get_accumulated_return_with_dividends_percent(
+        self, portfolio_value, accumulated_investment, accumulated_dividends
+    ):
+        amount = 0
+        if accumulated_investment > 0:
+            amount = (
+                portfolio_value + accumulated_dividends - accumulated_investment
+            ) / accumulated_investment
+
+        return amount * 100
+
     def get_dividends_yield(self, dividends, portfolio_value):
         total = 0
         if portfolio_value != 0:
-            logger.debug("Calculating dividends yield")
-            logger.debug(f"Dividends: {dividends}")
-            logger.debug(f"Portfolio value: {portfolio_value}")
             total = dividends / portfolio_value * 100 if portfolio_value else 0
         return total
 

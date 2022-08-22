@@ -19,7 +19,10 @@ from django.urls import path, register_converter, include
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework import permissions
+from two_factor.urls import urlpatterns as tf_urls
+from two_factor.admin import AdminSiteOTPRequired
 
+admin.site.__class__ = AdminSiteOTPRequired
 
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
@@ -41,6 +44,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    path("", include(tf_urls)),
     path("admin/", admin.site.urls),
     path("auth/", include("auth.urls"), name="authentication"),
     path(
@@ -82,7 +86,8 @@ urlpatterns = [
     path("api/v1/sectors/", include("sectors.urls.api")),
     path("api/v1/settings/", include("settings.urls")),
     path("api/v1/stats/", include("stats.urls")),
-    path("api/v1/stock-markets-indexes/", include("stock_markets_indexes.urls")),
+    path("api/v1/benchmarks/", include("benchmarks.urls.api")),
+    path("admin-actions/benchmarks/", include("benchmarks.urls.admin")),
     path("admin-actions/currencies/", include("currencies.urls.admin")),
     path("admin-actions/markets/", include("markets.urls.admin")),
     path("admin-actions/sectors/", include("sectors.urls.admin")),

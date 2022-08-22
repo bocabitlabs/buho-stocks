@@ -1,0 +1,73 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
+  <head>
+    <title>
+      {% block title %}{% endblock %}
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/css/bootstrap.min.css"
+          rel="stylesheet"
+          media="screen">
+    <script defer src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+    {% block content_wrapper %}
+      <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+        <div class="container">
+          {% comment %} <a class="navbar-brand" href="{% url 'home' %}">{% trans "Demo" %}</a> {% endcomment %}
+          <button class="navbar-toggler"
+                  type="button"
+                  data-toggle="collapse"
+                  data-target="#bs-example-navbar-collapse-1"
+                  aria-controls="bs-example-navbar-collapse-1"
+                  aria-expanded="false"
+                  aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <!-- Collect the nav links, forms, and other content for toggling -->
+          <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="navbar-nav mr-auto">
+              {% comment %} <li class="nav-item {% block nav_home %}{% endblock %}">
+                <a class="nav-link" href="{% url 'home' %}">{% trans "Home" %}</a>
+              </li> {% endcomment %}
+              {% comment %} <li class="nav-item {% block nav_secret %}{% endblock %}">
+                <a class="nav-link" href="{% url 'secret' %}">{% trans "Secret Page" %}</a>
+              </li> {% endcomment %}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link">{{ user }}
+                    {% if user.otp_device %}🔒{% endif %}
+                  </a>
+                </li>
+                <li class="nav-item {% block nav_profile %}{% endblock %}">
+                  <a class="nav-link" href="{% url 'two_factor:profile' %}">{% trans "Account Security" %}</a>
+                </li>
+                {% comment %} <li class="nav-item {% block nav_sessions %}{% endblock %}">
+                  <a class="nav-link" href="{% url 'user_sessions:session_list' %}">{% trans "Sessions" %}</a>
+                </li> {% endcomment %}
+                {% comment %} <li class="nav-item">
+                  <a class="nav-link" href="{% url 'logout' %}">{% trans "Logout" %}</a>
+                </li> {% endcomment %}
+              {% else %}
+                <li class="nav-item">
+                <span class="navbar-text">{% trans "Not logged in" %}</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'two_factor:login' %}">{% trans "Login" %}</a>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      {% comment %} {% include "_messages.html" %} {% endcomment %}
+      {% block content %}{% endblock %}
+    </div>
+  {% endblock %}
+</body>
+</html>

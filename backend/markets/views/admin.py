@@ -19,7 +19,6 @@ def create_markets(request):
     next_url = request.GET.get("next")
     if next_url and is_safe_url(url=next_url, allowed_hosts=request.get_host()):
         markets_list = []
-        logger.debug("Creating indexes")
         with open(
             path.join(
                 pathlib.Path(__file__).parent.parent.resolve(),
