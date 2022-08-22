@@ -10,6 +10,7 @@ drf-extra-fields==3.2.1
 drf-yasg==1.20.0
 mysqlclient==2.1.0
 pandas==1.4.3
+phonenumbers==8.12.54
 Pillow==9.0.1
 requests==2.26.0
 sentry-sdk==1.9.4
