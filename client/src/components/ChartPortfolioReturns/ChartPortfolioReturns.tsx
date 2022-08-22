@@ -3,11 +3,11 @@ import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Select } from "antd";
-import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 import {
-  useStockMarketIndexes,
-  useStockMarketIndexValues,
-} from "hooks/use-stock-market-indexes/use-stock-market-indexes";
+  useBenchmarks,
+  useBenchmarkValues,
+} from "hooks/use-benchmarks/use-benchmarks";
+import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { hexToRgb, manyColors } from "utils/colors";
 
 export default function ChartPortfolioReturns(): ReactElement | null {
@@ -16,15 +16,14 @@ export default function ChartPortfolioReturns(): ReactElement | null {
   const [chartData, setChartData] = React.useState<any>();
   const { data } = usePortfolioAllYearStats(+id!);
 
-  const { data: indexes, isFetching } = useStockMarketIndexes();
+  const { data: benchmarks, isFetching } = useBenchmarks();
 
   const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(
     undefined,
   );
-  const { data: indexData, isFetching: indexIsFetching } =
-    useStockMarketIndexValues(
-      selectedIndex !== undefined ? indexes[selectedIndex].id : undefined,
-    );
+  const { data: indexData, isFetching: indexIsFetching } = useBenchmarkValues(
+    selectedIndex !== undefined ? benchmarks[selectedIndex].id : undefined,
+  );
 
   const options = {
     responsive: true,
@@ -125,9 +124,9 @@ export default function ChartPortfolioReturns(): ReactElement | null {
       tempChartData.datasets[0].data = returnsPercent;
       tempChartData.datasets[1].data = returnsWithDividendsPercent;
 
-      if (indexData && selectedIndex !== undefined && indexes.length > 0) {
+      if (indexData && selectedIndex !== undefined && benchmarks.length > 0) {
         tempChartData.datasets[2] = {
-          label: indexes[selectedIndex].name,
+          label: benchmarks[selectedIndex].name,
           data: [],
           borderColor: hexToRgb(manyColors[17], 1),
           backgroundColor: hexToRgb(manyColors[17], 1),
@@ -138,13 +137,13 @@ export default function ChartPortfolioReturns(): ReactElement | null {
 
       setChartData(tempChartData);
     }
-  }, [data, indexData, indexes, selectedIndex, t]);
+  }, [data, indexData, benchmarks, selectedIndex, t]);
 
   if (chartData) {
     return (
       <div>
         {!indexIsFetching && <Line options={options} data={chartData} />}
-        {indexes.length > 0 && (
+        {benchmarks.length > 0 && (
           <Select
             showSearch
             placeholder="Select a index"
@@ -152,7 +151,7 @@ export default function ChartPortfolioReturns(): ReactElement | null {
             loading={isFetching}
             style={{ marginTop: 20, minWidth: 200 }}
           >
-            {indexes.map((element: any, index: number) => (
+            {benchmarks.map((element: any, index: number) => (
               <Select.Option key={element.id} value={index}>
                 {element.name}
               </Select.Option>

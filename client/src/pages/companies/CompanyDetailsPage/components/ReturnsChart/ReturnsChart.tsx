@@ -2,7 +2,6 @@ import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import { useStockMarketIndexValues } from "hooks/use-stock-market-indexes/use-stock-market-indexes";
 
 interface Props {
   stats: any;
@@ -12,10 +11,6 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
   const { t } = useTranslation();
   const [data, setData] = React.useState<any>(null);
   const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
-  const { data: indexData, isFetching: indexIsFetching } =
-    useStockMarketIndexValues(1);
-  console.log(indexData);
-  console.log(indexIsFetching);
 
   const options = {
     responsive: true,

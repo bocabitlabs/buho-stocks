@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from djmoney.contrib.django_rest_framework import MoneyField
 
-from stock_markets_indexes.models import StockMarketIndex, StockMarketIndexYear
+from benchmarks.models import Benchmark, BenchmarkYear
 
 
-class StockMarketIndexSerializer(serializers.ModelSerializer):
+class BenchmarkSerializer(serializers.ModelSerializer):
     class Meta:
-        model = StockMarketIndex
+        model = Benchmark
         fields = [
             "id",
             "name",
@@ -15,17 +15,17 @@ class StockMarketIndexSerializer(serializers.ModelSerializer):
         ]
 
 
-class StockMarketIndexYearSerializer(serializers.ModelSerializer):
+class BenchmarkYearSerializer(serializers.ModelSerializer):
 
     value = MoneyField(max_digits=12, decimal_places=3)
     value_currency = serializers.CharField(max_length=50)
 
     class Meta:
-        model = StockMarketIndexYear
+        model = BenchmarkYear
         fields = [
             "id",
             "year",
-            "index",
+            "benchmark",
             "value",
             "return_percentage",
             "value_currency",
