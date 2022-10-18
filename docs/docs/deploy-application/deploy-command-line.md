@@ -24,10 +24,10 @@ Before starting, keep in mind that the application uses 2 volumes to persist the
 
 Rename the following files and update its values accordingly:
 
-- `backend/config/config.sample.py`: Application configuration.
-- `backend/config/mysql.conf`: Database configuration.
+- `backend/config/config.sample.py`: Application configuration. ([link to the file](https://github.com/bocabitlabs/buho-stocks/blob/main/backend/config/config.sample.py))
+- `backend/config/mysql.conf`: Database configuration. ([link to the file](https://github.com/bocabitlabs/buho-stocks/blob/main/backend/config/mysql.sample.conf))
 
-The final location of these files must be the following:
+The final location of these files in the container must be the following:
 
 - `/usr/src/app/config/`:
     - `config.py`
@@ -38,7 +38,7 @@ The final location of these files must be the following:
 
   These two paths are paths in your host machine:
 
-  - `$HOME/projects/buho-volumes/`
+  - `$HOME/projects/buho-volumes/media/`
   - `$HOME/projects/buho-volumes/data/`
 
 :::
@@ -47,6 +47,6 @@ The final location of these files must be the following:
 docker run \
  --publish 34800:34800 \
   -v $HOME/projects/buho-volumes/media/:/usr/src/media:rw \
-  -v $HOME/projects/buho-volumes/data/:/usr/src/data:rw \
+  -v $HOME/projects/buho-volumes/data/:/usr/src/app/config:rw \
   bocabitlabs/buho-stocks:latest
 ```
