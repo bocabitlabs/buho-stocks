@@ -1,0 +1,20 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+## [0.0.71-alpha] - 2022-10-18
+### Added
+### Changed
+### Fixed
+### Removed
+### Security
+
+
+## [0.0.71-alpha] - 2022-10-18
+### Added
+- This CHANGELOG file.
+- Documentation on how to create the initial super user.
+- Documentation on how to populate the initial data.
+- Redirect to the 2FA setup page when super admin tries to access the admin and 2FA was not set yet.
+
