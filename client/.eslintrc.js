@@ -34,7 +34,7 @@ module.exports = {
     "prettier",
     "jest",
   ],
-  ignorePatterns: [".eslintrc.js"],
+  ignorePatterns: [".eslintrc.js", "setupProxy.js", "setupTests.ts"],
   rules: {
     "no-console": "off",
     "prettier/prettier": [
