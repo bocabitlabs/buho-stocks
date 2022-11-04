@@ -15,9 +15,6 @@ describe("CurrenciesPageHeader tests", () => {
     const element = screen.getAllByText(/Markets/i);
     expect(element).toHaveLength(2);
 
-    const elements = screen.getByText(/Add market/i);
-    expect(elements).toBeInTheDocument();
-
     const body = screen.getByText(/Page Content/i);
     expect(body).toBeInTheDocument();
   });

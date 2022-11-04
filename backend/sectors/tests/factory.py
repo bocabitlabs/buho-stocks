@@ -8,9 +8,6 @@ class SectorFactory(django.DjangoModelFactory):
         model = Sector
 
     name = Faker("company")
-    color = Faker("color")
-
-    user = SubFactory(UserFactory)
 
 
 class SectorWithSuperSectorFactory(django.DjangoModelFactory):
@@ -18,16 +15,11 @@ class SectorWithSuperSectorFactory(django.DjangoModelFactory):
         model = Sector
 
     name = Faker("company")
-    color = Faker("color")
+    super_sector = SubFactory("sectors.tests.factory.SuperSectorFactory")
 
-    user = SubFactory(UserFactory)
-    super_sector = SubFactory('sectors.tests.factory.SuperSectorFactory')
 
 class SuperSectorFactory(django.DjangoModelFactory):
     class Meta:
         model = SuperSector
 
     name = Faker("company")
-    color = Faker("color")
-
-    user = SubFactory(UserFactory)

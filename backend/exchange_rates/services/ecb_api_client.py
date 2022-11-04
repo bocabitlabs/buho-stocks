@@ -1,6 +1,7 @@
 import json
 import logging
 import io
+from typing import Union
 import requests
 import pandas as pd
 
@@ -33,7 +34,7 @@ class EcbApiClient:
 
     def get_exchange_rate_for_date(
         self, from_currency: str, to_currency: str, exchange_date: str
-    ) -> dict:
+    ) -> Union[dict, None]:
         """Get the exchange rate for a given date from the ECB API
 
         Args:
@@ -46,8 +47,9 @@ class EcbApiClient:
         """
         request_url = self.build_endpoint_url(from_currency, to_currency)
 
-        logger.debug("Call the exchange API")
-        logger.debug(f"From: {from_currency} To: {to_currency} Date: {exchange_date}")
+        logger.debug(
+            f"Call the exchange API. From: {from_currency} To: {to_currency} Date: {exchange_date}. URL: {request_url}"
+        )
 
         parameters = {
             "startPeriod": exchange_date,
@@ -60,7 +62,9 @@ class EcbApiClient:
             logger.warning(f"No exchange rate found for the date {exchange_date}")
             return None
 
-        logger.debug(f"Response text: {response.text}")
+        logger.debug(
+            f"{from_currency}-{to_currency} ({exchange_date}): Response text: {response.text}"
+        )
         parsed_response = self.parse_csv_data(response.text)
 
         if parsed_response:
@@ -92,7 +96,7 @@ class EcbApiClient:
         from_currency: str,
         to_currency: str,
         exchange_date: str,
-        exchange_rate_value: str,
+        exchange_rate_value: float,
     ) -> dict:
         data = {
             "exchange_from": from_currency,

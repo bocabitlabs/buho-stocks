@@ -46,12 +46,17 @@ export const fetchCompany = async (
 };
 
 export const useAddCompany = () => {
+  const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, newCompany }: AddMutationProps) =>
       apiClient.post(`/portfolios/${portfolioId}/companies/`, newCompany),
     {
       onSuccess: (data, variables) => {
+        toast.success(`${t("Company has been created")}`);
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+      },
+      onError: () => {
+        toast.error(t("Unable to create company"));
       },
     },
   );
@@ -68,14 +73,10 @@ export const useDeleteCompany = () => {
       onSuccess: (data, variables) => {
         toast.success(`${t("Company has been deleted")}`);
         navigate(-1);
-        queryClient.invalidateQueries([
-          "portfolios",
-          variables.portfolioId,
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
       onError: () => {
-        toast.error(t("Unable to create company"));
+        toast.error(t("Unable to delete company"));
       },
     },
   );
@@ -92,11 +93,7 @@ export const useUpdateCompany = () => {
     {
       onSuccess: (data, variables) => {
         toast.success(t("Company has been updated"));
-        queryClient.invalidateQueries([
-          "portfolios",
-          variables.portfolioId,
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
       onError: () => {
         toast.error(t("Unable to update company"));

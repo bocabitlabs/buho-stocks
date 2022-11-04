@@ -1,9 +1,6 @@
 from django.utils.decorators import method_decorator
 from rest_framework import viewsets
 
-from rest_framework.authentication import (
-    TokenAuthentication,
-)
 from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
 from buho_backend.utils.token_utils import ExpiringTokenAuthentication
@@ -79,6 +76,4 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":
             return PortfolioSerializerGet
-        return (
-            super().get_serializer_class()
-        )
+        return super().get_serializer_class()

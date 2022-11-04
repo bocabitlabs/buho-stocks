@@ -1,3 +1,4 @@
+import logging
 from asyncio.log import logger
 from rest_framework.fields import SerializerMethodField
 from rest_framework import serializers
@@ -8,8 +9,6 @@ from currencies.serializers import CurrencySerializer
 from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
-
-import logging
 
 logger = logging.getLogger("buho_backend")
 
@@ -35,7 +34,6 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 class PortfolioSerializerGet(PortfolioSerializer):
     base_currency = SerializerMethodField()
-    # companies = CompanySerializer(many=True, read_only=True)
     first_year = serializers.SerializerMethodField()
     stats = PortfolioStatsForYearSerializer(many=True, read_only=True)
 

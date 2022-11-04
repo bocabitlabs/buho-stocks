@@ -4,7 +4,7 @@ from django.db import models
 # Create your models here.
 class Portfolio(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     color = models.CharField(max_length=200)
     hide_closed_companies = models.BooleanField(default=False)
 
@@ -20,4 +20,4 @@ class Portfolio(models.Model):
         return f"{self.name} ({self.base_currency})"
 
     class Meta:
-        ordering = ['name']
+        ordering = ["name"]

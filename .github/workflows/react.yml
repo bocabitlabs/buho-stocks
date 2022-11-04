@@ -2,9 +2,9 @@ name: React CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
 
 jobs:
   build:
@@ -25,6 +25,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd client && yarn
+          mv src/config.sample.js src/config.js
       - name: Lint
         run: |
           cd client && yarn lint

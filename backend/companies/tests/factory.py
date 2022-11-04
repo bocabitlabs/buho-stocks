@@ -2,7 +2,6 @@ import random
 from factory import django, Faker, SubFactory, post_generation
 from auth.tests.factory import UserFactory
 from companies.models import Company
-from currencies.models import get_all_currencies
 from markets.tests.factory import MarketFactory
 from portfolios.tests.factory import PortfolioFactory
 from sectors.tests.factory import SectorFactory
@@ -22,8 +21,8 @@ class CompanyFactory(django.DjangoModelFactory):
     is_closed = Faker("boolean")
     country_code = Faker("country_code")
 
-    base_currency = random.choice(get_all_currencies())["code"]
-    dividends_currency = random.choice(get_all_currencies())["code"]
+    base_currency = "USD"
+    dividends_currency = "USD"
 
     user = SubFactory(UserFactory)
     sector = SubFactory(SectorFactory)
