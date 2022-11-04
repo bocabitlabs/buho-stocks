@@ -4,6 +4,7 @@
   "eslint.workingDirectories": ["/client"],
   "python.analysis.extraPaths": ["backend"],
   "python.analysis.autoSearchPaths": true,
+  "python.analysis.typeCheckingMode": "basic",
   "editor.formatOnSave": true,
   "python.linting.enabled": true,
   "python.linting.pylintEnabled": true,
