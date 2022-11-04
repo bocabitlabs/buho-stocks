@@ -24,6 +24,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install -r requirements.dev.txt
           mv backend/config/config.sample.py backend/config/config.py
           sed -i -e "s/\/usr\/src\/data\/db.sqlite3/{{env.GITHUB_WORKSPACE}}\backend\/db.sqlite3/g" backend/config/config.py
       - name: Run Tests
