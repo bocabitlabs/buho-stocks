@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 import factory
 from auth.tests.factory import UserFactory
 import logging
+from currencies.views.admin import create_initial_currencies
 from portfolios.models import Portfolio
 
 from portfolios.tests.factory import PortfolioFactory
@@ -17,6 +18,7 @@ class PortfoliosListTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
+        create_initial_currencies()
         cls.user_saved = UserFactory.create()
         cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         cls.url = reverse("portfolio-list")
@@ -25,7 +27,7 @@ class PortfoliosListTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
-    def test_get_sectors(self):
+    def test_get_portfolios(self):
         response = self.client.get(self.url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -63,6 +65,7 @@ class PortfoliosDetailTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
+        create_initial_currencies()
         cls.user_saved = UserFactory.create()
         cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         instances = []
@@ -74,7 +77,7 @@ class PortfoliosDetailTestCase(APITestCase):
     def setUp(self):
         self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
-    def test_get_sector(self):
+    def test_get_portfolio(self):
         url = reverse("portfolio-detail", args=[self.instances[0].id])
         response = self.client.get(url)
         # Check status response

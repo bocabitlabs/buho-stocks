@@ -37,7 +37,9 @@ class CompaniesListTestCase(APITestCase):
         self.assertEqual(len(response.data), 0)
 
         for _ in range(0, 4):
-            CompanyFactory.create(user=self.user_saved, portfolio=portfolio, is_closed=False)
+            CompanyFactory.create(
+                user=self.user_saved, portfolio=portfolio, is_closed=False
+            )
 
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -53,7 +55,9 @@ class CompanisDetailTestCase(APITestCase):
         cls.portfolio = PortfolioFactory.create(user=cls.user_saved)
         instances = []
         for _ in range(0, 4):
-            instance = CompanyFactory.create(user=cls.user_saved, portfolio=cls.portfolio)
+            instance = CompanyFactory.create(
+                user=cls.user_saved, portfolio=cls.portfolio
+            )
             instances.append(instance)
         cls.instances = instances
 
@@ -62,7 +66,9 @@ class CompanisDetailTestCase(APITestCase):
 
     def test_get_company(self):
         index = 0
-        url = reverse("company-detail", args=[self.portfolio.id, self.instances[index].id])
+        url = reverse(
+            "company-detail", args=[self.portfolio.id, self.instances[index].id]
+        )
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -79,7 +85,9 @@ class CompanisDetailTestCase(APITestCase):
             self.instances[index].ticker,
         )
         index = len(self.instances) - 1
-        url = reverse("company-detail", args=[self.portfolio.id, self.instances[index].id])
+        url = reverse(
+            "company-detail", args=[self.portfolio.id, self.instances[index].id]
+        )
         response = self.client.get(url)
         self.assertEqual(
             response.data["broker"],
@@ -92,14 +100,16 @@ class CompanisDetailTestCase(APITestCase):
 
     def test_update_company(self):
         index = 0
-        sector = SectorFactory.create(user=self.user_saved)
-        market = MarketFactory.create(user=self.user_saved)
+        sector = SectorFactory.create()
+        market = MarketFactory.create()
         temp_data = factory.build(dict, FACTORY_CLASS=CompanyFactory)
         temp_data["portfolio"] = self.portfolio.id
         temp_data["sector"] = sector.id
         temp_data["market"] = market.id
 
-        url = reverse("company-detail", args=[self.portfolio.id, self.instances[index].id])
+        url = reverse(
+            "company-detail", args=[self.portfolio.id, self.instances[index].id]
+        )
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)

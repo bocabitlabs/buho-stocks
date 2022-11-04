@@ -28,27 +28,11 @@ class MarketsListTestCase(APITestCase):
         self.assertEqual(len(response.data), 0)
 
         for _ in range(0, 4):
-            MarketFactory.create(user=self.user_saved)
+            MarketFactory.create()
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 4)
-
-    def test_create_market(self):
-        temp_data = factory.build(dict, FACTORY_CLASS=MarketFactory)
-        response = self.client.post(self.url, temp_data)
-        # Check status response
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(
-            response.data["name"],
-            temp_data["name"],
-        )
-        self.assertEqual(
-            response.data["region"],
-            temp_data["region"],
-        )
-        created_market = Market.objects.get(id=response.data["id"])
-        self.assertEqual(created_market.user, self.user_saved)
 
 
 class MarketsDetailTestCase(APITestCase):
@@ -59,7 +43,7 @@ class MarketsDetailTestCase(APITestCase):
         cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         markets = []
         for _ in range(0, 4):
-            market = MarketFactory.create(user=cls.user_saved)
+            market = MarketFactory.create()
             markets.append(market)
         cls.instances = markets
 
@@ -91,28 +75,3 @@ class MarketsDetailTestCase(APITestCase):
             response.data["description"],
             self.instances[index].description,
         )
-
-    def test_update_market(self):
-        index = 0
-        temp_data = factory.build(dict, FACTORY_CLASS=MarketFactory)
-        url = reverse("market-detail", args=[self.instances[index].id])
-        response = self.client.put(url, temp_data)
-        # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.data["name"],
-            temp_data["name"],
-        )
-        self.assertEqual(
-            response.data["description"],
-            temp_data["description"],
-        )
-
-    def test_delete_market(self):
-        index = 0
-        url = reverse("market-detail", args=[self.instances[index].id])
-        response = self.client.delete(url)
-        # Check status response
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        with self.assertRaises(Market.DoesNotExist):
-          Market.objects.get(id=self.instances[index].id)
