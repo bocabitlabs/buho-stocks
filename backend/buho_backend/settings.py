@@ -214,7 +214,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "buho_backend": {
+        "": {
             "handlers": config.LOGGER_HANDLERS,
             "level": config.LOG_LEVEL,
             "propagate": True,
