@@ -25,7 +25,7 @@ jobs:
       - name: Install Dependencies
         run: |
           cd client && yarn
-          mv client/src/config.sample.js client/src/config.js
+          mv src/config.sample.js src/config.js
       - name: Lint
         run: |
           cd client && yarn lint
