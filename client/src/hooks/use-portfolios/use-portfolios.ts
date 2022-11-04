@@ -55,9 +55,9 @@ export const useDeletePortfolio = () => {
     ({ portfolioId }: DeleteMutationProps) =>
       apiClient.delete(`/portfolios/${portfolioId}/`),
     {
-      onSuccess: (data, variables) => {
-        toast.error(t("Portfolio deleted"));
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+      onSuccess: () => {
+        toast.success(t("Portfolio deleted"));
+        queryClient.invalidateQueries(["portfolios"]);
       },
       onError: () => {
         toast.error(t("Unable to delete portfolio"));
@@ -74,9 +74,9 @@ export const useUpdatePortfolio = () => {
     ({ portfolioId, newPortfolio }: UpdateMutationProps) =>
       apiClient.put(`/portfolios/${portfolioId}/`, newPortfolio),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success(t("Portfolio has been updated"));
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
+        queryClient.invalidateQueries(["portfolios"]);
       },
       onError: () => {
         toast.error(t("Unable to update portfolio"));
