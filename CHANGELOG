@@ -10,6 +10,8 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.0.72-alpha] - 2022-10-18
+- Fix: Bug where empty alternative tickers where not handled properly during stock price update.
 
 ## [0.0.71-alpha] - 2022-10-18
 ### Added
