@@ -32,7 +32,8 @@ class YFinanceApiClient(StockPriceServiceBase):
                     currency = "GBP"
 
                 price = round(price, 3)
-                formatted_date = datetime.fromtimestamp(price_date).strftime("%Y-%m-%d")
+                converted_date = price_date.to_pydatetime().date()
+                formatted_date = converted_date.strftime("%Y-%m-%d")
                 transaction_date = formatted_date
                 data = {
                     "price": price,
