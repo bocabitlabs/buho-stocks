@@ -1,4 +1,4 @@
-Django==3.2.16
+Django==3.2.17
 django-filter==21.1
 django-money==2.1
 django-otp==1.1.3
