@@ -37,17 +37,22 @@ class StockPricesYearAPIView(APIView):
         """
         Update last stock price of a company for a given year
         """
+        logger.info(f"Updating stock price for company {company_id} and year {year}")
         settings = UserSettings.objects.get(user=request.user)
+        instance = None
         if settings.allow_fetch:
             instance = self.get_update_object(company_id, year, request.user.id)
 
-        if not instance:
-            return Response(
-                {
-                    "res": f"Object with id {company_id} does not exists. Allow fetch was: {settings.allow_fetch}"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if instance:
+            serializer = StockPriceSerializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        serializer = StockPriceSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "res": (
+                    f"Unable to retrieve stock price for company {company_id}. "
+                    f"Verify the API logs. Allow fetch was: {settings.allow_fetch}"
+                )
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )

@@ -34,7 +34,7 @@ class StockPricesApi:
         Returns:
             dict: [description]
         """
-        logger.debug(
+        logger.info(
             f"Getting historical data for {ticker} from {from_date} to {to_date}. only_api={only_api}, dry_run={dry_run} )"
         )
         if only_api:
@@ -53,13 +53,14 @@ class StockPricesApi:
             if minimum_values is None:
                 minimum_values = delta.days / 2 - 1
         if prices_length < minimum_values:
-            if only_api:
-                logger.debug("Force is true. Searching remote.")
-            else:
-                logger.debug("No historical data found locally. Searching remote.")
+            logger.info(
+                f"No historical data found locally for {ticker} on those dates. Searching remote."
+            )
             prices = self.stock_prices_service.get_historical_data(
                 ticker, from_date, to_date
             )
+            if len(prices) > 0:
+                logger.info(f"Found {len(prices)} prices for {ticker} in the remote.")
             for price in prices:
                 serialized_date = price.get("transaction_date", "unknown")
                 try:

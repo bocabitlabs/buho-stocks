@@ -67,13 +67,17 @@ class YFinanceApiClient(StockPriceServiceBase):
 
         try:
             company = yf.Ticker(ticker)
-            currency = company.info["currency"]
+            logger.info(f"Requestd company {ticker} from API.")
+            currency = company.fast_info["currency"]
+            logger.info(f"{ticker} currency returned from API {currency}")
 
             result = result.sort_values("Date", ascending=False)
             dates_dict = result.to_dict("index")
 
+            logger.info(f"{ticker} dates returned from API {dates_dict}")
+
             return dates_dict, currency
 
         except (IndexError, TypeError) as error:
-            logger.warning(f"{ticker}: IndexError: {error}. Skipping.")
+            logger.warning(f"{ticker}: Error: {error}. Skipping.")
             return None, None
