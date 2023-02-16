@@ -3,6 +3,7 @@ coverage==6.2
 djlint==1.9.4
 factory-boy==3.2.1
 Faker==11.3.0
+mypy==1.0.0
 pre-commit==2.15.0
 pylint==2.13.4
 pylint-django==2.5.3
