@@ -73,10 +73,12 @@ class StockPricesApi:
                     serializer = StockPriceSerializer(price_instance, data=price)
                 else:
                     serializer = StockPriceSerializer(data=price)
-
                 if serializer.is_valid():
                     if not dry_run:
                         serializer.save()
+                        logger.debug(
+                            f"Saving price for {ticker} on {serialized_date}: {serializer.data}"
+                        )
                     else:
                         logger.debug("Dry run. Not saving element.")
                 else:
