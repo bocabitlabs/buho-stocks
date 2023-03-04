@@ -1,9 +1,10 @@
+import io
 import json
 import logging
-import io
 from typing import Union
-import requests
+
 import pandas as pd
+import requests
 
 logger = logging.getLogger("buho_backend")
 
@@ -102,6 +103,6 @@ class EcbApiClient:
             "exchange_from": from_currency,
             "exchange_to": to_currency,
             "exchange_date": exchange_date,
-            "exchange_rate": round(exchange_rate_value, 3),
+            "exchange_rate": 1/round(exchange_rate_value, 3),
         }
         return data
