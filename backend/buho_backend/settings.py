@@ -12,10 +12,10 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 import logging
 from os import path
 from pathlib import Path
-import sentry_sdk
-from sentry_sdk.integrations.django import DjangoIntegration
 
+import sentry_sdk
 from config import config
+from sentry_sdk.integrations.django import DjangoIntegration
 
 logger = logging.getLogger("buho_backend")
 
@@ -214,7 +214,12 @@ LOGGING = {
         },
     },
     "loggers": {
-        "": {
+        "*": {
+            "handlers": config.LOGGER_HANDLERS,
+            "level": "ERROR",
+            "propagate": True,
+        },
+        "buho_backend": {
             "handlers": config.LOGGER_HANDLERS,
             "level": config.LOG_LEVEL,
             "propagate": True,
