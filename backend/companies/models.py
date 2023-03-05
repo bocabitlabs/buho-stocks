@@ -14,13 +14,13 @@ def user_directory_path(instance, filename):
 class Company(models.Model):
     name = models.CharField(max_length=200)
     ticker = models.CharField(max_length=200)
-    alt_tickers = models.CharField(max_length=200, blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    url = models.URLField(max_length=200, blank=True, null=True)
+    alt_tickers = models.CharField(max_length=200, blank=True)
+    description = models.TextField(blank=True)
+    url = models.URLField(max_length=200, blank=True)
     color = models.CharField(max_length=200)
     broker = models.CharField(max_length=200)
     country_code = models.CharField(max_length=200)
-    isin = models.CharField(max_length=200, blank=True, null=True)
+    isin = models.CharField(max_length=200, blank=True)
 
     is_closed = models.BooleanField(default=False)
 
@@ -39,6 +39,7 @@ class Company(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name = "Company"
         verbose_name_plural = "Companies"
 
     def __str__(self):
