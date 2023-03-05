@@ -1,10 +1,10 @@
-from django.contrib.auth.models import User
 from django.db import models
+
 
 # Create your models here.
 class Portfolio(models.Model):
     name = models.CharField(max_length=200)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True)
     color = models.CharField(max_length=200)
     hide_closed_companies = models.BooleanField(default=False)
 
@@ -14,10 +14,10 @@ class Portfolio(models.Model):
     base_currency = models.CharField(max_length=50)
     country_code = models.CharField(max_length=200)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
+    class Meta:
+        ordering = ["name"]
+        verbose_name = "Portfolio"
+        verbose_name_plural = "Portfolios"
 
     def __str__(self):
         return f"{self.name} ({self.base_currency})"
-
-    class Meta:
-        ordering = ["name"]

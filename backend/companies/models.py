@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.db import models
 from markets.models import Market
 from portfolios.models import Portfolio
@@ -34,8 +33,6 @@ class Company(models.Model):
     market = models.ForeignKey(Market, on_delete=models.RESTRICT, related_name="companies")
     portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name="companies")
     logo = models.ImageField(upload_to=user_directory_path, blank=True, null=True)
-
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
 
     class Meta:
         ordering = ["name"]
