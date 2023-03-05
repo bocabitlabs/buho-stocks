@@ -1,7 +1,4 @@
 from rest_framework import serializers
-from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
-from buho_backend.validators import validate_ownership
-from companies.models import Company
 from stock_prices.models import StockPrice
 
 
