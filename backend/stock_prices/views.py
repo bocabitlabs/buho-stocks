@@ -1,12 +1,13 @@
-from rest_framework.response import Response
 import logging
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
-from settings.models import UserSettings
+
 from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from settings.models import UserSettings
 from stock_prices.api import StockPricesApi
 from stock_prices.serializers import StockPriceSerializer
 from stock_prices.services.yfinance_api_client import YFinanceApiClient

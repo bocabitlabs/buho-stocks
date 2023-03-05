@@ -1,8 +1,13 @@
-class StockPriceServiceBase:
-    @classmethod
-    def get_current_data(self, ticker: str) -> dict:
-        raise NotImplementedError
+from typing import TypedDict
 
-    @classmethod
-    def get_historical_data(self, ticker: str, start_date: str, end_date: str) -> dict:
+
+class TypedStockPrice(TypedDict):
+    price: float
+    price_currency: str
+    ticker: str
+    transaction_date: str
+
+
+class StockPriceServiceBase:
+    def get_stock_prices_list(self, ticker: str, start_date: str, end_date: str) -> list[TypedStockPrice]:
         raise NotImplementedError
