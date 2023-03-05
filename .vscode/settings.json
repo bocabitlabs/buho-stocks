@@ -6,8 +6,19 @@
   "python.analysis.autoSearchPaths": true,
   "python.analysis.typeCheckingMode": "basic",
   "editor.formatOnSave": true,
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
   "python.linting.enabled": true,
+  "python.linting.ignorePatterns": [
+    "**/site-packages/**/*.py",
+    "**/migrations/*.py"
+  ],
+  "python.analysis.ignore": ["**/site-packages/**/*.py", "**/migrations/*.py"],
   "python.linting.pylintEnabled": true,
+  "python.linting.flake8Enabled": true,
   "python.linting.pylintPath": "venv/bin/pylint",
   "[html]": {
     "editor.defaultFormatter": "monosans.djlint"
@@ -41,5 +52,6 @@
   },
   "[twig]": {
     "editor.defaultFormatter": "monosans.djlint"
-  }
+  },
+  "python.linting.banditEnabled": true
 }
