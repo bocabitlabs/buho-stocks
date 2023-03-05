@@ -4,7 +4,7 @@ repos:
     hooks:
       - id: pylint
         exclude: "[a-zA-Z]*/(migrations)/(.)*"
-        args: ["--rcfile=./backend/.pylintrc"]
+        args: ["--rcfile=./pyproject.toml"]
         additional_dependencies: [
             # pylint dependency
             pylint_django,
