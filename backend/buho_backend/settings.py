@@ -15,9 +15,17 @@ from pathlib import Path
 
 import sentry_sdk
 from config import config
+from django.db.models import ForeignKey
+from django.db.models.manager import BaseManager
+from django.db.models.query import QuerySet
 from sentry_sdk.integrations.django import DjangoIntegration
 
 logger = logging.getLogger("buho_backend")
+
+# NOTE: there are probably other items you'll need to monkey patch depending on
+# your version.
+for cls in [QuerySet, BaseManager, ForeignKey]:
+    cls.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -49,10 +57,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "drf_yasg",
-    "django_otp",
-    "django_otp.plugins.otp_static",
-    "django_otp.plugins.otp_totp",
-    "two_factor",
     "companies",
     "currencies",
     "dividends_transactions",
@@ -75,7 +79,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django_otp.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -183,11 +186,7 @@ STATIC_ROOT = "/app/static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = config.MEDIA_ROOT
 
-SWAGGER_SETTINGS = {
-    "SECURITY_DEFINITIONS": {
-        "Token": {"type": "apiKey", "name": "Authorization", "in": "header"},
-    }
-}
+SWAGGER_SETTINGS = {}
 
 LOGGING = {
     "version": 1,
