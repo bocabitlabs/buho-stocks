@@ -11,6 +11,7 @@ logger = logging.getLogger("buho_backend")
 
 
 class Transaction(models.Model):
+    id = models.AutoField(primary_key=True)
     count = models.IntegerField()
     exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
     transaction_date = models.DateField()
@@ -37,7 +38,8 @@ class Transaction(models.Model):
 
 class SharesTransaction(Transaction):
     type = models.CharField(choices=TransactionType.choices, default=TransactionType.BUY, max_length=10)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="shares_transactions")
+    company_id: int
+    company = models.ForeignKey["Company"](Company, on_delete=models.CASCADE, related_name="shares_transactions")
 
     def __str___(self):
         return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"
