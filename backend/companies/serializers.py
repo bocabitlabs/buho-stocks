@@ -1,44 +1,40 @@
 import logging
 
-from rest_framework.fields import SerializerMethodField
-from rest_framework import serializers
+from companies.models import Company
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
-from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
-from buho_backend.validators import validate_ownership
+from drf_extra_fields.fields import Base64ImageField
+from markets.models import Market
+from markets.serializers import MarketSerializer
 from portfolios.models import Portfolio
 from portfolios.serializers_lite import PortfolioSerializerLite
-from companies.models import Company
+from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
 from rights_transactions.serializers import RightsTransactionSerializer
 from sectors.models import Sector
 from sectors.serializers import SectorSerializerGet
-from markets.models import Market
-from markets.serializers import MarketSerializer
-from shares_transactions.serializers import SharesTransactionSerializer
 from shares_transactions.models import SharesTransaction
-from drf_extra_fields.fields import Base64ImageField
+from shares_transactions.serializers import SharesTransactionSerializer
 from stats.models.company_stats import CompanyStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 
-logger = logging.getLogger("buho_backend")
+logger: logging.Logger = logging.getLogger("buho_backend")
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    market = serializers.PrimaryKeyRelatedField(
+    market: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
         queryset=Market.objects, many=False, read_only=False
     )
-    sector = serializers.PrimaryKeyRelatedField(
+    sector: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
         queryset=Sector.objects, many=False, read_only=False
     )
-    portfolio = UserFilteredPrimaryKeyRelatedField(
+    portfolio: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
         queryset=Portfolio.objects, many=False, read_only=False
     )
 
-    logo = Base64ImageField(
-        max_length=None, use_url=True, allow_null=True, required=False
-    )
+    logo = Base64ImageField(max_length=None, use_url=True, allow_null=True, required=False)
     all_stats = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
     last_dividend_month = serializers.SerializerMethodField()
@@ -46,7 +42,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields = [
+        fields: list[str] = [
             "id",
             "alt_tickers",
             "base_currency",
@@ -72,34 +68,22 @@ class CompanySerializer(serializers.ModelSerializer):
             "last_dividend_month",
         ]
 
-    def validate(self, attrs):
-        portfolio = attrs["portfolio"]
-
-        validate_ownership(self.context, portfolio, Portfolio)
-        return attrs
-
     def get_all_stats(self, obj):
-        query = CompanyStatsForYear.objects.filter(
-            company=obj.id, user=obj.user, year=9999
-        )
+        query = CompanyStatsForYear.objects.filter(company=obj.id, year=9999)
         if query.exists():
             serializer = CompanyStatsForYearSerializer(query[0])
             return serializer.data
         return None
 
     def get_last_transaction_month(self, obj):
-        query = SharesTransaction.objects.filter(
-            company_id=obj.id, user=obj.user
-        ).order_by("transaction_date")
+        query = SharesTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
         if query.exists():
             last_element = query[len(query) - 1]
             return last_element.transaction_date
         return None
 
     def get_last_dividend_month(self, obj):
-        query = DividendsTransaction.objects.filter(
-            company_id=obj.id, user=obj.user
-        ).order_by("transaction_date")
+        query = DividendsTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
         if query.exists():
             last_element = query[len(query) - 1]
             return last_element.transaction_date
@@ -110,12 +94,12 @@ class CompanySerializerGet(CompanySerializer):
     base_currency = SerializerMethodField()
     dividends_currency = SerializerMethodField()
 
-    market = MarketSerializer(many=False, read_only=True)
-    sector = SectorSerializerGet(many=False, read_only=True)
+    market: MarketSerializer = MarketSerializer(many=False, read_only=True)
+    sector: SectorSerializerGet = SectorSerializerGet(many=False, read_only=True)
     shares_transactions = SharesTransactionSerializer(many=True, read_only=True)
     rights_transactions = RightsTransactionSerializer(many=True, read_only=True)
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
-    portfolio = PortfolioSerializerLite(many=False, read_only=True)
+    portfolio: PortfolioSerializerLite = PortfolioSerializerLite(many=False, read_only=True)
     first_year = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
@@ -133,20 +117,18 @@ class CompanySerializerGet(CompanySerializer):
     def get_logo(self, obj):
         request = self.context.get("request")
         photo_url = obj.fingerprint.url
-        return request.build_absolute_uri(photo_url)
+        if request:
+            return request.build_absolute_uri(photo_url)
+        return None
 
     def get_first_year(self, obj):
-        query = SharesTransaction.objects.filter(
-            company_id=obj.id, user=obj.user
-        ).order_by("transaction_date")
+        query = SharesTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
         if query.exists():
             return query[0].transaction_date.year
         return None
 
     def get_last_transaction_month(self, obj):
-        query = SharesTransaction.objects.filter(
-            company_id=obj.id, user=obj.user
-        ).order_by("transaction_date")
+        query = SharesTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
         if query.exists():
             return f"{query[len(query)-1].transaction_date.year}-{query[len(query)-1].transaction_date.month}"
         return None
