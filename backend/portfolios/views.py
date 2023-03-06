@@ -1,11 +1,8 @@
 from django.utils.decorators import method_decorator
-from rest_framework import viewsets
-
-from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
-from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
 from portfolios.models import Portfolio
+from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
+from rest_framework import viewsets
 
 
 @method_decorator(
@@ -61,17 +58,14 @@ class PortfolioViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = PortfolioSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "portfolio_id"
     lookup_field = "id"
 
     def get_queryset(self):
-        user = self.request.user
-        return Portfolio.objects.filter(user=user.id)
+        return Portfolio.objects
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
 
     def get_serializer_class(self):
         if self.action == "list" or self.action == "retrieve":

@@ -1,14 +1,10 @@
 import logging
+
 from django.utils.decorators import method_decorator
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
 from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
-from sectors.serializers import (
-    SectorSerializerGet,
-    SuperSectorSerializer,
-)
+from rest_framework import viewsets
 from sectors.models import Sector, SuperSector
+from sectors.serializers import SectorSerializerGet, SuperSectorSerializer
 
 logger = logging.getLogger("buho_backend")
 
@@ -35,8 +31,6 @@ class SectorViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = SectorSerializerGet
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "sector_id"
 
     def get_queryset(self):
@@ -65,8 +59,6 @@ class SuperSectorViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = SuperSectorSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "sector_id"
 
     def get_queryset(self):

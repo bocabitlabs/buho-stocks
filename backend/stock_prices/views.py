@@ -1,10 +1,8 @@
 import logging
 
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from settings.models import UserSettings
@@ -18,11 +16,8 @@ logger = logging.getLogger("buho_backend")
 class StockPricesYearAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_update_object(self, company_id, year, user_id):
-        company = Company.objects.get(id=company_id, user=user_id)
+    def get_update_object(self, company_id, year):
+        company = Company.objects.get(id=company_id)
         api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
         data = api.get_last_data_from_year(company.ticker, year, only_api=True)
@@ -39,10 +34,10 @@ class StockPricesYearAPIView(APIView):
         Update last stock price of a company for a given year
         """
         logger.info(f"Updating stock price for company {company_id} and year {year}")
-        settings = UserSettings.objects.get(user=request.user)
+        settings = UserSettings.objects.get(1)
         instance = None
         if settings.allow_fetch:
-            instance = self.get_update_object(company_id, year, request.user.id)
+            instance = self.get_update_object(company_id, year)
 
         if instance:
             serializer = StockPriceSerializer(instance)

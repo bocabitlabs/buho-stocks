@@ -1,30 +1,20 @@
 import logging
-from rest_framework.response import Response
-from rest_framework.authentication import (
-    TokenAuthentication,
-)
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
-
 
 from benchmarks.models import Benchmark, BenchmarkYear
-
-from benchmarks.serializers import (
-    BenchmarkSerializer,
-    BenchmarkYearSerializer,
-)
+from benchmarks.serializers import BenchmarkSerializer, BenchmarkYearSerializer
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 logger = logging.getLogger("buho_backend")
 
 
 class BenchmarkAPIView(APIView):
-
     authentication_classes = [
         TokenAuthentication,
     ]
-    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(tags=["benchmarks"])
     def get(self, request, *args, **kwargs):
@@ -44,11 +34,9 @@ class BenchmarkAPIView(APIView):
 
 
 class BenchmarkYearsAPIView(APIView):
-
     authentication_classes = [
         TokenAuthentication,
     ]
-    permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(tags=["benchmarks"])
     def get(self, request, benchmark_id, *args, **kwargs):

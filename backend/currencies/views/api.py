@@ -1,12 +1,10 @@
 import logging
 
-from django.utils.decorators import method_decorator
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
-from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
 
 logger = logging.getLogger("buho_backend")
 
@@ -33,8 +31,6 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = CurrencySerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "currency_id"
 
     def get_queryset(self):

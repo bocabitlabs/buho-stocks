@@ -13,17 +13,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf.urls import url
-from django.contrib import admin
-from django.urls import path, register_converter, include
-from django.conf import settings
-from django.conf.urls.static import static
-from rest_framework import permissions
-from two_factor.urls import urlpatterns as tf_urls
-from buho_backend.admin import AdminSiteOTPRequiredMixinRedirSetup
 from buho_backend import path_converters
-from drf_yasg.views import get_schema_view
+from buho_backend.admin import AdminSiteOTPRequiredMixinRedirSetup
+from django.conf import settings
+from django.conf.urls import url
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path, register_converter
 from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 
 # admin.site.__class__ = AdminSiteOTPRequired
 admin.site.__class__ = AdminSiteOTPRequiredMixinRedirSetup
@@ -44,9 +43,7 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
-    path("", include(tf_urls)),
     path("admin/", admin.site.urls),
-    path("auth/", include("auth.urls"), name="authentication"),
     path(
         "api/v1/companies/<int:company_id>/shares/",
         include("shares_transactions.urls"),
@@ -68,9 +65,7 @@ urlpatterns = [
         name="stocks-prices",
     ),
     path("api/v1/currencies/", include("currencies.urls.api")),
-    path(
-        "api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"
-    ),
+    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
     path("api/v1/markets/", include("markets.urls.api")),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
@@ -101,7 +96,5 @@ urlpatterns = [
         schema_view.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
-    url(
-        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
-    ),
+    url(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

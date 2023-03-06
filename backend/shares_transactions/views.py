@@ -1,10 +1,8 @@
-from django.utils.decorators import method_decorator
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from log_messages.models import LogMessage
+from rest_framework import generics
 from shares_transactions.models import SharesTransaction
 from shares_transactions.serializers import SharesTransactionSerializer
 
@@ -29,13 +27,10 @@ class SharesTransactionListCreateAPIView(generics.ListCreateAPIView):
     """Get all the shares transactions from a company"""
 
     serializer_class = SharesTransactionSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         company_id = self.kwargs.get("company_id")
-        user = self.request.user
-        return SharesTransaction.objects.filter(company=company_id, user=user.id)
+        return SharesTransaction.objects.filter(company=company_id)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
@@ -43,7 +38,11 @@ class SharesTransactionListCreateAPIView(generics.ListCreateAPIView):
         company = Company.objects.get(id=serializer.data["company"])
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_ADD_SHARES,
-            message_text=f"Shares added: {company.name} ({company.ticker}). {serializer.data.get('count')} - {serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}",
+            message_text=(
+                f"Shares added: {company.name} ({company.ticker}). "
+                f"{serializer.data.get('count')} - "
+                f"{serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}"
+            ),
             portfolio=company.portfolio,
             user=self.request.user,
         )
@@ -82,13 +81,9 @@ class SharesTransactionListCreateAPIView(generics.ListCreateAPIView):
     ),
 )
 class SharesTransactionDetailsDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-
     serializer_class = SharesTransactionSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "transaction_id"
 
     def get_queryset(self):
         transaction_id = self.kwargs.get("transaction_id")
-        user = self.request.user
-        return SharesTransaction.objects.filter(id=transaction_id, user=user.id)
+        return SharesTransaction.objects.filter(id=transaction_id)

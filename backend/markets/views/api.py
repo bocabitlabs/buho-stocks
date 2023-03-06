@@ -1,12 +1,10 @@
 import logging
 
 from django.utils.decorators import method_decorator
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets, generics
 from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
-from markets.serializers import MarketSerializer, TimezoneSerializer
 from markets.models import Market, get_all_timezones
+from markets.serializers import MarketSerializer, TimezoneSerializer
+from rest_framework import generics, viewsets
 
 logger = logging.getLogger("buho_backend")
 
@@ -33,8 +31,6 @@ class MarketViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = MarketSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "market_id"
 
     def get_queryset(self):
@@ -50,7 +46,7 @@ class MarketViewSet(viewsets.ModelViewSet):
     ),
 )
 class TimezoneList(generics.ListAPIView):
-    queryset = get_all_timezones()
     serializer_class = TimezoneSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [ExpiringTokenAuthentication]
+
+    def get_queryset(self):
+        return get_all_timezones()
