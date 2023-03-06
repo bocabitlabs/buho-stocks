@@ -1,37 +1,34 @@
-const APP_BASE_ROUTE = "/app";
-const LOGIN_ROUTE = "/app-login";
-const REGISTER_ROUTE = "/register";
+const APP_BASE_ROUTE = "/";
 
-const HOME_ROUTE = "/home";
-const SETTINGS_ROUTE = "/settings";
+const HOME_ROUTE = "home";
+const SETTINGS_ROUTE = "settings";
 
-const COMPANIES_ADD_ROUTE = "/portfolios/:id/companies/add";
-const COMPANIES_DETAILS_ROUTE = "/portfolios/:id/companies/:companyId";
-const COMPANIES_EDIT_ROUTE = "/portfolios/:id/companies/:companyId/edit";
+const COMPANIES_ADD_ROUTE = "portfolios/:id/companies/add";
+const COMPANIES_DETAILS_ROUTE = "portfolios/:id/companies/:companyId";
+const COMPANIES_EDIT_ROUTE = "portfolios/:id/companies/:companyId/edit";
 
-const MARKETS_ROUTE = "/markets";
-const MARKETS_DETAILS_ROUTE = "/markets/:id";
+const MARKETS_ROUTE = "markets";
+const MARKETS_DETAILS_ROUTE = "markets/:id";
 
-const PORTFOLIOS_ROUTE = "/portfolios";
-const PORTFOLIOS_ADD_ROUTE = "/portfolios/add";
-const PORTFOLIOS_DETAILS_ROUTE = "/portfolios/:id";
-const PORTFOLIOS_EDIT_ROUTE = "/portfolios/:id/edit";
+const PORTFOLIOS_ROUTE = "portfolios";
+const PORTFOLIOS_ADD_ROUTE = "portfolios/add";
+const PORTFOLIOS_DETAILS_ROUTE = "portfolios/:id";
+const PORTFOLIOS_EDIT_ROUTE = "portfolios/:id/edit";
 
-const SECTORS_ROUTE = "/sectors";
-const SECTORS_DETAILS_ROUTE = "/sectors/:id";
+const SECTORS_ROUTE = "sectors";
+const SECTORS_DETAILS_ROUTE = "sectors/:id";
 
-const SHARES_ADD_ROUTE = "/portfolios/:id/companies/:companyId/shares/add";
+const SHARES_ADD_ROUTE = "portfolios/:id/companies/:companyId/shares/add";
 const SHARES_EDIT_ROUTE =
-  "/portfolios/:id/companies/:companyId/shares/:transactionId";
+  "portfolios/:id/companies/:companyId/shares/:transactionId";
 
-const RIGHTS_ADD_ROUTE = "/portfolios/:id/companies/:companyId/rights/add";
+const RIGHTS_ADD_ROUTE = "portfolios/:id/companies/:companyId/rights/add";
 const RIGHTS_EDIT_ROUTE =
-  "/portfolios/:id/companies/:companyId/rights/:transactionId";
+  "portfolios/:id/companies/:companyId/rights/:transactionId";
 
-const DIVIDENDS_ADD_ROUTE =
-  "/portfolios/:id/companies/:companyId/dividends/add";
+const DIVIDENDS_ADD_ROUTE = "portfolios/:id/companies/:companyId/dividends/add";
 const DIVIDENDS_EDIT_ROUTE =
-  "/portfolios/:id/companies/:companyId/dividends/:transactionId";
+  "portfolios/:id/companies/:companyId/dividends/:transactionId";
 
 const getRoute = (route: string): string => {
   return APP_BASE_ROUTE + route;
@@ -46,8 +43,6 @@ export {
   COMPANIES_EDIT_ROUTE,
   DIVIDENDS_ADD_ROUTE,
   DIVIDENDS_EDIT_ROUTE,
-  LOGIN_ROUTE,
-  REGISTER_ROUTE,
   HOME_ROUTE,
   SETTINGS_ROUTE,
   MARKETS_ROUTE,

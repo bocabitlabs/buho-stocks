@@ -11,7 +11,7 @@ function MarketsPageHeader({ children }: Props) {
 
   const routes = [
     {
-      path: `/app/markets`,
+      path: `/markets`,
       breadcrumbName: t("Markets"),
     },
   ];

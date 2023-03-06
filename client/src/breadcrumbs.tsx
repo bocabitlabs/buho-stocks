@@ -5,7 +5,7 @@ import { Breadcrumb } from "antd";
 
 export default function breadCrumbRender(props: any, originBreadcrumb: any) {
   const homeRoute = {
-    path: "/app/home",
+    path: "/home",
     breadcrumbName: <Translation>{(t) => <>{t("Home")}</>}</Translation>,
   };
   return (

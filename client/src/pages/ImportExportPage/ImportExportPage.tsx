@@ -25,7 +25,7 @@ export default function ImportExportPage(): ReactElement {
   };
 
   const goToBrokerImportPage = (brokerId: string) => {
-    navigate(`/app/import/${brokerId}`);
+    navigate(`/import/${brokerId}`);
   };
 
   const options1 = [

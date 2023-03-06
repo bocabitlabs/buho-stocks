@@ -52,10 +52,10 @@ function RoutesMenu({
 
   const items: MenuItem[] = [
     getItem(t("Home"), "0", getRoute(HOME_ROUTE), <HomeOutlined />),
-    getItem(t("Markets"), "1", "/app/markets/", <BankOutlined />),
-    getItem(t("Sectors"), "2", "/app/sectors/", <ClusterOutlined />),
-    getItem(t("Import & Export"), "3", "/app/import-export/", <SyncOutlined />),
-    getItem(t("Settings"), "4", "/app/settings/", <SettingOutlined />),
+    getItem(t("Markets"), "1", "/markets/", <BankOutlined />),
+    getItem(t("Sectors"), "2", "/sectors/", <ClusterOutlined />),
+    getItem(t("Import & Export"), "3", "/import-export/", <SyncOutlined />),
+    getItem(t("Settings"), "4", "/settings/", <SettingOutlined />),
   ];
 
   const menuClickAction = useCallback(

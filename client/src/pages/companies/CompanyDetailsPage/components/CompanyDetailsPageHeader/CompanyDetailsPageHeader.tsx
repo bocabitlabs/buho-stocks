@@ -33,11 +33,11 @@ function CompanyDetailsPageHeader({
 
   const routes = [
     {
-      path: `/app/portfolios/${id}`,
+      path: `/portfolios/${id}`,
       breadcrumbName: portfolioName || t("Loading..."),
     },
     {
-      path: `/app/portfolios/${id}/companies/${companyId}`,
+      path: `/portfolios/${id}/companies/${companyId}`,
       breadcrumbName: companyName || t("Loading..."),
     },
   ];

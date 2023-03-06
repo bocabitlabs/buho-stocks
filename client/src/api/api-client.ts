@@ -25,13 +25,11 @@ export interface IApiResponse {
 const getAxiosOptionsWithAuth = () => ({
   headers: {
     Accept: "application/json",
-    Authorization: `Token ${localStorage.getItem("token")}`,
   },
 });
 
 export const getAxiosHeadersWithAuth = () => ({
   Accept: "application/json",
-  Authorization: `Token ${localStorage.getItem("token")}`,
 });
 
 const apiClient = axios.create({
