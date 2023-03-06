@@ -34,7 +34,7 @@ class StockPricesYearAPIView(APIView):
         Update last stock price of a company for a given year
         """
         logger.info(f"Updating stock price for company {company_id} and year {year}")
-        settings = UserSettings.objects.get(1)
+        settings, _ = UserSettings.objects.get_or_create(pk=1)
         instance = None
         if settings.allow_fetch:
             instance = self.get_update_object(company_id, year)

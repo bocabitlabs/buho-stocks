@@ -81,7 +81,7 @@ class PortfolioStatsAPIView(APIView):
         """
         Update the portfolio item with given id
         """
-        settings = UserSettings.objects.get(1)
+        settings, _ = UserSettings.objects.get_or_create(pk=1)
         if settings.allow_fetch:
             forced = self.request.query_params.get("force")
             if forced == "true":

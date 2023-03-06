@@ -41,7 +41,7 @@ class CompanyStatsAPIView(APIView):
         """
         Update the company stats for a given year
         """
-        settings = UserSettings.objects.get(1)
+        settings, _ = UserSettings.objects.get_or_create(pk=1)
         if settings.allow_fetch:
             forced = self.request.query_params.get("force")
             if forced == "true":

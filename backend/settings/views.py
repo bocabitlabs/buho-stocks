@@ -37,7 +37,8 @@ class UserSettingsDetailAPIView(APIView):
         Helper method to get the object with given todo_id
         """
         try:
-            return UserSettings.objects.get(id=todo_id)
+            settings, _ = UserSettings.objects.get_or_create(pk=1)
+            return settings
         except UserSettings.DoesNotExist:
             return None
 
