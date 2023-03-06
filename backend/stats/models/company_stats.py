@@ -17,7 +17,7 @@ class CompanyStatsForYear(models.Model):
     accumulated_investment = models.DecimalField(max_digits=12, decimal_places=3)
     accumulated_dividends = models.DecimalField(max_digits=12, decimal_places=3)
     stock_price_value = models.DecimalField(max_digits=12, decimal_places=3, null=True)
-    stock_price_currency = models.CharField(max_length=200)
+    stock_price_currency = models.CharField(max_length=200, default="")
     stock_price_transaction_date = models.DateField(null=True)
     portfolio_value = models.DecimalField(max_digits=12, decimal_places=3)
     portfolio_value_is_down = models.BooleanField()

@@ -1,19 +1,9 @@
 import logging
 import pathlib
-import time
-from decimal import Decimal
-from unittest.mock import patch
 
-import factory
 import responses
-from auth.tests.factory import UserFactory
-from companies.tests.factory import CompanyFactory
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.authtoken.models import Token
-from rest_framework.test import APIClient, APITestCase
+from rest_framework.test import APITestCase
 from stock_prices.services.yfinance_api_client import YFinanceApiClient
-from stock_prices.tests.factory import StockPriceTransactionFactory
 
 logger = logging.getLogger("buho_backend")
 
@@ -22,7 +12,6 @@ class CustomYServiceTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
 
     @responses.activate
     def test_fetch_stock_prices(
