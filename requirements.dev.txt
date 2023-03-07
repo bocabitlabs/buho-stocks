@@ -6,7 +6,7 @@ djangorestframework-stubs==1.8.0
 djlint==1.19.14
 factory-boy==3.2.1
 Faker==11.3.0
-flake8==6.0.0
+flake8==5.0.4
 flake8-django==1.1.5
 isort==5.12.0
 pyright==1.1.296
