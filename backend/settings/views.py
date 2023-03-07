@@ -10,29 +10,10 @@ from settings.serializers import UserSettingsSerializer
 logger = logging.getLogger("buho_backend")
 
 
-class UserSettingsListAPIView(APIView):
-    # test
-    # 1. List all
-    @swagger_auto_schema(tags=["settings"])
-    def get(self, request, *args, **kwargs):
-        """_summary_
-
-        Args:
-            request (_type_): _description_
-
-        Returns:
-            _type_: _description_
-        """
-        settings, _ = UserSettings.objects.get_or_create(pk=1)
-        logger.debug(settings)
-        serializer = UserSettingsSerializer(settings)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class UserSettingsDetailAPIView(APIView):
     # add permission to check if user is authenticated
 
-    def get_object(self, todo_id):
+    def get_object(self) -> UserSettings | None:
         """
         Helper method to get the object with given todo_id
         """
@@ -44,27 +25,27 @@ class UserSettingsDetailAPIView(APIView):
 
     # 3. Retrieve
     @swagger_auto_schema(tags=["settings"])
-    def get(self, request, market_id, *args, **kwargs):
+    def get(self, request, *args, **kwargs) -> Response:
         """
         Retrieves the Todo with given todo_id
         """
-        todo_instance = self.get_object(market_id)
-        if not todo_instance:
+        settings_instance = self.get_object()
+        if not settings_instance:
             return Response(
                 {"res": "Object with todo id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        serializer = UserSettingsSerializer(todo_instance)
+        serializer = UserSettingsSerializer(settings_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     # 4. Update
     @swagger_auto_schema(tags=["settings"], request_body=UserSettingsSerializer)
-    def put(self, request, settings_id, *args, **kwargs):
+    def put(self, request, *args, **kwargs) -> Response:
         """
         Updates the settings item with given todo_id if exists
         """
-        todo_instance = self.get_object(settings_id)
+        todo_instance = self.get_object()
         if not todo_instance:
             return Response(
                 {"res": "Object with settings id does not exists"},

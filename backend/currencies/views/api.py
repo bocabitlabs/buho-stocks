@@ -34,5 +34,4 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     lookup_url_kwarg = "currency_id"
 
     def get_queryset(self):
-        logger.debug(Currency.objects.all())
         return Currency.objects.all()
