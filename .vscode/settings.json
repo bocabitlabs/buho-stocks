@@ -19,9 +19,9 @@
   "python.analysis.completeFunctionParens": true,
   "python.analysis.autoImportCompletions": true,
   "python.analysis.useLibraryCodeForTypes": true,
-  "python.analysis.inlayHints.variableTypes": true,
-  "python.analysis.inlayHints.functionReturnTypes": true,
-  "python.analysis.inlayHints.pytestParameters": true,
+  //"python.analysis.inlayHints.variableTypes": true,
+  //"python.analysis.inlayHints.functionReturnTypes": true,
+  //"python.analysis.inlayHints.pytestParameters": true,
   "python.analysis.ignore": ["**/site-packages/**/*.py", "**/migrations/*.py"],
   "[python]": {
     "editor.codeActionsOnSave": {
