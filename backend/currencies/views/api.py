@@ -25,6 +25,41 @@ logger = logging.getLogger("buho_backend")
         tags=["Currencies"],
     ),
 )
+@method_decorator(
+    name="create",
+    decorator=swagger_auto_schema(
+        operation_id="Create a currency",
+        operation_description="Create a new currency",
+        tags=["Currencies"],
+        responses={200: CurrencySerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="update",
+    decorator=swagger_auto_schema(
+        operation_id="Update a currency",
+        operation_description="Update an existing currency",
+        tags=["Currencies"],
+        responses={200: CurrencySerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="partial_update",
+    decorator=swagger_auto_schema(
+        operation_id="Patch a currency",
+        operation_description="Patch an existing currency",
+        tags=["Currencies"],
+        responses={200: CurrencySerializer(many=False)},
+    ),
+)
+@method_decorator(
+    name="destroy",
+    decorator=swagger_auto_schema(
+        operation_id="Delete currency",
+        operation_description="Delete an existing currency",
+        tags=["Currencies"],
+    ),
+)
 class CurrencyViewSet(viewsets.ModelViewSet):
     """
     A viewset for viewing and editing currency instances.
