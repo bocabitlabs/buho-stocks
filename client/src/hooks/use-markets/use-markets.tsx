@@ -8,7 +8,7 @@ export const fetchMarkets = async () => {
 };
 
 export const fetchTimezones = async () => {
-  const { data } = await apiClient.get<IMarket[]>("/markets/timezones/");
+  const { data } = await apiClient.get<IMarket[]>("/timezones/");
   return data;
 };
 
