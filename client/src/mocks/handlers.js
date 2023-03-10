@@ -15,7 +15,7 @@ export const handlers = [
     // If authenticated, return a mocked user details
     return res(ctx.status(200), ctx.json(marketsResponse));
   }),
-  rest.get("/api/v1/markets/timezones/", (req, res, ctx) => {
+  rest.get("/api/v1/timezones/", (req, res, ctx) => {
     // If authenticated, return a mocked user details
     return res(ctx.status(200), ctx.json(timezonesResponse));
   }),

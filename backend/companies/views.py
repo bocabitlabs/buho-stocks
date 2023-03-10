@@ -51,7 +51,7 @@ logger = logging.getLogger("buho_backend")
     name="partial_update",
     decorator=swagger_auto_schema(
         operation_id="Patch a company",
-        operation_description="Patch an existing company of the current user",
+        operation_description="Patch an existing company",
         tags=["Companies"],
         responses={200: CompanySerializer(many=False)},
     ),

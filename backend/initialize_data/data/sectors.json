@@ -1,0 +1,223 @@
+[
+  {
+    "name": "Diversified Banks",
+    "color": "#607d8b",
+    "super_sector_id": 1
+  },
+  {
+    "name": "Multi-line Insurance",
+    "color": "#e91e63",
+    "super_sector_id": 3
+  },
+  {
+    "name": "Integrated Telecommunication Services",
+    "color": "#2196f3",
+    "super_sector_id": 4
+  },
+  {
+    "name": "Electric Utilities",
+    "color": "#4caf50",
+    "super_sector_id": 5
+  },
+  {
+    "name": "Integrated Oil and Gas",
+    "color": "#ff9800",
+    "super_sector_id": 6
+  },
+  {
+    "name": "Gas Utilities",
+    "color": "#ff5722",
+    "super_sector_id": 5
+  },
+  {
+    "name": "Packaged Foods and Meats",
+    "color": "#a1887f",
+    "super_sector_id": 7
+  },
+  {
+    "name": "Construction and Engineering",
+    "color": "#03a9f4",
+    "super_sector_id": 8
+  },
+  {
+    "name": "IT Consulting and Other Services",
+    "color": "#2196f3",
+    "super_sector_id": 9
+  },
+  {
+    "name": "Apparel Retail",
+    "color": "#ffeb3b",
+    "super_sector_id": 10
+  },
+  {
+    "name": "Automobile Manufacturers",
+    "color": "#cfd8dc",
+    "super_sector_id": 12
+  },
+  {
+    "name": "Pharmaceuticals",
+    "color": "#cddc39",
+    "super_sector_id": 13
+  },
+  {
+    "name": "Technology Hardware,Storage and Peripherals",
+    "color": "#9c27b0",
+    "super_sector_id": 14
+  },
+  {
+    "name": "Aerospace & Defense",
+    "color": "#673ab7",
+    "super_sector_id": 15
+  },
+  {
+    "name": "Agricultural Products",
+    "color": "#8bc34a",
+    "super_sector_id": 7
+  },
+  {
+    "name": "Air Freight and Logistics",
+    "color": "#4caf50",
+    "super_sector_id": 16
+  },
+  {
+    "name": "Asset Management andCustody Banks",
+    "color": "#f44336",
+    "super_sector_id": 17
+  },
+  {
+    "name": "Biotechnology",
+    "color": "#e91e63",
+    "super_sector_id": 13
+  },
+  {
+    "name": "Communications Equipment",
+    "color": "#e91e63",
+    "super_sector_id": 14
+  },
+  {
+    "name": "Construction Machinery and Heavy Trucks",
+    "color": "#9c27b0",
+    "super_sector_id": 8
+  },
+  {
+    "name": "Distillers and Vintners",
+    "color": "#9c27b0",
+    "super_sector_id": 7
+  },
+  {
+    "name": "Drug Retail",
+    "color": "#673ab7",
+    "super_sector_id": 19
+  },
+  {
+    "name": "ETF Test",
+    "color": "#2196f3",
+    "super_sector_id": 25
+  },
+  {
+    "name": "Health Care REITs",
+    "color": "#03a9f4",
+    "super_sector_id": 21
+  },
+  {
+    "name": "Health Care Services",
+    "color": "#03a9f4",
+    "super_sector_id": 20
+  },
+  {
+    "name": "Home Improvement Retail",
+    "color": "#00bcd4",
+    "super_sector_id": 10
+  },
+  {
+    "name": "Household Products",
+    "color": "#00bcd4",
+    "super_sector_id": 22
+  },
+  {
+    "name": "Industrial Conglomerates",
+    "color": "#009688",
+    "super_sector_id": 8
+  },
+  {
+    "name": "Movies and Entertainment",
+    "color": "#cddc39",
+    "super_sector_id": 23
+  },
+  {
+    "name": "Multi Utilities",
+    "color": "#ffeb3b",
+    "super_sector_id": 5
+  },
+  {
+    "name": "Personal Products",
+    "color": "#ffc107",
+    "super_sector_id": 22
+  },
+  {
+    "name": "Restaurants",
+    "color": "#ffc107",
+
+    "super_sector_id": 18
+  },
+  {
+    "name": "Retail REITS",
+    "color": "#ff9800",
+    "super_sector_id": 21
+  },
+  {
+    "name": "Semiconductors",
+    "color": "#607d8b",
+    "super_sector_id": 24
+  },
+  {
+    "name": "Soft Drinks",
+    "color": "#e91e63",
+    "super_sector_id": 7
+  },
+  {
+    "name": "Systems Software",
+    "color": "#9c27b0",
+    "super_sector_id": 9
+  },
+  {
+    "name": "Tobacco",
+    "color": "#2196f3",
+    "super_sector_id": 7
+  },
+  {
+    "name": "Office REITs",
+    "color": "#e91e63",
+    "super_sector_id": 21
+  },
+  {
+    "name": "FTSE Developed Europe",
+    "color": "#607d8b",
+    "super_sector_id": 25
+  },
+  {
+    "name": "SP 500",
+    "color": "#607d8b",
+    "super_sector_id": 25
+  },
+  {
+    "name": "FTSE Emerging Markets",
+    "color": "#607d8b",
+    "super_sector_id": 25
+  },
+  {
+    "name": "FTSE All-World ETF",
+    "color": "#607d8b",
+    "super_sector_id": 25
+  },
+  {
+    "name": "FTSE Developed Asia Pacific ex Japan",
+    "color": "#607d8b",
+    "super_sector_id": 25
+  },
+  {
+    "name": "MSCI World",
+    "color": "#607d8b",
+    "super_sector_id": 25
+  }
+]

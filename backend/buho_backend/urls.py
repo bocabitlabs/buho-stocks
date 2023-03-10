@@ -13,19 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from benchmarks.urls import router as benchmarks_router
 from buho_backend import path_converters
-from buho_backend.admin import AdminSiteOTPRequiredMixinRedirSetup
 from django.conf import settings
-from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path, register_converter
+from django.urls import include, path, re_path, register_converter
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from markets.urls import router as markets_router
 from rest_framework import permissions
-
-# admin.site.__class__ = AdminSiteOTPRequired
-admin.site.__class__ = AdminSiteOTPRequiredMixinRedirSetup
+from sectors.urls import router as sectors_router
 
 register_converter(path_converters.DateConverter, "date")
 
@@ -44,6 +42,12 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    path("api/v1/", include(benchmarks_router.urls)),
+    path("api/v1/", include(markets_router.urls)),
+    path("api/v1/", include("markets.urls")),
+    path("api/v1/", include(sectors_router.urls)),
+    path("api/v1/initialize-data/", include("initialize_data.urls")),
+    # path("api/v1/", include("sectors.urls.api")),
     path(
         "api/v1/companies/<int:company_id>/shares/",
         include("shares_transactions.urls"),
@@ -66,7 +70,6 @@ urlpatterns = [
     ),
     path("api/v1/currencies/", include("currencies.urls.api")),
     path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
-    path("api/v1/markets/", include("markets.urls.api")),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
         "api/v1/portfolios/<int:portfolio_id>/messages/",
@@ -78,23 +81,14 @@ urlpatterns = [
         include("companies.urls"),
         name="companies",
     ),
-    path("api/v1/sectors/", include("sectors.urls.api")),
     path("api/v1/settings/", include("settings.urls")),
     path("api/v1/stats/", include("stats.urls")),
-    path("api/v1/benchmarks/", include("benchmarks.urls.api")),
-    path("admin-actions/benchmarks/", include("benchmarks.urls.admin")),
     path("admin-actions/currencies/", include("currencies.urls.admin")),
-    path("admin-actions/markets/", include("markets.urls.admin")),
-    path("admin-actions/sectors/", include("sectors.urls.admin")),
-    url(
+    re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
-        schema_view.without_ui(cache_timeout=0),
+        schema_view.without_ui(cache_timeout=0),  # type: ignore
         name="schema-json",
     ),
-    url(
-        r"^swagger/$",
-        schema_view.with_ui("swagger", cache_timeout=0),
-        name="schema-swagger-ui",
-    ),
-    url(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
+    re_path(r"^swagger/$", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),  # type: ignore
+    re_path(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),  # type: ignore
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
