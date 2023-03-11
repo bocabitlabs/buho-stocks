@@ -15,6 +15,7 @@ Including another URLconf
 """
 from benchmarks.urls import router as benchmarks_router
 from buho_backend import path_converters
+from currencies.urls import router as currencies_router
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -46,6 +47,7 @@ urlpatterns = [
     path("api/v1/", include(markets_router.urls)),
     path("api/v1/", include("markets.urls")),
     path("api/v1/", include(sectors_router.urls)),
+    path("api/v1/", include(currencies_router.urls)),
     path("api/v1/initialize-data/", include("initialize_data.urls")),
     # path("api/v1/", include("sectors.urls.api")),
     path(
@@ -68,7 +70,6 @@ urlpatterns = [
         include("stock_prices.urls"),
         name="stocks-prices",
     ),
-    path("api/v1/currencies/", include("currencies.urls.api")),
     path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
@@ -83,7 +84,6 @@ urlpatterns = [
     ),
     path("api/v1/settings/", include("settings.urls")),
     path("api/v1/stats/", include("stats.urls")),
-    path("admin-actions/currencies/", include("currencies.urls.admin")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),  # type: ignore

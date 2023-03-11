@@ -13,8 +13,8 @@ class SectorsListTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.sectors_url = reverse("sector-list")
-        cls.super_sectors_url = reverse("super-sector-list")
+        cls.sectors_url = reverse("sectors-list")
+        cls.super_sectors_url = reverse("super_sectors-list")
         cls.faker_obj = Faker()
 
     def test_get_sectors(self):
@@ -42,7 +42,7 @@ class SectorsDetailTestCase(APITestCase):
         cls.instances = instances
 
     def test_get_sector(self):
-        url = reverse("sector-detail", args=[self.instances[0].id])
+        url = reverse("sectors-detail", args=[self.instances[0].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -51,7 +51,7 @@ class SectorsDetailTestCase(APITestCase):
             self.instances[0].name,
         )
         index = len(self.instances) - 1
-        url = reverse("sector-detail", args=[self.instances[index].id])
+        url = reverse("sectors-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             response.data["name"],

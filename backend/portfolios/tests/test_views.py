@@ -1,9 +1,9 @@
 import logging
 
 import factory
-from currencies.views.admin import create_initial_currencies
 from django.urls import reverse
 from faker import Faker
+from initialize_data.initializers.currencies import create_initial_currencies
 from portfolios.models import Portfolio
 from portfolios.tests.factory import PortfolioFactory
 from rest_framework import status

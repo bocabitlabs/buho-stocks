@@ -9,7 +9,7 @@ class MarketsListTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.url = reverse("market-list")
+        cls.url = reverse("markets-list")
         cls.faker_obj = Faker()
 
     def test_get_markets(self):
@@ -38,7 +38,7 @@ class MarketsDetailTestCase(APITestCase):
 
     def test_get_markets(self):
         index = 0
-        url = reverse("market-detail", args=[self.instances[index].id])
+        url = reverse("markets-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -51,7 +51,7 @@ class MarketsDetailTestCase(APITestCase):
             self.instances[index].description,
         )
         index = len(self.instances) - 1
-        url = reverse("market-detail", args=[self.instances[index].id])
+        url = reverse("markets-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             response.data["name"],
