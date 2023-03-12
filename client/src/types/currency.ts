@@ -8,4 +8,5 @@ export interface ICurrencyFormFields {
 export interface ICurrency extends ICurrencyFormFields {
   dateCreated: string;
   lastUpdated: string;
+  id: number;
 }

@@ -13,6 +13,9 @@ import getRoute, { HOME_ROUTE } from "routes";
 const CompanyDetailsPage = React.lazy(
   () => import("pages/companies/CompanyDetailsPage/CompanyDetailsPage"),
 );
+const CurrenciesListPage = React.lazy(
+  () => import("pages/currencies/CurrenciesListPage/CurrenciesListPage"),
+);
 const ImportExportPage = React.lazy(
   () => import("pages/ImportExportPage/ImportExportPage"),
 );
@@ -64,7 +67,6 @@ export default function Main(): ReactElement {
                   path="import/:brokerId"
                   element={<ImportFromBrokerPage />}
                 />
-                <Route path="markets" element={<MarketsListPage />} />
                 <Route
                   path="portfolios/:id"
                   element={<PortfolioDetailsPage />}
@@ -81,8 +83,10 @@ export default function Main(): ReactElement {
                   path="portfolios/:id/companies/:companyId"
                   element={<CompanyDetailsPage />}
                 />
+                <Route path="currencies" element={<CurrenciesListPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="sectors" element={<SectorsListPage />} />
+                <Route path="markets" element={<MarketsListPage />} />
               </Route>
             </Routes>
           </BrowserRouter>

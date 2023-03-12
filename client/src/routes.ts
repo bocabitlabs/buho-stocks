@@ -7,6 +7,8 @@ const COMPANIES_ADD_ROUTE = "portfolios/:id/companies/add";
 const COMPANIES_DETAILS_ROUTE = "portfolios/:id/companies/:companyId";
 const COMPANIES_EDIT_ROUTE = "portfolios/:id/companies/:companyId/edit";
 
+const CURRENCIES_ROUTE = "currencies";
+
 const MARKETS_ROUTE = "markets";
 const MARKETS_DETAILS_ROUTE = "markets/:id";
 
@@ -41,6 +43,7 @@ export {
   COMPANIES_ADD_ROUTE,
   COMPANIES_DETAILS_ROUTE,
   COMPANIES_EDIT_ROUTE,
+  CURRENCIES_ROUTE,
   DIVIDENDS_ADD_ROUTE,
   DIVIDENDS_EDIT_ROUTE,
   HOME_ROUTE,
