@@ -10,7 +10,7 @@
     "@types/lodash": "^4.14.181",
     "@typescript-eslint/eslint-plugin": "^5.27.1",
     "@typescript-eslint/parser": "^5.27.1",
-    "antd": "^4.19.5",
+    "antd": "^4.24.8",
     "axios": "^0.27.2",
     "chart.js": "^3.7.0",
     "country-flag-icons": "^1.4.19",
