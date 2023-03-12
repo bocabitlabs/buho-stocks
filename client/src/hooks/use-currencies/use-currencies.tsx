@@ -10,9 +10,9 @@ interface UpdateMutationProps {
   id: number | undefined;
 }
 
-interface DeleteMutationProps {
-  id: number | undefined;
-}
+// interface DeleteMutationProps {
+//   id: number | undefined;
+// }
 
 export const fetchCurrencies = async () => {
   const { data } = await apiClient.get<ICurrency[]>("/currencies/");
@@ -63,19 +63,16 @@ export const useAddCurrency = () => {
 export const useDeleteCurrency = () => {
   const { t } = useTranslation();
 
-  return useMutation(
-    ({ id }: DeleteMutationProps) => apiClient.delete(`/currencies/${id}/`),
-    {
-      onSuccess: () => {
-        toast.success(t("Currency deleted"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
-      onError: () => {
-        toast.error(t("Unable to delete currency"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
+  return useMutation((id: number) => apiClient.delete(`/currencies/${id}/`), {
+    onSuccess: () => {
+      toast.success(t("Currency deleted"));
+      queryClient.invalidateQueries(["currencies"]);
     },
-  );
+    onError: () => {
+      toast.error(t("Unable to delete currency"));
+      queryClient.invalidateQueries(["currencies"]);
+    },
+  });
 };
 
 export const useUpdateCurrency = () => {

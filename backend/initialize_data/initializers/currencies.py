@@ -30,7 +30,7 @@ def create_initial_currencies_from_json(json_path: str) -> list[Currency]:
         data = file.read()
         data = json.loads(data)
         for currency in data:
-            existing = Currency.objects.filter(name=currency["code"]).exists()
+            existing = Currency.objects.filter(code=currency["code"]).exists()
             if existing:
                 logger.debug(f"Currency {currency['code']} already exists")
                 continue
@@ -40,5 +40,5 @@ def create_initial_currencies_from_json(json_path: str) -> list[Currency]:
                 code=currency["code"],
             )
             if result:
-                currencies_list.append(currency["code"])
+                currencies_list.append(currency)
     return currencies_list
