@@ -27,7 +27,7 @@ DATABASE_MYSQL_CONFIG_PATH = "/usr/src/app/config/mysql.conf"
 SECRET_KEY = "REPLACE_SECRET_KEY"  # nosec
 # List of allowed hosts to access the application
 # Default: ['0.0.0.0', 'localhost']
-ALLOWED_HOSTS = ["0.0.0.0", "localhost"]  # nosec
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "127.0.0.1"]  # nosec
 # Path to the media files uploaded by the users
 # Default: "/usr/src/media/"
 MEDIA_ROOT = "/usr/src/media/"

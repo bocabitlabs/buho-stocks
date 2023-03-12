@@ -2,8 +2,10 @@
 import logging
 
 from benchmarks.serializers import BenchmarkSerializer
+from currencies.serializers import CurrencySerializer
 from drf_yasg.utils import swagger_auto_schema
 from initialize_data.initializers.benchmarks import create_initial_benchmarks
+from initialize_data.initializers.currencies import create_initial_currencies
 from initialize_data.initializers.markets import create_initial_markets
 from initialize_data.initializers.sectors import initialize_all_sectors
 from markets.serializers import MarketSerializer
@@ -55,6 +57,21 @@ class InitializeSectorsView(APIView):
         """
         Initialize all the sectors
         """
-        markets_list = initialize_all_sectors()
-        serializer = SectorSerializer(markets_list, many=True)
+        sectors_list = initialize_all_sectors()
+        serializer = SectorSerializer(sectors_list, many=True)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+class InitializeCurrenciesView(APIView):
+    """
+    A viewset for viewing and editing market instances.
+    """
+
+    @swagger_auto_schema(tags=["initializers"], responses={201: CurrencySerializer(many=True)})
+    def post(self, request, format=None):
+        """
+        Initialize all the sectors
+        """
+        currencies_list = create_initial_currencies()
+        serializer = CurrencySerializer(currencies_list, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
