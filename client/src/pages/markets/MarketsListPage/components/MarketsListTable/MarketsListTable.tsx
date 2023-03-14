@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Table } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Alert, Button, Popconfirm, Space, Table } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import momentTz from "moment-timezone";
+import MarketAddEditForm from "../MarketAddEditForm/MarketAddEditForm";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import { useMarkets } from "hooks/use-markets/use-markets";
+import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { IMarket } from "types/market";
 
@@ -13,6 +15,31 @@ export default function MarketsListTable() {
   const { t } = useTranslation();
   const { data: markets, error, isFetching } = useMarkets();
   const { data: settings } = useSettings();
+
+  const { mutate: deleteCurrency } = useDeleteMarket();
+  const [selectedMarketId, setSelectedMarketId] = useState<number | undefined>(
+    undefined,
+  );
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (recordId: number) => {
+    setSelectedMarketId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const confirmDelete = async (recordId: number) => {
+    deleteCurrency(recordId);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setSelectedMarketId(undefined);
+  };
 
   const columns: any = [
     {
@@ -77,6 +104,32 @@ export default function MarketsListTable() {
         );
       },
     },
+    {
+      title: t("Action"),
+      key: "action",
+      render: (text: string, record: any) => (
+        <Space size="middle">
+          <Button
+            data-testid="editButton"
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
+          <Popconfirm
+            key={`currency-delete-${record.key}`}
+            title={`${t("Delete market")} ${record.name}?`}
+            onConfirm={() => confirmDelete(record.id)}
+            okText={t("Yes")}
+            cancelText={t("No")}
+          >
+            <Button
+              data-testid="deleteButton"
+              danger
+              icon={<DeleteOutlined />}
+            />
+          </Popconfirm>
+        </Space>
+      ),
+    },
   ];
 
   const getData = () => {
@@ -116,6 +169,15 @@ export default function MarketsListTable() {
         columns={columns}
         dataSource={getData()}
         loading={isFetching}
+      />
+      <div>{selectedMarketId ? selectedMarketId.toString() : ""}</div>
+      <MarketAddEditForm
+        title={t("Update market")}
+        okText={t("Update")}
+        id={selectedMarketId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={handleCancel}
       />
     </div>
   );
