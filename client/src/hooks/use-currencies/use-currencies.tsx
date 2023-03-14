@@ -10,10 +10,6 @@ interface UpdateMutationProps {
   id: number | undefined;
 }
 
-// interface DeleteMutationProps {
-//   id: number | undefined;
-// }
-
 export const fetchCurrencies = async () => {
   const { data } = await apiClient.get<ICurrency[]>("/currencies/");
   return data;

@@ -182,7 +182,7 @@ export default function SharesTransactionAddEditForm({
 
   return (
     <Modal
-      visible={isModalVisible}
+      open={isModalVisible}
       title={title}
       okText={okText}
       cancelText={t("Cancel")}
