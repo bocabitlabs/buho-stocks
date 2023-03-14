@@ -35,6 +35,7 @@ export default function CurrenciesListTable() {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+    setSelectedCurrencyId(undefined);
   };
 
   const columns: any = [
@@ -124,7 +125,7 @@ export default function CurrenciesListTable() {
         loading={isFetching}
       />
       <CurrencyAddEditForm
-        title={t("Update market")}
+        title={t("Update currency")}
         okText={t("Update")}
         id={selectedCurrencyId}
         isModalVisible={isModalVisible}

@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   BankOutlined,
+  BarChartOutlined,
   ClusterOutlined,
   DollarCircleOutlined,
   HomeOutlined,
@@ -56,8 +57,9 @@ function RoutesMenu({
     getItem(t("Markets"), "1", "/markets/", <BankOutlined />),
     getItem(t("Sectors"), "2", "/sectors/", <ClusterOutlined />),
     getItem(t("Currencies"), "3", "/currencies/", <DollarCircleOutlined />),
-    getItem(t("Import & Export"), "4", "/import-export/", <SyncOutlined />),
-    getItem(t("Settings"), "45", "/settings/", <SettingOutlined />),
+    getItem(t("Benchmarks"), "4", "/benchmarks/", <BarChartOutlined />),
+    getItem(t("Import & Export"), "5", "/import-export/", <SyncOutlined />),
+    getItem(t("Settings"), "6", "/settings/", <SettingOutlined />),
   ];
 
   const menuClickAction = useCallback(
