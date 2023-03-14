@@ -1,7 +1,7 @@
 import logging
 
 from benchmarks.models import Benchmark, BenchmarkYear
-from benchmarks.serializers import BenchmarkSerializer, BenchmarkYearSerializer
+from benchmarks.serializers import BenchmarkSerializer, BenchmarkSerializerDetails, BenchmarkYearSerializer
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, viewsets
@@ -65,6 +65,11 @@ class BenchmarkViewSet(viewsets.ModelViewSet):
 
     serializer_class = BenchmarkSerializer
     queryset = Benchmark.objects.all()
+
+    def get_serializer_class(self):
+        if self.action == "retrieve":
+            return BenchmarkSerializerDetails
+        return super().get_serializer_class()
 
     @method_decorator(
         name="action",

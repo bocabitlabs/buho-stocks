@@ -3,6 +3,8 @@ const APP_BASE_ROUTE = "/";
 const HOME_ROUTE = "home";
 const SETTINGS_ROUTE = "settings";
 
+const BENCHMARKS_ROUTE = "benchmarks";
+
 const COMPANIES_ADD_ROUTE = "portfolios/:id/companies/add";
 const COMPANIES_DETAILS_ROUTE = "portfolios/:id/companies/:companyId";
 const COMPANIES_EDIT_ROUTE = "portfolios/:id/companies/:companyId/edit";
@@ -40,6 +42,7 @@ export default getRoute;
 
 export {
   APP_BASE_ROUTE,
+  BENCHMARKS_ROUTE,
   COMPANIES_ADD_ROUTE,
   COMPANIES_DETAILS_ROUTE,
   COMPANIES_EDIT_ROUTE,

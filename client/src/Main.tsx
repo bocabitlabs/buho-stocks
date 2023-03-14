@@ -10,6 +10,10 @@ import ScrollToTop from "components/ScrollToTop/ScrollToTop";
 import SetupAxios from "components/SetupAxios/SetupAxios";
 import getRoute, { HOME_ROUTE } from "routes";
 
+const BenchmarksListPage = React.lazy(
+  () => import("pages/benchmarks/BenchmarksListPage/BenchmarksListPage"),
+);
+
 const CompanyDetailsPage = React.lazy(
   () => import("pages/companies/CompanyDetailsPage/CompanyDetailsPage"),
 );
@@ -62,6 +66,7 @@ export default function Main(): ReactElement {
                   element={<Navigate to={getRoute(HOME_ROUTE)} />}
                 />
                 <Route path="home" element={<PortfoliosListPage />} />
+                <Route path="benchmarks" element={<BenchmarksListPage />} />
                 <Route path="import-export" element={<ImportExportPage />} />
                 <Route
                   path="import/:brokerId"

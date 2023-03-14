@@ -1,6 +1,7 @@
 import React from "react";
 import {
   BankOutlined,
+  BarChartOutlined,
   ClusterOutlined,
   DollarCircleOutlined,
   HomeOutlined,
@@ -32,12 +33,18 @@ export const navLinks: RoutePathProps[] = [
   },
   {
     key: "4",
+    path: "/benchmarks",
+    text: "Benchmarks",
+    icon: <BarChartOutlined />,
+  },
+  {
+    key: "5",
     path: "/import-export",
     text: "Import & Export",
     icon: <SyncOutlined />,
   },
   {
-    key: "5",
+    key: "6",
     path: "/settings",
     text: "Settings",
     icon: <SettingOutlined />,

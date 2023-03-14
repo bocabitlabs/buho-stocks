@@ -4,7 +4,7 @@ import logging
 from benchmarks.serializers import BenchmarkSerializer
 from currencies.serializers import CurrencySerializer
 from drf_yasg.utils import swagger_auto_schema
-from initialize_data.initializers.benchmarks import create_initial_benchmarks
+from initialize_data.initializers.benchmarks import create_initial_benchmark_years, create_initial_benchmarks
 from initialize_data.initializers.currencies import create_initial_currencies
 from initialize_data.initializers.markets import create_initial_markets
 from initialize_data.initializers.sectors import initialize_all_sectors
@@ -42,8 +42,9 @@ class InitializeBenchmarksView(APIView):
         """
         Initialize all the benchmarks
         """
-        markets_list = create_initial_benchmarks()
-        serializer = BenchmarkSerializer(markets_list, many=True)
+        benchmarks_list = create_initial_benchmarks()
+        create_initial_benchmark_years()
+        serializer = BenchmarkSerializer(benchmarks_list, many=True)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 

@@ -10,6 +10,10 @@ class Benchmark(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        verbose_name = "Benchmark"
+        verbose_name_plural = "Benchmarks"
+
     def __str__(self):
         return self.name
 
@@ -27,8 +31,10 @@ class BenchmarkYear(models.Model):
 
     benchmark = models.ForeignKey(Benchmark, on_delete=models.CASCADE, related_name="years")
 
+    class Meta:
+        verbose_name = "Benchmark Year"
+        verbose_name_plural = "Benchmark Years"
+        unique_together = ("benchmark", "year")
+
     def __str__(self):
         return f"{self.benchmark} {self.year} ({self.value})"
-
-    class Meta:
-        unique_together = ("benchmark", "year")
