@@ -11,6 +11,8 @@ const COMPANIES_EDIT_ROUTE = "portfolios/:id/companies/:companyId/edit";
 
 const CURRENCIES_ROUTE = "currencies";
 
+const EXCHANGE_RATES = "exchange-rates";
+
 const MARKETS_ROUTE = "markets";
 const MARKETS_DETAILS_ROUTE = "markets/:id";
 
@@ -49,6 +51,7 @@ export {
   CURRENCIES_ROUTE,
   DIVIDENDS_ADD_ROUTE,
   DIVIDENDS_EDIT_ROUTE,
+  EXCHANGE_RATES,
   HOME_ROUTE,
   SETTINGS_ROUTE,
   MARKETS_ROUTE,
