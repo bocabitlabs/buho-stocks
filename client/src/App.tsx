@@ -23,7 +23,7 @@ function App() {
 
   const { data, error: errorSettings } = useSettings({
     onError: () => {
-      toast.error(t("Unable to load settings"));
+      toast.error<string>(t("Unable to load settings"));
     },
   });
 

@@ -9,6 +9,7 @@ import {
   HomeOutlined,
   SettingOutlined,
   SyncOutlined,
+  CodeTwoTone,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import type { MenuProps } from "antd";
@@ -58,8 +59,9 @@ function RoutesMenu({
     getItem(t("Sectors"), "2", "/sectors/", <ClusterOutlined />),
     getItem(t("Currencies"), "3", "/currencies/", <DollarCircleOutlined />),
     getItem(t("Benchmarks"), "4", "/benchmarks/", <BarChartOutlined />),
-    getItem(t("Import & Export"), "5", "/import-export/", <SyncOutlined />),
-    getItem(t("Settings"), "6", "/settings/", <SettingOutlined />),
+    getItem(t("Exchange Rates"), "5", "/exchange-rates/", <CodeTwoTone />),
+    getItem(t("Import & Export"), "6", "/import-export/", <SyncOutlined />),
+    getItem(t("Settings"), "7", "/settings/", <SettingOutlined />),
   ];
 
   const menuClickAction = useCallback(

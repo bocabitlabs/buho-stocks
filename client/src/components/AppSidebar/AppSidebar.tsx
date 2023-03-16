@@ -3,6 +3,7 @@ import {
   BankOutlined,
   BarChartOutlined,
   ClusterOutlined,
+  CodeOutlined,
   DollarCircleOutlined,
   HomeOutlined,
   SettingOutlined,
@@ -39,12 +40,18 @@ export const navLinks: RoutePathProps[] = [
   },
   {
     key: "5",
+    path: "/exchange-rates",
+    text: "Exchange Rates",
+    icon: <CodeOutlined />,
+  },
+  {
+    key: "6",
     path: "/import-export",
     text: "Import & Export",
     icon: <SyncOutlined />,
   },
   {
-    key: "6",
+    key: "7",
     path: "/settings",
     text: "Settings",
     icon: <SettingOutlined />,

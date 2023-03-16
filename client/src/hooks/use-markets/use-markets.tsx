@@ -45,11 +45,11 @@ export const useAddMarket = () => {
     (newMarket: IMarketFormFields) => apiClient.post(`/markets/`, newMarket),
     {
       onSuccess: () => {
-        toast.success(t("Market created"));
+        toast.success<string>(t("Market created"));
         queryClient.invalidateQueries(["markets"]);
       },
       onError: () => {
-        toast.error(t("Unable to create market"));
+        toast.error<string>(t("Unable to create market"));
         queryClient.invalidateQueries(["markets"]);
       },
     },
@@ -61,11 +61,11 @@ export const useDeleteMarket = () => {
 
   return useMutation((id: number) => apiClient.delete(`/markets/${id}/`), {
     onSuccess: () => {
-      toast.success(t("Market deleted"));
+      toast.success<string>(t("Market deleted"));
       queryClient.invalidateQueries(["markets"]);
     },
     onError: () => {
-      toast.error(t("Unable to delete market"));
+      toast.error<string>(t("Unable to delete market"));
       queryClient.invalidateQueries(["markets"]);
     },
   });
@@ -79,11 +79,11 @@ export const useUpdateMarket = () => {
       apiClient.put(`/markets/${id}/`, newMarket),
     {
       onSuccess: () => {
-        toast.success(t("Market has been updated"));
+        toast.success<string>(t("Market has been updated"));
         queryClient.invalidateQueries(["markets"]);
       },
       onError: () => {
-        toast.error(t("Unable to update market"));
+        toast.error<string>(t("Unable to update market"));
         queryClient.invalidateQueries(["markets"]);
       },
     },
@@ -97,11 +97,11 @@ export const useInitializeMarkets = () => {
     () => apiClient.post<IMarket[]>(`/initialize-data/markets/`),
     {
       onSuccess: () => {
-        toast.success(t("Markets created"));
+        toast.success<string>(t("Markets created"));
         queryClient.invalidateQueries(["markets"]);
       },
       onError: () => {
-        toast.error(t("Unable to create markets"));
+        toast.error<string>(t("Unable to create markets"));
         queryClient.invalidateQueries(["markets"]);
       },
     },

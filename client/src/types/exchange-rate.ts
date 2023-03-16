@@ -1,4 +1,5 @@
 export interface IExchangeRate {
+  id: number;
   exchangeDate: string;
   exchangeRate: number;
   exchangeFrom: string;

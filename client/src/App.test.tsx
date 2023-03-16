@@ -1,13 +1,12 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import React from "react";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, render } from "@testing-library/react";
 import App from "./App";
-import { renderWithRouterAndQueryClient } from "utils/test-utils";
+import { wrapper } from "utils/mock-providers";
 
 describe("App tests", () => {
   it("renders expected texts when authenticated", async () => {
     expect(1).toBe(1);
-    renderWithRouterAndQueryClient(<App />);
+    render(<App />, { wrapper });
     await waitFor(() => {
       const elements = screen.getAllByText(/Buho Stocks/i);
       expect(elements).toHaveLength(2);

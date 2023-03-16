@@ -33,3 +33,12 @@ export function useExchangeRate(
     },
   );
 }
+
+export const fetchExchangeRates = async () => {
+  const { data } = await apiClient.get<IExchangeRate[]>("/exchange-rates/");
+  return data;
+};
+
+export function useExchangeRates() {
+  return useQuery<IExchangeRate[], Error>("exchange-rates", fetchExchangeRates);
+}
