@@ -151,22 +151,24 @@ export default function Form(): ReactElement {
               )}
             </CSVReader>
           )}
-          {defaultImport === "shares" && data.length > 0 && selectedPortfolio && (
-            <div>
-              <Typography.Title level={4}>
-                {t("Importing trades from Interactive Brokers")}
-              </Typography.Title>
-              {data.map((element: any) => {
-                return (
-                  <TradesImportForm
-                    key={`${element.data[5]}_${element.data[6]}`}
-                    inputData={element.data}
-                    portfolio={selectedPortfolio}
-                  />
-                );
-              })}
-            </div>
-          )}
+          {defaultImport === "shares" &&
+            data.length > 0 &&
+            selectedPortfolio && (
+              <div>
+                <Typography.Title level={4}>
+                  {t("Importing trades from Interactive Brokers")}
+                </Typography.Title>
+                {data.map((element: any) => {
+                  return (
+                    <TradesImportForm
+                      key={`${element.data[5]}_${element.data[6]}`}
+                      inputData={element.data}
+                      portfolio={selectedPortfolio}
+                    />
+                  );
+                })}
+              </div>
+            )}
           {defaultImport === "dividends" &&
             data.length > 0 &&
             selectedPortfolio && (

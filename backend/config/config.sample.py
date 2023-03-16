@@ -40,3 +40,9 @@ SENTRY_DSN = "REPLACE_SENTRY_DSN"
 # Enable or disable Sentry
 # Default: False
 ENABLE_SENTRY = False
+#
+#
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
