@@ -13,5 +13,5 @@ pandas==1.4.3
 phonenumbers==8.12.54
 Pillow==9.0.1
 requests==2.26.0
-sentry-sdk==1.9.4
+sentry-sdk==1.14.0
 yfinance==0.2.12
