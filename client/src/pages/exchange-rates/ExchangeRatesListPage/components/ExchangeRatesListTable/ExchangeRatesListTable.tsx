@@ -1,31 +1,69 @@
-import React, { useState } from "react";
+import { useReducer, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Alert, Button, Popconfirm, Space, Table } from "antd";
-import CurrencyAddEditForm from "../ExchangeRateAddEditForm/ExchangeRateAddEditForm";
+import type { ColumnsType, TableProps } from "antd/es/table";
+import ExchangeRateAddEditForm from "../ExchangeRateAddEditForm/ExchangeRateAddEditForm";
 import {
-  useCurrencies,
-  useDeleteCurrency,
-} from "hooks/use-currencies/use-currencies";
-import { ICurrency } from "types/currency";
+  useDeleteExchangeRate,
+  useExchangeRates,
+} from "hooks/use-exchange-rates/use-exchange-rates";
+import { IExchangeRate } from "types/exchange-rate";
+
+type Pagination = {
+  page: number;
+  pageSize: number;
+  sortBy: string;
+  order: string;
+};
+
+type Action =
+  | { type: "SET_PAGE"; page: number; pageSize: number }
+  | { type: "SET_SORT_BY"; sortBy: string; order: string };
+
+const paginationReducer = (state: Pagination, action: Action) => {
+  switch (action.type) {
+    case "SET_PAGE":
+      return { ...state, page: action.page, pageSize: action.pageSize };
+    case "SET_SORT_BY":
+      return { ...state, sortBy: action.sortBy, order: action.order };
+    default:
+      return state;
+  }
+};
 
 export default function CurrenciesListTable() {
   const { t } = useTranslation();
-  const { data: currencies, error, isFetching } = useCurrencies();
+  const [pagination, dispatch] = useReducer(paginationReducer, {
+    page: 1,
+    pageSize: 100,
+    sortBy: "exchangeDate",
+    order: "descend",
+  });
+  const {
+    data: exchangeRatesData,
+    error,
+    isFetching,
+  } = useExchangeRates(
+    pagination.page,
+    pagination.pageSize,
+    pagination.sortBy,
+    pagination.order,
+  );
 
-  const { mutate: deleteCurrency } = useDeleteCurrency();
-  const [selectedCurrencyId, setSelectedCurrencyId] = useState<
+  const { mutate: deleteExchangeRate } = useDeleteExchangeRate();
+  const [selectedExchangeRateId, setSelectedExchangeRateId] = useState<
     number | undefined
   >(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = (recordId: number) => {
-    setSelectedCurrencyId(recordId);
+    setSelectedExchangeRateId(recordId);
     setIsModalVisible(true);
   };
 
   const confirmDelete = async (recordId: number) => {
-    deleteCurrency(recordId);
+    deleteExchangeRate(recordId);
   };
 
   const onCreate = (values: any) => {
@@ -35,32 +73,38 @@ export default function CurrenciesListTable() {
 
   const handleCancel = () => {
     setIsModalVisible(false);
-    setSelectedCurrencyId(undefined);
+    setSelectedExchangeRateId(undefined);
   };
 
-  const columns: any = [
+  const columns: ColumnsType<DataType> = [
     {
       title: "#",
-      dataIndex: "count",
-      key: "count",
+      dataIndex: "id",
+      key: "key",
     },
     {
-      title: t("Name"),
-      dataIndex: "name",
-      key: "name",
-      sorter: (a: ICurrency, b: ICurrency) => a.name.localeCompare(b.name),
+      title: t("From"),
+      dataIndex: "exchangeFrom",
+      key: "exchangeFrom",
+      sorter: (a, b) => a.exchangeFrom.localeCompare(b.exchangeFrom),
     },
     {
-      title: t("Code"),
-      dataIndex: "code",
-      key: "code",
-      sorter: (a: ICurrency, b: ICurrency) => a.code.localeCompare(b.code),
+      title: t("To"),
+      dataIndex: "exchangeTo",
+      key: "exchangeTo",
+      sorter: (a, b) => a.exchangeTo.localeCompare(b.exchangeTo),
     },
     {
-      title: t("Symbol"),
-      dataIndex: "symbol",
-      key: "symbol",
-      sorter: (a: ICurrency, b: ICurrency) => a.symbol.localeCompare(b.symbol),
+      title: t("Rate"),
+      dataIndex: "exchangeRate",
+      key: "exchangeRate",
+      sorter: (a, b) => a.exchangeRate - b.exchangeRate,
+    },
+    {
+      title: t("Date"),
+      dataIndex: "exchangeDate",
+      key: "exchangeDate",
+      sorter: (a, b) => a.exchangeDate.localeCompare(b.exchangeDate),
     },
     {
       title: t("Action"),
@@ -74,7 +118,7 @@ export default function CurrenciesListTable() {
           />
           <Popconfirm
             key={`currency-delete-${record.key}`}
-            title={`${t("Delete currency")} ${record.name}?`}
+            title={`${t("Delete exchange rate")} ${record.name}?`}
             onConfirm={() => confirmDelete(record.id)}
             okText={t("Yes")}
             cancelText={t("No")}
@@ -92,16 +136,42 @@ export default function CurrenciesListTable() {
 
   const getData = () => {
     return (
-      currencies &&
-      currencies.map((currency: ICurrency, index: number) => ({
-        id: currency.id,
-        count: index + 1,
-        key: currency.id,
-        name: currency.name,
-        code: currency.code,
-        symbol: currency.symbol,
-      }))
+      exchangeRatesData &&
+      exchangeRatesData.results.map(
+        (exchange: IExchangeRate, index: number) => ({
+          id: exchange.id,
+          count: index + 1,
+          key: exchange.id,
+          exchangeFrom: exchange.exchangeFrom,
+          exchangeTo: exchange.exchangeTo,
+          exchangeRate: exchange.exchangeRate,
+          exchangeDate: exchange.exchangeDate,
+        }),
+      )
     );
+  };
+
+  interface DataType {
+    key: React.Key;
+    id: number;
+    count: number;
+    exchangeFrom: string;
+    exchangeTo: string;
+    exchangeRate: number;
+    exchangeDate: string;
+  }
+
+  const onChange: TableProps<DataType>["onChange"] = (
+    paginatio,
+    filters,
+    sorter,
+  ) => {
+    dispatch({
+      type: "SET_SORT_BY",
+      sortBy: sorter.field,
+      order: sorter.order,
+    });
+    // setPagination({ ...pagination, sortBy: sorter.field, order: sorter.order });
   };
 
   if (error) {
@@ -123,11 +193,21 @@ export default function CurrenciesListTable() {
         columns={columns}
         dataSource={getData()}
         loading={isFetching}
+        onChange={onChange}
+        pagination={{
+          defaultPageSize: 100,
+          current: pagination.page,
+          total: exchangeRatesData?.count,
+          pageSize: pagination.pageSize,
+          onChange: (page, pageSize) => {
+            dispatch({ type: "SET_PAGE", page, pageSize });
+          },
+        }}
       />
-      <CurrencyAddEditForm
-        title={t("Update currency")}
+      <ExchangeRateAddEditForm
+        title={t("Update exchange rate")}
         okText={t("Update")}
-        id={selectedCurrencyId}
+        id={selectedExchangeRateId}
         isModalVisible={isModalVisible}
         onCreate={onCreate}
         onCancel={handleCancel}
