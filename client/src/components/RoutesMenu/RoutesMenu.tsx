@@ -60,8 +60,9 @@ function RoutesMenu({
     getItem(t("Currencies"), "3", "/currencies/", <DollarCircleOutlined />),
     getItem(t("Benchmarks"), "4", "/benchmarks/", <BarChartOutlined />),
     getItem(t("Exchange Rates"), "5", "/exchange-rates/", <CodeTwoTone />),
-    getItem(t("Import & Export"), "6", "/import-export/", <SyncOutlined />),
-    getItem(t("Settings"), "7", "/settings/", <SettingOutlined />),
+    getItem(t("Stock Prices"), "6", "/stock-prices/", <CodeTwoTone />),
+    getItem(t("Import & Export"), "7", "/import-export/", <SyncOutlined />),
+    getItem(t("Settings"), "8", "/settings/", <SettingOutlined />),
   ];
 
   const menuClickAction = useCallback(

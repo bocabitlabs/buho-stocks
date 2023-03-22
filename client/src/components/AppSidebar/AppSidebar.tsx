@@ -46,12 +46,18 @@ export const navLinks: RoutePathProps[] = [
   },
   {
     key: "6",
+    path: "/stock-prices",
+    text: "Stock Prices",
+    icon: <CodeOutlined />,
+  },
+  {
+    key: "7",
     path: "/import-export",
     text: "Import & Export",
     icon: <SyncOutlined />,
   },
   {
-    key: "7",
+    key: "8",
     path: "/settings",
     text: "Settings",
     icon: <SettingOutlined />,

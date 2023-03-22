@@ -32,6 +32,8 @@ const RIGHTS_ADD_ROUTE = "portfolios/:id/companies/:companyId/rights/add";
 const RIGHTS_EDIT_ROUTE =
   "portfolios/:id/companies/:companyId/rights/:transactionId";
 
+const STOCK_PRICES = "stock-prices";
+
 const DIVIDENDS_ADD_ROUTE = "portfolios/:id/companies/:companyId/dividends/add";
 const DIVIDENDS_EDIT_ROUTE =
   "portfolios/:id/companies/:companyId/dividends/:transactionId";
@@ -66,4 +68,5 @@ export {
   SECTORS_DETAILS_ROUTE,
   SHARES_ADD_ROUTE,
   SHARES_EDIT_ROUTE,
+  STOCK_PRICES,
 };

@@ -55,6 +55,10 @@ const SettingsPage = React.lazy(
   () => import("pages/settings/SettingsPage/SettingsPage"),
 );
 
+const StockPricesListPage = React.lazy(
+  () => import("pages/stock-prices/StockPricesListPage/StockPricesListPage"),
+);
+
 export default function Main(): ReactElement {
   return (
     <>
@@ -100,6 +104,7 @@ export default function Main(): ReactElement {
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="sectors" element={<SectorsListPage />} />
                 <Route path="markets" element={<MarketsListPage />} />
+                <Route path="stock-prices" element={<StockPricesListPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
