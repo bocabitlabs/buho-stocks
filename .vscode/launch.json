@@ -23,7 +23,7 @@
     },
 
     {
-      "name": "Run React: React",
+      "name": "Run Vite: React",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "yarn",
