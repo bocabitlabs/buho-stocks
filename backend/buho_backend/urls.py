@@ -22,9 +22,11 @@ from django.contrib import admin
 from django.urls import include, path, re_path, register_converter
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from exchange_rates.urls import router as exchange_rates_router
 from markets.urls import router as markets_router
 from rest_framework import permissions
 from sectors.urls import router as sectors_router
+from stock_prices.urls import router as stock_prices_router
 
 register_converter(path_converters.DateConverter, "date")
 
@@ -48,6 +50,14 @@ urlpatterns = [
     path("api/v1/", include("markets.urls")),
     path("api/v1/", include(sectors_router.urls)),
     path("api/v1/", include(currencies_router.urls)),
+    path("api/v1/", include(exchange_rates_router.urls)),
+    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
+    path("api/v1/", include(stock_prices_router.urls)),
+    path(
+        "api/v1/companies/<int:company_id>/stock-prices/",
+        include("stock_prices.urls"),
+        name="stocks-prices",
+    ),
     path("api/v1/initialize-data/", include("initialize_data.urls")),
     # path("api/v1/", include("sectors.urls.api")),
     path(
@@ -65,12 +75,6 @@ urlpatterns = [
         include("dividends_transactions.urls"),
         name="dividends-transactions",
     ),
-    path(
-        "api/v1/companies/<int:company_id>/stock-prices/",
-        include("stock_prices.urls"),
-        name="stocks-prices",
-    ),
-    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
         "api/v1/portfolios/<int:portfolio_id>/messages/",
