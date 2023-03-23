@@ -16,7 +16,7 @@ export default function MarketsListTable() {
   const { data: markets, error, isFetching } = useMarkets();
   const { data: settings } = useSettings();
 
-  const { mutate: deleteCurrency } = useDeleteMarket();
+  const { mutate: deleteMarket } = useDeleteMarket();
   const [selectedMarketId, setSelectedMarketId] = useState<number | undefined>(
     undefined,
   );
@@ -28,7 +28,7 @@ export default function MarketsListTable() {
   };
 
   const confirmDelete = async (recordId: number) => {
-    deleteCurrency(recordId);
+    deleteMarket(recordId);
   };
 
   const onCreate = (values: any) => {

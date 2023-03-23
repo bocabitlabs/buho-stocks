@@ -7,6 +7,7 @@ import {
   DollarCircleOutlined,
   HomeOutlined,
   SettingOutlined,
+  StockOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import getRoute, { HOME_ROUTE } from "routes";
@@ -48,7 +49,7 @@ export const navLinks: RoutePathProps[] = [
     key: "6",
     path: "/stock-prices",
     text: "Stock Prices",
-    icon: <CodeOutlined />,
+    icon: <StockOutlined />,
   },
   {
     key: "7",

@@ -45,11 +45,11 @@ export const useAddCurrency = () => {
       apiClient.post(`/currencies/`, newCurrency),
     {
       onSuccess: () => {
-        toast.success(t("Currency created"));
+        toast.success<string>(t("Currency created"));
         queryClient.invalidateQueries(["currencies"]);
       },
       onError: () => {
-        toast.error(t("Unable to create currency"));
+        toast.error<string>(t("Unable to create currency"));
         queryClient.invalidateQueries(["currencies"]);
       },
     },
@@ -61,11 +61,11 @@ export const useDeleteCurrency = () => {
 
   return useMutation((id: number) => apiClient.delete(`/currencies/${id}/`), {
     onSuccess: () => {
-      toast.success(t("Currency deleted"));
+      toast.success<string>(t("Currency deleted"));
       queryClient.invalidateQueries(["currencies"]);
     },
     onError: () => {
-      toast.error(t("Unable to delete currency"));
+      toast.error<string>(t("Unable to delete currency"));
       queryClient.invalidateQueries(["currencies"]);
     },
   });
@@ -79,11 +79,11 @@ export const useUpdateCurrency = () => {
       apiClient.put(`/currencies/${id}/`, newCurrency),
     {
       onSuccess: () => {
-        toast.success(t("Currency has been updated"));
+        toast.success<string>(t("Currency has been updated"));
         queryClient.invalidateQueries(["currencies"]);
       },
       onError: () => {
-        toast.error(t("Unable to update currency"));
+        toast.error<string>(t("Unable to update currency"));
         queryClient.invalidateQueries(["currencies"]);
       },
     },
@@ -97,11 +97,11 @@ export const useInitializeCurrencies = () => {
     () => apiClient.post<ICurrency[]>(`/initialize-data/currencies/`),
     {
       onSuccess: () => {
-        toast.success(t("Currencies created"));
+        toast.success<string>(t("Currencies created"));
         queryClient.invalidateQueries(["currencies"]);
       },
       onError: () => {
-        toast.error(t("Unable to create currencies"));
+        toast.error<string>(t("Unable to create currencies"));
         queryClient.invalidateQueries(["currencies"]);
       },
     },
