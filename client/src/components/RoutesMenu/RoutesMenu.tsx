@@ -67,7 +67,7 @@ function RoutesMenu({
       <EuroCircleOutlined />,
     ),
     getItem(t("Stock Prices"), "6", "/stock-prices/", <StockOutlined />),
-    getItem(t("Import & Export"), "7", "/import-export/", <SyncOutlined />),
+    getItem(t("Import from CSV"), "7", "/import/", <SyncOutlined />),
     getItem(t("Settings"), "8", "/settings/", <SettingOutlined />),
   ];
 

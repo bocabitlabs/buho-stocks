@@ -24,9 +24,6 @@ const ExchangeRatesListPage = React.lazy(
   () =>
     import("pages/exchange-rates/ExchangeRatesListPage/ExchangeRatesListPage"),
 );
-const ImportExportPage = React.lazy(
-  () => import("pages/ImportExportPage/ImportExportPage"),
-);
 const ImportFromBrokerPage = React.lazy(
   () => import("pages/ImportFromBrokerPage/ImportFromBrokerPage"),
 );
@@ -79,7 +76,7 @@ export default function Main(): ReactElement {
                   path="exchange-rates"
                   element={<ExchangeRatesListPage />}
                 />
-                <Route path="import-export" element={<ImportExportPage />} />
+                <Route path="import" element={<ImportFromBrokerPage />} />
                 <Route
                   path="import/:brokerId"
                   element={<ImportFromBrokerPage />}

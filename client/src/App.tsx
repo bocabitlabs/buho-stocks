@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
+import "./index.css";
 import "./App.css";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";

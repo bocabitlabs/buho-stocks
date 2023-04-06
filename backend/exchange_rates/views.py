@@ -42,13 +42,13 @@ class ExchangeRateDetailAPIView(APIView):
     """Operations for a single Exchange rate"""
 
     @swagger_auto_schema(tags=["exchange_rates"])
-    def get(self, request, exchange_from: str, exchange_to: str, exchange_date: datetime.date, *args, **kwargs):
+    def get(self, request, exchange_from: str, exchange_to: str, exchange_date: str, *args, **kwargs):
         """
         Retrieve the market item with given exchange_name
         """
         service = ExchangeRateService()
-        exchange_date_str = exchange_date.strftime("%Y-%m-%d")
-        exchange_rate = service.get_exchange_rate_for_date(exchange_from, exchange_to, exchange_date_str)
+        # exchange_date_str = exchange_date.strftime("%Y-%m-%d")
+        exchange_rate = service.get_exchange_rate_for_date(exchange_from, exchange_to, exchange_date)
         serializer = ExchangeRateSerializer(exchange_rate)
 
         if not serializer:

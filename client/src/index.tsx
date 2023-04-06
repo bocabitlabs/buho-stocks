@@ -4,7 +4,6 @@ import { BrowserTracing } from "@sentry/tracing";
 import { Chart, registerables } from "chart.js";
 import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
-import "./index.css";
 import "./i18n";
 import reportWebVitals from "./reportWebVitals";
 import config from "config";

@@ -39,7 +39,7 @@ code {
   background-color: #fff;
 }
 
-.site-page-header {
+.ant-layout-content .site-page-header {
   padding: 24px;
   background: #fff;
   margin: 24px;

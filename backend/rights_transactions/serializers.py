@@ -24,6 +24,8 @@ class RightsTransactionSerializer(serializers.ModelSerializer):
             "type",
             "gross_price_per_share",
             "gross_price_per_share_currency",
+            "total_amount",
+            "total_amount_currency",
             "total_commission",
             "total_commission_currency",
             "company",

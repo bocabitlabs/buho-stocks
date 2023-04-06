@@ -95,8 +95,31 @@ export default function DividendsListTable({
     },
     {
       title: t("Total"),
-      dataIndex: "transactionTotal",
-      key: "transactionTotal",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
+      render: (text: number, record: any) => (
+        <>
+          {(+text).toFixed(2)} {record.grossPricePerShareCurrency}
+          {record.grossPricePerShareCurrency !== portfolioBaseCurrency && (
+            <>
+              <br />
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: "0.8em" }}
+                title={portfolioBaseCurrency}
+              >
+                {record.transactionTotalPortfolioCurrency}{" "}
+                {portfolioBaseCurrency}
+              </Typography.Text>
+            </>
+          )}
+        </>
+      ),
+    },
+    {
+      title: t("Total Calculated"),
+      dataIndex: "transactionTotalCalculated",
+      key: "transactionTotalCalculated",
       render: (text: number, record: any) => (
         <>
           {(+text).toFixed(2)} {record.grossPricePerShareCurrency}
@@ -151,10 +174,11 @@ export default function DividendsListTable({
         totalCommission: transaction.totalCommission,
         totalCommissionCurrency: transaction.totalCommissionCurrency,
         transactionDate: transaction.transactionDate,
-        transactionTotal:
+        totalAmount: transaction.totalAmount,
+        transactionTotalCalculated:
           +transaction.count * +transaction.grossPricePerShare -
           +transaction.totalCommission,
-        transactionTotalPortfolioCurrency: (
+        transactionTotalCalculatedPortfolioCurrency: (
           +transaction.exchangeRate *
             +transaction.count *
             +transaction.grossPricePerShare -

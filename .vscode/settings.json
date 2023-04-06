@@ -1,6 +1,9 @@
 {
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "eslint.workingDirectories": ["/client"],
+  "prettier.configPath": ".prettierrc.js",
+  "eslint.format.enable": true,
   "python.formatting.provider": "black",
   "python.languageServer": "Default",
   "python.linting.flake8Enabled": true,

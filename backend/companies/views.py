@@ -90,13 +90,12 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         portfolio_id = self.kwargs.get("portfolio_id")
-        serializer.save(user=self.request.user)
+        serializer.save()
 
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
             message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
             portfolio=Portfolio.objects.get(id=portfolio_id),
-            user=self.request.user,
         )
 
     def get_serializer_class(self):

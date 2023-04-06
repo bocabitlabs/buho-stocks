@@ -33,7 +33,7 @@ class SharesTransactionListCreateAPIView(generics.ListCreateAPIView):
         return SharesTransaction.objects.filter(company=company_id)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
         # Log the operation
         company = Company.objects.get(id=serializer.data["company"])
         LogMessage.objects.create(
@@ -44,7 +44,6 @@ class SharesTransactionListCreateAPIView(generics.ListCreateAPIView):
                 f"{serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}"
             ),
             portfolio=company.portfolio,
-            user=self.request.user,
         )
 
 

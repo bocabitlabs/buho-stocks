@@ -26,6 +26,8 @@ class SharesTransactionSerializer(serializers.ModelSerializer):
             "exchange_rate",
             "transaction_date",
             "type",
+            "total_amount",
+            "total_amount_currency",
             "gross_price_per_share",
             "gross_price_per_share_currency",
             "total_commission",

@@ -53,8 +53,8 @@ export const navLinks: RoutePathProps[] = [
   },
   {
     key: "7",
-    path: "/import-export",
-    text: "Import & Export",
+    path: "/import",
+    text: "Import from CSV",
     icon: <SyncOutlined />,
   },
   {

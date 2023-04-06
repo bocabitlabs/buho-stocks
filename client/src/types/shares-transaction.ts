@@ -1,6 +1,17 @@
-import { Transaction, TransactionType } from "types/transaction";
+import { TransactionType } from "types/transaction";
 
-export interface ISharesTransactionFormFields extends Transaction {
+export interface ISharesTransactionFormFields {
+  count: number;
+  totalAmount: number;
+  totalAmountCurrency: string;
+  grossPricePerShare: number;
+  grossPricePerShareCurrency: string;
+  totalCommission: number;
+  totalCommissionCurrency: string;
+  exchangeRate: number;
+  transactionDate: string;
+  company: number;
+  notes: string;
   type: TransactionType;
 }
 
