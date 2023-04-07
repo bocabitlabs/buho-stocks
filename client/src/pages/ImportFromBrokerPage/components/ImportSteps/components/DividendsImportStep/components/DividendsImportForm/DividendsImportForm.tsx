@@ -78,7 +78,7 @@ export default function DividendsImportForm({
       totalAmountCurrency: dividend.currency,
       totalCommission: commissions,
       totalCommissionCurrency: dividend.currency,
-      exchangeRate: +exchangeRate,
+      exchangeRate: exchangeRate ? +exchangeRate : 1,
       transactionDate: date,
       notes: `Imported from IB CSV on ${moment(new Date()).format(
         "YYYY-MM-DD HH:mm:ss.",
