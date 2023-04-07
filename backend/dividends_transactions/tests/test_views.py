@@ -69,12 +69,12 @@ class DividendsTransactionsDetailTestCase(APITestCase):
             self.instances[index].exchange_rate,
         )
         self.assertEqual(
-            Decimal(response.data["gross_price_per_share"]),
-            self.instances[index].gross_price_per_share.amount,
+            Decimal(response.data["total_amount"]),
+            self.instances[index].total_amount.amount,
         )
         self.assertEqual(
-            response.data["gross_price_per_share_currency"],
-            str(self.instances[index].gross_price_per_share.currency),
+            response.data["total_amount_currency"],
+            str(self.instances[index].total_amount.currency),
         )
         index = len(self.instances) - 1
         url = reverse("dividends-transaction-detail", args=[self.company.id, self.instances[index].id])
