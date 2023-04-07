@@ -39,7 +39,7 @@ export default function PortfolioList(): ReactElement {
       }}
       dataSource={portfolios}
       renderItem={(item) => (
-        <Link to={`/app/portfolios/${(item as IPortfolio).id}`}>
+        <Link to={`/portfolios/${(item as IPortfolio).id}`}>
           <List.Item>
             <PortfolioCard portfolio={item as IPortfolio} />
           </List.Item>

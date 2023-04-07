@@ -97,6 +97,7 @@ export default function SharesTransactionAddEditForm({
   const handleSubmit = async (values: any) => {
     const {
       count,
+      totalAmount,
       grossPricePerShare,
       type,
       totalCommission,
@@ -105,6 +106,8 @@ export default function SharesTransactionAddEditForm({
     } = values;
 
     const newTransactionValues: ISharesTransactionFormFields = {
+      totalAmount,
+      totalAmountCurrency: companyBaseCurrency.code,
       count,
       grossPricePerShare,
       grossPricePerShareCurrency: companyBaseCurrency.code,
@@ -115,7 +118,6 @@ export default function SharesTransactionAddEditForm({
       notes,
       exchangeRate: exchangeRateValue ? +exchangeRateValue : 1,
       company: +companyId!,
-      color: "#000",
     };
     if (transactionId) {
       updateTransaction({
@@ -182,7 +184,7 @@ export default function SharesTransactionAddEditForm({
 
   return (
     <Modal
-      visible={isModalVisible}
+      open={isModalVisible}
       title={title}
       okText={okText}
       cancelText={t("Cancel")}
@@ -201,6 +203,21 @@ export default function SharesTransactionAddEditForm({
       )}
       {(isSuccess || !transactionId) && (
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="type"
+            label={t("Operation's type")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the type of transaction"),
+              },
+            ]}
+          >
+            <Select placeholder={t("Select an option")}>
+              <Select.Option value="BUY">{t("Buy")}</Select.Option>
+              <Select.Option value="SELL">{t("Sell")}</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item
             name="count"
             label={t("Number of shares")}
@@ -231,19 +248,21 @@ export default function SharesTransactionAddEditForm({
             />
           </Form.Item>
           <Form.Item
-            name="type"
-            label={t("Operation's type")}
+            name="totalAmount"
+            label={t("Total amount")}
             rules={[
               {
                 required: true,
-                message: t("Please input the type of transaction"),
+                message: t("Please input the total amount"),
               },
             ]}
           >
-            <Select placeholder={t("Select an option")}>
-              <Select.Option value="BUY">{t("Buy")}</Select.Option>
-              <Select.Option value="SELL">{t("Sell")}</Select.Option>
-            </Select>
+            <InputNumber
+              decimalSeparator="."
+              addonAfter={`${companyBaseCurrency.code}`}
+              min={0}
+              step={0.001}
+            />
           </Form.Item>
           <Form.Item
             name="totalCommission"

@@ -30,67 +30,7 @@ use_parentheses = true
 multi_line_output = 3
 line_length = 120
 
-# [mypy-backend.*.migrations.*]
+[tool.pyright]
 
-# # Django migrations should not produce any errors:
-# ignore_errors = true
-
-
-[tool.pylint.main]
-init-hook = 'import sys; sys.path.append("./backend")'
-
-ignore-patterns = '\*/migrations\/*.py'
-
-# List of plugins (as comma separated values of python module names) to load,
-# usually to register additional checkers.
-load-plugins = ["pylint_django"]
-
-[tool.pylint.logging]
-# The type of string formatting that logging methods do. `old` means using %
-# formatting, `new` is for `{}` formatting.
-logging-format-style = "new"
-
-django-settings-module = "buho_backend.settings"
-
-# Logging modules to check that the string format arguments are in logging
-# function parameter format.
-logging-modules = ["logging"]
-
-disable = [
-  "raw-checker-failed",
-  "bad-inline-option",
-  "locally-disabled",
-  "file-ignored",
-  "suppressed-message",
-  "useless-suppression",
-  "deprecated-pragma",
-  "use-symbolic-message-instead",
-  "imported-auth-user",
-  "missing-module-docstring",
-  "missing-class-docstring",
-  "logging-fstring-interpolation",
-  "missing-function-docstring",
-  "too-few-public-methods",
-]
-
-[tool.pylint.method_args]
-# List of qualified names (i.e., library.method) which require a timeout
-# parameter e.g. 'requests.api.get,requests.api.post'
-timeout-methods = [
-  "requests.api.delete",
-  "requests.api.get",
-  "requests.api.head",
-  "requests.api.options",
-  "requests.api.patch",
-  "requests.api.post",
-  "requests.api.put",
-  "requests.api.request",
-]
-
-[tool.pylint.miscellaneous]
-# List of note tags to take in consideration, separated by a comma.
-notes = ["FIXME", "XXX", "TODO"]
-
-[tool.pylint.format]
-
-max-line-length = 120
+include = ["backend"]
+exclude = ["**/migrations", "**/__pycache__"]

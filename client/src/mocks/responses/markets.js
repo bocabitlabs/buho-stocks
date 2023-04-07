@@ -2,7 +2,6 @@ const marketsResponse = [
   {
     name: "AMS",
     description: "Amsterdam stock exchange (AMS)",
-    color: "#607d8b",
     region: "nl",
     openTime: "09:00:00",
     closeTime: "17:30:00",
@@ -14,7 +13,6 @@ const marketsResponse = [
   {
     name: "BME",
     description: "Spain stock exchange (BME)",
-    color: "#f44336",
     region: "es",
     openTime: "09:00:00",
     closeTime: "17:30:00",
@@ -26,7 +24,6 @@ const marketsResponse = [
   {
     name: "LSE",
     description: "London stock exchange",
-    color: "#3f51b5",
     region: "gb",
     openTime: "08:00:00",
     closeTime: "16:30:00",
@@ -38,7 +35,6 @@ const marketsResponse = [
   {
     name: "NASDAQ",
     description: "United States stock exchange (NASDAQ)",
-    color: "#2196f3",
     region: "us",
     openTime: "09:30:00",
     closeTime: "16:00:00",
@@ -50,7 +46,6 @@ const marketsResponse = [
   {
     name: "NYSE",
     description: "New York stock exchange (NYSE)",
-    color: "#2196f3",
     region: "us",
     openTime: "09:30:00",
     closeTime: "16:00:00",
@@ -62,7 +57,6 @@ const marketsResponse = [
   {
     name: "SIX",
     description: "Swiss stock exchange",
-    color: "#f44336",
     region: "ch",
     openTime: "09:00:00",
     closeTime: "17:30:00",
@@ -74,7 +68,6 @@ const marketsResponse = [
   {
     name: "XETRA",
     description: "Frankfurt Stock Exchange",
-    color: "#263238",
     region: "de",
     openTime: "09:00:00",
     closeTime: "17:30:00",

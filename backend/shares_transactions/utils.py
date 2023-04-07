@@ -1,25 +1,27 @@
+import logging
 from datetime import date
 from decimal import Decimal
-import logging
+
 from buho_backend.transaction_types import TransactionType
+from django.db.models.query import QuerySet
 from shares_transactions.models import SharesTransaction
 from shares_transactions.new_utils.transaction_utils import TransactionsUtils
 
-logger = logging.getLogger("buho_backend")
+logger: logging.Logger = logging.getLogger("buho_backend")
 
 
 class SharesTransactionsUtils:
     def __init__(
         self,
-        shares_transactions: list[SharesTransaction],
+        shares_transactions: QuerySet[SharesTransaction],
         use_portfolio_currency: bool = True,
     ):
-        self.shares_transactions = shares_transactions
-        self.use_portfolio_currency = use_portfolio_currency
+        self.shares_transactions: QuerySet[SharesTransaction] = shares_transactions
+        self.use_portfolio_currency: bool = use_portfolio_currency
 
     def _get_transactions_query(
         self, year: int, use_accumulated: bool = False, only_buy: bool = False
-    ):
+    ) -> QuerySet[SharesTransaction]:
         """Get the transactions query for a given year based on the parameters.
 
         Args:
@@ -71,8 +73,8 @@ class SharesTransactionsUtils:
         self,
         year: int,
         use_accumulated: bool = False,
-    ) -> list[SharesTransaction]:
-        query = self.shares_transactions
+    ) -> QuerySet[SharesTransaction]:
+        query: QuerySet[SharesTransaction] = self.shares_transactions
         query = query.filter(type=TransactionType.BUY)
 
         if use_accumulated:
@@ -91,21 +93,17 @@ class SharesTransactionsUtils:
         Returns:
             Decimal: The total invested amount.
         """
-        total = 0
-        query = self._get_buy_transactions_query(year)
-        transaction_utils = TransactionsUtils()
-        total = transaction_utils.get_transactions_amount(
-            query, use_portfolio_currency=self.use_portfolio_currency
-        )
+        total: Decimal = Decimal(0)
+        query: QuerySet[SharesTransaction] = self._get_buy_transactions_query(year)
+        transaction_utils: TransactionsUtils = TransactionsUtils()
+        total = transaction_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         return total
 
     def get_accumulated_investment_until_year(self, year: int) -> Decimal:
-        total = 0
+        total: Decimal = Decimal(0)
         query = self._get_buy_transactions_query(year, use_accumulated=True)
         transaction_utils = TransactionsUtils()
-        total = transaction_utils.get_transactions_amount(
-            query, use_portfolio_currency=self.use_portfolio_currency
-        )
+        total = transaction_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         return total
 
     def get_accumulated_investment_until_current_year(self) -> Decimal:
@@ -159,13 +157,11 @@ class SharesTransactionsUtils:
         return total
 
     def get_accumulated_return_from_sales_until_year(self, year: int) -> Decimal:
-        total = 0
+        total: Decimal = Decimal(0)
         if year == "all":
             year = date.today().year
         query = self._get_sell_transactions_query(year, use_accumulated=True)
         transactions_utils = TransactionsUtils()
-        total = transactions_utils.get_transactions_amount(
-            query, use_portfolio_currency=self.use_portfolio_currency
-        )
+        total = transactions_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         logger.debug(f"Total accumulated return from sales: {total}")
         return total

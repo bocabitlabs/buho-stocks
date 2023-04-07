@@ -1,15 +1,15 @@
 /* eslint-disable react/jsx-no-constructed-context-values */
-import React from "react";
-import { screen } from "@testing-library/react";
+import { screen, render } from "@testing-library/react";
 import MarketsPageHeader from "./MarketsPageHeader";
-import { renderWithRouterAndQueryClient } from "utils/test-utils";
+import { wrapper } from "utils/mock-providers";
 
 describe("CurrenciesPageHeader tests", () => {
   it("renders expected texts", async () => {
-    renderWithRouterAndQueryClient(
+    render(
       <MarketsPageHeader>
         <div>Page content</div>
       </MarketsPageHeader>,
+      { wrapper },
     );
 
     const element = screen.getAllByText(/Markets/i);

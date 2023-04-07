@@ -32,7 +32,7 @@ function PortfolioDetailsPageHeader({
   const { mutate: deletePortfolio } = useDeletePortfolio();
   const routes = [
     {
-      path: `/app/portfolios/${id}`,
+      path: `/portfolios/${id}`,
       breadcrumbName: portfolioName,
     },
   ];

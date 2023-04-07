@@ -33,9 +33,7 @@ class EcbApiClient:
         key = f"D.{from_currency}.{to_currency}.SP00.A"
         return self.endpoint + self.resource + "/" + self.flow_ref + "/" + key
 
-    def get_exchange_rate_for_date(
-        self, from_currency: str, to_currency: str, exchange_date: str
-    ) -> Union[dict, None]:
+    def get_exchange_rate_for_date(self, from_currency: str, to_currency: str, exchange_date: str) -> Union[dict, None]:
         """Get the exchange rate for a given date from the ECB API
 
         Args:
@@ -63,16 +61,12 @@ class EcbApiClient:
             logger.warning(f"No exchange rate found for the date {exchange_date}")
             return None
 
-        logger.debug(
-            f"{from_currency}-{to_currency} ({exchange_date}): Response text: {response.text}"
-        )
+        logger.debug(f"{from_currency}-{to_currency} ({exchange_date}): Response text: {response.text}")
         parsed_response = self.parse_csv_data(response.text)
 
         if parsed_response:
             value = parsed_response["OBS_VALUE"][exchange_date]
-            result = self.exchange_rate_as_dict(
-                from_currency, to_currency, exchange_date, value
-            )
+            result = self.exchange_rate_as_dict(from_currency, to_currency, exchange_date, value)
             return result
         return None
 
@@ -103,6 +97,6 @@ class EcbApiClient:
             "exchange_from": from_currency,
             "exchange_to": to_currency,
             "exchange_date": exchange_date,
-            "exchange_rate": 1/round(exchange_rate_value, 3),
+            "exchange_rate": 1 / round(exchange_rate_value, ndigits=3),
         }
         return data

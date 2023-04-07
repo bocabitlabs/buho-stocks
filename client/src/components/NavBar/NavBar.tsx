@@ -27,7 +27,7 @@ function NavBar({ menu }: { menu: ReactElement }) {
         title="Navigation"
         placement="left"
         onClose={() => setVisible(false)}
-        visible={visible}
+        open={visible}
       >
         {React.cloneElement(menu as React.ReactElement<any>, {
           extraCallback: hideDrawer,

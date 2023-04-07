@@ -1,11 +1,10 @@
 import logging
-from django.db import models
-from django.contrib.auth.models import User
 
+from django.db import models
 from portfolios.models import Portfolio
 
-
 logger = logging.getLogger("buho_backend")
+
 
 class PortfolioStatsForYear(models.Model):
     year = models.IntegerField()
@@ -24,10 +23,12 @@ class PortfolioStatsForYear(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    portfolio = models.ForeignKey(
-        Portfolio, on_delete=models.CASCADE, related_name="stats"
-    )
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name="stats")
 
     class Meta:
-        unique_together = [['year', 'portfolio']]
+        unique_together = [["year", "portfolio"]]
+        verbose_name = "Portfolio Stats"
+        verbose_name_plural = "Portfolios Stats"
+
+    def __str__(self):
+        return f"Portfolio Stats: {self.portfolio.name} ({self.year})"

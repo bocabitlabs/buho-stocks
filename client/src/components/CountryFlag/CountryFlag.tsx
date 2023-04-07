@@ -1,10 +1,16 @@
-import React, { ReactElement } from "react";
-import getUnicodeFlagIcon from "country-flag-icons/unicode";
+import { hasFlag } from "country-flag-icons";
+import Flags from "country-flag-icons/react/3x2";
 
 interface Props {
   code: string;
 }
 
-export default function CountryFlag({ code }: Props): ReactElement | null {
-  return <span style={{ fontSize: 20 }}>{getUnicodeFlagIcon(code)}</span>;
+export default function CountryFlag({ code }: Props) {
+  let countryCode = code;
+  if (code === "EUR") {
+    countryCode = "EU";
+  }
+  if (!countryCode || !hasFlag(countryCode.toUpperCase())) return null;
+  const FlagComponent = Flags[countryCode.toUpperCase() as keyof typeof Flags];
+  return <FlagComponent style={{ maxHeight: 20 }} />;
 }

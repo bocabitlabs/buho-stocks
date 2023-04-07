@@ -1,22 +1,19 @@
-from rest_framework import serializers
-from buho_backend.serializers import UserFilteredPrimaryKeyRelatedField
-from buho_backend.validators import validate_ownership
 from companies.models import Company
-from rights_transactions.models import RightsTransaction
 from djmoney.contrib.django_rest_framework import MoneyField
+from rest_framework import serializers
+from rights_transactions.models import RightsTransaction
 
 
 class RightsTransactionSerializer(serializers.ModelSerializer):
-    company = UserFilteredPrimaryKeyRelatedField(
-        queryset=Company.objects, many=False, read_only=False
-    )
+    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects, many=False, read_only=False)
     gross_price_per_share = MoneyField(max_digits=12, decimal_places=3)
     gross_price_per_share_currency = serializers.CharField(max_length=50)
 
     total_commission = MoneyField(max_digits=12, decimal_places=3)
     total_commission_currency = serializers.CharField(max_length=50)
 
-    notes = serializers.CharField(allow_null = True, required=False)
+    notes = serializers.CharField(allow_null=True, required=False)
+
     class Meta:
         model = RightsTransaction
         fields = [
@@ -27,6 +24,8 @@ class RightsTransactionSerializer(serializers.ModelSerializer):
             "type",
             "gross_price_per_share",
             "gross_price_per_share_currency",
+            "total_amount",
+            "total_amount_currency",
             "total_commission",
             "total_commission_currency",
             "company",
@@ -34,9 +33,3 @@ class RightsTransactionSerializer(serializers.ModelSerializer):
             "date_created",
             "last_updated",
         ]
-
-    def validate(self, attrs):
-        company = attrs["company"]
-
-        validate_ownership(self.context, company, Company)
-        return attrs

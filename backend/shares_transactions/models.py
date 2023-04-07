@@ -1,33 +1,31 @@
 import datetime
 import logging
-from asyncio.log import logger
 
 from buho_backend.transaction_types import TransactionType
 from companies.models import Company
-from django.contrib.auth.models import User
 from django.db import models
 from djmoney.models.fields import MoneyField
+from moneyed import Money
 from rest_framework import serializers
 
 logger = logging.getLogger("buho_backend")
 
 
 class Transaction(models.Model):
-    class Meta:
-        abstract = True
-
-    count = models.IntegerField()
+    id = models.AutoField(primary_key=True)
+    count = models.IntegerField(default=0)
     exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
     transaction_date = models.DateField()
-    gross_price_per_share = MoneyField(max_digits=12, decimal_places=3)
+    gross_price_per_share = MoneyField(max_digits=12, decimal_places=3, default=Money("0", "USD"))  # type: ignore
     total_commission = MoneyField(max_digits=12, decimal_places=3)
     notes = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
+    class Meta:
+        abstract = True
 
-    def __str___(self):
+    def __str__(self):
         return f"{self.count} - {self.gross_price_per_share} - {self.total_commission}"
 
     def clean(self):
@@ -41,7 +39,9 @@ class Transaction(models.Model):
 
 class SharesTransaction(Transaction):
     type = models.CharField(choices=TransactionType.choices, default=TransactionType.BUY, max_length=10)
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="shares_transactions")
+    total_amount = MoneyField(max_digits=12, decimal_places=3, default=0, default_currency="EUR")  # type: ignore
+    company_id: int
+    company = models.ForeignKey["Company"](Company, on_delete=models.CASCADE, related_name="shares_transactions")
 
     def __str___(self):
         return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"

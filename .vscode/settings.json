@@ -1,38 +1,40 @@
 {
-  "python.formatting.provider": "black",
-  "python.autoComplete.extraPaths": ["/backend"],
-  "eslint.workingDirectories": ["/client"],
-  "python.analysis.extraPaths": ["backend"],
-  "python.analysis.autoSearchPaths": true,
-  "python.analysis.typeCheckingMode": "basic",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
-  },
+  "eslint.workingDirectories": ["/client"],
+  "prettier.configPath": ".prettierrc.js",
+  "eslint.format.enable": true,
+  "python.formatting.provider": "black",
+  "python.languageServer": "Default",
+  "python.linting.flake8Enabled": true,
+  "python.linting.flake8Path": "venv/bin/flake8",
+  "python.linting.banditEnabled": true,
+  "python.linting.banditPath": "venv/bin/bandit",
   "python.linting.enabled": true,
   "python.linting.ignorePatterns": [
     "**/site-packages/**/*.py",
     "**/migrations/*.py"
   ],
+  "python.autoComplete.extraPaths": ["venv", "/backend"],
+  "python.analysis.extraPaths": ["backend"],
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.completeFunctionParens": true,
+  "python.analysis.autoImportCompletions": true,
+  "python.analysis.useLibraryCodeForTypes": true,
+  //"python.analysis.inlayHints.variableTypes": true,
+  //"python.analysis.inlayHints.functionReturnTypes": true,
+  //"python.analysis.inlayHints.pytestParameters": true,
   "python.analysis.ignore": ["**/site-packages/**/*.py", "**/migrations/*.py"],
-  "python.linting.pylintEnabled": true,
-  "python.linting.flake8Enabled": true,
-  "python.linting.pylintPath": "venv/bin/pylint",
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": true
+    }
+  },
   "[html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
   "[django-html]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "[handlebars]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "[hbs]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "[mustache]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
   "[jinja]": {
@@ -41,17 +43,5 @@
   "[jinja-html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
-  "[nj]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "[njk]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "[nunjucks]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "[twig]": {
-    "editor.defaultFormatter": "monosans.djlint"
-  },
-  "python.linting.banditEnabled": true
+  "python.pythonPath": "python"
 }

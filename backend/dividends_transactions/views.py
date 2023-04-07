@@ -1,12 +1,11 @@
-from django.utils.decorators import method_decorator
-from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated
-from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from companies.models import Company
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from log_messages.models import LogMessage
+from rest_framework import generics
+
 
 @method_decorator(
     name="get",
@@ -26,24 +25,24 @@ class DividendsTransactionListCreateAPIView(generics.ListCreateAPIView):
     """Get all the dividends transaction from a company"""
 
     serializer_class = DividendsTransactionSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         company_id = self.kwargs.get("company_id")
-        user = self.request.user
-        return DividendsTransaction.objects.filter(company=company_id, user=user.id)
+        return DividendsTransaction.objects.filter(company=company_id)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
         # Log the operation
-        company = Company.objects.get(id=serializer.data['company'])
+        company = Company.objects.get(id=serializer.data["company"])
         LogMessage.objects.create(
-                message_type=LogMessage.MESSAGE_TYPE_ADD_DIVIDEND,
-                message_text=f"Dividend added: {company.name} ({company.ticker}). {serializer.data.get('count')} - {serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}",
-                portfolio=company.portfolio,
-                user=self.request.user,
-            )
+            message_type=LogMessage.MESSAGE_TYPE_ADD_DIVIDEND,
+            message_text=(
+                f"Dividend added: {company.name} ({company.ticker}). {serializer.data.get('count')} - "
+                f"{serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}"
+            ),
+            portfolio=company.portfolio,
+        )
+
 
 @method_decorator(
     name="get",
@@ -74,13 +73,9 @@ class DividendsTransactionListCreateAPIView(generics.ListCreateAPIView):
     ),
 )
 class DividendsDetailsDetailAPIView(generics.RetrieveUpdateDestroyAPIView):
-
     serializer_class = DividendsTransactionSerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "transaction_id"
 
     def get_queryset(self):
         transaction_id = self.kwargs.get("transaction_id")
-        user = self.request.user
-        return DividendsTransaction.objects.filter(id=transaction_id, user=user.id)
+        return DividendsTransaction.objects.filter(id=transaction_id)
