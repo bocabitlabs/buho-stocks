@@ -37,11 +37,11 @@ export const useAddPortfolio = () => {
       apiClient.post(`/portfolios/`, newPortfolio),
     {
       onSuccess: () => {
-        toast.success(t("Portfolio created"));
+        toast.success<string>(t("Portfolio created"));
         queryClient.invalidateQueries(["portfolios"]);
       },
       onError: () => {
-        toast.error(t("Unable to create portfolio"));
+        toast.error<string>(t("Unable to create portfolio"));
         queryClient.invalidateQueries(["portfolios"]);
       },
     },
@@ -56,11 +56,11 @@ export const useDeletePortfolio = () => {
       apiClient.delete(`/portfolios/${portfolioId}/`),
     {
       onSuccess: () => {
-        toast.success(t("Portfolio deleted"));
+        toast.success<string>(t("Portfolio deleted"));
         queryClient.invalidateQueries(["portfolios"]);
       },
       onError: () => {
-        toast.error(t("Unable to delete portfolio"));
+        toast.error<string>(t("Unable to delete portfolio"));
         queryClient.invalidateQueries(["portfolios"]);
       },
     },
@@ -75,11 +75,11 @@ export const useUpdatePortfolio = () => {
       apiClient.put(`/portfolios/${portfolioId}/`, newPortfolio),
     {
       onSuccess: () => {
-        toast.success(t("Portfolio has been updated"));
+        toast.success<string>(t("Portfolio has been updated"));
         queryClient.invalidateQueries(["portfolios"]);
       },
       onError: () => {
-        toast.error(t("Unable to update portfolio"));
+        toast.error<string>(t("Unable to update portfolio"));
         queryClient.invalidateQueries(["portfolios"]);
       },
     },

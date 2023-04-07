@@ -1,14 +1,10 @@
 import logging
-import datetime
-from os import path
-import responses
-from responses import matchers
-from decimal import Decimal
 import pathlib
-from unittest.mock import patch
-from rest_framework.test import APITestCase
-from exchange_rates.services.ecb_api_client import EcbApiClient
+from os import path
 
+import responses
+from exchange_rates.services.ecb_api_client import EcbApiClient
+from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
@@ -50,7 +46,7 @@ class EcbApiTestCase(APITestCase):
         )
         self.assertEqual(
             result["exchange_rate"],
-            1.018,
+            0.9823182711198428,
         )
 
     @responses.activate

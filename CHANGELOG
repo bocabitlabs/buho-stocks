@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.0.74-alpha] - 2023-02-17
+- Removed: Support for ING ES. Since it was impossible to test anymore.
+
+## [0.0.73-alpha] - 2023-02-15
+- Changed: Yfinance lib updated to 0.2.12 to be compatible again with new format.
+
 ## [0.0.72-alpha] - 2022-10-18
 - Fix: Bug where empty alternative tickers where not handled properly during stock price update.
 

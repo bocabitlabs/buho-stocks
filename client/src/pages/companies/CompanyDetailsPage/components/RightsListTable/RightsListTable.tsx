@@ -94,8 +94,8 @@ export default function RightsListTable({
     },
     {
       title: t("Total"),
-      dataIndex: "transactionTotal",
-      key: "transactionTotal",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
       render: (text: number, record: any) =>
         `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
@@ -134,6 +134,8 @@ export default function RightsListTable({
         grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
         totalCommission: transaction.totalCommission,
         totalCommissionCurrency: transaction.totalCommissionCurrency,
+        totalAmount: transaction.totalAmount,
+        totalAmountCurrency: transaction.totalAmountCurrency,
         transactionDate: transaction.transactionDate,
         transactionTotal:
           +transaction.count * +transaction.grossPricePerShare +

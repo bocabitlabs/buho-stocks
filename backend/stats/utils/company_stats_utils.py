@@ -1,36 +1,30 @@
-from decimal import Decimal
 import logging
-from django.contrib.auth.models import User
-from exchange_rates.services.exchange_rate_service import ExchangeRateService
+from decimal import Decimal
+
 from companies.models import Company
 from companies.utils import CompanyUtils
+from exchange_rates.services.exchange_rate_service import ExchangeRateService
 from stats.models.company_stats import CompanyStatsForYear
 from stock_prices.utils import StockPricesUtils
-
 
 logger = logging.getLogger("buho_backend")
 
 
 class CompanyStatsUtils:
-
     year_for_all = 9999
 
     def __init__(
         self,
         company_id: int,
-        user_id: int,
-        year="all",
+        year=year_for_all,
         use_portfolio_currency: bool = True,
         force: bool = False,
     ):
-        self.company = Company.objects.get(id=company_id, user=user_id)
+        self.company = Company.objects.get(id=company_id)
         self.year = year
         self.use_portfolio_currency = use_portfolio_currency
-        self.user_id = user_id
         self.force = force
-        self.company_utils = CompanyUtils(
-            self.company.id, use_portfolio_currency=self.use_portfolio_currency
-        )
+        self.company_utils = CompanyUtils(self.company.id, use_portfolio_currency=self.use_portfolio_currency)
 
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
         self.exchange_rates_utils = ExchangeRateService()
@@ -53,15 +47,11 @@ class CompanyStatsUtils:
     def get_accumulated_shares_count_until_year(self, year):
         return self.company_utils.get_accumulated_shares_count_until_year(year)
 
-    def get_return_with_dividends(
-        self, portfolio_value, accumulated_dividends, total_invested
-    ):
+    def get_return_with_dividends(self, portfolio_value, accumulated_dividends, total_invested):
         total = 0
 
         if self.company.is_closed:
-            total = self.company_utils.get_accumulated_return_from_sales_until_year(
-                self.year
-            )
+            total = self.company_utils.get_accumulated_return_from_sales_until_year(self.year)
             total += accumulated_dividends - total_invested
         else:
             if portfolio_value:
@@ -72,9 +62,7 @@ class CompanyStatsUtils:
     def get_return(self, portfolio_value, total_invested):
         total = 0
         if self.company.is_closed:
-            total = self.company_utils.get_accumulated_return_from_sales_until_year(
-                self.year
-            )
+            total = self.company_utils.get_accumulated_return_from_sales_until_year(self.year)
             total -= total_invested
         else:
             if portfolio_value:
@@ -99,9 +87,7 @@ class CompanyStatsUtils:
     ):
         amount = 0
         if accumulated_investment > 0:
-            amount = (
-                portfolio_value + accumulated_dividends - accumulated_investment
-            ) / accumulated_investment
+            amount = (portfolio_value + accumulated_dividends - accumulated_investment) / accumulated_investment
 
         return amount * 100
 
@@ -113,27 +99,16 @@ class CompanyStatsUtils:
 
     def get_stats_for_year_from_db(self, year: int):
         if CompanyStatsForYear.objects.filter(company=self.company, year=year).exists():
-            company_stats_for_year = CompanyStatsForYear.objects.get(
-                company=self.company, year=year
-            )
+            company_stats_for_year = CompanyStatsForYear.objects.get(company=self.company, year=year)
             return company_stats_for_year
         return None
 
     def calculate_stats_for_year(self, year: int):
-
-        accum_shares_count = self.company_utils.get_accumulated_shares_count_until_year(
-            year
-        )
+        accum_shares_count = self.company_utils.get_accumulated_shares_count_until_year(year)
         total_invested = self.company_utils.get_total_invested_on_year(year)
         dividends = self.company_utils.dividends_utils.get_dividends_of_year(year)
-        accumulated_investment = (
-            self.company_utils.get_accumulated_investment_until_year(year)
-        )
-        accumulated_dividends = (
-            self.company_utils.dividends_utils.get_accumulated_dividends_until_year(
-                year
-            )
-        )
+        accumulated_investment = self.company_utils.get_accumulated_investment_until_year(year)
+        accumulated_dividends = self.company_utils.dividends_utils.get_accumulated_dividends_until_year(year)
         last_stock_price = self.stock_prices_utils.get_year_last_stock_price()
         # Calculated values
         portfolio_value = self.get_portfolio_value(last_stock_price, accum_shares_count)
@@ -142,25 +117,17 @@ class CompanyStatsUtils:
         return_with_dividends = self.get_return_with_dividends(
             portfolio_value, accumulated_dividends, accumulated_investment
         )
-        return_with_dividends_percent = self.get_return_percent(
-            return_with_dividends, accumulated_investment
-        )
+        return_with_dividends_percent = self.get_return_percent(return_with_dividends, accumulated_investment)
         if year == self.year_for_all:
-            dividends_yield = self.get_dividends_yield(
-                accumulated_dividends, portfolio_value
-            )
+            dividends_yield = self.get_dividends_yield(accumulated_dividends, portfolio_value)
         else:
             dividends_yield = self.get_dividends_yield(dividends, portfolio_value)
 
         # Fixes
         last_stock_price_value = last_stock_price["price"] if last_stock_price else 0
-        last_stock_price_currency = (
-            last_stock_price["price_currency"] if last_stock_price else ""
-        )
+        last_stock_price_currency = last_stock_price["price_currency"] if last_stock_price else ""
         last_stock_price_transaction_date = (
-            last_stock_price["transaction_date"]
-            if last_stock_price
-            else f"{year}-01-01"
+            last_stock_price["transaction_date"] if last_stock_price else f"{year}-01-01"
         )
         portfolio_currency = self.company.portfolio.base_currency
         portfolio_is_down = portfolio_value < accumulated_investment
@@ -187,13 +154,10 @@ class CompanyStatsUtils:
 
     def update_or_create_stats_for_year(self, year: int, results: dict):
         if CompanyStatsForYear.objects.filter(company=self.company, year=year).exists():
-            company_stats_for_year = CompanyStatsForYear.objects.get(
-                company=self.company, year=year
-            )
+            company_stats_for_year = CompanyStatsForYear.objects.get(company=self.company, year=year)
             company_stats_for_year.delete()
             # Create a new CompanyStatsForYear
         instance = CompanyStatsForYear.objects.create(
-            user=User.objects.get(id=self.user_id),
             company=self.company,
             year=year,
             **results,
@@ -201,7 +165,6 @@ class CompanyStatsUtils:
         return instance
 
     def get_stats_for_year(self):
-
         temp_year = self.year_for_all if self.year == "all" else self.year
 
         if not self.force:

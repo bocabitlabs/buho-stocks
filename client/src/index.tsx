@@ -4,16 +4,17 @@ import { BrowserTracing } from "@sentry/tracing";
 import { Chart, registerables } from "chart.js";
 import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
-import "./index.css";
 import "./i18n";
 import reportWebVitals from "./reportWebVitals";
-import { sentryDsn } from "config";
+import config from "config";
 import Main from "Main";
 
 Chart.register(...registerables);
 
 Sentry.init({
-  dsn: sentryDsn,
+  dsn: config.SENTRY_DSN,
+  enabled: config.ENABLE_SENTRY,
+  environment: config.SENTRY_ENV,
   integrations: [new BrowserTracing()],
 
   // Set tracesSampleRate to 1.0 to capture 100%

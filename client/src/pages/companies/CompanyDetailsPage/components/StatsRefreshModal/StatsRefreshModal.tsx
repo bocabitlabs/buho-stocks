@@ -117,7 +117,7 @@ export default function StatsRefreshModal({
       />
       <Modal
         title={t("Refresh stats and stock prices")}
-        visible={visible}
+        open={visible}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}

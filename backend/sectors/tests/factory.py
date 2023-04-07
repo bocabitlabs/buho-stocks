@@ -1,5 +1,4 @@
-from factory import django, Faker, SubFactory
-from auth.tests.factory import UserFactory
+from factory import Faker, SubFactory, django
 from sectors.models import Sector, SuperSector
 
 

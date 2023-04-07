@@ -1,18 +1,14 @@
 import datetime
+import logging
 from decimal import Decimal
 from functools import reduce
-from faker import Faker
-from rest_framework.test import APITestCase
-from auth.tests.factory import UserFactory
+
 from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
-import logging
+from faker import Faker
+from rest_framework.test import APITestCase
 from rights_transactions.tests.factory import RightsTransactionFactory
 from rights_transactions.utils import RightsTransactionsUtils
-
-from shares_transactions.tests.factory import SharesTransactionFactory
-from shares_transactions.utils import SharesTransactionsUtils
-
 
 logger = logging.getLogger("buho_backend")
 
@@ -21,11 +17,10 @@ class RightsInvestedTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
         cls.faker_obj = Faker()
         # Create company
         # Add shares
-        cls.company = CompanyFactory.create(user=cls.user_saved)
+        cls.company = CompanyFactory.create()
         cls.shares_count = 0
         cls.total_amount = 0
         cls.total_transactions = 0
@@ -42,11 +37,8 @@ class RightsInvestedTestCase(APITestCase):
             40 * 40 * cls.exchange_rate + cls.exchange_rate * 4,  # 802
         ]
         for index in range(0, len(cls.years)):
-            first_datetime = datetime.datetime.strptime(
-                f"{cls.years[index]}-01-01", "%Y-%m-%d"
-            )
+            first_datetime = datetime.datetime.strptime(f"{cls.years[index]}-01-01", "%Y-%m-%d")
             RightsTransactionFactory.create(
-                user=cls.user_saved,
                 company=cls.company,
                 gross_price_per_share_currency=cls.company.base_currency,
                 total_commission_currency=cls.company.base_currency,
@@ -55,9 +47,7 @@ class RightsInvestedTestCase(APITestCase):
                 gross_price_per_share=cls.prices[index],
                 exchange_rate=cls.exchange_rate,
                 total_commission=cls.commissions[index],
-                transaction_date=datetime.date(
-                    first_datetime.year, first_datetime.month, first_datetime.day
-                ),
+                transaction_date=datetime.date(first_datetime.year, first_datetime.month, first_datetime.day),
             )
             cls.shares_count += cls.counts[index]
             cls.total_transactions += 1
@@ -85,20 +75,6 @@ class RightsInvestedTestCase(APITestCase):
         utils = RightsTransactionsUtils(self.company.rights_transactions)
         self.assertEqual(
             utils.get_accumulated_investment_until_current_year(),
-            reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
-        )
-
-    def test_get_accumulated_investment_on_year(self):
-        index = 3
-        utils = RightsTransactionsUtils(self.company.rights_transactions)
-        self.assertEqual(
-            utils.get_accumulated_investment_until_year(self.years[index]),
-            reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
-        )
-        index = 0
-        utils = RightsTransactionsUtils(self.company.rights_transactions)
-        self.assertEqual(
-            utils.get_accumulated_investment_until_year(self.years[index]),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
 
@@ -130,9 +106,7 @@ class RightsInvestedTestCase(APITestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 0
-        utils = RightsTransactionsUtils(
-            self.company.rights_transactions
-        )
+        utils = RightsTransactionsUtils(self.company.rights_transactions)
         self.assertEqual(
             utils.get_invested_on_year(self.years[index]),
             self.prices_times_counts[index],

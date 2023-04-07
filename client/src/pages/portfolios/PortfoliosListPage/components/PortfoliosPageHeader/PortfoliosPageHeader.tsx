@@ -11,7 +11,7 @@ function PortfoliosPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const routes = [
     {
-      path: "/app/home",
+      path: "/home",
       breadcrumbName: t("Home"),
     },
   ];

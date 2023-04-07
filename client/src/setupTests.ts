@@ -5,10 +5,14 @@
 // learn more: https://github.com/testing-library/jest-dom
 // eslint-disable-next-line import/no-extraneous-dependencies
 import "@testing-library/jest-dom";
-import "canvas";
 import { server } from "./mocks/server";
 // src/setupTests.js
 import "./i18n";
+import matchers from "@testing-library/jest-dom/matchers";
+import { cleanup } from "@testing-library/react";
+import "vitest-canvas-mock";
+// extends Vitest's expect method with methods from react-testing-library
+expect.extend(matchers);
 
 /**
  * Added to avoid matchMedia error
@@ -19,23 +23,29 @@ global.matchMedia =
   function () {
     return {
       matches: false,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
     };
   };
 
 window.ResizeObserver = function () {
   return {
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
   };
 };
-
+const { getComputedStyle } = window;
+window.getComputedStyle = (elt) => getComputedStyle(elt);
 // Establish API mocking before all tests.
 beforeAll(() => server.listen());
-// Reset any request handlers that we may add during the tests,
-// so they don't affect other tests.
-afterEach(() => server.resetHandlers());
+
+afterEach(() => {
+  // runs a cleanup after each test case (e.g. clearing jsdom)
+  cleanup();
+  // Reset any request handlers that we may add during the tests,
+  // so they don't affect other tests.
+  server.resetHandlers();
+});
 // Clean up after the tests are finished.
 afterAll(() => server.close());

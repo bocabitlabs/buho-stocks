@@ -1,47 +1,31 @@
-from rest_framework.response import Response
-from rest_framework.authentication import (
-    TokenAuthentication,
-)
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
 from log_messages.models import LogMessage
 from log_messages.serializers import LogMessageSerializer
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 class LogMessageListAPIView(APIView):
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
     # 1. List all
     @swagger_auto_schema(tags=["messages_log"])
     def get(self, request, portfolio_id, *args, **kwargs):
-        items = LogMessage.objects.filter(
-            user=request.user.id, portfolio=portfolio_id
-        ).order_by("-date_created")
-        serializer = LogMessageSerializer(
-            items, many=True, context={"request": request}
-        )
+        items = LogMessage.objects.filter(portfolio=portfolio_id).order_by("-date_created")
+        serializer = LogMessageSerializer(items, many=True, context={"request": request})
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-class LogMessageDetailAPIView(APIView):
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
-    def get_object(self, portfolio_id, message_id, user_id):
+class LogMessageDetailAPIView(APIView):
+    def get_object(self, portfolio_id, message_id):
         try:
-            return LogMessage.objects.get(
-                id=message_id, portfolio=portfolio_id, user=user_id
-            )
+            return LogMessage.objects.get(id=message_id, portfolio=portfolio_id)
         except LogMessage.DoesNotExist:
             return None
 
     # 5. Delete
     @swagger_auto_schema(tags=["messages_log"])
     def delete(self, request, portfolio_id, message_id, *args, **kwargs):
-        instance = self.get_object(portfolio_id, message_id, request.user.id)
+        instance = self.get_object(portfolio_id, message_id)
         if not instance:
             return Response(
                 {"res": "Message with id does not exists"},

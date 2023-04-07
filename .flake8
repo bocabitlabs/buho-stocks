@@ -1,0 +1,16 @@
+[flake8]
+max-line-length = 120
+
+exclude = migrations
+
+extend-exclude =
+    client
+    docs
+    docs_old
+    media
+    venv
+    env
+
+select = C,E,F,W,DJ,DJ10
+
+extend-ignore = E203
