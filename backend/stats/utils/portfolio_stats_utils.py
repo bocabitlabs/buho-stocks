@@ -366,9 +366,9 @@ class PortfolioStatsUtils:
         result = {}
 
         def get_transaction_value(transaction):
-            current_value = (
-                transaction.count * transaction.exchange_rate * transaction.gross_price_per_share.amount
-            ) - (transaction.total_commission.amount * transaction.exchange_rate)
+            current_value = (transaction.total_amount.amount * transaction.exchange_rate) - (
+                transaction.total_commission.amount * transaction.exchange_rate
+            )
             return current_value
 
         for transaction in transactions:

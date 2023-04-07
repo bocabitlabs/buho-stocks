@@ -17,6 +17,7 @@ class Transaction(models.Model):
     exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
     transaction_date = models.DateField()
     gross_price_per_share = MoneyField(max_digits=12, decimal_places=3, default=Money("0", "USD"))  # type: ignore
+    total_amount = MoneyField(max_digits=12, decimal_places=3)
     total_commission = MoneyField(max_digits=12, decimal_places=3)
     notes = models.TextField()
     date_created = models.DateTimeField(auto_now_add=True)

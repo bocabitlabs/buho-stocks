@@ -28,7 +28,7 @@ class TransactionsUtils:
         if use_portfolio_currency:
             exchange_rate = transaction.exchange_rate
 
-        total = (transaction.gross_price_per_share.amount * transaction.count * exchange_rate) + (
+        total = (transaction.total_amount.amount * exchange_rate) + (
             transaction.total_commission.amount * exchange_rate
         )
         return total
