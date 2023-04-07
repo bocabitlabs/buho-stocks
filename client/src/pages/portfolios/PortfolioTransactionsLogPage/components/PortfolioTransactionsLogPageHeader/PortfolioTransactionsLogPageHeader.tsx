@@ -20,15 +20,15 @@ function PortfolioDetailsPageHeader({
   const { t } = useTranslation();
   const routes = [
     {
-      path: "/app/home",
+      path: "/home",
       breadcrumbName: t("Home"),
     },
     {
-      path: `/app/portfolios/${id}`,
+      path: `/portfolios/${id}`,
       breadcrumbName: portfolioName,
     },
     {
-      path: `/app/portfolios/${id}/log`,
+      path: `/portfolios/${id}/log`,
       breadcrumbName: t("Log"),
     },
   ];

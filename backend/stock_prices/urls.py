@@ -1,9 +1,15 @@
 from django.urls import path
-from stock_prices import views as stock_prices_views
+from rest_framework.routers import DefaultRouter
+from stock_prices import views
+
+router = DefaultRouter()
+
+router.register(r"stock-prices", views.ExchangeRateViewSet, basename="stock-prices")
 
 urlpatterns = [
     path(
         "<int:year>/",
-        stock_prices_views.StockPricesYearAPIView.as_view(), name="stock-prices-year",
+        views.StockPricesYearAPIView.as_view(),  # type: ignore
+        name="stock-prices-year",
     ),
 ]

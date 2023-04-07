@@ -6,24 +6,26 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import queryClient from "api/query-client";
 import App from "App";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import RequireAuth from "components/RequireAuth/RequireAuth";
 import ScrollToTop from "components/ScrollToTop/ScrollToTop";
 import SetupAxios from "components/SetupAxios/SetupAxios";
-import { AuthContext } from "contexts/auth";
-import { useAuthContext } from "hooks/use-auth/use-auth-context";
 import getRoute, { HOME_ROUTE } from "routes";
+
+const BenchmarksListPage = React.lazy(
+  () => import("pages/benchmarks/BenchmarksListPage/BenchmarksListPage"),
+);
 
 const CompanyDetailsPage = React.lazy(
   () => import("pages/companies/CompanyDetailsPage/CompanyDetailsPage"),
 );
-const ImportExportPage = React.lazy(
-  () => import("pages/ImportExportPage/ImportExportPage"),
+const CurrenciesListPage = React.lazy(
+  () => import("pages/currencies/CurrenciesListPage/CurrenciesListPage"),
+);
+const ExchangeRatesListPage = React.lazy(
+  () =>
+    import("pages/exchange-rates/ExchangeRatesListPage/ExchangeRatesListPage"),
 );
 const ImportFromBrokerPage = React.lazy(
   () => import("pages/ImportFromBrokerPage/ImportFromBrokerPage"),
-);
-const LoginPage = React.lazy(
-  () => import("pages/authentication/LoginPage/LoginPage"),
 );
 const MarketsListPage = React.lazy(
   () => import("pages/markets/MarketsListPage/MarketsListPage"),
@@ -43,9 +45,6 @@ const PortfolioTransactionsLogPage = React.lazy(
       "pages/portfolios/PortfolioTransactionsLogPage/PortfolioTransactionsLogPage"
     ),
 );
-const RegisterPage = React.lazy(
-  () => import("pages/authentication/RegisterPage/RegisterPage"),
-);
 const SectorsListPage = React.lazy(
   () => import("pages/sectors/SectorsListPage/SectorsListPage"),
 );
@@ -53,42 +52,35 @@ const SettingsPage = React.lazy(
   () => import("pages/settings/SettingsPage/SettingsPage"),
 );
 
-export default function Main(): ReactElement {
-  const authContext = useAuthContext();
+const StockPricesListPage = React.lazy(
+  () => import("pages/stock-prices/StockPricesListPage/StockPricesListPage"),
+);
 
+export default function Main(): ReactElement {
   return (
-    <AuthContext.Provider value={authContext}>
+    <>
       <QueryClientProvider client={queryClient}>
         <React.Suspense fallback={<LoadingSpin />}>
           <BrowserRouter>
             <SetupAxios />
             <ScrollToTop />
             <Routes>
-              <Route path="app-login" element={<LoginPage />} />
-              <Route path="app-register" element={<RegisterPage />} />
-              <Route
-                path="/"
-                element={<Navigate to={getRoute(HOME_ROUTE)} />}
-              />
-              <Route
-                path="app"
-                element={
-                  <RequireAuth>
-                    <App />
-                  </RequireAuth>
-                }
-              >
+              <Route path="/" element={<App />}>
                 <Route
                   path=""
                   element={<Navigate to={getRoute(HOME_ROUTE)} />}
                 />
                 <Route path="home" element={<PortfoliosListPage />} />
-                <Route path="import-export" element={<ImportExportPage />} />
+                <Route path="benchmarks" element={<BenchmarksListPage />} />
+                <Route
+                  path="exchange-rates"
+                  element={<ExchangeRatesListPage />}
+                />
+                <Route path="import" element={<ImportFromBrokerPage />} />
                 <Route
                   path="import/:brokerId"
                   element={<ImportFromBrokerPage />}
                 />
-                <Route path="markets" element={<MarketsListPage />} />
                 <Route
                   path="portfolios/:id"
                   element={<PortfolioDetailsPage />}
@@ -105,8 +97,11 @@ export default function Main(): ReactElement {
                   path="portfolios/:id/companies/:companyId"
                   element={<CompanyDetailsPage />}
                 />
+                <Route path="currencies" element={<CurrenciesListPage />} />
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="sectors" element={<SectorsListPage />} />
+                <Route path="markets" element={<MarketsListPage />} />
+                <Route path="stock-prices" element={<StockPricesListPage />} />
               </Route>
             </Routes>
           </BrowserRouter>
@@ -114,6 +109,6 @@ export default function Main(): ReactElement {
         </React.Suspense>
       </QueryClientProvider>
       <ToastContainer position="top-center" theme="colored" newestOnTop />
-    </AuthContext.Provider>
+    </>
   );
 }

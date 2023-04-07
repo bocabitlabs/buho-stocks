@@ -1,6 +1,5 @@
 export interface ISectorBase {
   name: string;
-  color: string;
   isSuperSector?: boolean;
 }
 

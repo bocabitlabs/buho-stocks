@@ -11,7 +11,7 @@ function SectorsPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const routes = [
     {
-      path: `/app/sectors`,
+      path: `/sectors`,
       breadcrumbName: t("Sectors"),
     },
   ];

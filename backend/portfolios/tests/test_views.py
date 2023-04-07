@@ -1,15 +1,13 @@
+import logging
+
+import factory
 from django.urls import reverse
 from faker import Faker
-from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-from rest_framework.authtoken.models import Token
-import factory
-from auth.tests.factory import UserFactory
-import logging
-from currencies.views.admin import create_initial_currencies
+from initialize_data.initializers.currencies import create_initial_currencies
 from portfolios.models import Portfolio
-
 from portfolios.tests.factory import PortfolioFactory
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
@@ -19,13 +17,8 @@ class PortfoliosListTestCase(APITestCase):
     def setUpClass(cls) -> None:
         super().setUpClass()
         create_initial_currencies()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         cls.url = reverse("portfolio-list")
         cls.faker_obj = Faker()
-
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_portfolios(self):
         response = self.client.get(self.url)
@@ -34,7 +27,7 @@ class PortfoliosListTestCase(APITestCase):
         self.assertEqual(len(response.data), 0)
 
         for _ in range(0, 4):
-            PortfolioFactory.create(user=self.user_saved)
+            PortfolioFactory.create()
 
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -56,8 +49,7 @@ class PortfoliosListTestCase(APITestCase):
             response.data["base_currency"],
             temp_data["base_currency"],
         )
-        created_instance = Portfolio.objects.get(id=response.data["id"])
-        self.assertEqual(created_instance.user, self.user_saved)
+        # created_instance = Portfolio.objects.get(id=response.data["id"])
         self.assertEqual(len(response.data["companies"]), 0)
 
 
@@ -66,16 +58,11 @@ class PortfoliosDetailTestCase(APITestCase):
     def setUpClass(cls) -> None:
         super().setUpClass()
         create_initial_currencies()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         instances = []
         for _ in range(0, 4):
-            instance = PortfolioFactory.create(user=cls.user_saved)
+            instance = PortfolioFactory.create()
             instances.append(instance)
         cls.instances = instances
-
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_portfolio(self):
         url = reverse("portfolio-detail", args=[self.instances[0].id])

@@ -22,11 +22,11 @@ function PortfolioChartsPageHeader({
   const { id } = useParams();
   const routes = [
     {
-      path: `/app/portfolios/${id}`,
+      path: `/portfolios/${id}`,
       breadcrumbName: portfolioName,
     },
     {
-      path: `/app/portfolios/${id}/charts`,
+      path: `/portfolios/${id}/charts`,
       breadcrumbName: `${t("Charts")}`,
     },
   ];

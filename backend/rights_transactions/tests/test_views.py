@@ -1,15 +1,13 @@
+import logging
 from decimal import Decimal
+
+import factory
+from companies.tests.factory import CompanyFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-from rest_framework.authtoken.models import Token
-from auth.tests.factory import UserFactory
-from companies.tests.factory import CompanyFactory
-import logging
-import factory
+from rest_framework.test import APITestCase
 from rights_transactions.models import RightsTransaction
-
 from rights_transactions.tests.factory import RightsTransactionFactory
 
 logger = logging.getLogger("buho_backend")
@@ -19,15 +17,10 @@ class RightsTransactionsListTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         cls.faker_obj = Faker()
 
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
-
     def test_get_rights(self):
-        company = CompanyFactory.create(user=self.user_saved)
+        company = CompanyFactory.create()
         url = reverse("rights-transaction-list", args=[company.id])
         response = self.client.get(url)
         # Check status response
@@ -36,7 +29,6 @@ class RightsTransactionsListTestCase(APITestCase):
 
         for _ in range(0, 4):
             RightsTransactionFactory.create(
-                user=self.user_saved,
                 company=company,
                 gross_price_per_share_currency=company.base_currency,
                 total_commission_currency=company.base_currency,
@@ -46,26 +38,21 @@ class RightsTransactionsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 4)
 
+
 class RightsTransactionsDetailTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
-        cls.company = CompanyFactory.create(user=cls.user_saved)
+        cls.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
             instance = RightsTransactionFactory.create(
-                user=cls.user_saved,
                 company=cls.company,
                 gross_price_per_share_currency=cls.company.base_currency,
                 total_commission_currency=cls.company.base_currency,
             )
             instances.append(instance)
         cls.instances = instances
-
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
 
     def test_get_shares(self):
         index = 0

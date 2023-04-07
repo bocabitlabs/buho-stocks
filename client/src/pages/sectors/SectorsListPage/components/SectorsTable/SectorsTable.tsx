@@ -1,14 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Table } from "antd";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { Alert, Button, Popconfirm, Space, Table } from "antd";
+import SectorAddEditForm from "../SectorAddEditForm/SectorAddEditForm";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import { useSectors } from "hooks/use-sectors/use-sectors";
+import { useDeleteSector, useSectors } from "hooks/use-sectors/use-sectors";
 import { ISector } from "types/sector";
 
 export default function SectorsTable() {
   const { t } = useTranslation();
 
   const { data: sectors, error, isFetching } = useSectors();
+  const { mutate: deleteSector } = useDeleteSector();
+  const [selectedSectorId, setSelectedSectorId] = useState<number | undefined>(
+    undefined,
+  );
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = (recordId: number) => {
+    setSelectedSectorId(recordId);
+    setIsModalVisible(true);
+  };
+
+  const confirmDelete = async (recordId: number) => {
+    deleteSector(recordId);
+  };
+
+  const onCreate = (values: any) => {
+    console.log("Received values of form: ", values);
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setSelectedSectorId(undefined);
+  };
 
   const columns: any = [
     {
@@ -29,6 +55,32 @@ export default function SectorsTable() {
       key: "superSector",
       render: (text: string) => t(text),
     },
+    {
+      title: t("Action"),
+      key: "action",
+      render: (text: string, record: any) => (
+        <Space size="middle">
+          <Button
+            data-testid="editButton"
+            icon={<EditOutlined />}
+            onClick={() => showModal(record.id)}
+          />
+          <Popconfirm
+            key={`sector-delete-${record.key}`}
+            title={`${t("Delete sector")} ${record.name}?`}
+            onConfirm={() => confirmDelete(record.id)}
+            okText={t("Yes")}
+            cancelText={t("No")}
+          >
+            <Button
+              data-testid="deleteButton"
+              danger
+              icon={<DeleteOutlined />}
+            />
+          </Popconfirm>
+        </Space>
+      ),
+    },
   ];
 
   const getData = () => {
@@ -39,7 +91,6 @@ export default function SectorsTable() {
         count: index + 1,
         key: element.id,
         name: element.name,
-        color: element.color,
         superSector: element.superSector?.name,
       }))
     );
@@ -67,6 +118,14 @@ export default function SectorsTable() {
         style={{ marginTop: 16 }}
         columns={columns}
         dataSource={getData()}
+      />
+      <SectorAddEditForm
+        title={t("Update sector")}
+        okText={t("Update")}
+        id={selectedSectorId}
+        isModalVisible={isModalVisible}
+        onCreate={onCreate}
+        onCancel={handleCancel}
       />
     </div>
   );

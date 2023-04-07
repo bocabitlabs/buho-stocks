@@ -54,6 +54,7 @@ export const useAddSharesTransaction = () => {
       apiClient.post(`/companies/${companyId}/shares/`, newTransaction),
     {
       onSuccess: (data, variables) => {
+        toast.success("Trades added successfully");
         queryClient.invalidateQueries([
           "sharesTransactions",
           variables.companyId,

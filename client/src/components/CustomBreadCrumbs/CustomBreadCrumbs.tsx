@@ -13,7 +13,7 @@ export default function CustomBreadCrumbs({
   return (
     <div>
       <Breadcrumb.Item key="home">
-        <Link to="/app/home">
+        <Link to="/home">
           <HomeOutlined />
         </Link>
       </Breadcrumb.Item>

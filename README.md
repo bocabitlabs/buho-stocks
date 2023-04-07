@@ -31,7 +31,7 @@ Using a spreadsheet to manage a portfolio can become a complicated and tedious t
 | Unlimited companies per portfolio  | ✅ |
 | Support for stock transactions, dividends and rights | ✅ |
 | Unlimited sectors and subsectors | ✅ |
-| Import CSV files from Interactive Brokers and ING (Spain) | ✅ |
+| Import CSV files from Interactive Brokers | ✅ |
 | Fetch stock prices and exchange rates from a external source in real time. | ✅ |
 | Multiple charts: dividends, returns, sectors, currencies... | ✅ |
 | Support for multiple languages | ✅ |

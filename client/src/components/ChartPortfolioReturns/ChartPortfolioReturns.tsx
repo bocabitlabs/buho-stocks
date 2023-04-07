@@ -22,7 +22,9 @@ export default function ChartPortfolioReturns(): ReactElement | null {
     undefined,
   );
   const { data: indexData, isFetching: indexIsFetching } = useBenchmarkValues(
-    selectedIndex !== undefined ? benchmarks[selectedIndex].id : undefined,
+    selectedIndex !== undefined && benchmarks && benchmarks?.length > 0
+      ? benchmarks[selectedIndex].id
+      : undefined,
   );
 
   const options = {
@@ -111,7 +113,7 @@ export default function ChartPortfolioReturns(): ReactElement | null {
           );
           let indexValue = null;
           if (indexData) {
-            indexValue = indexData.find(
+            indexValue = indexData.years.find(
               (indexItem: any) => indexItem.year === year.year,
             );
             indexPercents.push(
@@ -124,7 +126,12 @@ export default function ChartPortfolioReturns(): ReactElement | null {
       tempChartData.datasets[0].data = returnsPercent;
       tempChartData.datasets[1].data = returnsWithDividendsPercent;
 
-      if (indexData && selectedIndex !== undefined && benchmarks.length > 0) {
+      if (
+        indexData &&
+        selectedIndex !== undefined &&
+        benchmarks &&
+        benchmarks.length > 0
+      ) {
         tempChartData.datasets[2] = {
           label: benchmarks[selectedIndex].name,
           data: [],
@@ -143,7 +150,7 @@ export default function ChartPortfolioReturns(): ReactElement | null {
     return (
       <div>
         {!indexIsFetching && <Line options={options} data={chartData} />}
-        {benchmarks.length > 0 && (
+        {benchmarks && benchmarks.length > 0 && (
           <Select
             showSearch
             placeholder="Select a index"
