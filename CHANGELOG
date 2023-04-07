@@ -10,6 +10,30 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.100.0] - 2023-04-07 - Breaking changes!
+### Added
+- Markets CRUD
+- Initial markets creation
+- Currencies CRUD
+- Initial currencies creation
+- Benchmark CRUD
+- Initial benchmarks creation
+- Sectors CRUD
+- Super sectors CRUD
+- Initial sectors creation
+- Exchange rates CRUD
+- Stock prices CRUD
+- Handle corporate actions
+### Removed
+- Remove 2factor authentication.
+- Remove support for multiple users.
+- Do not use the Django admin to perform some tasks. Move these tasks to the app frontend settings.
+### Improved
+- Fetch exchange rates using Yfinance API (For non EURO base currencies)
+- Improve the IB CSV fetch.
+- Improve the fetch UI
+- Fetch dividends and trades from the same form
+
 ## [0.0.74-alpha] - 2023-02-17
 - Removed: Support for ING ES. Since it was impossible to test anymore.
 
