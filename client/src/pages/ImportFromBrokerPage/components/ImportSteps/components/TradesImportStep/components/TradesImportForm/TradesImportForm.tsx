@@ -86,11 +86,15 @@ export default function TradesImportForm({
       type,
     } = values;
 
+    console.log(values);
+
+    const commissionFixed = commission ? Number((+commission).toFixed(3)) : 0;
+
     const transaction: ISharesTransactionFormFields = {
       count: count < 0 ? -count : +count,
       totalAmount: amount,
       totalAmountCurrency: trade.currency,
-      totalCommission: commission,
+      totalCommission: commissionFixed,
       grossPricePerShare: price,
       grossPricePerShareCurrency: trade.currency,
       totalCommissionCurrency: trade.currency,
@@ -107,7 +111,7 @@ export default function TradesImportForm({
       companyId: selectedCompany.id,
       newTransaction: transaction,
     });
-    setFormSent(false);
+    setFormSent(true);
     onTradeImported();
   };
   const options1 = [
@@ -135,7 +139,7 @@ export default function TradesImportForm({
               date: trade.date,
               amount: trade.total,
               price: trade.price,
-              commission: trade.commission,
+              commission: trade.commission ? trade.commission.toFixed(3) : 0,
               description: trade.description,
               type: trade.count < 0 ? "SELL" : "BUY",
             }}
