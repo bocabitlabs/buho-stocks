@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import {
@@ -44,10 +44,13 @@ export default function TradesImportForm({
   const { mutate: createTradesTransaction, isLoading } =
     useAddSharesTransaction();
 
-  const onCompanyChange = (value: any) => {
-    setSelectedCompany(value);
-    form.setFieldValue("company", value.id);
-  };
+  const onCompanyChange = useCallback(
+    (value: any) => {
+      setSelectedCompany(value);
+      form.setFieldValue("company", value.id);
+    },
+    [form],
+  );
 
   const onExchangeRateChange = (value: any) => {
     form.setFieldsValue({

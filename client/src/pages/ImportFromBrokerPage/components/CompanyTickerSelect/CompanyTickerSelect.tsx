@@ -30,12 +30,7 @@ export default function CompanyTickerSelect({
       const altTickers = element.altTickers
         .split(",")
         .map((string) => string.trim());
-
-      return (
-        element.ticker === ticker ||
-        ticker.includes(element.ticker) ||
-        altTickers.includes(ticker)
-      );
+      return element.ticker === ticker || altTickers.includes(ticker);
     });
     if (company) {
       onSelect(company);
