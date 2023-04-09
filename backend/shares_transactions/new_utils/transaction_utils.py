@@ -1,7 +1,10 @@
+import logging
 from decimal import Decimal
 
 from django.db.models.query import QuerySet
 from shares_transactions.models import Transaction
+
+logger = logging.getLogger("buho_backend")
 
 
 class TransactionsUtils:
@@ -27,7 +30,7 @@ class TransactionsUtils:
         exchange_rate: Decimal = Decimal(1)
         if use_portfolio_currency:
             exchange_rate = transaction.exchange_rate
-
+        logger.debug(f"Exchange rate: {exchange_rate}")
         total = (transaction.total_amount.amount * exchange_rate) + (
             transaction.total_commission.amount * exchange_rate
         )

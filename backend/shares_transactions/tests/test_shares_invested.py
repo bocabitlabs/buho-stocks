@@ -25,16 +25,17 @@ class SharesInvestedTestCase(APITestCase):
         cls.total_amount = 0
         cls.total_transactions = 0
         cls.years = [2018, 2020, 2021, datetime.date.today().year]
-        cls.counts = [10, 20, 30, 40]
-        cls.accumulated_counts = [10, 30, 60, 100]
-        cls.prices = [Decimal(10), Decimal(20), Decimal(30), Decimal(40)]
+        cls.counts = [1, 2, 3, 4]
+        cls.totalAmounts = [1, 2, 3, 4]
+        cls.accumulated_counts = [1, 3, 6, 10]
+        cls.prices = [Decimal(1), Decimal(2), Decimal(3), Decimal(4)]
         cls.exchange_rate = 0.5
         cls.commissions = [Decimal(1), Decimal(2), Decimal(3), Decimal(4)]
         cls.prices_times_counts = [
-            10 * 10 * cls.exchange_rate + cls.exchange_rate * 1,  # 50.5
-            20 * 20 * cls.exchange_rate + cls.exchange_rate * 2,  # 201
-            30 * 30 * cls.exchange_rate + cls.exchange_rate * 3,  # 451.5
-            40 * 40 * cls.exchange_rate + cls.exchange_rate * 4,  # 802
+            1 * cls.exchange_rate,  # 50.5
+            2 * cls.exchange_rate,  # 201
+            3 * cls.exchange_rate,  # 451.5
+            4 * cls.exchange_rate,  # 802
         ]
         for index in range(0, len(cls.years)):
             first_datetime = datetime.datetime.strptime(f"{cls.years[index]}-01-01", "%Y-%m-%d")

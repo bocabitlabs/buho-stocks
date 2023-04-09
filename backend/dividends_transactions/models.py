@@ -15,4 +15,4 @@ class DividendsTransaction(Transaction):
         verbose_name_plural = "Dividends Transactions"
 
     def __str__(self):
-        return f"{self.total_amount} - {self.gross_price_per_share} - {self.total_commission}"
+        return f"Amount: {self.total_amount} - PPS: {self.gross_price_per_share} - Commission: {self.total_commission}"
