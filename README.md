@@ -90,6 +90,3 @@ If you like this project — or just feeling generous, consider buying me a beer
 <p align="center">
 <img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio-list.jpg" alt="Buho Stocks portfolio list screen"/>
 </p>
-<p align="center">
-<img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-login.jpg" alt="Buho Stocks login screen"/>
-</p>
