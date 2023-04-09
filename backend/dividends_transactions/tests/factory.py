@@ -8,7 +8,7 @@ class DividendsTransactionFactory(django.DjangoModelFactory):
         model = DividendsTransaction
 
     count = Faker("pyint")
-    gross_price_per_share = Faker("pydecimal", left_digits=4, right_digits=3, positive=True)
+    total_amount = Faker("pydecimal", left_digits=4, right_digits=3, positive=True)
 
     total_commission = Faker("pydecimal", left_digits=4, right_digits=3, positive=True)
     exchange_rate = Faker("pydecimal", left_digits=1, right_digits=3, positive=True)

@@ -48,6 +48,8 @@ class CompanyStatsAPIView(APIView):
                 forced = True
         else:
             forced = False
+        if year == "all":
+            year = 9999
         instance = self.get_object(company_id, year, force=forced)
 
         if not instance:

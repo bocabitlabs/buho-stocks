@@ -57,4 +57,4 @@ class Company(models.Model):
         verbose_name_plural = "Companies"
 
     def __str__(self) -> str:
-        return f"{self.name}, {self.ticker}"
+        return f"Name: {self.name}, Ticker: {self.ticker}, B.Currency: {self.base_currency} D.Currency: {self.dividends_currency}"
