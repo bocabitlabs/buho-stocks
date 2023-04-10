@@ -20,7 +20,7 @@ export const fetchYearStats = async (
 
 export const fetchAllYearsStats = async (portfolioId: number | undefined) => {
   const { data } = await apiClient.get<IPortfolioYearStats[]>(
-    `/stats/portfolio/${portfolioId}/all-years/`,
+    `/stats/portfolio/${portfolioId}/`,
   );
   return data;
 };
