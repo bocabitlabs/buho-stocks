@@ -12,7 +12,7 @@ export const fetchYearStats = async (
   if (groupBy) {
     grouping = `?groupBy=${groupBy}`;
   }
-  const { data } = await apiClient.get<IPortfolioYearStats[]>(
+  const { data } = await apiClient.get<IPortfolioYearStats>(
     `/stats/portfolio/${portfolioId}/year/${year}/${grouping}`,
   );
   return data;
@@ -25,13 +25,21 @@ export const fetchAllYearsStats = async (portfolioId: number | undefined) => {
   return data;
 };
 
+/**
+ * Get the portfolio stats for a given year
+ * @param portfolioId Portfolio ID
+ * @param year Year of the stats: 2020, 2021, etc. or 'all'
+ * @param groupBy month, company, undefined
+ * @param otherOptions
+ * @returns A IPortfolioYearStats object
+ */
 export function usePortfolioYearStats(
   portfolioId: number | undefined,
   year: string | undefined,
-  groupBy: string | undefined,
+  groupBy?: string | undefined,
   otherOptions?: any,
 ) {
-  return useQuery<IPortfolioYearStats[], Error>(
+  return useQuery<IPortfolioYearStats, Error>(
     ["portfolioYearStats", portfolioId, year, groupBy],
     () => fetchYearStats(portfolioId, year, groupBy),
     {

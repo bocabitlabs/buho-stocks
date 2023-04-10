@@ -7,7 +7,7 @@ import PortfolioAddEditForm from "../PortfolioAddEditForm/PortfolioAddEditForm";
 interface Props {
   children: ReactNode;
 }
-function PortfoliosPageHeader({ children }: Props) {
+function HomePageHeader({ children }: Props) {
   const { t } = useTranslation();
   const routes = [
     {
@@ -57,4 +57,4 @@ function PortfoliosPageHeader({ children }: Props) {
   );
 }
 
-export default PortfoliosPageHeader;
+export default HomePageHeader;
