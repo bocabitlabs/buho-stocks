@@ -22,10 +22,7 @@ import {
   useUpdateSharesTransaction,
 } from "hooks/use-shares-transactions/use-shares-transactions";
 import { ICurrency } from "types/currency";
-import {
-  ISharesTransaction,
-  ISharesTransactionFormFields,
-} from "types/shares-transaction";
+import { ISharesTransactionFormFields } from "types/shares-transaction";
 
 interface IProps {
   transactionId?: number;
@@ -77,19 +74,7 @@ export default function SharesTransactionAddEditForm({
     error: errorFetchingTransaction,
     isFetching,
     isSuccess,
-  } = useSharesTransaction(companyId, transactionId, {
-    onSuccess: (data: ISharesTransaction) => {
-      form.setFieldsValue({
-        count: data.count,
-        grossPricePerShare: data.grossPricePerShare,
-        totalCommission: data.totalCommission,
-        exchangeRate: data.exchangeRate,
-        notes: data.notes,
-        transactionDate: moment(data.transactionDate),
-        type: data.type,
-      });
-    },
-  });
+  } = useSharesTransaction(transactionId);
   const fetchExchangeRate = async () => {
     refetch();
   };
@@ -121,13 +106,11 @@ export default function SharesTransactionAddEditForm({
     };
     if (transactionId) {
       updateTransaction({
-        companyId: newTransactionValues.company,
         transactionId,
         newTransaction: newTransactionValues,
       });
     } else {
       createTransaction({
-        companyId: newTransactionValues.company,
         newTransaction: newTransactionValues,
       });
     }

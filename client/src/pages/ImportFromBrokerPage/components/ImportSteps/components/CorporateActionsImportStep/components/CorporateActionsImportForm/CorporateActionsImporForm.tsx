@@ -104,7 +104,6 @@ export default function CorporateActionsImportForm({
     };
     console.log(transaction);
     createRightsTransaction({
-      companyId: selectedCompany.id,
       newTransaction: transaction,
     });
     setFormSent(false);

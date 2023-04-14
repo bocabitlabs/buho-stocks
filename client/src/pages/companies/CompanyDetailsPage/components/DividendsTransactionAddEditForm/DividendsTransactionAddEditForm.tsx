@@ -68,7 +68,7 @@ export default function DividendsTransactionAddEditForm({
     error: errorFetchingTransaction,
     isFetching,
     isSuccess,
-  } = useDividendsTransaction(companyId, transactionId);
+  } = useDividendsTransaction(transactionId);
 
   const fetchExchangeRate = async () => {
     const { data: exchangeRateResult } = await refetch();
@@ -106,13 +106,11 @@ export default function DividendsTransactionAddEditForm({
     };
     if (transactionId) {
       updateTransaction({
-        companyId: +companyId!,
         transactionId,
         newTransaction: newTransactionValues,
       });
     } else {
       createTransaction({
-        companyId: +companyId!,
         newTransaction: newTransactionValues,
       });
     }

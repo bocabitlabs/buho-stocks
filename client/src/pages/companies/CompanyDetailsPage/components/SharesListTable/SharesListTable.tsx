@@ -50,7 +50,6 @@ export default function SharesListTable({
 
   const confirmDelete = async (recordId: number) => {
     deleteTransaction({
-      companyId: +companyId!,
       transactionId: recordId,
     });
   };

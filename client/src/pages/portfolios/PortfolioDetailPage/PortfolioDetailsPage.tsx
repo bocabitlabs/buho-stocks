@@ -19,7 +19,10 @@ export default function PortfolioDetailsPage() {
     ICompanyListItem[]
   >([]);
   const [showClosed, setShowClosed] = useState<boolean>(false);
-  const { data: companies } = useCompanies(+id!, showClosed);
+  const { data: companies, isFetching: isFetchingCompanies } = useCompanies(
+    +id!,
+    showClosed,
+  );
   useEffect(() => {
     if (companies) {
       const tempCompanies = companies.filter((company) => {
@@ -66,6 +69,7 @@ export default function PortfolioDetailsPage() {
       <CompaniesList
         companies={filteredCompanies}
         portfolioBaseCurrency={portfolio.baseCurrency}
+        isFetching={isFetchingCompanies}
       />
     </PortfolioDetailsPageHeader>
   );

@@ -9,18 +9,15 @@ import {
 
 interface IUpdateSharesMutationProps {
   newTransaction: ISharesTransactionFormFields;
-  companyId: number;
   transactionId: number;
 }
 
 interface IAddSharesMutationProps {
   newTransaction: ISharesTransactionFormFields;
-  companyId: number;
 }
 
 interface DeleteTransactionMutationProps {
   transactionId: number;
-  companyId: number;
 }
 
 export const fetchSharesTransactions = async (
@@ -30,35 +27,31 @@ export const fetchSharesTransactions = async (
     throw new Error("companyId is required");
   }
   const { data } = await apiClient.get<ISharesTransaction[]>(
-    `/companies/${companyId}/shares/`,
+    `/shares/?company=${companyId}`,
   );
   return data;
 };
 
 export const fetchSharesTransaction = async (
-  companyId: number | undefined,
   transactionId: number | undefined,
 ) => {
-  if (!companyId && !transactionId) {
-    throw new Error("companyId and transactionId are required");
+  if (!transactionId) {
+    throw new Error("transactionId is required");
   }
   const { data } = await apiClient.get<ISharesTransaction>(
-    `/companies/${companyId}/shares/${transactionId}/`,
+    `/shares/${transactionId}/`,
   );
   return data;
 };
 
 export const useAddSharesTransaction = () => {
   return useMutation(
-    ({ companyId, newTransaction }: IAddSharesMutationProps) =>
-      apiClient.post(`/companies/${companyId}/shares/`, newTransaction),
+    ({ newTransaction }: IAddSharesMutationProps) =>
+      apiClient.post(`/shares/`, newTransaction),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success("Trades added successfully");
-        queryClient.invalidateQueries([
-          "sharesTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["sharesTransactions"]);
       },
       onError: () => {
         toast.error("Unable to add shares transaction");
@@ -69,8 +62,8 @@ export const useAddSharesTransaction = () => {
 
 export const useDeleteSharesTransaction = () => {
   return useMutation(
-    ({ companyId, transactionId }: DeleteTransactionMutationProps) =>
-      apiClient.delete(`/companies/${companyId}/shares/${transactionId}/`),
+    ({ transactionId }: DeleteTransactionMutationProps) =>
+      apiClient.delete(`/shares/${transactionId}/`),
     {
       onSuccess: () => {
         toast.success("Shares transaction deleted successfully");
@@ -85,22 +78,12 @@ export const useDeleteSharesTransaction = () => {
 
 export const useUpdateSharesTransaction = () => {
   return useMutation(
-    ({
-      companyId,
-      transactionId,
-      newTransaction,
-    }: IUpdateSharesMutationProps) =>
-      apiClient.put(
-        `/companies/${companyId}/shares/${transactionId}/`,
-        newTransaction,
-      ),
+    ({ transactionId, newTransaction }: IUpdateSharesMutationProps) =>
+      apiClient.put(`/shares/${transactionId}/`, newTransaction),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success("Shares transaction updated successfully");
-        queryClient.invalidateQueries([
-          "sharesTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["sharesTransactions"]);
       },
       onError: () => {
         toast.error("Unable to update shares transaction");
@@ -118,15 +101,14 @@ export function useSharesTransactions(companyId: number | undefined) {
 }
 
 export function useSharesTransaction(
-  companyId: number | undefined,
   transactionId: number | undefined,
   options?: any,
 ) {
   return useQuery<ISharesTransaction, Error>(
-    ["sharesTransactions", companyId, transactionId],
-    () => fetchSharesTransaction(companyId, transactionId),
+    ["sharesTransactions", transactionId],
+    () => fetchSharesTransaction(transactionId),
     {
-      enabled: !!companyId && !!transactionId,
+      enabled: !!transactionId,
       ...options,
     },
   );

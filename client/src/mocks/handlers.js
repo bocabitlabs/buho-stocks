@@ -28,7 +28,7 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(allYears));
   }),
   rest.get(
-    "http://127.0.0.1:8001/api/v1/stats/portfolio/1/all-years/",
+    "http://127.0.0.1:8001/api/v1/stats/portfolio/1/",
     (req, res, ctx) => {
       // If authenticated, return a mocked user details
       return res(ctx.status(200), ctx.json(allYears));
