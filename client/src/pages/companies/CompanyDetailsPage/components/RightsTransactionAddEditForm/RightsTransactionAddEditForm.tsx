@@ -70,7 +70,7 @@ export default function RightsTransactionAddEditForm({
     error: errorFetchingTransaction,
     isSuccess,
     isFetching,
-  } = useRightsTransaction(companyId, transactionId);
+  } = useRightsTransaction(transactionId);
 
   const fetchExchangeRate = async () => {
     const { data: exchangeRateResult } = await refetch();
@@ -116,13 +116,11 @@ export default function RightsTransactionAddEditForm({
     };
     if (transactionId) {
       updateTransaction({
-        companyId: newTransactionValues.company,
         transactionId,
         newTransaction: newTransactionValues,
       });
     } else {
       createTransaction({
-        companyId: newTransactionValues.company,
         newTransaction: newTransactionValues,
       });
     }

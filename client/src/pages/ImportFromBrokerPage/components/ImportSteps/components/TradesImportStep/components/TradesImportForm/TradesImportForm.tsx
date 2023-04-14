@@ -108,7 +108,6 @@ export default function TradesImportForm({
     };
     console.log(transaction);
     createTradesTransaction({
-      companyId: selectedCompany.id,
       newTransaction: transaction,
     });
     setFormSent(true);

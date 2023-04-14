@@ -16,6 +16,7 @@ Including another URLconf
 from benchmarks.urls import router as benchmarks_router
 from buho_backend import path_converters
 from currencies.urls import router as currencies_router
+from dividends_transactions.urls import router as dividends_transactions_router
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
@@ -25,7 +26,9 @@ from drf_yasg.views import get_schema_view
 from exchange_rates.urls import router as exchange_rates_router
 from markets.urls import router as markets_router
 from rest_framework import permissions
+from rights_transactions.urls import router as rights_transactions_router
 from sectors.urls import router as sectors_router
+from shares_transactions.urls import router as shares_transactions_router
 from stock_prices.urls import router as stock_prices_router
 
 register_converter(path_converters.DateConverter, "date")
@@ -51,30 +54,17 @@ urlpatterns = [
     path("api/v1/", include(sectors_router.urls)),
     path("api/v1/", include(currencies_router.urls)),
     path("api/v1/", include(exchange_rates_router.urls)),
-    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
+    path("api/v1/", include(dividends_transactions_router.urls)),
+    path("api/v1/", include(rights_transactions_router.urls)),
+    path("api/v1/", include(shares_transactions_router.urls)),
     path("api/v1/", include(stock_prices_router.urls)),
+    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
     path(
         "api/v1/companies/<int:company_id>/stock-prices/",
         include("stock_prices.urls"),
         name="stocks-prices",
     ),
     path("api/v1/initialize-data/", include("initialize_data.urls")),
-    # path("api/v1/", include("sectors.urls.api")),
-    path(
-        "api/v1/companies/<int:company_id>/shares/",
-        include("shares_transactions.urls"),
-        name="shares-transactions",
-    ),
-    path(
-        "api/v1/companies/<int:company_id>/rights/",
-        include("rights_transactions.urls"),
-        name="rights-transactions",
-    ),
-    path(
-        "api/v1/companies/<int:company_id>/dividends/",
-        include("dividends_transactions.urls"),
-        name="dividends-transactions",
-    ),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
         "api/v1/portfolios/<int:portfolio_id>/messages/",

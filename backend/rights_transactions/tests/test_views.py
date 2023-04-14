@@ -21,7 +21,8 @@ class RightsTransactionsListTestCase(APITestCase):
 
     def test_get_rights(self):
         company = CompanyFactory.create()
-        url = reverse("rights-transaction-list", args=[company.id])
+        base_url = reverse("rights-list")
+        url = f"{base_url}?company={company.id}"
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -56,7 +57,7 @@ class RightsTransactionsDetailTestCase(APITestCase):
 
     def test_get_shares(self):
         index = 0
-        url = reverse("rights-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("rights-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -77,7 +78,7 @@ class RightsTransactionsDetailTestCase(APITestCase):
             str(self.instances[index].gross_price_per_share.currency),
         )
         index = len(self.instances) - 1
-        url = reverse("rights-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("rights-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             Decimal(response.data["total_commission"]),
@@ -95,7 +96,7 @@ class RightsTransactionsDetailTestCase(APITestCase):
         temp_data["gross_price_per_share_currency"] = self.company.base_currency
         temp_data["total_commission_currency"] = self.company.base_currency
 
-        url = reverse("rights-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("rights-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -117,7 +118,7 @@ class RightsTransactionsDetailTestCase(APITestCase):
         )
 
     def test_delete_transaction(self):
-        url = reverse("rights-transaction-detail", args=[self.company.id, self.instances[0].id])
+        url = reverse("rights-detail", args=[self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
 

@@ -90,7 +90,6 @@ export default function DividendsImportForm({
     };
     console.log(transaction);
     createDividendsTransaction({
-      companyId: selectedCompany.id,
       newTransaction: transaction,
     });
     setFormSent(true);

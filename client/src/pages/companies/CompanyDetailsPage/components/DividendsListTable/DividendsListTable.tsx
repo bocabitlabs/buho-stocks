@@ -47,7 +47,6 @@ export default function DividendsListTable({
 
   const confirmDelete = async (recordId: number) => {
     deleteTransaction({
-      companyId: +companyId!,
       transactionId: recordId,
     });
   };
