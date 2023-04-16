@@ -34,7 +34,7 @@ module.exports = {
     "prettier",
     "vitest",
   ],
-  ignorePatterns: [".eslintrc.js", "setupProxy.js", "setupTests.ts"],
+  ignorePatterns: [".eslintrc.js", "setupProxy.js", "setupTests.ts", "vite.config.ts"],
   rules: {
     "comma-dangle": "off",
     "import/order": [
