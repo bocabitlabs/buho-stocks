@@ -7,12 +7,7 @@ import svgr from "vite-plugin-svgr";
 import eslint from "vite-plugin-eslint";
 export default ({ command, mode }) => {
   return defineConfig({
-    plugins: [
-      react(),
-      viteTsconfigPaths(),
-      svgr(),
-      eslint(),
-    ],
+    plugins: [react(), viteTsconfigPaths(), svgr(), eslint()],
     test: {
       globals: true,
       environment: "jsdom",
