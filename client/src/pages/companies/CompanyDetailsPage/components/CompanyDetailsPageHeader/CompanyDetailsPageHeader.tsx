@@ -35,11 +35,11 @@ function CompanyDetailsPageHeader({
   const { token } = useToken();
   const routes = [
     {
-      path: `/portfolios/${id}`,
+      href: `/portfolios/${id}`,
       title: portfolioName || t("Loading..."),
     },
     {
-      path: `/portfolios/${id}/companies/${companyId}`,
+      href: `/portfolios/${id}/companies/${companyId}`,
       title: companyName || t("Loading..."),
     },
   ];

@@ -16,7 +16,7 @@ function StockPricesPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/stock-prices`,
+      href: `/stock-prices`,
       title: t("Stock Prices"),
     },
   ];

@@ -14,7 +14,7 @@ function ImportFromBrokerPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/import`,
+      href: `/import`,
       title: t("Import from CSV"),
     },
   ];

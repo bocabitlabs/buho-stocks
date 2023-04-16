@@ -14,7 +14,7 @@ function SectorsPageHeader({ children }: Props) {
   const { token } = useToken();
   const items = [
     {
-      path: `/sectors`,
+      href: `/sectors`,
       title: t("Sectors"),
     },
   ];

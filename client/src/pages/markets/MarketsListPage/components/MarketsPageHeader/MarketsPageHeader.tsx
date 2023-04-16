@@ -18,7 +18,7 @@ function MarketsPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/markets`,
+      href: `/markets`,
       title: t("Markets"),
     },
   ];
