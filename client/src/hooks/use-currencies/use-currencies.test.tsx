@@ -1,28 +1,18 @@
-import React from "react";
-import { QueryClient, QueryClientProvider, setLogger } from "react-query";
+import { setLogger } from "react-query";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useCurrencies } from "./use-currencies";
 import currenciesList from "mocks/responses/currencies";
+import { wrapper } from "utils/mock-providers";
+
+jest.mock("react-i18next", () => ({
+  useTranslation: () => ({ t: (key: any) => key }),
+}));
 
 setLogger({
   log: console.log,
   warn: console.warn,
   error: () => {},
 });
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
-});
-
-function wrapper({ children }: any) {
-  return (
-    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-}
 
 describe("useCurrencies Hook tests", () => {
   it("Gets a list of currencies", async () => {

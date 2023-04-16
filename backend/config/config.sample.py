@@ -36,10 +36,10 @@ MEDIA_ROOT = "/usr/src/media/"
 TIME_ZONE = "UTC"
 #
 # https://sentry.io
-SENTRY_DSN = "REPLACE_SENTRY_DSN"
+SENTRY_DSN = "https://863c26cf130741e594cb5d93e3339568@o301826.ingest.sentry.io/1727901"
 # Enable or disable Sentry
 # Default: False
-ENABLE_SENTRY = False
+ENABLE_SENTRY = True
 # Set the hostname of your application
 # Default: ["http://localhost:3000", "http://127.0.0.1:3000"]
 CORS_ALLOWED_ORIGINS = [
