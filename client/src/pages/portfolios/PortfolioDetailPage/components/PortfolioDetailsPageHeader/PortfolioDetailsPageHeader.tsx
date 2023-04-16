@@ -7,7 +7,8 @@ import {
   PlusOutlined,
   UnorderedListOutlined,
 } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Button, Popconfirm, Typography, theme } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeletePortfolio } from "hooks/use-portfolios/use-portfolios";
@@ -19,6 +20,7 @@ interface Props {
   portfolioCountryCode: string;
   children?: ReactNode;
 }
+const { useToken } = theme;
 
 function PortfolioDetailsPageHeader({
   portfolioName,
@@ -30,10 +32,11 @@ function PortfolioDetailsPageHeader({
   const navigate = useNavigate();
   const { id } = useParams();
   const { mutate: deletePortfolio } = useDeletePortfolio();
+  const { token } = useToken();
   const routes = [
     {
       path: `/portfolios/${id}`,
-      breadcrumbName: portfolioName,
+      title: portfolioName,
     },
   ];
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -59,9 +62,12 @@ function PortfolioDetailsPageHeader({
   return (
     <PageHeader
       className="site-page-header"
-      title={portfolioName}
+      style={{
+        background: token.colorBgContainer,
+      }}
+      title={<Typography.Title level={2}>{portfolioName}</Typography.Title>}
       subTitle={portfolioDescription}
-      breadcrumb={{ routes }}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,

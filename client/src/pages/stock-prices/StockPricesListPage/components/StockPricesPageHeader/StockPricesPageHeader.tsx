@@ -1,20 +1,23 @@
 import { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, PageHeader } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Button, Typography, theme } from "antd";
 import StockPriceAddEditForm from "../StockPriceAddEditForm/StockPriceAddEditForm";
 import breadCrumbRender from "breadcrumbs";
 
 interface Props {
   children: ReactNode;
 }
+const { useToken } = theme;
+
 function StockPricesPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { token } = useToken();
   const routes = [
     {
       path: `/stock-prices`,
-      breadcrumbName: t("Stock Prices"),
+      title: t("Stock Prices"),
     },
   ];
 
@@ -34,8 +37,11 @@ function StockPricesPageHeader({ children }: Props) {
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Stock prices")}
-      breadcrumb={{ routes }}
+      style={{
+        background: token.colorBgContainer,
+      }}
+      title={<Typography.Title level={2}>{t("Stock prices")}</Typography.Title>}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       extra={[
         <Button type="primary" key="er-add-header" onClick={showModal}>

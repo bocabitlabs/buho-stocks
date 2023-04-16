@@ -1,21 +1,26 @@
 import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
-import { Button, PageHeader } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Button, Typography, theme } from "antd";
 import PortfolioAddEditForm from "../PortfolioAddEditForm/PortfolioAddEditForm";
 
 interface Props {
   children: ReactNode;
 }
+
+const { useToken } = theme;
+
 function HomePageHeader({ children }: Props) {
   const { t } = useTranslation();
   const routes = [
     {
       path: "/home",
-      breadcrumbName: t("Home"),
+      title: t("Home"),
     },
   ];
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const { token } = useToken();
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -32,8 +37,11 @@ function HomePageHeader({ children }: Props) {
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Portfolios")}
-      breadcrumb={{ routes }}
+      style={{
+        background: token.colorBgContainer,
+      }}
+      title={<Typography.Title level={2}>{t("Portfolios")}</Typography.Title>}
+      breadcrumb={{ items: routes }}
       extra={[
         <Button
           key="add-button"

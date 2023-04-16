@@ -1,6 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dropdown, MenuProps, PageHeader } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Dropdown, MenuProps, Typography, theme } from "antd";
 import BenchmarkAddEditForm from "../BenchmarkAddEditForm/BenchmarkAddEditForm";
 import breadCrumbRender from "breadcrumbs";
 import { useInitializeBenchmarks } from "hooks/use-benchmarks/use-benchmarks";
@@ -8,15 +9,17 @@ import { useInitializeBenchmarks } from "hooks/use-benchmarks/use-benchmarks";
 interface Props {
   children: ReactNode;
 }
+const { useToken } = theme;
+
 function BenchmarksListPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const { mutate: initializeBenchmarks } = useInitializeBenchmarks();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { token } = useToken();
   const routes = [
     {
       path: `/benchmarks`,
-      breadcrumbName: t("Benchmarks"),
+      title: t("Benchmarks"),
     },
   ];
 
@@ -51,8 +54,9 @@ function BenchmarksListPageHeader({ children }: Props) {
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Benchmarks")}
-      breadcrumb={{ routes }}
+      style={{ background: token.colorBgContainer }}
+      title={<Typography.Title level={2}>{t("Benchmarks")}</Typography.Title>}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       extra={[
         <Dropdown.Button

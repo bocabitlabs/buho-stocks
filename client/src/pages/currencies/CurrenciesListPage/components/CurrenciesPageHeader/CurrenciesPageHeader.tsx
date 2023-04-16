@@ -1,6 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dropdown, MenuProps, PageHeader } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Dropdown, MenuProps, Typography, theme } from "antd";
 import CurrencyAddEditForm from "../CurrencyAddEditForm/CurrencyAddEditForm";
 import breadCrumbRender from "breadcrumbs";
 import { useInitializeCurrencies } from "hooks/use-currencies/use-currencies";
@@ -8,15 +9,17 @@ import { useInitializeCurrencies } from "hooks/use-currencies/use-currencies";
 interface Props {
   children: ReactNode;
 }
+const { useToken } = theme;
+
 function CurrenciesPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const { mutate: initializeCurrencies } = useInitializeCurrencies();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { token } = useToken();
   const routes = [
     {
       path: `/currencies`,
-      breadcrumbName: t("Currencies"),
+      title: t("Currencies"),
     },
   ];
 
@@ -51,8 +54,9 @@ function CurrenciesPageHeader({ children }: Props) {
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Currencies")}
-      breadcrumb={{ routes }}
+      style={{ background: token.colorBgContainer }}
+      title={<Typography.Title level={2}>{t("Currencies")}</Typography.Title>}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       extra={[
         <Dropdown.Button
