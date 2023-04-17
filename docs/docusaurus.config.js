@@ -16,7 +16,7 @@ const config = {
   organizationName: 'bocabitlabs', // Usually your GitHub org/user name.
   projectName: 'buho-stocks', // Usually your repo name.
 
-  plugins: [require.resolve("@cmfcmf/docusaurus-search-local")],
+  plugins: [require.resolve("@easyops-cn/docusaurus-search-local")],
 
   presets: [
     [
