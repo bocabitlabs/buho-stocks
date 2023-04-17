@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[239],{6406:function(s){s.exports=JSON.parse('{"label":"hola","permalink":"/buho-stocks/blog/tags/hola","allTagsPath":"/buho-stocks/blog/tags","count":1}')}}]);
