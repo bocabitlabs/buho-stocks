@@ -4,7 +4,7 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    "plugin:jest/recommended",
+    "plugin:vitest/recommended",
     "plugin:testing-library/react",
     "airbnb",
     "airbnb-typescript",
@@ -32,21 +32,16 @@ module.exports = {
     "react-hooks",
     "@typescript-eslint",
     "prettier",
-    "jest",
+    "vitest",
   ],
-  ignorePatterns: [".eslintrc.js", "setupProxy.js", "setupTests.ts"],
+  ignorePatterns: [
+    ".eslintrc.js",
+    "setupProxy.js",
+    "setupTests.ts",
+    "vite.config.ts",
+  ],
   rules: {
-    "no-console": "off",
-    "prettier/prettier": [
-      "error",
-      {
-        singleQuote: false,
-        trailingComma: "all",
-      },
-    ],
-    quotes: ["error", "double", { allowTemplateLiterals: true }],
     "comma-dangle": "off",
-    // "no-console": ["warn", { "allow": ["warn", "error"] }],
     "import/order": [
       "error",
       {
@@ -80,6 +75,17 @@ module.exports = {
         tsx: "never",
       },
     ],
+    "no-console": "off",
+    "prettier/prettier": [
+      "error",
+      {
+        singleQuote: false,
+        trailingComma: "all",
+      },
+    ],
+    quotes: ["error", "double", { allowTemplateLiterals: true }],
+    // "no-console": ["warn", { "allow": ["warn", "error"] }],
+    "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { extensions: [".js", ".ts", ".tsx"] }],
   },
   settings: {

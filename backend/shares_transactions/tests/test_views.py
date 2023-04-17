@@ -1,14 +1,13 @@
+import logging
 from decimal import Decimal
+
+import factory
+from companies.tests.factory import CompanyFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-from rest_framework.authtoken.models import Token
-from auth.tests.factory import UserFactory
-from companies.tests.factory import CompanyFactory
-import logging
+from rest_framework.test import APITestCase
 from shares_transactions.models import SharesTransaction
-import factory
 from shares_transactions.tests.factory import SharesTransactionFactory
 
 logger = logging.getLogger("buho_backend")
@@ -18,16 +17,13 @@ class SharesTransactionsListTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         cls.faker_obj = Faker()
 
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
-
     def test_get_shares(self):
-        company = CompanyFactory.create(user=self.user_saved)
-        url = reverse("shares-transaction-list", args=[company.id])
+        company = CompanyFactory.create()
+        base_url = reverse("shares-list")
+        url = f"{base_url}?company={company.id}"
+
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -35,7 +31,6 @@ class SharesTransactionsListTestCase(APITestCase):
 
         for _ in range(0, 4):
             SharesTransactionFactory.create(
-                user=self.user_saved,
                 company=company,
                 gross_price_per_share_currency=company.base_currency,
                 total_commission_currency=company.base_currency,
@@ -45,17 +40,15 @@ class SharesTransactionsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 4)
 
+
 class SharesTransactionsDetailTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
-        cls.company = CompanyFactory.create(user=cls.user_saved)
+        cls.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
-            instance =SharesTransactionFactory.create(
-                user=cls.user_saved,
+            instance = SharesTransactionFactory.create(
                 company=cls.company,
                 gross_price_per_share_currency=cls.company.base_currency,
                 total_commission_currency=cls.company.base_currency,
@@ -63,12 +56,9 @@ class SharesTransactionsDetailTestCase(APITestCase):
             instances.append(instance)
         cls.instances = instances
 
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
-
     def test_get_shares(self):
         index = 0
-        url = reverse("shares-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("shares-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -89,7 +79,7 @@ class SharesTransactionsDetailTestCase(APITestCase):
             str(self.instances[index].gross_price_per_share.currency),
         )
         index = len(self.instances) - 1
-        url = reverse("shares-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("shares-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         self.assertEqual(
             Decimal(response.data["total_commission"]),
@@ -107,7 +97,7 @@ class SharesTransactionsDetailTestCase(APITestCase):
         temp_data["gross_price_per_share_currency"] = self.company.base_currency
         temp_data["total_commission_currency"] = self.company.base_currency
 
-        url = reverse("shares-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("shares-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -129,7 +119,7 @@ class SharesTransactionsDetailTestCase(APITestCase):
         )
 
     def test_delete_transaction(self):
-        url = reverse("shares-transaction-detail", args=[self.company.id, self.instances[0].id])
+        url = reverse("shares-detail", args=[self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
 

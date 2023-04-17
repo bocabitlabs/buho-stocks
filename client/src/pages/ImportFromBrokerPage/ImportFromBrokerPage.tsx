@@ -1,28 +1,11 @@
-import React, { lazy, ReactElement, Suspense } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import React, { ReactElement } from "react";
 import ImportFromBrokerPageHeader from "./components/ImportFromBrokerPageHeader/ImportFromBrokerPageHeader";
-import brokersList from "brokers/brokers-list";
+import ImportSteps from "./components/ImportSteps/ImportSteps";
 
 export default function ImportFromBrokerPage(): ReactElement {
-  const { t } = useTranslation();
-  const { brokerId } = useParams();
-  const broker = brokersList.find((b: any) => b.id === brokerId);
-  const ImportForm = lazy(() => import(`brokers/${broker?.importPath}/Form`));
-
-  if (!broker) {
-    return (
-      <ImportFromBrokerPageHeader title="Broker not found">
-        {t("Broker not found")}
-      </ImportFromBrokerPageHeader>
-    );
-  }
-
   return (
-    <ImportFromBrokerPageHeader title={`${t("Import from")} ${broker.name}`}>
-      <Suspense fallback={<div>Loading Import form....</div>}>
-        <ImportForm />
-      </Suspense>
+    <ImportFromBrokerPageHeader>
+      <ImportSteps />
     </ImportFromBrokerPageHeader>
   );
 }

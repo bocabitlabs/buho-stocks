@@ -3,10 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   BankOutlined,
+  BarChartOutlined,
   ClusterOutlined,
+  DollarCircleOutlined,
   HomeOutlined,
   SettingOutlined,
   SyncOutlined,
+  StockOutlined,
+  EuroCircleOutlined,
 } from "@ant-design/icons";
 import { Menu } from "antd";
 import type { MenuProps } from "antd";
@@ -52,10 +56,19 @@ function RoutesMenu({
 
   const items: MenuItem[] = [
     getItem(t("Home"), "0", getRoute(HOME_ROUTE), <HomeOutlined />),
-    getItem(t("Markets"), "1", "/app/markets/", <BankOutlined />),
-    getItem(t("Sectors"), "2", "/app/sectors/", <ClusterOutlined />),
-    getItem(t("Import & Export"), "3", "/app/import-export/", <SyncOutlined />),
-    getItem(t("Settings"), "4", "/app/settings/", <SettingOutlined />),
+    getItem(t("Markets"), "1", "/markets/", <BankOutlined />),
+    getItem(t("Sectors"), "2", "/sectors/", <ClusterOutlined />),
+    getItem(t("Currencies"), "3", "/currencies/", <DollarCircleOutlined />),
+    getItem(t("Benchmarks"), "4", "/benchmarks/", <BarChartOutlined />),
+    getItem(
+      t("Exchange Rates"),
+      "5",
+      "/exchange-rates/",
+      <EuroCircleOutlined />,
+    ),
+    getItem(t("Stock Prices"), "6", "/stock-prices/", <StockOutlined />),
+    getItem(t("Import from CSV"), "7", "/import/", <SyncOutlined />),
+    getItem(t("Settings"), "8", "/settings/", <SettingOutlined />),
   ];
 
   const menuClickAction = useCallback(
@@ -92,6 +105,7 @@ function RoutesMenu({
       mode="inline"
       selectedKeys={[selectedKey]}
       items={items}
+      style={{ width: "300" }}
     />
   );
 }

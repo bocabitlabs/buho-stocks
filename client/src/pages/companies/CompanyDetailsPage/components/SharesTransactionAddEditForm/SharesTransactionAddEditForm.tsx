@@ -22,10 +22,7 @@ import {
   useUpdateSharesTransaction,
 } from "hooks/use-shares-transactions/use-shares-transactions";
 import { ICurrency } from "types/currency";
-import {
-  ISharesTransaction,
-  ISharesTransactionFormFields,
-} from "types/shares-transaction";
+import { ISharesTransactionFormFields } from "types/shares-transaction";
 
 interface IProps {
   transactionId?: number;
@@ -77,19 +74,7 @@ export default function SharesTransactionAddEditForm({
     error: errorFetchingTransaction,
     isFetching,
     isSuccess,
-  } = useSharesTransaction(companyId, transactionId, {
-    onSuccess: (data: ISharesTransaction) => {
-      form.setFieldsValue({
-        count: data.count,
-        grossPricePerShare: data.grossPricePerShare,
-        totalCommission: data.totalCommission,
-        exchangeRate: data.exchangeRate,
-        notes: data.notes,
-        transactionDate: moment(data.transactionDate),
-        type: data.type,
-      });
-    },
-  });
+  } = useSharesTransaction(transactionId);
   const fetchExchangeRate = async () => {
     refetch();
   };
@@ -97,6 +82,7 @@ export default function SharesTransactionAddEditForm({
   const handleSubmit = async (values: any) => {
     const {
       count,
+      totalAmount,
       grossPricePerShare,
       type,
       totalCommission,
@@ -105,6 +91,8 @@ export default function SharesTransactionAddEditForm({
     } = values;
 
     const newTransactionValues: ISharesTransactionFormFields = {
+      totalAmount,
+      totalAmountCurrency: companyBaseCurrency.code,
       count,
       grossPricePerShare,
       grossPricePerShareCurrency: companyBaseCurrency.code,
@@ -115,17 +103,14 @@ export default function SharesTransactionAddEditForm({
       notes,
       exchangeRate: exchangeRateValue ? +exchangeRateValue : 1,
       company: +companyId!,
-      color: "#000",
     };
     if (transactionId) {
       updateTransaction({
-        companyId: newTransactionValues.company,
         transactionId,
         newTransaction: newTransactionValues,
       });
     } else {
       createTransaction({
-        companyId: newTransactionValues.company,
         newTransaction: newTransactionValues,
       });
     }
@@ -182,7 +167,7 @@ export default function SharesTransactionAddEditForm({
 
   return (
     <Modal
-      visible={isModalVisible}
+      open={isModalVisible}
       title={title}
       okText={okText}
       cancelText={t("Cancel")}
@@ -201,6 +186,21 @@ export default function SharesTransactionAddEditForm({
       )}
       {(isSuccess || !transactionId) && (
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="type"
+            label={t("Operation's type")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the type of transaction"),
+              },
+            ]}
+          >
+            <Select placeholder={t("Select an option")}>
+              <Select.Option value="BUY">{t("Buy")}</Select.Option>
+              <Select.Option value="SELL">{t("Sell")}</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item
             name="count"
             label={t("Number of shares")}
@@ -231,19 +231,21 @@ export default function SharesTransactionAddEditForm({
             />
           </Form.Item>
           <Form.Item
-            name="type"
-            label={t("Operation's type")}
+            name="totalAmount"
+            label={t("Total amount")}
             rules={[
               {
                 required: true,
-                message: t("Please input the type of transaction"),
+                message: t("Please input the total amount"),
               },
             ]}
           >
-            <Select placeholder={t("Select an option")}>
-              <Select.Option value="BUY">{t("Buy")}</Select.Option>
-              <Select.Option value="SELL">{t("Sell")}</Select.Option>
-            </Select>
+            <InputNumber
+              decimalSeparator="."
+              addonAfter={`${companyBaseCurrency.code}`}
+              min={0}
+              step={0.001}
+            />
           </Form.Item>
           <Form.Item
             name="totalCommission"

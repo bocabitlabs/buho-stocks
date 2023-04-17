@@ -9,18 +9,15 @@ import {
 
 interface IUpdateRightsMutationProps {
   newTransaction: IRightsTransactionFormFields;
-  companyId: number;
   transactionId: number;
 }
 
 interface IAddRightsMutationProps {
   newTransaction: IRightsTransactionFormFields;
-  companyId: number;
 }
 
 interface IDeleteTransactionMutationProps {
   transactionId: number;
-  companyId: number;
 }
 
 export const fetchRightsTransactions = async (
@@ -30,35 +27,31 @@ export const fetchRightsTransactions = async (
     throw new Error("companyId is required");
   }
   const { data } = await apiClient.get<IRightsTransaction[]>(
-    `/companies/${companyId}/rights/`,
+    `/rights/?company=${companyId}`,
   );
   return data;
 };
 
 export const fetchRightsTransaction = async (
-  companyId: number | undefined,
   transactionId: number | undefined,
 ) => {
-  if (!companyId && !transactionId) {
+  if (!transactionId) {
     throw new Error("companyId and transactionId are required");
   }
   const { data } = await apiClient.get<IRightsTransaction>(
-    `/companies/${companyId}/rights/${transactionId}/`,
+    `/rights/${transactionId}/`,
   );
   return data;
 };
 
 export const useAddRightsTransaction = () => {
   return useMutation(
-    ({ companyId, newTransaction }: IAddRightsMutationProps) =>
-      apiClient.post(`/companies/${companyId}/rights/`, newTransaction),
+    ({ newTransaction }: IAddRightsMutationProps) =>
+      apiClient.post(`/rights/`, newTransaction),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success(`Rights added successfully`);
-        queryClient.invalidateQueries([
-          "rightsTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["rightsTransactions"]);
       },
       onError: () => {
         toast.error(`Unable to add rights`);
@@ -69,22 +62,12 @@ export const useAddRightsTransaction = () => {
 
 export const useUpdateRightsTransaction = () => {
   return useMutation(
-    ({
-      companyId,
-      transactionId,
-      newTransaction,
-    }: IUpdateRightsMutationProps) =>
-      apiClient.put(
-        `/companies/${companyId}/rights/${transactionId}/`,
-        newTransaction,
-      ),
+    ({ transactionId, newTransaction }: IUpdateRightsMutationProps) =>
+      apiClient.put(`/rights/${transactionId}/`, newTransaction),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success(`Rights updated successfully`);
-        queryClient.invalidateQueries([
-          "rightsTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["rightsTransactions"]);
       },
       onError: () => {
         toast.error(`Unable to update transaction`);
@@ -95,17 +78,12 @@ export const useUpdateRightsTransaction = () => {
 
 export const useDeleteRightsTransaction = () => {
   return useMutation(
-    ({ companyId, transactionId }: IDeleteTransactionMutationProps) =>
-      apiClient.delete(
-        `/api/v1/companies/${companyId}/rights/${transactionId}/`,
-      ),
+    ({ transactionId }: IDeleteTransactionMutationProps) =>
+      apiClient.delete(`/rights/${transactionId}/`),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success(`Rights deleted successfully`);
-        queryClient.invalidateQueries([
-          "rightsTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["rightsTransactions"]);
       },
       onError: () => {
         toast.error("Unable to delete transaction");
@@ -122,15 +100,12 @@ export function useRightsTransactions(companyId: number | undefined) {
   );
 }
 
-export function useRightsTransaction(
-  companyId: number | undefined,
-  transactionId: number | undefined,
-) {
+export function useRightsTransaction(transactionId: number | undefined) {
   return useQuery<IRightsTransaction, Error>(
-    ["rightsTransactions", companyId, transactionId],
-    () => fetchRightsTransaction(companyId, transactionId),
+    ["rightsTransactions", transactionId],
+    () => fetchRightsTransaction(transactionId),
     {
-      enabled: !!companyId && !!transactionId,
+      enabled: !!transactionId,
     },
   );
 }

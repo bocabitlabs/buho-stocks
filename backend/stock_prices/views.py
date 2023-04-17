@@ -1,27 +1,49 @@
-from rest_framework.response import Response
 import logging
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from rest_framework import status
-from drf_yasg.utils import swagger_auto_schema
-from settings.models import UserSettings
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
+
 from companies.models import Company
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status, viewsets
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from settings.models import UserSettings
 from stock_prices.api import StockPricesApi
+from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
 from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 logger = logging.getLogger("buho_backend")
 
 
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 100
+    page_size_query_param = "page_size"
+    max_page_size = 1000
+
+
+class ExchangeRateViewSet(viewsets.ModelViewSet):
+    """Get all the exchange rates from a user"""
+
+    pagination_class = StandardResultsSetPagination
+    serializer_class = StockPriceSerializer
+
+    def get_queryset(self):
+        sort_by = self.request.query_params.get("sort_by", "transaction_date")
+        order_by = self.request.query_params.get("order_by", "desc")
+        # Sort and order the queryset
+        if order_by == "desc":
+            queryset = StockPrice.objects.order_by(f"-{sort_by}")
+        else:
+            queryset = StockPrice.objects.order_by(f"{sort_by}")
+
+        return queryset
+
+
 class StockPricesYearAPIView(APIView):
     """Operations for a single Shares Transaction"""
 
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get_update_object(self, company_id, year, user_id):
-        company = Company.objects.get(id=company_id, user=user_id)
+    def get_update_object(self, company_id, year):
+        company = Company.objects.get(id=company_id)
         api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
         data = api.get_last_data_from_year(company.ticker, year, only_api=True)
@@ -37,17 +59,22 @@ class StockPricesYearAPIView(APIView):
         """
         Update last stock price of a company for a given year
         """
-        settings = UserSettings.objects.get(user=request.user)
+        logger.info(f"Updating stock price for company {company_id} and year {year}")
+        settings, _ = UserSettings.objects.get_or_create(pk=1)
+        instance = None
         if settings.allow_fetch:
-            instance = self.get_update_object(company_id, year, request.user.id)
+            instance = self.get_update_object(company_id, year)
 
-        if not instance:
-            return Response(
-                {
-                    "res": f"Object with id {company_id} does not exists. Allow fetch was: {settings.allow_fetch}"
-                },
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        if instance:
+            serializer = StockPriceSerializer(instance)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        serializer = StockPriceSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {
+                "res": (
+                    f"Unable to retrieve stock price for company {company_id}. "
+                    f"Verify the API logs. Allow fetch was: {settings.allow_fetch}"
+                )
+            },
+            status=status.HTTP_400_BAD_REQUEST,
+        )

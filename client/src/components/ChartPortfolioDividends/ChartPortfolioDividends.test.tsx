@@ -1,29 +1,30 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-import React from "react";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, render } from "@testing-library/react";
 import ChartPortfolioDividends from "./ChartPortfolioDividends";
-import { renderWithRouterAndQueryClient } from "utils/test-utils";
+import { wrapper } from "utils/mock-providers";
 
-jest.mock("react-router-dom", () => ({
-  ...jest.requireActual("react-router-dom"),
-  useParams: () => ({
-    id: "1",
-  }),
-}));
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...(actual as any),
+    useParams: () => ({
+      id: "1",
+    }),
+  };
+});
 
 describe("ChartPortfolioDividends tests", () => {
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it("renders chart", async () => {
-    renderWithRouterAndQueryClient(<ChartPortfolioDividends />);
+    render(<ChartPortfolioDividends />, { wrapper });
 
     const element = screen.getByTestId(/loader/i);
     expect(element).toBeInTheDocument();
   });
   it("renders expected texts after loading", async () => {
-    renderWithRouterAndQueryClient(<ChartPortfolioDividends />);
+    render(<ChartPortfolioDividends />, { wrapper });
 
     await waitFor(() => {
       const element = screen.getByTestId("canvas");

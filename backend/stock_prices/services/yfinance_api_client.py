@@ -1,88 +1,98 @@
 import logging
-from datetime import datetime
-import json
-import re
 import time
-import requests
+from typing import Any, Tuple, TypedDict
 
-from stock_prices.services.stock_price_service_base import StockPriceServiceBase
+import yfinance as yf
+from pandas import Timestamp
+from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice
 
 logger = logging.getLogger("buho_backend")
+
+
+class TypedYFinanceStockPrice(TypedDict):
+    Open: float
+    High: float
+    Low: float
+    Close: float
+    Volume: int
 
 
 class YFinanceApiClient(StockPriceServiceBase):
     def __init__(self, wait_time=2):
         self.wait_time = wait_time
-        self.api_endpoint = "https://finance.yahoo.com/quote"
-        self.session = requests.Session()
-        headers = {
-            "User-Agent": "Mozilla/5.0 (X11; Linux i686; rv:95.0) Gecko/20100101 Firefox/95.0"
-        }
-        self.session.headers = headers
-        self.request_timeout = 4
 
-    def get_historical_data(self, ticker: str, start_date: str, end_date: str) -> list:
+    def get_stock_prices_list(self, ticker: str, start_date: str, end_date: str) -> list[TypedStockPrice]:
         prices = []
         time.sleep(self.wait_time)
 
-        results, currency = self.request_from_api(ticker, start_date, end_date)
+        results, currency = self.get_company_data_between_dates(ticker, start_date, end_date)
 
         if results is None:
             return []
 
-        for row in results:
+        for price_date in results:
             try:
-                price = row["close"]
-                if currency.upper() == "GBP":
-                    price = price / 100
-                    currency = "GBP"
-
-                price = round(price, 3)
-                row_date = datetime.fromtimestamp(row["date"]).strftime("%Y-%m-%d")
-                transaction_date = row_date
-
-                data = {
-                    "price": price,
-                    "price_currency": currency,
-                    "ticker": ticker,
-                    "transaction_date": transaction_date,
-                }
+                if not currency:
+                    break
+                element_values = results[price_date]
+                data = self.get_formatted_price_dict(ticker, currency, price_date, element_values)
                 prices.append(data)
+
             except (KeyError, TypeError) as error:
-                logger.warning(
-                    f"{ticker}: close or date fields not found: {error}. Skipping."
-                )
+                logger.warning(f"{ticker}: close or date fields not found: {error}. Skipping.")
+
         prices.sort(key=lambda x: x["transaction_date"], reverse=False)
         return prices
 
-    def get_api_endpoint_path(self, ticker: str, from_date: str, to_date: str) -> str:
-        # Convert from_date to datetime
-        from_date_datetime = datetime.strptime(from_date, "%Y-%m-%d")
-        # Convert to_date to datetime
-        to_date_datetime = datetime.strptime(to_date, "%Y-%m-%d")
-        # Get utc timestamp for from_date
-        from_date_timestamp = int(from_date_datetime.timestamp())
-        to_date_timestamp = int(to_date_datetime.timestamp())
+    def get_formatted_price_dict(
+        self, ticker: str, currency: str, price_date: Timestamp, element_values: TypedYFinanceStockPrice
+    ) -> TypedStockPrice:
+        price = element_values["Close"]
+        if currency == "GBP":
+            price = self.convert_price_to_gbp(price)
 
-        endpoint_path = f"{self.api_endpoint}/{ticker}/history"
-        query_params = f"?period1={from_date_timestamp}&period2={to_date_timestamp}&interval=1d&filter=history&frequency=1d"
+        price = round(price, 3)
+        converted_date = price_date.to_pydatetime().date()
+        formatted_date = converted_date.strftime("%Y-%m-%d")
+        transaction_date = formatted_date
+        data: TypedStockPrice = {
+            "price": price,
+            "price_currency": currency,
+            "ticker": ticker,
+            "transaction_date": transaction_date,
+        }
 
-        return endpoint_path + query_params
+        return data
 
-    def request_from_api(self, ticker: str, from_date: str, to_date: str):
-        api_path = self.get_api_endpoint_path(ticker, from_date, to_date)
-        response = self.session.get(api_path, timeout=self.request_timeout)
-        response_text = response.text
+    def convert_price_to_gbp(self, price):
+        price = price / 100
+        return price
+
+    def get_company_currency(self, ticker: str) -> str:
+        company = yf.Ticker(ticker)
+        currency = company.fast_info["currency"]
+        currency = currency.upper()
+        logger.info(f"{ticker} currency: {currency}")
+        return currency
+
+    def convert_api_data_to_dict(self, api_data: Any) -> dict | None:
+        result = api_data.sort_values("Date", ascending=False)
+        dates_dict = result.to_dict("index")
+        if dates_dict == {}:
+            dates_dict = None
+        return dates_dict
+
+    def get_company_data_between_dates(
+        self, ticker: str, from_date: str, to_date: str
+    ) -> tuple[dict[Timestamp, TypedYFinanceStockPrice] | None, str] | Tuple[None, None]:
+        currency = self.get_company_currency(ticker)
+        result = yf.download(ticker, start=from_date, end=to_date)
+
         try:
-            result = json.loads(
-                response_text.split('HistoricalPriceStore":{"prices":')[1].split(
-                    ',"isPending'
-                )[0]
-            )
-            currency_search = re.search(r"Currency in (\w+)\<\/span\>", response.text)
-            currency = currency_search.group(1)
-        except (IndexError, TypeError) as error:
-            logger.warning(f"{ticker}: IndexError: {error}. Skipping.")
-            return None, None
+            result_as_dict = self.convert_api_data_to_dict(result)
+            logger.info(f"{ticker} dates returned from API {result_as_dict}")
+            return result_as_dict, currency
 
-        return result, currency
+        except (IndexError, TypeError) as error:
+            logger.warning(f"{ticker}: Error: {error}. Skipping.")
+            return None, None

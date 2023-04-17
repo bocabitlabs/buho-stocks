@@ -4,6 +4,12 @@ sidebar_position: 3
 
 # Create the initial admin user
 
+:::info
+
+This step is deprecated and is not needed anymore since version `0.100.0`.
+
+:::
+
 First of all, login into the container and create the super user for the admin dashboard following the on screen steps:
 
 ```bash

@@ -1,11 +1,15 @@
-from unicodedata import name
 from django.urls import path
 from exchange_rates import views
+from rest_framework.routers import DefaultRouter
+
+router = DefaultRouter()
+
+router.register(r"exchange-rates", views.ExchangeRateViewSet)
 
 urlpatterns = [
-    path("", views.ExchangeRateListAPIView.as_view(), name="exchange-rates-list"),
     path(
-        "<str:exchange_from>/<str:exchange_to>/<date:exchange_date>/",
-        views.ExchangeRateDetailAPIView.as_view(), name="exchange-rates-detail",
+        "<str:exchange_from>/<str:exchange_to>/<str:exchange_date>/",
+        views.ExchangeRateDetailAPIView.as_view(),  # type: ignore
+        name="exchange-rates-details",
     ),
 ]

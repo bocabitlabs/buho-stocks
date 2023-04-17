@@ -247,7 +247,7 @@ export default function StatsRefreshModal({
         title={`${t("Refresh stats and stock prices for")} &quot;${t(
           selectedYear,
         )}&quot;`}
-        visible={visible}
+        open={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         okText={`${t("Update stats")}`}

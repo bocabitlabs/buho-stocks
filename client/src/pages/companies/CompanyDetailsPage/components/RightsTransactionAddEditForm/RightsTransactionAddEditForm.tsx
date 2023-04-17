@@ -70,7 +70,7 @@ export default function RightsTransactionAddEditForm({
     error: errorFetchingTransaction,
     isSuccess,
     isFetching,
-  } = useRightsTransaction(companyId, transactionId);
+  } = useRightsTransaction(transactionId);
 
   const fetchExchangeRate = async () => {
     const { data: exchangeRateResult } = await refetch();
@@ -97,6 +97,7 @@ export default function RightsTransactionAddEditForm({
       totalCommission,
       exchangeRate: exchangeRateValue,
       notes,
+      totalAmount,
     } = values;
 
     const newTransactionValues: IRightsTransactionFormFields = {
@@ -104,23 +105,22 @@ export default function RightsTransactionAddEditForm({
       grossPricePerShare,
       grossPricePerShareCurrency: companyBaseCurrency.code,
       type,
+      totalAmount,
+      totalAmountCurrency: companyBaseCurrency.code,
       totalCommission,
       totalCommissionCurrency: companyBaseCurrency.code,
       transactionDate: currentTransactionDate,
       notes,
       exchangeRate: exchangeRateValue ? +exchangeRateValue : 1,
       company: +companyId!,
-      color: "#000",
     };
     if (transactionId) {
       updateTransaction({
-        companyId: newTransactionValues.company,
         transactionId,
         newTransaction: newTransactionValues,
       });
     } else {
       createTransaction({
-        companyId: newTransactionValues.company,
         newTransaction: newTransactionValues,
       });
     }
@@ -161,7 +161,7 @@ export default function RightsTransactionAddEditForm({
 
   return (
     <Modal
-      visible={isModalVisible}
+      open={isModalVisible}
       title={title}
       okText={okText}
       cancelText={t("Cancel")}
@@ -180,6 +180,21 @@ export default function RightsTransactionAddEditForm({
       )}
       {(isSuccess || !transactionId) && (
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="type"
+            label={t("Operation's type")}
+            rules={[
+              {
+                required: true,
+                message: t("Please input the type of transaction"),
+              },
+            ]}
+          >
+            <Select placeholder={t("Select an option")}>
+              <Select.Option value="BUY">{t("Buy")}</Select.Option>
+              <Select.Option value="SELL">{t("Sell")}</Select.Option>
+            </Select>
+          </Form.Item>
           <Form.Item
             name="count"
             label={t("Number of rights")}
@@ -210,20 +225,23 @@ export default function RightsTransactionAddEditForm({
             />
           </Form.Item>
           <Form.Item
-            name="type"
-            label={t("Operation's type")}
+            name="totalAmount"
+            label={t("Total amount")}
             rules={[
               {
                 required: true,
-                message: t("Please input the type of transaction"),
+                message: t("Please input the total amount"),
               },
             ]}
           >
-            <Select placeholder={t("Select an option")}>
-              <Select.Option value="BUY">{t("Buy")}</Select.Option>
-              <Select.Option value="SELL">{t("Sell")}</Select.Option>
-            </Select>
+            <InputNumber
+              decimalSeparator="."
+              addonAfter={`${companyBaseCurrency.code}`}
+              min={0}
+              step={0.001}
+            />
           </Form.Item>
+
           <Form.Item
             name="totalCommission"
             label={t("Total commission")}
