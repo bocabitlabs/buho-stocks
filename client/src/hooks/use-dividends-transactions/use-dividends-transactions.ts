@@ -9,18 +9,15 @@ import {
 
 interface AddTransactionMutationProps {
   newTransaction: IDividendsTransactionFormFields;
-  companyId: number;
 }
 
 interface UpdateTransactionMutationProps {
   newTransaction: IDividendsTransactionFormFields;
-  companyId: number;
   transactionId: number;
 }
 
 interface DeleteTransactionMutationProps {
   transactionId: number;
-  companyId: number;
 }
 
 export const fetchDividendsTransactions = async (
@@ -30,35 +27,27 @@ export const fetchDividendsTransactions = async (
     throw new Error("companyId is required");
   }
   const { data } = await apiClient.get<IDividendsTransaction[]>(
-    `/companies/${companyId}/dividends/`,
+    `/dividends/?company=${companyId}`,
   );
   return data;
 };
 
-export const fetchTransaction = async (
-  companyId: number | undefined,
-  transactionId: number | undefined,
-) => {
-  if (!companyId || !transactionId) {
+export const fetchTransaction = async (transactionId: number | undefined) => {
+  if (!transactionId) {
     throw new Error("companyId and transactionId are required");
   }
-  const { data } = await apiClient.get(
-    `/companies/${companyId}/dividends/${transactionId}/`,
-  );
+  const { data } = await apiClient.get(`/dividends/${transactionId}/`);
   return data;
 };
 
 export const useAddDividendsTransaction = () => {
   return useMutation(
-    ({ companyId, newTransaction }: AddTransactionMutationProps) =>
-      apiClient.post(`/companies/${companyId}/dividends/`, newTransaction),
+    ({ newTransaction }: AddTransactionMutationProps) =>
+      apiClient.post(`/dividends/`, newTransaction),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success("Transaction created successfully");
-        queryClient.invalidateQueries([
-          "dividendsTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["dividendsTransactions"]);
       },
       onError: () => {
         toast.error("Unable to create transaction");
@@ -69,15 +58,12 @@ export const useAddDividendsTransaction = () => {
 
 export const useDeleteDividendsTransaction = () => {
   return useMutation(
-    ({ companyId, transactionId }: DeleteTransactionMutationProps) =>
-      apiClient.delete(`/companies/${companyId}/dividends/${transactionId}/`),
+    ({ transactionId }: DeleteTransactionMutationProps) =>
+      apiClient.delete(`/dividends/${transactionId}/`),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success("Transaction deleted");
-        queryClient.invalidateQueries([
-          "dividendsTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["dividendsTransactions"]);
       },
       onError: () => {
         toast.error("Unable to delete dividends transaction");
@@ -88,22 +74,12 @@ export const useDeleteDividendsTransaction = () => {
 
 export const useUpdateDividendsTransaction = () => {
   return useMutation(
-    ({
-      companyId,
-      transactionId,
-      newTransaction,
-    }: UpdateTransactionMutationProps) =>
-      apiClient.put(
-        `/companies/${companyId}/dividends/${transactionId}/`,
-        newTransaction,
-      ),
+    ({ transactionId, newTransaction }: UpdateTransactionMutationProps) =>
+      apiClient.put(`/dividends/${transactionId}/`, newTransaction),
     {
-      onSuccess: (data, variables) => {
+      onSuccess: () => {
         toast.success("Transaction updated");
-        queryClient.invalidateQueries([
-          "dividendsTransactions",
-          variables.companyId,
-        ]);
+        queryClient.invalidateQueries(["dividendsTransactions"]);
       },
       onError: () => {
         toast.error("Unable to update dividends transaction");
@@ -121,16 +97,15 @@ export function useDividendsTransactions(companyId: number | undefined) {
 }
 
 export function useDividendsTransaction(
-  companyId: number | undefined,
   transactionId: number | undefined,
   options?: any,
 ) {
   return useQuery<IDividendsTransaction, Error>(
-    ["dividendsTransactions", companyId, transactionId],
-    () => fetchTransaction(companyId, transactionId),
+    ["dividendsTransactions", transactionId],
+    () => fetchTransaction(transactionId),
     {
       // The query will not execute until the userId exists
-      enabled: !!companyId && !!transactionId,
+      enabled: !!transactionId,
       ...options,
     },
   );

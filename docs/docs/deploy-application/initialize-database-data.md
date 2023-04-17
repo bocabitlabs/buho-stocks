@@ -2,6 +2,12 @@
 sidebar_position: 4
 ---
 
+:::info
+
+This step is deprecated and is not needed anymore since version `0.100.0`.
+
+:::
+
 # Initialize the database with some data
 
 Once you have access to the `/admin/` dashboard, you will be able to initialize the database with some data already preset:

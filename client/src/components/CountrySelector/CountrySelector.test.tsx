@@ -4,6 +4,10 @@ import CountrySelector from "./CountrySelector";
 import { wrapper } from "utils/mock-providers";
 
 describe("CountrySelector tests", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("renders expected texts when loading", async () => {
     const user = userEvent.setup({ pointerEventsCheck: 0 });
 

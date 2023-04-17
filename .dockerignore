@@ -16,3 +16,6 @@ coverage.xml
 .pytest_cache
 .hypothesis
 node_modules
+client/node_modules
+client/build
+client/dist

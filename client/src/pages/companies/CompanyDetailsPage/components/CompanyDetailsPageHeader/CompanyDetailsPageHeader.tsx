@@ -2,7 +2,8 @@ import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { DeleteOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
-import { Button, PageHeader, Popconfirm, Tag } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Button, Popconfirm, Tag, Typography, theme } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeleteCompany } from "hooks/use-companies/use-companies";
@@ -17,6 +18,7 @@ interface Props {
   companyUrl: string;
   children: ReactNode;
 }
+const { useToken } = theme;
 
 function CompanyDetailsPageHeader({
   companyName,
@@ -30,15 +32,15 @@ function CompanyDetailsPageHeader({
   const { t } = useTranslation();
   const { id, companyId } = useParams();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { token } = useToken();
   const routes = [
     {
-      path: `/portfolios/${id}`,
-      breadcrumbName: portfolioName || t("Loading..."),
+      href: `/portfolios/${id}`,
+      title: portfolioName || t("Loading..."),
     },
     {
-      path: `/portfolios/${id}/companies/${companyId}`,
-      breadcrumbName: companyName || t("Loading..."),
+      href: `/portfolios/${id}/companies/${companyId}`,
+      title: companyName || t("Loading..."),
     },
   ];
   const { mutate: deleteCompany } = useDeleteCompany();
@@ -63,10 +65,11 @@ function CompanyDetailsPageHeader({
   return (
     <PageHeader
       className="site-page-header"
-      title={companyName}
+      style={{ background: token.colorBgContainer }}
+      title={<Typography.Title level={2}>{companyName}</Typography.Title>}
       subTitle={companyTicker}
       avatar={{ src: companyLogo }}
-      breadcrumb={{ routes }}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={companyCountryCode} key={companyCountryCode} />,

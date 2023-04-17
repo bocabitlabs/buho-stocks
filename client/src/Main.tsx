@@ -36,9 +36,7 @@ const PortfolioDetailsPage = React.lazy(
 const PortfolioChartsPage = React.lazy(
   () => import("pages/portfolios/PorfolioChartsPage/PortfolioChartsPage"),
 );
-const PortfoliosListPage = React.lazy(
-  () => import("pages/portfolios/PortfoliosListPage/PortfoliosListPage"),
-);
+const HomePage = React.lazy(() => import("pages/home/HomePage"));
 const PortfolioTransactionsLogPage = React.lazy(
   () =>
     import(
@@ -70,7 +68,7 @@ export default function Main(): ReactElement {
                   path=""
                   element={<Navigate to={getRoute(HOME_ROUTE)} />}
                 />
-                <Route path="home" element={<PortfoliosListPage />} />
+                <Route path="home" element={<HomePage />} />
                 <Route path="benchmarks" element={<BenchmarksListPage />} />
                 <Route
                   path="exchange-rates"

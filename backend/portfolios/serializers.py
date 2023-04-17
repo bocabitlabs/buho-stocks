@@ -5,9 +5,7 @@ from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from portfolios.models import Portfolio
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 from shares_transactions.models import SharesTransaction
-from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 
 logger = logging.getLogger("buho_backend")
 
@@ -32,9 +30,8 @@ class PortfolioSerializer(serializers.ModelSerializer):
 
 
 class PortfolioSerializerGet(PortfolioSerializer):
-    base_currency = SerializerMethodField()
+    base_currency = serializers.SerializerMethodField()
     first_year = serializers.SerializerMethodField()
-    stats = PortfolioStatsForYearSerializer(many=True, read_only=True)
 
     class Meta:
         model = Portfolio
@@ -50,15 +47,11 @@ class PortfolioSerializerGet(PortfolioSerializer):
             "hide_closed_companies",
             "base_currency",
             "companies",
-            "stats",
         ]
 
     def get_base_currency(self, obj):
-        logger.debug(f"obj.base_currency: {obj.base_currency}")
         currency = Currency.objects.filter(code=obj.base_currency)[0]
-        logger.debug(f"currency: {currency}")
         serialized_currency = CurrencySerializer(currency)
-        logger.debug(serialized_currency.data)
         return serialized_currency.data
 
     def get_first_year(self, obj):

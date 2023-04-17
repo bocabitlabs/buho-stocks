@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import {
@@ -44,10 +44,13 @@ export default function TradesImportForm({
   const { mutate: createTradesTransaction, isLoading } =
     useAddSharesTransaction();
 
-  const onCompanyChange = (value: any) => {
-    setSelectedCompany(value);
-    form.setFieldValue("company", value.id);
-  };
+  const onCompanyChange = useCallback(
+    (value: any) => {
+      setSelectedCompany(value);
+      form.setFieldValue("company", value.id);
+    },
+    [form],
+  );
 
   const onExchangeRateChange = (value: any) => {
     form.setFieldsValue({
@@ -83,11 +86,15 @@ export default function TradesImportForm({
       type,
     } = values;
 
+    console.log(values);
+
+    const commissionFixed = commission ? Number((+commission).toFixed(3)) : 0;
+
     const transaction: ISharesTransactionFormFields = {
       count: count < 0 ? -count : +count,
       totalAmount: amount,
       totalAmountCurrency: trade.currency,
-      totalCommission: commission,
+      totalCommission: commissionFixed,
       grossPricePerShare: price,
       grossPricePerShareCurrency: trade.currency,
       totalCommissionCurrency: trade.currency,
@@ -101,10 +108,9 @@ export default function TradesImportForm({
     };
     console.log(transaction);
     createTradesTransaction({
-      companyId: selectedCompany.id,
       newTransaction: transaction,
     });
-    setFormSent(false);
+    setFormSent(true);
     onTradeImported();
   };
   const options1 = [
@@ -132,7 +138,7 @@ export default function TradesImportForm({
               date: trade.date,
               amount: trade.total,
               price: trade.price,
-              commission: trade.commission,
+              commission: trade.commission ? trade.commission.toFixed(3) : 0,
               description: trade.description,
               type: trade.count < 0 ? "SELL" : "BUY",
             }}

@@ -1,5 +1,10 @@
 name: React CI
 
+env:
+  VITE_ENV: test
+  VITE_API_URL: http://127.0.0.1:8001
+  VITE_PORT: 3000
+
 on:
   push:
     branches: [main, dev]
@@ -25,7 +30,6 @@ jobs:
       - name: Install Dependencies
         run: |
           cd client && yarn
-          mv src/config.sample.js src/config.js
       - name: Lint
         run: |
           cd client && yarn lint

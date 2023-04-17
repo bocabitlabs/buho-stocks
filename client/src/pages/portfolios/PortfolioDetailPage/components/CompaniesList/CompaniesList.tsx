@@ -9,11 +9,13 @@ import { ICurrency } from "types/currency";
 interface IProps {
   companies: ICompanyListItem[];
   portfolioBaseCurrency: ICurrency;
+  isFetching: boolean;
 }
 
 export default function CompaniesList({
   companies,
   portfolioBaseCurrency,
+  isFetching,
 }: IProps) {
   const { t } = useTranslation();
   const { id } = useParams();
@@ -204,7 +206,7 @@ export default function CompaniesList({
   return (
     <div>
       <Table
-        loading={!companies}
+        loading={!companies || isFetching}
         pagination={{ defaultPageSize: 60 }}
         columns={columns}
         size="small"

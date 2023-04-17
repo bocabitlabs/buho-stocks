@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { PageHeader, Spin } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Spin, Typography, theme } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 
@@ -10,6 +11,7 @@ interface Props {
   portfolioCountryCode: string;
   children: ReactNode;
 }
+const { useToken } = theme;
 
 function PortfolioDetailsPageHeader({
   portfolioName,
@@ -18,18 +20,19 @@ function PortfolioDetailsPageHeader({
 }: Props) {
   const { id } = useParams();
   const { t } = useTranslation();
+  const { token } = useToken();
   const routes = [
     {
-      path: "/home",
-      breadcrumbName: t("Home"),
+      href: "/home",
+      title: t("Home"),
     },
     {
-      path: `/portfolios/${id}`,
-      breadcrumbName: portfolioName,
+      href: `/portfolios/${id}`,
+      title: portfolioName,
     },
     {
-      path: `/portfolios/${id}/log`,
-      breadcrumbName: t("Log"),
+      href: `/portfolios/${id}/log`,
+      title: t("Log"),
     },
   ];
   if (!portfolioName) {
@@ -38,9 +41,12 @@ function PortfolioDetailsPageHeader({
   return (
     <PageHeader
       className="site-page-header"
-      title={portfolioName}
+      style={{
+        background: token.colorBgContainer,
+      }}
+      title={<Typography.Title level={2}>{portfolioName}</Typography.Title>}
       subTitle={t("Portfolio transactions log")}
-      breadcrumb={{ routes }}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,

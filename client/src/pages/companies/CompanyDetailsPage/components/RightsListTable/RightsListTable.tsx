@@ -47,7 +47,6 @@ export default function RightsListTable({
   };
   const confirmDelete = async (recordId: number) => {
     deleteTransaction({
-      companyId: +companyId!,
       transactionId: recordId,
     });
   };
@@ -137,9 +136,6 @@ export default function RightsListTable({
         totalAmount: transaction.totalAmount,
         totalAmountCurrency: transaction.totalAmountCurrency,
         transactionDate: transaction.transactionDate,
-        transactionTotal:
-          +transaction.count * +transaction.grossPricePerShare +
-          +transaction.totalCommission,
         notes: transaction.notes,
       }))
     );

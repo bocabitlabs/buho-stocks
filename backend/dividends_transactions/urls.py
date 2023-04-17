@@ -1,13 +1,6 @@
-from django.urls import path
-from dividends_transactions import views as dividends_views
+from dividends_transactions import views
+from rest_framework.routers import DefaultRouter
 
-urlpatterns = [
-    path(
-        "",
-        dividends_views.DividendsTransactionListCreateAPIView.as_view(), name="dividends-transaction-list",
-    ),
-    path(
-        "<int:transaction_id>/",
-        dividends_views.DividendsDetailsDetailAPIView.as_view(), name="dividends-transaction-detail",
-    ),
-]
+router = DefaultRouter()
+
+router.register(r"dividends", views.DividendsViewSet, basename="dividends")

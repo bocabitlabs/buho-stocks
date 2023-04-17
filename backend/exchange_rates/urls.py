@@ -4,12 +4,12 @@ from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
 
-router.register(r"exchange-rates", views.ExchangeRateViewSet, basename="exchange_rates")
+router.register(r"exchange-rates", views.ExchangeRateViewSet)
 
 urlpatterns = [
     path(
         "<str:exchange_from>/<str:exchange_to>/<str:exchange_date>/",
         views.ExchangeRateDetailAPIView.as_view(),  # type: ignore
-        name="exchange-rates-detail",
+        name="exchange-rates-details",
     ),
 ]

@@ -1,6 +1,7 @@
 import React, { ReactNode, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Dropdown, MenuProps, PageHeader } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Dropdown, MenuProps, Typography, theme } from "antd";
 import MarketAddEditForm from "../MarketAddEditForm/MarketAddEditForm";
 import breadCrumbRender from "breadcrumbs";
 import { useInitializeMarkets } from "hooks/use-markets/use-markets";
@@ -8,15 +9,17 @@ import { useInitializeMarkets } from "hooks/use-markets/use-markets";
 interface Props {
   children: ReactNode;
 }
+const { useToken } = theme;
+
 function MarketsPageHeader({ children }: Props) {
   const { t } = useTranslation();
   const { mutate: initializeMarkets } = useInitializeMarkets();
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const { token } = useToken();
   const routes = [
     {
-      path: `/markets`,
-      breadcrumbName: t("Markets"),
+      href: `/markets`,
+      title: t("Markets"),
     },
   ];
 
@@ -51,8 +54,11 @@ function MarketsPageHeader({ children }: Props) {
   return (
     <PageHeader
       className="site-page-header"
-      title={t("Markets")}
-      breadcrumb={{ routes }}
+      style={{
+        background: token.colorBgContainer,
+      }}
+      title={<Typography.Title level={2}>{t("Markets")}</Typography.Title>}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       extra={[
         <Dropdown.Button

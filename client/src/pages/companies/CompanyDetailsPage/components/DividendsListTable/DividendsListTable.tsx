@@ -47,7 +47,6 @@ export default function DividendsListTable({
 
   const confirmDelete = async (recordId: number) => {
     deleteTransaction({
-      companyId: +companyId!,
       transactionId: recordId,
     });
   };
@@ -63,19 +62,6 @@ export default function DividendsListTable({
       sorter: (a: IDividendsTransaction, b: IDividendsTransaction) =>
         a.transactionDate.localeCompare(b.transactionDate),
       render: (text: string) => moment(new Date(text)).format("DD/MM/YYYY"),
-    },
-    {
-      title: t("Count"),
-      dataIndex: "count",
-      key: "count",
-      render: (text: string) => text,
-    },
-    {
-      title: t("Gross price per share"),
-      dataIndex: "grossPricePerShare",
-      key: "grossPricePerShare",
-      render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
     {
       title: t("Total commission"),
@@ -97,29 +83,6 @@ export default function DividendsListTable({
       title: t("Total"),
       dataIndex: "totalAmount",
       key: "totalAmount",
-      render: (text: number, record: any) => (
-        <>
-          {(+text).toFixed(2)} {record.grossPricePerShareCurrency}
-          {record.grossPricePerShareCurrency !== portfolioBaseCurrency && (
-            <>
-              <br />
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: "0.8em" }}
-                title={portfolioBaseCurrency}
-              >
-                {record.transactionTotalPortfolioCurrency}{" "}
-                {portfolioBaseCurrency}
-              </Typography.Text>
-            </>
-          )}
-        </>
-      ),
-    },
-    {
-      title: t("Total Calculated"),
-      dataIndex: "transactionTotalCalculated",
-      key: "transactionTotalCalculated",
       render: (text: number, record: any) => (
         <>
           {(+text).toFixed(2)} {record.grossPricePerShareCurrency}
@@ -168,27 +131,16 @@ export default function DividendsListTable({
       transactions.map((transaction: IDividendsTransaction) => ({
         id: transaction.id,
         key: transaction.id,
-        count: transaction.count,
-        grossPricePerShare: transaction.grossPricePerShare,
-        grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
         totalCommission: transaction.totalCommission,
         totalCommissionCurrency: transaction.totalCommissionCurrency,
         transactionDate: transaction.transactionDate,
         totalAmount: transaction.totalAmount,
-        transactionTotalCalculated:
-          +transaction.count * +transaction.grossPricePerShare -
-          +transaction.totalCommission,
-        transactionTotalCalculatedPortfolioCurrency: (
-          +transaction.exchangeRate *
-            +transaction.count *
-            +transaction.grossPricePerShare -
-          +transaction.totalCommission * +transaction.exchangeRate
-        ).toFixed(2),
+        totalAmountBaseCurrency:
+          +transaction.exchangeRate * transaction.totalAmount,
         notes: transaction.notes,
         exchangeRate: transaction.exchangeRate,
         commissionPercentage: (
-          (+transaction.totalCommission /
-            (+transaction.count * +transaction.grossPricePerShare)) *
+          (+transaction.totalCommission / +transaction.totalAmount) *
           100
         ).toFixed(2),
       }))

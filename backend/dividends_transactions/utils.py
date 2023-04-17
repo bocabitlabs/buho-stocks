@@ -36,9 +36,7 @@ class DividendsTransactionsUtils:
         exchange_rate = 1
         if self.use_portfolio_currency:
             exchange_rate = item.exchange_rate
-        total = (item.gross_price_per_share.amount * exchange_rate * item.count) - (
-            item.total_commission.amount * exchange_rate
-        )
+        total = (item.total_amount.amount * exchange_rate) - (item.total_commission.amount * exchange_rate)
         return total
 
     def _get_transactions_amount(self, query: QuerySet[DividendsTransaction]) -> Decimal:

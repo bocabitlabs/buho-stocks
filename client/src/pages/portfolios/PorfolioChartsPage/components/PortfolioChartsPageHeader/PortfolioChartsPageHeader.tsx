@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { PageHeader, Spin } from "antd";
+import { PageHeader } from "@ant-design/pro-layout";
+import { Spin, Typography, theme } from "antd";
 import breadCrumbRender from "breadcrumbs";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 
@@ -11,6 +12,7 @@ interface Props {
   portfolioCountryCode: string;
   children: ReactNode;
 }
+const { useToken } = theme;
 
 function PortfolioChartsPageHeader({
   portfolioName,
@@ -20,14 +22,15 @@ function PortfolioChartsPageHeader({
 }: Props) {
   const { t } = useTranslation();
   const { id } = useParams();
+  const { token } = useToken();
   const routes = [
     {
-      path: `/portfolios/${id}`,
-      breadcrumbName: portfolioName,
+      href: `/portfolios/${id}`,
+      title: portfolioName,
     },
     {
-      path: `/portfolios/${id}/charts`,
-      breadcrumbName: `${t("Charts")}`,
+      href: `/portfolios/${id}/charts`,
+      title: `${t("Charts")}`,
     },
   ];
 
@@ -37,9 +40,12 @@ function PortfolioChartsPageHeader({
   return (
     <PageHeader
       className="site-page-header"
-      title={portfolioName}
+      style={{
+        background: token.colorBgContainer,
+      }}
+      title={<Typography.Title level={2}>{portfolioName}</Typography.Title>}
       subTitle={portfolioDescription}
-      breadcrumb={{ routes }}
+      breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
       tags={[
         <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
