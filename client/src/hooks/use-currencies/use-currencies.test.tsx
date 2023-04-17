@@ -4,17 +4,17 @@ import { useCurrencies } from "./use-currencies";
 import currenciesList from "mocks/responses/currencies";
 import { wrapper } from "utils/mock-providers";
 
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: (key: any) => key }),
-}));
-
-setLogger({
-  log: console.log,
-  warn: console.warn,
-  error: () => {},
-});
-
 describe("useCurrencies Hook tests", () => {
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+
+  setLogger({
+    log: console.log,
+    warn: console.warn,
+    error: () => {},
+  });
+
   it("Gets a list of currencies", async () => {
     const { result } = renderHook(() => useCurrencies(), { wrapper });
     await waitFor(() => result.current.isSuccess);

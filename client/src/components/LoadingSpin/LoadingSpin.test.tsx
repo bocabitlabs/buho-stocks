@@ -1,10 +1,5 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import LoadingSpin from "./LoadingSpin";
-
-jest.mock("react-i18next", () => ({
-  useTranslation: () => ({ t: jest.fn((text) => text) }),
-}));
 
 describe("LoadingSpin component", () => {
   test("renders with default text 'Loading...'", () => {
