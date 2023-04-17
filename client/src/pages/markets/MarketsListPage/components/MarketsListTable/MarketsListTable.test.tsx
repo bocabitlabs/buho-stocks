@@ -1,19 +1,11 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-import React from "react";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, render } from "@testing-library/react";
 import MarketsListTable from "./MarketsListTable";
-import { renderWithRouterAndQueryClient } from "utils/test-utils";
+import { wrapper } from "utils/mock-providers";
 
 describe("MarketsListTable tests", () => {
-  // it("renders expected texts when loading", async () => {
-  //   renderWithRouterAndQueryClient(<MarketsListTable />);
-
-  //   const element = screen.getByText(/No data/i);
-  //   expect(element).toBeInTheDocument();
-  // });
-
   it("renders expected texts after loading", async () => {
-    renderWithRouterAndQueryClient(<MarketsListTable />);
+    expect(1).toBe(1);
+    render(<MarketsListTable />, { wrapper });
 
     await waitFor(() => {
       const element = screen.getByText("AMS");

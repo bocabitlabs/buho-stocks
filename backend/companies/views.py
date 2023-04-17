@@ -1,13 +1,12 @@
-from django.utils.decorators import method_decorator
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
-from drf_yasg.utils import swagger_auto_schema
-from buho_backend.utils.token_utils import ExpiringTokenAuthentication
-from companies.serializers import CompanySerializer, CompanySerializerGet
+import logging
+
 from companies.models import Company
+from companies.serializers import CompanySerializer, CompanySerializerGet
+from django.utils.decorators import method_decorator
+from drf_yasg.utils import swagger_auto_schema
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
-import logging
+from rest_framework import viewsets
 
 logger = logging.getLogger("buho_backend")
 
@@ -52,7 +51,7 @@ logger = logging.getLogger("buho_backend")
     name="partial_update",
     decorator=swagger_auto_schema(
         operation_id="Patch a company",
-        operation_description="Patch an existing company of the current user",
+        operation_description="Patch an existing company",
         tags=["Companies"],
         responses={200: CompanySerializer(many=False)},
     ),
@@ -71,38 +70,32 @@ class CompanyViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = CompanySerializer
-    authentication_classes = [ExpiringTokenAuthentication]
-    permission_classes = [IsAuthenticated]
     lookup_url_kwarg = "company_id"
     lookup_field = "id"
 
     def get_queryset(self):
-        user = self.request.user
         company_id = self.kwargs.get("company_id")
         portfolio_id = self.kwargs.get("portfolio_id")
-        closed = self.request.query_params.get('closed')
+        closed = self.request.query_params.get("closed")
 
-        if closed == 'true':
+        if closed == "true":
             closed = True
         else:
             closed = False
 
         if self.action == "list" or self.action == "create":
-            return Company.objects.filter(portfolio=portfolio_id, user=user.id, is_closed=closed)
+            return Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
 
-        return Company.objects.filter(
-            id=company_id, portfolio=portfolio_id, user=user.id
-        )
+        return Company.objects.filter(id=company_id, portfolio=portfolio_id)
 
     def perform_create(self, serializer):
         portfolio_id = self.kwargs.get("portfolio_id")
-        serializer.save(user=self.request.user)
+        serializer.save()
 
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
             message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
             portfolio=Portfolio.objects.get(id=portfolio_id),
-            user=self.request.user,
         )
 
     def get_serializer_class(self):

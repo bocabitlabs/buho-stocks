@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Alert,
@@ -68,7 +68,7 @@ export default function DividendsTransactionAddEditForm({
     error: errorFetchingTransaction,
     isFetching,
     isSuccess,
-  } = useDividendsTransaction(companyId, transactionId);
+  } = useDividendsTransaction(transactionId);
 
   const fetchExchangeRate = async () => {
     const { data: exchangeRateResult } = await refetch();
@@ -88,34 +88,29 @@ export default function DividendsTransactionAddEditForm({
 
   const handleSubmit = async (values: any) => {
     const {
-      count,
-      grossPricePerShare,
+      totalAmount,
       totalCommission,
       exchangeRate: exchangeRateValue,
       notes,
     } = values;
 
     const newTransactionValues: IDividendsTransactionFormFields = {
-      count,
-      grossPricePerShare,
-      grossPricePerShareCurrency: companyDividendsCurrency.code,
+      totalAmount,
+      totalAmountCurrency: companyDividendsCurrency.code,
       totalCommission,
       totalCommissionCurrency: companyDividendsCurrency.code,
       transactionDate: currentTransactionDate,
       notes,
       exchangeRate: exchangeRateValue ? +exchangeRateValue : 1,
       company: +companyId!,
-      color: "#000",
     };
     if (transactionId) {
       updateTransaction({
-        companyId: +companyId!,
         transactionId,
         newTransaction: newTransactionValues,
       });
     } else {
       createTransaction({
-        companyId: +companyId!,
         newTransaction: newTransactionValues,
       });
     }
@@ -142,8 +137,7 @@ export default function DividendsTransactionAddEditForm({
   useEffect(() => {
     if (transaction) {
       form.setFieldsValue({
-        count: transaction.count,
-        grossPricePerShare: transaction.grossPricePerShare,
+        totalAmount: transaction.totalAmount,
         totalCommission: transaction.totalCommission,
         exchangeRate: transaction.exchangeRate,
         notes: transaction.notes,
@@ -155,7 +149,7 @@ export default function DividendsTransactionAddEditForm({
 
   return (
     <Modal
-      visible={isModalVisible}
+      open={isModalVisible}
       title={title}
       okText={okText}
       cancelText={t("Cancel")}
@@ -175,33 +169,16 @@ export default function DividendsTransactionAddEditForm({
       {(isSuccess || !transactionId) && (
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
-            name="count"
-            label={t("Number of shares")}
+            name="totalAmount"
+            label={t("Amount")}
             rules={[
               {
                 required: true,
-                message: t("Please input the number of shares"),
+                message: t("Please input the amount"),
               },
             ]}
           >
             <InputNumber min={0} step={1} style={{ width: "100%" }} />
-          </Form.Item>
-          <Form.Item
-            name="grossPricePerShare"
-            label={t("Gross price per share")}
-            rules={[
-              {
-                required: true,
-                message: t("Please input the gross price per share"),
-              },
-            ]}
-          >
-            <InputNumber
-              decimalSeparator="."
-              addonAfter={`${companyDividendsCurrency.code}`}
-              min={0}
-              step={0.001}
-            />
           </Form.Item>
 
           <Form.Item

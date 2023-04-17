@@ -1,9 +1,12 @@
-import React from "react";
 import {
   BankOutlined,
+  BarChartOutlined,
   ClusterOutlined,
+  CodeOutlined,
+  DollarCircleOutlined,
   HomeOutlined,
   SettingOutlined,
+  StockOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
 import getRoute, { HOME_ROUTE } from "routes";
@@ -16,22 +19,46 @@ export const navLinks: RoutePathProps[] = [
     text: "Home",
     icon: <HomeOutlined />,
   },
-  { key: "1", path: "/app/markets", text: "Markets", icon: <BankOutlined /> },
+  { key: "1", path: "/markets", text: "Markets", icon: <BankOutlined /> },
   {
     key: "2",
-    path: "/app/sectors",
+    path: "/sectors",
     text: "Sectors",
     icon: <ClusterOutlined />,
   },
   {
     key: "3",
-    path: "/app/import-export",
-    text: "Import & Export",
-    icon: <SyncOutlined />,
+    path: "/currencies",
+    text: "Currencies",
+    icon: <DollarCircleOutlined />,
   },
   {
     key: "4",
-    path: "/app/settings",
+    path: "/benchmarks",
+    text: "Benchmarks",
+    icon: <BarChartOutlined />,
+  },
+  {
+    key: "5",
+    path: "/exchange-rates",
+    text: "Exchange Rates",
+    icon: <CodeOutlined />,
+  },
+  {
+    key: "6",
+    path: "/stock-prices",
+    text: "Stock Prices",
+    icon: <StockOutlined />,
+  },
+  {
+    key: "7",
+    path: "/import",
+    text: "Import from CSV",
+    icon: <SyncOutlined />,
+  },
+  {
+    key: "8",
+    path: "/settings",
     text: "Settings",
     icon: <SettingOutlined />,
   },

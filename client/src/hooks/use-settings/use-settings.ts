@@ -5,7 +5,6 @@ import { ISettings, ISettingsFormFields } from "types/settings";
 
 interface UpdateSettingsMutationProps {
   newSettings: ISettingsFormFields;
-  id: number;
 }
 
 export const fetchSettings = async () => {
@@ -15,8 +14,8 @@ export const fetchSettings = async () => {
 
 export const useUpdateSettings = () => {
   return useMutation(
-    ({ id, newSettings }: UpdateSettingsMutationProps) =>
-      apiClient.put(`/settings/${id}/`, newSettings),
+    ({ newSettings }: UpdateSettingsMutationProps) =>
+      apiClient.put(`/settings/`, newSettings),
     {
       onSuccess: () => {
         queryClient.invalidateQueries("settings");

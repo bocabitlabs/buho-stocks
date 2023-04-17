@@ -1,22 +1,32 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import "./index.css";
 import "./App.css";
 import { useTranslation } from "react-i18next";
 import { Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Layout } from "antd";
+import { ConfigProvider, Layout, theme } from "antd";
 import { navLinks } from "components/AppSidebar/AppSidebar";
-import NavBar from "components/NavBar/NavBar";
 import PageFooter from "components/PageFooter/PageFooter";
 import RoutesMenu from "components/RoutesMenu/RoutesMenu";
 import SideBar from "components/SideBar/SideBar";
-import { AuthContext } from "contexts/auth";
+import TopNavBar from "components/TopNavBar/TopNavBar";
 import { useSettings } from "hooks/use-settings/use-settings";
 import i18n from "i18n";
 
+function useDarkMode() {
+  return (
+    window.matchMedia &&
+    window.matchMedia("(prefers-color-scheme:dark)").matches
+  );
+}
+
 function App() {
-  const { state } = useContext(AuthContext);
-  const { isAuthenticated } = state;
   const { t } = useTranslation();
+  const [isDarkMode, setIsDarkMode] = useState(useDarkMode());
+
+  const handChangeTheme = () => {
+    setIsDarkMode((previousValue) => !previousValue);
+  };
 
   const [selectedKey, setSelectedKey] = useState<string>("0");
   const changeSelectedKey = useCallback((event: any) => {
@@ -26,7 +36,7 @@ function App() {
 
   const { data, error: errorSettings } = useSettings({
     onError: () => {
-      toast.error("Unable to load settings");
+      toast.error<string>(t("Unable to load settings"));
     },
   });
 
@@ -35,10 +45,6 @@ function App() {
       i18n.changeLanguage(data?.language);
     }
   }, [data]);
-
-  if (!isAuthenticated) {
-    return <div>{t("Login in...")}</div>;
-  }
 
   const Menu = (
     <RoutesMenu
@@ -49,19 +55,25 @@ function App() {
   );
 
   return (
-    <div className="App">
-      <NavBar menu={Menu} />
-      <Layout>
-        <SideBar menu={Menu} />
-        <Layout.Content>
-          {errorSettings && (
-            <div>Unable to fetch application&apos;s settings.</div>
-          )}
-          <Outlet />
-          <PageFooter />
-        </Layout.Content>
-      </Layout>
-    </div>
+    <ConfigProvider
+      theme={{
+        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
+      }}
+    >
+      <div className="App">
+        <TopNavBar menu={Menu} changeTheme={handChangeTheme} />
+        <Layout>
+          <SideBar menu={Menu} />
+          <Layout.Content>
+            {errorSettings && (
+              <div>Unable to fetch application&apos;s settings.</div>
+            )}
+            <Outlet />
+            <PageFooter />
+          </Layout.Content>
+        </Layout>
+      </div>
+    </ConfigProvider>
   );
 }
 

@@ -1,4 +1,4 @@
-@import "~antd/dist/antd.css";
+/*@import "~antd/dist/antd.css";*/
 
 body {
   margin: 0;
@@ -39,8 +39,7 @@ code {
   background-color: #fff;
 }
 
-.site-page-header {
+.ant-layout-content .site-page-header {
   padding: 24px;
-  background: #fff;
-  margin: 24px;
+  margin: 10px;
 }

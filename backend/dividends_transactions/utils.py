@@ -1,12 +1,14 @@
 from datetime import date
 from decimal import Decimal
+
 from dividends_transactions.models import DividendsTransaction
+from django.db.models.query import QuerySet
 
 
 class DividendsTransactionsUtils:
     def __init__(
         self,
-        transactions: list[DividendsTransaction],
+        transactions: QuerySet[DividendsTransaction],
         use_portfolio_currency: bool = True,
     ):
         self.transactions = transactions
@@ -34,26 +36,23 @@ class DividendsTransactionsUtils:
         exchange_rate = 1
         if self.use_portfolio_currency:
             exchange_rate = item.exchange_rate
-        total = (
-            item.gross_price_per_share.amount * exchange_rate * item.count
-            - item.total_commission.amount * exchange_rate
-        )
+        total = (item.total_amount.amount * exchange_rate) - (item.total_commission.amount * exchange_rate)
         return total
 
-    def _get_transactions_amount(self, query: list[DividendsTransaction]) -> Decimal:
-        total = 0
+    def _get_transactions_amount(self, query: QuerySet[DividendsTransaction]) -> Decimal:
+        total: Decimal = Decimal(0)
         for item in query:
             total += self._get_transaction_amount(item)
         return total
 
     def get_dividends_of_year(self, year: int):
-        total = 0
+        total: Decimal = Decimal(0)
         query = self._get_transactions_query(year)
         total = self._get_transactions_amount(query)
         return total
 
     def get_accumulated_dividends_until_year(self, year: int):
-        total = 0
+        total: Decimal = Decimal(0)
         query = self._get_transactions_query(year, use_accumulated=True)
         total = self._get_transactions_amount(query)
         return total

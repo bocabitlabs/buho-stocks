@@ -1,16 +1,14 @@
+import logging
 from decimal import Decimal
+
+import factory
+from companies.tests.factory import CompanyFactory
+from dividends_transactions.models import DividendsTransaction
+from dividends_transactions.tests.factory import DividendsTransactionFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-from rest_framework.authtoken.models import Token
-from auth.tests.factory import UserFactory
-from companies.tests.factory import CompanyFactory
-import logging
-import factory
-from dividends_transactions.models import DividendsTransaction
-
-from dividends_transactions.tests.factory import DividendsTransactionFactory
+from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
@@ -19,16 +17,12 @@ class DividendsTransactionsListTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         cls.faker_obj = Faker()
 
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
-
-    def test_get_rights(self):
-        company = CompanyFactory.create(user=self.user_saved)
-        url = reverse("dividends-transaction-list", args=[company.id])
+    def test_get_dividends(self):
+        company = CompanyFactory.create()
+        base_url = reverse("dividends-list")
+        url = f"{base_url}?company={company.id}"
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -36,7 +30,6 @@ class DividendsTransactionsListTestCase(APITestCase):
 
         for _ in range(0, 4):
             DividendsTransactionFactory.create(
-                user=self.user_saved,
                 company=company,
                 gross_price_per_share_currency=company.base_currency,
                 total_commission_currency=company.base_currency,
@@ -46,17 +39,15 @@ class DividendsTransactionsListTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 4)
 
+
 class DividendsTransactionsDetailTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
-        cls.company = CompanyFactory.create(user=cls.user_saved)
+        cls.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
             instance = DividendsTransactionFactory.create(
-                user=cls.user_saved,
                 company=cls.company,
                 gross_price_per_share_currency=cls.company.base_currency,
                 total_commission_currency=cls.company.base_currency,
@@ -64,12 +55,9 @@ class DividendsTransactionsDetailTestCase(APITestCase):
             instances.append(instance)
         cls.instances = instances
 
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
-
     def test_get_dividends(self):
         index = 0
-        url = reverse("dividends-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("dividends-detail", args=[self.instances[index].id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -82,16 +70,17 @@ class DividendsTransactionsDetailTestCase(APITestCase):
             self.instances[index].exchange_rate,
         )
         self.assertEqual(
-            Decimal(response.data["gross_price_per_share"]),
-            self.instances[index].gross_price_per_share.amount,
+            Decimal(response.data["total_amount"]),
+            self.instances[index].total_amount.amount,
         )
         self.assertEqual(
-            response.data["gross_price_per_share_currency"],
-            str(self.instances[index].gross_price_per_share.currency),
+            response.data["total_amount_currency"],
+            str(self.instances[index].total_amount.currency),
         )
         index = len(self.instances) - 1
-        url = reverse("dividends-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("dividends-detail", args=[self.instances[index].id])
         response = self.client.get(url)
+        logger.debug(response.data)
         self.assertEqual(
             Decimal(response.data["total_commission"]),
             self.instances[index].total_commission.amount,
@@ -108,7 +97,7 @@ class DividendsTransactionsDetailTestCase(APITestCase):
         temp_data["gross_price_per_share_currency"] = self.company.base_currency
         temp_data["total_commission_currency"] = self.company.base_currency
 
-        url = reverse("dividends-transaction-detail", args=[self.company.id, self.instances[index].id])
+        url = reverse("dividends-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -126,7 +115,7 @@ class DividendsTransactionsDetailTestCase(APITestCase):
         )
 
     def test_delete_transaction(self):
-        url = reverse("dividends-transaction-detail", args=[self.company.id, self.instances[0].id])
+        url = reverse("dividends-detail", args=[self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
 

@@ -1,8 +1,8 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Select } from "antd";
+import CountryFlag from "components/CountryFlag/CountryFlag";
 import countries from "utils/countries";
-import FlagIcon from "utils/flag-icon";
 
 interface Props {
   handleChange: any;
@@ -22,7 +22,7 @@ export default function CountrySelector({
         aria-label={element.name}
         style={{ paddingRight: "1em" }}
       >
-        <FlagIcon code={element.code} size="lg" />
+        <CountryFlag code={element.code} />
       </span>
       {element.name}
     </div>

@@ -1,7 +1,5 @@
-import random
-from factory import django, Faker, SubFactory, post_generation
-from auth.tests.factory import UserFactory
 from companies.models import Company
+from factory import Faker, SubFactory, django, post_generation
 from markets.tests.factory import MarketFactory
 from portfolios.tests.factory import PortfolioFactory
 from sectors.tests.factory import SectorFactory
@@ -24,7 +22,6 @@ class CompanyFactory(django.DjangoModelFactory):
     base_currency = "USD"
     dividends_currency = "USD"
 
-    user = SubFactory(UserFactory)
     sector = SubFactory(SectorFactory)
     market = SubFactory(MarketFactory)
     portfolio = SubFactory(PortfolioFactory)

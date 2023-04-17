@@ -1,11 +1,9 @@
-from django.contrib.auth.models import User
 from django.db import models
-
 from portfolios.models import Portfolio
 
 
 class LogMessage(models.Model):
-
+    id = models.AutoField(primary_key=True)
     MESSAGE_TYPE_CREATE_COMPANY = "CREATE_COMPANY"
     MESSAGE_TYPE_DELETE_COMPANY = "DELETE_COMPANY"
 
@@ -26,11 +24,12 @@ class LogMessage(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    portfolio = models.ForeignKey(
-        Portfolio, on_delete=models.CASCADE, related_name="log_messages"
-    )
+    portfolio_id: int
+    portfolio = models.ForeignKey["Portfolio"](Portfolio, on_delete=models.CASCADE, related_name="log_messages")
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=False)
+    class Meta:
+        verbose_name = "Log Message"
+        verbose_name_plural = "Log Messages"
 
-    def __str___(self):
+    def __str__(self):
         return f"{self.message_type} - {self.date_created}: {self.message_text}"
