@@ -1,18 +1,15 @@
-import logging
 import datetime
+import logging
 import pathlib
-from os import path
 from decimal import Decimal
+from os import path
+
 import responses
-from faker import Faker
-from rest_framework.test import APITestCase
-from auth.tests.factory import UserFactory
 from exchange_rates.services.ecb_api_client import EcbApiClient
 from exchange_rates.services.exchange_rate_service import ExchangeRateService
-
-
 from exchange_rates.tests.factory import ExchangeRateFactory
-
+from faker import Faker
+from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
@@ -21,10 +18,9 @@ class ExchangeRateServiceTestCase(APITestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.user_saved = UserFactory.create()
         cls.faker_obj = Faker()
         instances = []
-        cls.years = [2018, 2020, 2021, datetime.date.today().year]
+        cls.years = [2018, 2020, 2021, 2022]
         cls.days_with_month_year = [
             datetime.date(cls.years[0], 1, 1),
             datetime.date(cls.years[1], 1, 1),
@@ -41,9 +37,7 @@ class ExchangeRateServiceTestCase(APITestCase):
                 exchange_from=cls.from_currency,
                 exchange_to=cls.to_currency,
                 exchange_rate=cls.exchange_rates[index],
-                exchange_date=datetime.date(
-                    first_datetime.year, first_datetime.month, first_datetime.day
-                ),
+                exchange_date=datetime.date(first_datetime.year, first_datetime.month, first_datetime.day),
             )
             instances.append(instance)
         cls.instances = instances
@@ -110,7 +104,7 @@ class ExchangeRateServiceTestCase(APITestCase):
             "exchange_from": "USD",
             "exchange_to": "EUR",
             "exchange_date": "2022-08-04",
-            "exchange_rate": 1.018,
+            "exchange_rate": 0.9823182711198428,
         }
         with open(
             path.join(
@@ -131,9 +125,7 @@ class ExchangeRateServiceTestCase(APITestCase):
         )
 
         service = ExchangeRateService()
-        result = service.get_exchange_rate_for_date(
-            self.from_currency, self.to_currency, self.not_found_date
-        )
+        result = service.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.not_found_date)
         self.assertEqual(result.exchange_from, expected_eur_value["exchange_from"])
         self.assertEqual(result.exchange_to, expected_eur_value["exchange_to"])
         self.assertEqual(result.exchange_rate, expected_eur_value["exchange_rate"])
@@ -161,8 +153,6 @@ class ExchangeRateServiceTestCase(APITestCase):
 
         utils = ExchangeRateService()
         self.assertEqual(
-            utils.get_exchange_rate_for_date(
-                self.from_currency, self.to_currency, self.not_found_date
-            ),
+            utils.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.not_found_date),
             expected_eur_value,
         )

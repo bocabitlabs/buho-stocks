@@ -7,11 +7,11 @@
     {
       "name": "Debug React: Edge",
       "request": "launch",
-      "type": "pwa-msedge",
+      "type": "msedge",
       "url": "http://localhost:3000",
       "webRoot": "${workspaceFolder}/client",
       "preLaunchTask": "npm: start",
-      "postDebugTask": "postdebugKill",
+      "postDebugTask": "postdebugKill"
     },
     {
       "name": "Python: Django",
@@ -23,13 +23,20 @@
     },
 
     {
-      "name": "Run React: React",
+      "name": "Run Vite: React",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "yarn",
       "runtimeArgs": ["start"],
       "cwd": "${workspaceRoot}/client",
-      "console": "integratedTerminal",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: Test",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/manage.py",
+      "args": ["test"]
     }
   ]
 }

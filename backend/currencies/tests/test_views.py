@@ -1,9 +1,7 @@
 from django.urls import reverse
+from initialize_data.initializers.currencies import create_initial_currencies
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
-from rest_framework.authtoken.models import Token
-from auth.tests.factory import UserFactory
-from currencies.views.admin import create_initial_currencies
+from rest_framework.test import APITestCase
 
 
 class CurrenciesViewsTestCase(APITestCase):
@@ -11,15 +9,10 @@ class CurrenciesViewsTestCase(APITestCase):
     def setUpClass(cls) -> None:
         super().setUpClass()
         cls.available_currencies_count = 13
-        cls.user_saved = UserFactory.create()
-        cls.token, _ = Token.objects.get_or_create(user=cls.user_saved)
         create_initial_currencies()
 
-    def setUp(self):
-        self.client = APIClient(HTTP_AUTHORIZATION="Token " + self.token.key)
-
     def test_get_currencies(self):
-        url = reverse("currency-list")
+        url = reverse("currencies-list")
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -35,7 +35,7 @@ function SettingsForm(): ReactElement | null {
       portfolioSortBy: "TODO",
     };
     if (data) {
-      updateSettings({ id: data.id, newSettings });
+      updateSettings({ newSettings });
       i18n.changeLanguage(newSettings.language);
     }
   };

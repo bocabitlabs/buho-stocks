@@ -50,7 +50,6 @@ export default function SharesListTable({
 
   const confirmDelete = async (recordId: number) => {
     deleteTransaction({
-      companyId: +companyId!,
       transactionId: recordId,
     });
   };
@@ -97,8 +96,8 @@ export default function SharesListTable({
     },
     {
       title: t("Total"),
-      dataIndex: "transactionTotal",
-      key: "transactionTotal",
+      dataIndex: "totalAmount",
+      key: "totalAmount",
       render: (text: number, record: any) =>
         `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
     },
@@ -137,10 +136,9 @@ export default function SharesListTable({
         grossPricePerShareCurrency: transaction.grossPricePerShareCurrency,
         totalCommission: transaction.totalCommission,
         totalCommissionCurrency: transaction.totalCommissionCurrency,
+        totalAmount: transaction.totalAmount,
+        totalAmountCurrency: transaction.totalAmountCurrency,
         transactionDate: transaction.transactionDate,
-        transactionTotal:
-          +transaction.count * +transaction.grossPricePerShare +
-          +transaction.totalCommission,
         notes: transaction.notes,
       }))
     );
