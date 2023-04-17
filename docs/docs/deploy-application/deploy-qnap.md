@@ -15,7 +15,7 @@ All the above required applications are available in the AppCenter.
 
 ## 1. Configure MariaDB
 
-Install MariaDB 10 from the AppCenter. Once the installation is complete, go to Control Panel > Applications. 
+Install MariaDB 10 from the AppCenter. Once the installation is complete, go to Control Panel > Applications.
 Activate the service by clicking on the toggle button and enable TCP/IP networking as shown in the image below. Define root password and apply the changes before closing the window.
 
 
@@ -43,7 +43,7 @@ socket: $cfg['Servers'][$i]['socket'] = '/var/run/mariadb10.sock';
 
 ## 3. Create database table and user
 
-Login into phpMyAdmin using MariaDB´s root account configured in step 1 and create a user and a table to be used by the application. 
+Login into phpMyAdmin using MariaDB´s root account configured in step 1 and create a user and a table to be used by the application.
 
 In the image below, the table name is `buho-stocks-database` and the user is `buho-stocks-user`.
 
@@ -108,6 +108,12 @@ Click on Create and confirm all the settings in the Summary window.
 
 
 ## 6. Create super user
+
+:::info
+
+This step is deprecated and is not needed anymore since version `0.100.0`.
+
+:::
 
 SSH into QNAP NAS and start an interactive bash session into `buho-stocks` container.
 

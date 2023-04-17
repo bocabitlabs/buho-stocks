@@ -12,5 +12,5 @@ export default function CountryFlag({ code }: Props) {
   }
   if (!countryCode || !hasFlag(countryCode.toUpperCase())) return null;
   const FlagComponent = Flags[countryCode.toUpperCase() as keyof typeof Flags];
-  return <FlagComponent style={{ maxHeight: 20 }} />;
+  return <FlagComponent data-testid="country-flag" style={{ maxHeight: 20 }} />;
 }

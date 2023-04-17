@@ -16,7 +16,7 @@ function ExchangeRatesPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/exchange-rates`,
+      href: `/exchange-rates`,
       title: t("Exchange Rates"),
     },
   ];

@@ -18,7 +18,7 @@ function BenchmarksListPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/benchmarks`,
+      href: `/benchmarks`,
       title: t("Benchmarks"),
     },
   ];

@@ -14,7 +14,7 @@ function SettingsPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/settings`,
+      href: `/settings`,
       title: t("Settings"),
     },
   ];

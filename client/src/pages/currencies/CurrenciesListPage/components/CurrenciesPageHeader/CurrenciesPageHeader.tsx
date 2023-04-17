@@ -18,7 +18,7 @@ function CurrenciesPageHeader({ children }: Props) {
   const { token } = useToken();
   const routes = [
     {
-      path: `/currencies`,
+      href: `/currencies`,
       title: t("Currencies"),
     },
   ];

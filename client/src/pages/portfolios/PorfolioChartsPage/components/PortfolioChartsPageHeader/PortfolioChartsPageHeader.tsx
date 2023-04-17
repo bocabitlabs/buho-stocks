@@ -25,11 +25,11 @@ function PortfolioChartsPageHeader({
   const { token } = useToken();
   const routes = [
     {
-      path: `/portfolios/${id}`,
+      href: `/portfolios/${id}`,
       title: portfolioName,
     },
     {
-      path: `/portfolios/${id}/charts`,
+      href: `/portfolios/${id}/charts`,
       title: `${t("Charts")}`,
     },
   ];

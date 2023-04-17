@@ -23,7 +23,12 @@ function TopNavBar({ menu, changeTheme }: TopNavBarProps) {
     <Layout>
       <Layout.Header
         className="navbar"
-        style={{ background: token.colorBgContainer }}
+        style={{
+          background: token.colorBgContainer,
+          boxShadow: "0 0 3px 0 #0000006b",
+          paddingInline: 20,
+          zIndex: 2,
+        }}
       >
         <div
           style={{

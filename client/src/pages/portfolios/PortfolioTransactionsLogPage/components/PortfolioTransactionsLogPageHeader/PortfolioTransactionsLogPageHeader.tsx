@@ -23,15 +23,15 @@ function PortfolioDetailsPageHeader({
   const { token } = useToken();
   const routes = [
     {
-      path: "/home",
+      href: "/home",
       title: t("Home"),
     },
     {
-      path: `/portfolios/${id}`,
+      href: `/portfolios/${id}`,
       title: portfolioName,
     },
     {
-      path: `/portfolios/${id}/log`,
+      href: `/portfolios/${id}/log`,
       title: t("Log"),
     },
   ];
