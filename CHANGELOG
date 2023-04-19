@@ -10,14 +10,20 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.100.5] - 2023-04-19
+### Improved
+- Merged dependabot security patches
+- Set sidebar to 300px
+- Decrease padding on main content and header
+
 ## [0.100.4] - 2023-04-16
-## Added
+### Added
 - Antd 5
 - Dark mode: Automatic based on system settings (on page load) and manual
-## Improved
+### Improved
 - Backend endpoint for transactions simplified (no nested URLs)
 - Loading spin now is centered in the page
-## Removed
+### Removed
 - less
 - vite-plugin-style-import
 

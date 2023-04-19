@@ -51,7 +51,6 @@ RUN mkdir /usr/src/media/
 RUN mkdir /usr/src/logs/
 # copy project
 COPY ./backend/config/config.sample.py /usr/src/app/config/config.py
-COPY ./data/db.sqlite3.base /usr/src/data/db.sqlite3
 
 EXPOSE 34800
 
