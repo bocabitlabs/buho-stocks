@@ -1,21 +1,26 @@
-import React, { ReactElement } from "react";
-import { Layout } from "antd";
+import { ReactElement } from "react";
+import { Layout, theme } from "antd";
 import "./SideBar.css";
 
+const { useToken } = theme;
+
 function SideBar({ menu }: { menu: ReactElement }) {
+  const { token } = useToken();
   return (
     <Layout.Sider
-      width={300}
+      width={250}
       className="sidebar"
       breakpoint="lg"
       theme="light"
       collapsedWidth={0}
       trigger={null}
-      style={{
-        boxShadow: "3px #0000006b",
-      }}
+      style={{ borderRight: `1px solid ${token.colorBorder}` }}
     >
-      {menu}
+      <div style={{ flex: 1 }}>
+        <div style={{ flex: 1, position: "sticky", top: 0, left: 0 }}>
+          {menu}
+        </div>
+      </div>
     </Layout.Sider>
   );
 }
