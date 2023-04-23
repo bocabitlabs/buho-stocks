@@ -25,9 +25,11 @@ function TopNavBar({ menu, changeTheme }: TopNavBarProps) {
         className="navbar"
         style={{
           background: token.colorBgContainer,
-          boxShadow: "0 0 3px 0 #0000006b",
+          // boxShadow: "0 0 3px 0 #0000006b",
           paddingInline: 20,
-          zIndex: 2,
+          // zIndex: 2,
+          borderBottom: `1px solid ${token.colorBorder}`,
+          position: "sticky",
         }}
       >
         <div
@@ -61,6 +63,7 @@ function TopNavBar({ menu, changeTheme }: TopNavBarProps) {
           placement="left"
           onClose={() => setVisible(false)}
           open={visible}
+          className="sidebar-drawer"
         >
           {React.cloneElement(menu as React.ReactElement<any>, {
             extraCallback: hideDrawer,

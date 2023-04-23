@@ -105,7 +105,7 @@ function RoutesMenu({
       mode="inline"
       selectedKeys={[selectedKey]}
       items={items}
-      style={{ width: "300" }}
+      // style={{ width: "250" }}
     />
   );
 }

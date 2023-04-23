@@ -15,14 +15,6 @@ code {
     monospace;
 }
 
-/* .site-layout-content {
-  min-height: 280px;
-  padding: 24px;
-  background: #fff;
-}
-.site-main-content {
-  width: 100%;
-}*/
 #components-layout-demo-top .logo {
   float: left;
   width: 120px;
@@ -42,4 +34,8 @@ code {
 .ant-layout-content .site-page-header {
   padding: 24px;
   margin: 10px;
+}
+
+.sidebar-drawer .ant-drawer-body {
+  padding: 0;
 }
