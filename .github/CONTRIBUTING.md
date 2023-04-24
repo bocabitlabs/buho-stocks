@@ -8,7 +8,7 @@ make via issue with the owners of this repository before making a change.
 If you would like to contribute to this project, you will need to use
 [git flow](https://github.com/nvie/gitflow). This way, any and all changes
 happen on the development branch and not on the master branch. As such, after
-you have git-flow-ified your `zoomus` git repo, create a pull request for your
+you have git-flow-ified your `buho-stocks` git repo, create a pull request for your
 branch, and we'll take it from there.
 
 ## Git Commit guidelines
