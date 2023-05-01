@@ -69,8 +69,8 @@ class PortfolioStatsAPIView(APIView):
         stats = self.get_object(portfolio_id, year, group_by=group_by)
         if not stats:
             return Response(
-                {"res": "Object with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         return Response(stats, status=status.HTTP_200_OK)
@@ -91,8 +91,8 @@ class PortfolioStatsAPIView(APIView):
         stats = self.update_object(portfolio_id, year)
         if not stats:
             return Response(
-                {"res": "Object with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         return Response(stats, status=status.HTTP_200_OK)
@@ -120,8 +120,8 @@ class PortfolioStatsAllYearsAPIView(APIView):
         stats = self.get_object(portfolio_id)
         if not stats:
             return Response(
-                {"res": "Object with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         return Response(stats, status=status.HTTP_200_OK)
