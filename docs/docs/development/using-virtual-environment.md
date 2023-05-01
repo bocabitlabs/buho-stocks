@@ -1,12 +1,12 @@
 ---
-sidebar_position: 5
+sidebar_position: 4
 ---
 # Using a Python virtual env on the host machine
 
 Use a virtual environment:
 
 ```
-python3 -m venv env
+python -m venv env
 source env/bin/activate
 ```
 
@@ -27,7 +27,7 @@ python manage.py migrate
 Backend:
 ```bash
 cd backend
-python manage.py 0.0.0.0:8001
+python manage.py runserver 0.0.0.0:8001
 ```
 
 Frontend:
