@@ -1,4 +1,3 @@
-import React from "react";
 import { Col, Row } from "antd";
 import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
 import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";

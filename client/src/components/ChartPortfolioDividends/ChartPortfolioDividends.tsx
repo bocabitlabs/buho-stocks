@@ -3,6 +3,7 @@ import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Spin } from "antd";
+import { AxiosError } from "axios";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 import { mapColorsToLabels } from "utils/colors";
@@ -11,7 +12,7 @@ export default function ChartPortfolioDividends(): ReactElement | null {
   const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>(null);
-  const { data } = usePortfolioAllYearStats(+id!);
+  const { data, isFetching, error } = usePortfolioAllYearStats(+id!);
   const { data: portfolio } = usePortfolio(+id!);
 
   const options = {
@@ -85,6 +86,17 @@ export default function ChartPortfolioDividends(): ReactElement | null {
       setChartData(tempChartData);
     }
   }, [data, t]);
+
+  if (error) {
+    if ((error as AxiosError)?.response?.status === 404) {
+      return <div>No stats yet</div>;
+    }
+    return <div>Something went wrong</div>;
+  }
+
+  if (isFetching) {
+    return <Spin data-testid="loader" />;
+  }
 
   if (chartData) {
     return (
