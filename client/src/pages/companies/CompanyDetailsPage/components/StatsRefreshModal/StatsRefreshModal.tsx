@@ -1,11 +1,9 @@
-import React, { ReactElement, useCallback, useState } from "react";
+import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import axios from "axios";
-import { useSettings } from "hooks/use-settings/use-settings";
 import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
-import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 
 interface Props {
   companyId: string | undefined;
@@ -24,9 +22,8 @@ export default function StatsRefreshModal({
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
   const [errorsList, setErrorsList] = useState<string[]>([]);
 
-  const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
+  // const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
   const { mutateAsync: updateStats } = useUpdateYearStats();
-  const { data: settings } = useSettings();
 
   const showModal = () => {
     setVisible(true);
@@ -46,7 +43,7 @@ export default function StatsRefreshModal({
       await updateStats({
         companyId: +companyId!,
         year: selectedYear,
-        forced: updateStockPriceSwitch,
+        updateApiPrice: updateStockPriceSwitch,
       });
       return { result: true, message: "" };
     } catch (error: any) {
@@ -58,36 +55,11 @@ export default function StatsRefreshModal({
     }
   };
 
-  const getStockPrice = useCallback(async () => {
-    let tempYear = selectedYear;
-    if (selectedYear === "all") {
-      tempYear = new Date().getFullYear().toString();
-    }
-    try {
-      await updateStockPrice({ companyId: +companyId!, year: tempYear });
-      return { result: true, message: "" };
-    } catch (error: any) {
-      let message = error;
-      if (axios.isAxiosError(error)) {
-        message = error.message;
-      }
-      return { result: false, message };
-    }
-  }, [companyId, selectedYear, updateStockPrice]);
-
   const handleOk = async () => {
     console.log("handleOk");
     setConfirmLoading(true);
     setErrorsList([]);
     const updatesErrorList: string[] = [];
-
-    if (updateStockPriceSwitch) {
-      const result = await getStockPrice();
-      if (!result.result) {
-        updatesErrorList.push(result.message);
-      }
-      setConfirmLoading(false);
-    }
     if (updateStatsSwitch) {
       setConfirmLoading(true);
       const result = await getStatsForced();
@@ -128,16 +100,15 @@ export default function StatsRefreshModal({
       >
         <Form>
           {t("Do you want to update the stats and the stock price?")}
-          {settings && settings.allowFetch && (
-            <Form.Item style={{ marginBottom: 0 }}>
-              <Checkbox
-                onChange={onStockPriceChange}
-                checked={updateStockPriceSwitch}
-              >
-                {t("Update the stock price from API")}
-              </Checkbox>
-            </Form.Item>
-          )}
+          <Form.Item style={{ marginBottom: 0 }}>
+            <Checkbox
+              onChange={onStockPriceChange}
+              checked={updateStockPriceSwitch}
+            >
+              {t("Update the stock price from API")}
+            </Checkbox>
+          </Form.Item>
+
           <Form.Item>
             <Checkbox onChange={onStatsChange} checked={updateStatsSwitch}>
               {t("Update the stats for the year")} &quot;{t(selectedYear)}&quot;
