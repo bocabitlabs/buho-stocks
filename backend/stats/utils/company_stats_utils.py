@@ -18,12 +18,12 @@ class CompanyStatsUtils:
         company_id: int,
         year=year_for_all,
         use_portfolio_currency: bool = True,
-        force: bool = False,
+        update_api_price: bool = False,
     ):
         self.company = Company.objects.get(id=company_id)
         self.year = year
         self.use_portfolio_currency = use_portfolio_currency
-        self.force = force
+        self.update_api_price = update_api_price
         self.company_utils = CompanyUtils(self.company.id, use_portfolio_currency=self.use_portfolio_currency)
 
         self.stock_prices_utils = StockPricesUtils(self.company, self.year)
@@ -167,7 +167,7 @@ class CompanyStatsUtils:
     def get_stats_for_year(self):
         temp_year = self.year_for_all if self.year == "all" else self.year
 
-        if not self.force:
+        if not self.update_api_price:
             instance = self.get_stats_for_year_from_db(temp_year)
             if instance:
                 return instance

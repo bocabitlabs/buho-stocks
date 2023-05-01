@@ -22,7 +22,7 @@ class StockPricesApi:
         from_date: str,
         to_date: str,
         minimum_values: Optional[int] = None,
-        only_api=False,
+        update_api_price=False,
         dry_run=False,
     ) -> dict:
         """Get the historical prices for a given ticker and range of dates.
@@ -39,7 +39,7 @@ class StockPricesApi:
         logger.info(
             (
                 f"Getting historical data for {ticker} "
-                f"from {from_date} to {to_date}. only_api={only_api}, dry_run={dry_run} )"
+                f"from {from_date} to {to_date}. update_api_price={update_api_price}, dry_run={dry_run} )"
             )
         )
 
@@ -56,7 +56,7 @@ class StockPricesApi:
             if minimum_values <= 0:
                 minimum_values = 1
 
-        if only_api:
+        if update_api_price:
             prices_length = 0
 
         if prices_length < minimum_values:
@@ -95,9 +95,11 @@ class StockPricesApi:
             serializer = StockPriceSerializer(instance=prices, many=True)
             return serializer.data
 
-    def get_last_data_from_year(self, ticker: str, year: int, only_api=False) -> Union[dict, None]:
+    def get_last_data_from_year(self, ticker: str, year: int, update_api_price=False) -> Union[dict, None]:
         from_date, to_date = self.get_start_end_dates_for_year(year)
-        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1, only_api=only_api)
+        results = self.get_historical_data(
+            ticker, from_date, to_date, minimum_values=1, update_api_price=update_api_price
+        )
         if len(results) > 0:
             return results[-1]
         return None
