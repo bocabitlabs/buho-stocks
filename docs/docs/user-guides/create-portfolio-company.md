@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Creating your first portfolio and company
+# Create your first portfolio and company
 
 The first thing to do is to create your first portfolio and add your first company to it.
 
