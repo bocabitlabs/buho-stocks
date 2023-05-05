@@ -2,6 +2,8 @@
 sidebar_position: 5
 ---
 
+# Deploy on a QNAP NAS
+
 The application can be deployed on QNAP NAS running QTS using the Docker image available at `bocabitlabs/buho-stocks:latest`
 
 ## Requirements
@@ -55,7 +57,7 @@ In the image below, the table name is `buho-stocks-database` and the user is `bu
 
 ## 4. Populate application configuration files
 
-Create a `config` directory to store the configuration files as specified [here](/docs/deploy-application/deploy-command-line).
+Create a `config` directory to store the configuration files as specified [here](/docs/deploy-docker/).
 
 Both `config.py` and `mysql.conf` must be placed inside the `config` directory.
 

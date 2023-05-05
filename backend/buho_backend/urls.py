@@ -59,11 +59,6 @@ urlpatterns = [
     path("api/v1/", include(shares_transactions_router.urls)),
     path("api/v1/", include(stock_prices_router.urls)),
     path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
-    path(
-        "api/v1/companies/<int:company_id>/stock-prices/",
-        include("stock_prices.urls"),
-        name="stocks-prices",
-    ),
     path("api/v1/initialize-data/", include("initialize_data.urls")),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(

@@ -3,10 +3,8 @@ import { useTranslation } from "react-i18next";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
-import { useSettings } from "hooks/use-settings/use-settings";
 import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 import { useUpdatePortfolioYearStatsForced } from "hooks/use-stats/use-portfolio-stats";
-import { useUpdateCompanyStockPrice } from "hooks/use-stock-prices/use-stock-prices";
 import { ICompanyListItem } from "types/company";
 
 interface Props {
@@ -47,7 +45,6 @@ export default function StatsRefreshModal({
   const [checkedList, setCheckedList] = React.useState<CheckboxValueType[]>([]);
   const [indeterminate, setIndeterminate] = React.useState(false);
   const [checkboxes, setCheckboxes] = useState<CheckboxesProps[]>([]);
-  const { data: settings } = useSettings();
 
   useEffect(() => {
     const tempCheckboxes = companies.map((company: ICompanyListItem) => {
@@ -56,7 +53,6 @@ export default function StatsRefreshModal({
     setCheckboxes(tempCheckboxes);
   }, [companies]);
 
-  const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
   const { mutateAsync: updateCompanyStats } = useUpdateYearStats();
   const { mutateAsync: updatePortfolioStats } =
     useUpdatePortfolioYearStatsForced();
@@ -88,7 +84,7 @@ export default function StatsRefreshModal({
         await updateCompanyStats({
           companyId: +companyId,
           year: selectedYear,
-          forced: updateStockPriceSwitch,
+          updateApiPrice: updateStockPriceSwitch,
         });
         setUpdateMessage(
           `${t("Stats updated for company")}: ${companyName} ${t(
@@ -107,41 +103,6 @@ export default function StatsRefreshModal({
     [selectedYear, t, updateCompanyStats, updateStockPriceSwitch],
   );
 
-  const getCompanyStockPrice = useCallback(
-    async (
-      companyId: number,
-      companyName: string,
-      itemIndex: number,
-      companiesLength: number,
-    ) => {
-      let tempYear = selectedYear;
-      if (selectedYear === "all") {
-        tempYear = new Date().getFullYear().toString();
-      }
-      setUpdateMessage(
-        `${t("Updating price for company")}: ${companyName} (${
-          itemIndex + 1
-        }/${companiesLength})`,
-      );
-      try {
-        await updateStockPrice({ companyId: +companyId, year: tempYear });
-        setUpdateMessage(
-          `${t("Price updated for company")}: ${companyName} ${t(
-            "and year",
-          )} ${tempYear}`,
-        );
-        return { result: true, message: "" };
-      } catch (e) {
-        const message = `${t(
-          "Error updating price for company",
-        )}: ${companyName} ${t("and year")} ${t(tempYear)}`;
-        setUpdateMessage(message);
-        return { result: false, message };
-      }
-    },
-    [selectedYear, t, updateStockPrice],
-  );
-
   const updatePortfolioStatsForced = useCallback(async () => {
     setUpdateMessage(
       `${t("Updating stats for portfolio")} #${id} ${t("and year")} ${t(
@@ -149,7 +110,11 @@ export default function StatsRefreshModal({
       )}`,
     );
     try {
-      await updatePortfolioStats({ portfolioId: +id!, year: selectedYear });
+      await updatePortfolioStats({
+        portfolioId: +id!,
+        year: selectedYear,
+        updateApiPrice: updateStockPriceSwitch,
+      });
       setUpdateMessage(
         `${t("Stats updated for portfolio")} #${id} ${t("and year")} ${t(
           selectedYear,
@@ -162,35 +127,12 @@ export default function StatsRefreshModal({
         )}`,
       );
     }
-  }, [t, id, selectedYear, updatePortfolioStats]);
+  }, [t, id, selectedYear, updatePortfolioStats, updateStockPriceSwitch]);
 
   const handleOk = async () => {
     setConfirmLoading(true);
     setErrorsList([]);
     const updatesErrorList: string[] = [];
-    if (updateStockPriceSwitch) {
-      console.log("Will update stock price");
-      await asyncForEach(
-        checkedList,
-        async (companyId: number, index: number) => {
-          const companyName = checkboxes.filter(
-            (company) => company.id === companyId,
-          )[0].name;
-          console.log(`Company name: ${companyName}`);
-
-          const result = await getCompanyStockPrice(
-            companyId,
-            companyName,
-            index,
-            checkedList.length,
-          );
-          if (!result.result) {
-            updatesErrorList.push(result.message);
-          }
-        },
-      );
-      setConfirmLoading(false);
-    }
     if (updateStatsSwitch) {
       setConfirmLoading(true);
       await asyncForEach(checkedList, async (companyId: number) => {
@@ -258,17 +200,15 @@ export default function StatsRefreshModal({
       >
         <Form form={form} layout="vertical">
           {t("For each company:")}
-          {settings && settings.allowFetch && (
-            <Form.Item
-              name="updateStockPrice"
-              valuePropName="checked"
-              style={{ marginBottom: 0 }}
-            >
-              <Checkbox onChange={onStockPriceChange}>
-                {t("Update the stock price from API")}
-              </Checkbox>
-            </Form.Item>
-          )}
+          <Form.Item
+            name="updateStockPrice"
+            valuePropName="checked"
+            style={{ marginBottom: 0 }}
+          >
+            <Checkbox onChange={onStockPriceChange}>
+              {t("Update the stock price from API")}
+            </Checkbox>
+          </Form.Item>
           <Form.Item name="updateStats" valuePropName="checked">
             <Checkbox onChange={onStatsChange}>
               {t("Update the stats for the year")} &quot;{t(selectedYear)}&quot;

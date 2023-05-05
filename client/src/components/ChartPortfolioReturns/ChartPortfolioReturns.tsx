@@ -2,7 +2,8 @@ import React, { ReactElement, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Select } from "antd";
+import { Select, Spin } from "antd";
+import { AxiosError } from "axios";
 import {
   useBenchmarks,
   useBenchmarkValues,
@@ -14,7 +15,11 @@ export default function ChartPortfolioReturns(): ReactElement | null {
   const { t } = useTranslation();
   const { id } = useParams();
   const [chartData, setChartData] = React.useState<any>();
-  const { data } = usePortfolioAllYearStats(+id!);
+  const {
+    data,
+    isFetching: areStatsFetching,
+    error: errorFetchingStats,
+  } = usePortfolioAllYearStats(+id!);
 
   const { data: benchmarks, isFetching } = useBenchmarks();
 
@@ -145,6 +150,17 @@ export default function ChartPortfolioReturns(): ReactElement | null {
       setChartData(tempChartData);
     }
   }, [data, indexData, benchmarks, selectedIndex, t]);
+
+  if (errorFetchingStats) {
+    if ((errorFetchingStats as AxiosError)?.response?.status === 404) {
+      return <div>No stats yet</div>;
+    }
+    return <div>Something went wrong</div>;
+  }
+
+  if (areStatsFetching) {
+    return <Spin data-testid="loader" />;
+  }
 
   if (chartData) {
     return (

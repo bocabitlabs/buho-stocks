@@ -4,7 +4,6 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from settings.models import UserSettings
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
@@ -14,19 +13,19 @@ logger = logging.getLogger("buho_backend")
 
 
 class PortfolioStatsAPIView(APIView):
-    def get_object(self, portfolio_id, year, force=False, group_by=None):
+    def get_object(self, portfolio_id, year, update_api_price=False, group_by=None):
         try:
             if group_by in ["month", "company"]:
-                stats = self.get_stats_grouped(portfolio_id, year, force, group_by)
+                stats = self.get_stats_grouped(portfolio_id, year, update_api_price, group_by)
                 return stats
 
-            stats = self.get_stats_for_year(portfolio_id, year, force)
+            stats = self.get_stats_for_year(portfolio_id, year, update_api_price)
             return stats
         except PortfolioStatsForYear.DoesNotExist:
             return None
 
-    def get_stats_for_year(self, portfolio_id, year, force):
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, force=force)
+    def get_stats_for_year(self, portfolio_id, year, update_api_price):
+        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
         stats = portfolio_stats.get_stats_for_year()
         logger.debug(stats)
         serializer = PortfolioStatsForYearSerializer(stats)
@@ -34,8 +33,8 @@ class PortfolioStatsAPIView(APIView):
         logger.debug(stats)
         return stats
 
-    def get_stats_grouped(self, portfolio_id, year, force, group_by):
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, force=force)
+    def get_stats_grouped(self, portfolio_id, year, update_api_price, group_by):
+        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
         stats = {}
         if group_by == "month":
             if year == "all":
@@ -48,10 +47,10 @@ class PortfolioStatsAPIView(APIView):
             stats = serializer.data
         return stats
 
-    def update_object(self, portfolio_id, year):
+    def update_object(self, portfolio_id, year, update_api_price=False):
         logger.debug("Updating portfolio stats")
         try:
-            portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year)
+            portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
             stats = portfolio_stats.update_stats_for_year()
             serializer = PortfolioStatsForYearSerializer(stats)
             return serializer.data
@@ -69,8 +68,8 @@ class PortfolioStatsAPIView(APIView):
         stats = self.get_object(portfolio_id, year, group_by=group_by)
         if not stats:
             return Response(
-                {"res": "Object with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         return Response(stats, status=status.HTTP_200_OK)
@@ -81,18 +80,12 @@ class PortfolioStatsAPIView(APIView):
         """
         Update the portfolio item with given id
         """
-        settings, _ = UserSettings.objects.get_or_create(pk=1)
-        if settings.allow_fetch:
-            forced = self.request.query_params.get("force")
-            if forced == "true":
-                forced = True
-        else:
-            forced = False
-        stats = self.update_object(portfolio_id, year)
+        update_api_price = request.data.get("update_api_price", False)
+        stats = self.update_object(portfolio_id, year, update_api_price=update_api_price)
         if not stats:
             return Response(
-                {"res": "Object with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         return Response(stats, status=status.HTTP_200_OK)
@@ -120,8 +113,8 @@ class PortfolioStatsAllYearsAPIView(APIView):
         stats = self.get_object(portfolio_id)
         if not stats:
             return Response(
-                {"res": "Object with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         return Response(stats, status=status.HTTP_200_OK)

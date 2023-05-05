@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.100.6] - 2023-04-23
+### Improved
+- UI: Sidebar width decreased a bit.
+- UI: Sidebar is now sticky.
+- UI: Header and sidebar are now divided in order to improve navigation.
+
 ## [0.100.5] - 2023-04-19
 ### Improved
 - Merged dependabot security patches

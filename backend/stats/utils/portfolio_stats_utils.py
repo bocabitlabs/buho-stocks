@@ -23,12 +23,12 @@ class PortfolioStatsUtils:
         portfolio_id: int,
         year: int = year_for_all,
         use_portfolio_currency: bool = True,
-        force: bool = False,
+        update_api_price: bool = False,
     ):
         self.portfolio: Portfolio = Portfolio.objects.get(id=portfolio_id)
         self.year = year
         self.use_portfolio_currency = use_portfolio_currency
-        self.force = force
+        self.update_api_price = update_api_price
 
     def _get_total_invested_in_rights(self):
         total = 0
@@ -214,7 +214,7 @@ class PortfolioStatsUtils:
         if PortfolioStatsForYear.objects.filter(portfolio=self.portfolio, year=temp_year).exists():
             results = PortfolioStatsForYear.objects.get(portfolio=self.portfolio, year=temp_year)
 
-        if not self.force and results:
+        if not self.update_api_price and results:
             return results
 
         results = self.update_stats_for_year()
@@ -239,7 +239,7 @@ class PortfolioStatsUtils:
         }
 
         for company in self.portfolio.companies.all():
-            company_stats = CompanyStatsUtils(company.id, year=self.year, force=self.force)
+            company_stats = CompanyStatsUtils(company.id, year=self.year, update_api_price=self.update_api_price)
             instance = company_stats.get_stats_for_year()
             data["dividends"] += instance.dividends
             data["accumulated_dividends"] += instance.accumulated_dividends
@@ -283,7 +283,7 @@ class PortfolioStatsUtils:
     def get_stats_for_year_by_company(self):
         results = []
         for company in self.portfolio.companies.all():
-            company_stats = CompanyStatsUtils(company.id, year=self.year, force=self.force)
+            company_stats = CompanyStatsUtils(company.id, year=self.year, update_api_price=self.update_api_price)
             instance = company_stats.get_stats_for_year()
             results.append(instance)
 
