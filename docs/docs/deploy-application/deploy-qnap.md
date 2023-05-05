@@ -57,7 +57,7 @@ In the image below, the table name is `buho-stocks-database` and the user is `bu
 
 ## 4. Populate application configuration files
 
-Create a `config` directory to store the configuration files as specified [here](/docs/deploy-docker/).
+Create a `config` directory to store the configuration files as specified [here](./deploy-docker/).
 
 Both `config.py` and `mysql.conf` must be placed inside the `config` directory.
 
@@ -124,6 +124,6 @@ SSH into QNAP NAS and start an interactive bash session into `buho-stocks` conta
 root@qnapy:/usr/src/app#
 ```
 
-Execute `manage.py` to create super user as described [here](/docs/deploy-application/create-initial-admin-user).
+Execute `manage.py` to create super user as described [here](./create-initial-admin-user).
 
 The application is now deployed and available on port 34800.
