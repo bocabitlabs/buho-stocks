@@ -35,8 +35,11 @@ pip install -r requirement.dev.txt
 
 ### Running the initial migrations
 
-```bash
+```
 cd backend
+```
+
+```bash
 python manage.py migrate
 ```
 
@@ -51,8 +54,11 @@ python manage.py runserver 0.0.0.0:8001
 
 ### Install the dependencies
 
-```bash
+```
 cd client
+```
+
+```bash
 yarn
 ```
 

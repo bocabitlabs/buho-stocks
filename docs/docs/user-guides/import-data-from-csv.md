@@ -2,7 +2,7 @@
 sidebar_position: 6
 ---
 
-# Importing data from a CSV file
+# Import data from a CSV file
 
 ## Shares data
 
