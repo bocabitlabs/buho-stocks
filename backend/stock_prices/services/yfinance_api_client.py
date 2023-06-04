@@ -48,8 +48,6 @@ class YFinanceApiClient(StockPriceServiceBase):
         self, ticker: str, currency: str, price_date: Timestamp, element_values: TypedYFinanceStockPrice
     ) -> TypedStockPrice:
         price = element_values["Close"]
-        if currency == "GBP":
-            price = self.convert_price_to_gbp(price)
 
         price = round(price, 3)
         converted_date = price_date.to_pydatetime().date()
@@ -63,10 +61,6 @@ class YFinanceApiClient(StockPriceServiceBase):
         }
 
         return data
-
-    def convert_price_to_gbp(self, price):
-        price = price / 100
-        return price
 
     def get_company_currency(self, ticker: str) -> str:
         company = yf.Ticker(ticker)
