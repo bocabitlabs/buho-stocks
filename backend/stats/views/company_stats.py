@@ -5,6 +5,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from stats.models.company_stats import CompanyStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.utils.company_stats_utils import CompanyStatsUtils
 
@@ -19,6 +20,14 @@ class CompanyStatsAPIView(APIView):
             return instance
         except Company.DoesNotExist:
             return None
+
+    def update_object(self, portfolio_id, year, update_api_price=False):
+        logger.debug("Updating company stats")
+        if year == "all":
+            year = 9999
+        company_stats = CompanyStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
+        stats = company_stats.update_stats_for_year()
+        return stats
 
     # 3. Retrieve
     @swagger_auto_schema(tags=["company_stats"])
@@ -42,9 +51,7 @@ class CompanyStatsAPIView(APIView):
         """
         update_api_price = request.data.get("update_api_price", False)
 
-        if year == "all":
-            year = 9999
-        instance = self.get_object(company_id, year, update_api_price=update_api_price)
+        instance = self.update_object(company_id, year, update_api_price=update_api_price)
 
         if not instance:
             return Response(

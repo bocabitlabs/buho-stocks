@@ -37,7 +37,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.rights_transactions
-            if self.year == "all":
+            if self.year == "all" or self.year == self.year_for_all:
                 query = query.all()
             else:
                 query = query.filter(
@@ -60,7 +60,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.shares_transactions
-            if self.year == "all":
+            if self.year == "all" or self.year == self.year_for_all:
                 query = query.filter(type=TransactionType.BUY)
             else:
                 query = query.filter(transaction_date__year=self.year, type=TransactionType.BUY)
@@ -80,7 +80,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.shares_transactions
-            if self.year == "all":
+            if self.year == "all" or self.year == self.year_for_all:
                 query = query.filter(type=TransactionType.BUY)
             else:
                 query = query.filter(transaction_date__year__lte=self.year, type=TransactionType.BUY)
@@ -100,7 +100,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.rights_transactions
-            if self.year == "all":
+            if self.year == "all" or self.year == self.year_for_all:
                 query = query.filter(type=TransactionType.BUY)
             else:
                 query = query.filter(transaction_date__year__lte=self.year, type=TransactionType.BUY)
@@ -117,7 +117,7 @@ class PortfolioStatsUtils:
         total = 0
         for company in self.portfolio.companies.all():
             query = company.dividends_transactions
-            if self.year == "all":
+            if self.year == "all" or self.year == self.year_for_all:
                 query = query.all()
             else:
                 query = query.filter(transaction_date__year=self.year)
@@ -137,7 +137,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.dividends_transactions
-            if self.year == "all":
+            if self.year == "all" or self.year == self.year_for_all:
                 query = query.all()
             else:
                 query = query.filter(transaction_date__year__lte=self.year)
@@ -171,7 +171,7 @@ class PortfolioStatsUtils:
 
             first_year = CompanyUtils(company.id).get_company_first_year()
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
-            if self.year != "all":
+            if self.year != "all" or self.year != self.year_for_all:
                 if not first_year or first_year > int(self.year):
                     total += 0
                     continue
