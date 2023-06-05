@@ -60,7 +60,7 @@ COPY ./backend/config/config.sample.py /usr/src/app/config/config.py
 
 EXPOSE 34800
 
-RUN python manage.py collectstatic
+RUN poetry run python manage.py collectstatic
 RUN sed -i -e "s/REPLACE_SECRET_KEY/$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')/g" /usr/src/app/config/config.py
 
 

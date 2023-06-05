@@ -37,7 +37,7 @@ exclude = ["**/migrations", "**/__pycache__"]
 
 [tool.poetry]
 name = "buho-stocks"
-version = "0.100.6"
+version = "0.100.7"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
