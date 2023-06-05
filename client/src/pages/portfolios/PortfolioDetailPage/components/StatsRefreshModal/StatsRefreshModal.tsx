@@ -1,5 +1,6 @@
 import React, { ReactElement, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import { CheckboxValueType } from "antd/lib/checkbox/Group";
@@ -79,7 +80,7 @@ export default function StatsRefreshModal({
 
   const getStatsForced = useCallback(
     async (companyId: number, companyName: string) => {
-      setUpdateMessage(`${t("Updating stats for company")} #${companyId}`);
+      setUpdateMessage(`${t("Updating stats for company")}: ${companyName}`);
       try {
         await updateCompanyStats({
           companyId: +companyId,
@@ -115,6 +116,13 @@ export default function StatsRefreshModal({
         year: selectedYear,
         updateApiPrice: updateStockPriceSwitch,
       });
+      toast.success<string>(
+        t(
+          `${t("Stats updated for portfolio")} #${id} ${t("and year")} ${t(
+            selectedYear,
+          )}`,
+        ),
+      );
       setUpdateMessage(
         `${t("Stats updated for portfolio")} #${id} ${t("and year")} ${t(
           selectedYear,
@@ -186,9 +194,7 @@ export default function StatsRefreshModal({
         icon={<SyncOutlined />}
       />
       <Modal
-        title={`${t("Refresh stats and stock prices for")} &quot;${t(
-          selectedYear,
-        )}&quot;`}
+        title={`${t("Refresh stats and stock prices for")} ${t(selectedYear)}`}
         open={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
@@ -211,7 +217,7 @@ export default function StatsRefreshModal({
           </Form.Item>
           <Form.Item name="updateStats" valuePropName="checked">
             <Checkbox onChange={onStatsChange}>
-              {t("Update the stats for the year")} &quot;{t(selectedYear)}&quot;
+              {t("Update the stats for the year")} {t(selectedYear)}
             </Checkbox>
           </Form.Item>
           <Typography.Title level={5}>
@@ -231,7 +237,11 @@ export default function StatsRefreshModal({
             style={{ marginBottom: 10 }}
             valuePropName="checked"
           >
-            <Checkbox.Group onChange={onChange} value={checkedList}>
+            <Checkbox.Group
+              onChange={onChange}
+              value={checkedList}
+              style={{ display: "block" }}
+            >
               {checkboxes.map((company: CheckboxesProps) => (
                 <div key={company.id}>
                   <Checkbox value={company.id}>

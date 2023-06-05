@@ -18,19 +18,25 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
 ENV LISTEN_PORT 34800
-
 ENV UWSGI_INI /usr/src/uwsgi.ini
+# The following environment variables are used by Poetry to install dependencies
+ENV POETRY_VERSION 1.5.0
+ENV POETRY_HOME /opt/poetry
+ENV POETRY_VIRTUALENVS_IN_PROJECT true
+ENV POETRY_CACHE_DIR ${WORKING_DIR}/.cache
+ENV VIRTUAL_ENVIRONMENT_PATH ${WORKING_DIR}/.venv
+
+
 COPY ./uwsgi.ini /usr/src/uwsgi.ini
-
 COPY ./nginx-app.conf /etc/nginx/conf.d/custom.conf
-
 COPY ./prestart.sh /app/prestart.sh
 
-# install dependencies
-RUN pip install --upgrade pip
-COPY ./requirements.txt /usr/src
-RUN pip install --no-cache-dir --upgrade -r /usr/src/requirements.txt
+# Install Poetry and dependencies
+COPY pyproject.toml ./
+COPY poetry.lock ./
 
+# Using Poetry to install dependencies without requiring the project main files to be present
+RUN pip install poetry==${POETRY_VERSION} && poetry install --only main --no-root --no-directory
 
 WORKDIR /usr/src/client
 COPY ./client/package.json /usr/src/client/package.json
@@ -54,7 +60,7 @@ COPY ./backend/config/config.sample.py /usr/src/app/config/config.py
 
 EXPOSE 34800
 
-RUN python manage.py collectstatic
+RUN poetry run python manage.py collectstatic
 RUN sed -i -e "s/REPLACE_SECRET_KEY/$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')/g" /usr/src/app/config/config.py
 
 

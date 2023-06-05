@@ -26,7 +26,7 @@ class CompanyStatsUtils:
         self.update_api_price = update_api_price
         self.company_utils = CompanyUtils(self.company.id, use_portfolio_currency=self.use_portfolio_currency)
 
-        self.stock_prices_utils = StockPricesUtils(self.company, self.year)
+        self.stock_prices_utils = StockPricesUtils(self.company, self.year, update_api_price=update_api_price)
         self.exchange_rates_utils = ExchangeRateService()
 
     def get_portfolio_value(self, stock_price, shares_count):
@@ -175,4 +175,11 @@ class CompanyStatsUtils:
         results_dict = self.calculate_stats_for_year(temp_year)
         instance = self.update_or_create_stats_for_year(temp_year, results_dict)
 
+        return instance
+
+    def update_stats_for_year(self):
+        temp_year = self.year_for_all if self.year == "all" else self.year
+        results_dict = self.calculate_stats_for_year(temp_year)
+        instance = self.update_or_create_stats_for_year(temp_year, results_dict)
+        logger.debug(instance.company)
         return instance
