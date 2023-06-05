@@ -1,5 +1,6 @@
 import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Form, Modal, Typography } from "antd";
 import axios from "axios";
@@ -22,7 +23,6 @@ export default function StatsRefreshModal({
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
   const [errorsList, setErrorsList] = useState<string[]>([]);
 
-  // const { mutateAsync: updateStockPrice } = useUpdateCompanyStockPrice();
   const { mutateAsync: updateStats } = useUpdateYearStats();
 
   const showModal = () => {
@@ -45,6 +45,7 @@ export default function StatsRefreshModal({
         year: selectedYear,
         updateApiPrice: updateStockPriceSwitch,
       });
+      toast.success<string>(t("Stats for company updated"));
       return { result: true, message: "" };
     } catch (error: any) {
       let message = error;

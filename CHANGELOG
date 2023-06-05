@@ -10,6 +10,14 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.100.7] - 2023-06-04
+### Fix
+- Backend: Fix the company year stats update (PUT)
+- Backend: Fix the portfolio year (all) stats update (PUT)
+- UI: Fix refresh stats UI on portfolio refresh stats modal
+### Improved
+- UI: display toast on company/portfolio stats update
+
 ## [0.100.6] - 2023-04-23
 ### Improved
 - UI: Sidebar width decreased a bit.
