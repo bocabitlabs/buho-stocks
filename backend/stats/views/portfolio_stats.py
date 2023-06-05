@@ -50,6 +50,8 @@ class PortfolioStatsAPIView(APIView):
     def update_object(self, portfolio_id, year, update_api_price=False):
         logger.debug("Updating portfolio stats")
         try:
+            if year == "all":
+                year = 9999
             portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
             stats = portfolio_stats.update_stats_for_year()
             serializer = PortfolioStatsForYearSerializer(stats)
