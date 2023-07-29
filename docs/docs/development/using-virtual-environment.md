@@ -8,29 +8,21 @@ sidebar_position: 4
 Use a virtual environment:
 
 ```bash
-python -m venv env
+poetry install
 ```
 
 ```bash
-source env/bin/activate
+source ./venv/bin/activate
 ```
 
-### Rename the config files and put them in the volumes
+### Create a .env file
 
-- `backend/config/config.sample.py`: Application's configuration.
-  - Must be renamed to `config.py`
-- `backend/config/mysql.sample.conf`: Database configuration in case you want to use Mysql.
-  - Must be renamed to `mysql.conf`
+Create an `.env` on the root of the project by copying the content of `.env.sample` and populate its values to the desired ones.
 
 ### Install the dependencies
 
 ```
-pip install -r requirement.txt
-```
-
-### Install the dev dependencies
-```
-pip install -r requirement.dev.txt
+poetry install
 ```
 
 ### Running the initial migrations
@@ -59,7 +51,7 @@ cd client
 ```
 
 ```bash
-yarn
+yarn install
 ```
 
 ### Running the application's frontend
