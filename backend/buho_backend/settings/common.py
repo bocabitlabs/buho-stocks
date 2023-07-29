@@ -146,7 +146,7 @@ if DB_TYPE == "mysql":
             "NAME": config("DB_NAME", default="buho_stocks"),
             "USER": config("DB_USER", default="root"),
             "PASSWORD": config("DB_PASSWORD", default="example"),
-            "HOST": config("DB_HOST", default="db"),
+            "HOST": config("DB_HOSTNAME", default="db"),
             "PORT": config("DB_PORT", default=3306, cast=int),
         }
     }
