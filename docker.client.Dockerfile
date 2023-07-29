@@ -1,7 +1,8 @@
 FROM node:16-alpine as builder
 WORKDIR /app
 COPY ./client/package*.json ./
-RUN npm install
+COPY ./client/yarn.lock ./
+RUN yarn install
 
 ENV VITE_ENV=production
 ENV VITE_PORT=
@@ -9,7 +10,7 @@ ENV VITE_API_URL=
 
 RUN ls -la
 COPY ./client ./
-RUN npm run build
+RUN yarn build
 
 FROM nginx:stable-alpine
 WORKDIR /usr/share/nginx/html
