@@ -14,7 +14,9 @@ from os import path
 from pathlib import Path
 
 import sentry_sdk
-from config import config
+
+# from decouple import Config, RepositoryEnv
+from decouple import config
 from django.db.models import ForeignKey
 from django.db.models.manager import BaseManager
 from django.db.models.query import QuerySet
@@ -28,19 +30,19 @@ for cls in [QuerySet, BaseManager, ForeignKey]:
     cls.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = Path(__file__).parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config.SECRET_KEY
+SECRET_KEY = config("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config.DEBUG
+DEBUG = config("DEBUG", default=False, cast=bool)
+TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = config.ALLOWED_HOSTS
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")])
 
 # Application definition
 
@@ -125,6 +127,8 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = "buho_backend.wsgi.application"
 
+DB_TYPE = config("DB_TYPE")
+SQLITE_DB_PATH = config("DATABASE_SQLITE_PATH", default="/usr/src/data/db.sqlite3")
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -132,16 +136,18 @@ WSGI_APPLICATION = "buho_backend.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": config.DATABASE_SQLITE_PATH,
+        "NAME": SQLITE_DB_PATH,
     }
 }
-if config.DATABASE_TYPE == "mysql":
+if DB_TYPE == "mysql":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
-            "OPTIONS": {
-                "read_default_file": config.DATABASE_MYSQL_CONFIG_PATH,
-            },
+            "NAME": config("DB_NAME", default="buho_stocks"),
+            "USER": config("DB_USER", default="root"),
+            "PASSWORD": config("DB_PASSWORD", default="example"),
+            "HOST": config("DB_HOST", default="db"),
+            "PORT": config("DB_PORT", default=3306, cast=int),
         }
     }
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -170,7 +176,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = config.TIME_ZONE
+TIME_ZONE = config("TIME_ZONE")
 
 USE_I18N = True
 
@@ -186,51 +192,15 @@ STATIC_URL = "/static-files/"
 STATIC_ROOT = "/app/static/"
 
 MEDIA_URL = "/media/"
-MEDIA_ROOT = config.MEDIA_ROOT
+MEDIA_ROOT = config("MEDIA_ROOT")
 
 SWAGGER_SETTINGS = {}
 
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "file": {
-            "format": "{levelname} | {asctime} | {module}:{lineno} | {process:d} | {thread:d} | {message}",
-            "style": "{",
-        },
-        "console": {
-            "format": "{levelname} | {asctime} | {message} | {pathname}:{lineno} | {module} | {funcName}",
-            "style": "{",
-        },
-    },
-    "handlers": {
-        "console": {"class": "logging.StreamHandler", "formatter": "console"},
-        "file": {
-            "level": "DEBUG",
-            "class": "logging.handlers.RotatingFileHandler",
-            "formatter": "file",
-            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
-            "backupCount": 10,
-            "filename": config.LOGS_ROOT + "debug.log",
-        },
-    },
-    "loggers": {
-        "*": {
-            "handlers": config.LOGGER_HANDLERS,
-            "level": "ERROR",
-            "propagate": True,
-        },
-        "buho_backend": {
-            "handlers": config.LOGGER_HANDLERS,
-            "level": config.LOG_LEVEL,
-            "propagate": True,
-        },
-    },
-}
+LOGS_ROOT = config("LOGS_ROOT")
 
-if config.ENABLE_SENTRY:
+if config("ENABLE_SENTRY", default=False, cast=bool):
     sentry_sdk.init(
-        dsn=config.SENTRY_DSN,
+        dsn=config("SENTRY_DSN", default="", cast=str),
         integrations=[
             DjangoIntegration(),
         ],
@@ -243,4 +213,4 @@ if config.ENABLE_SENTRY:
         send_default_pii=True,
     )
 
-CORS_ALLOWED_ORIGINS = config.CORS_ALLOWED_ORIGINS
+CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=lambda v: [s.strip() for s in v.split(",")])

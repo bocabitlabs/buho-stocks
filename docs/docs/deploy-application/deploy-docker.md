@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 ---
-# Deploy using the command line
+# Deploy using Docker
 
 You can deploy this application using Docker and the command line. To do so, follow these steps.
 
@@ -12,6 +12,8 @@ You can deploy this application using Docker and the command line. To do so, fol
 ## Database
 
 Please refer to [Choosing a database docs](/docs/development/database-selection) to select and run a database for the application.
+
+You can choose between `SQLite` and `MySQL`/`MariaDB`.
 
 ### Configuring the volumes
 
