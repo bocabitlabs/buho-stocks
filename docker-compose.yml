@@ -1,7 +1,8 @@
 version: '3'
 services:
   backend:
-    build: .
+    image: ghcr.io/bocabitlabs/buho-stocks/buho-stocks:latest
+    container_name: backend
     restart: always
     command: gunicorn buho_backend.wsgi:application --bind 0.0.0.0:8000
     volumes:
@@ -19,6 +20,8 @@ services:
       - db
   redis:
     image: redis:7
+    container_name: db
+
 #   celery:
 #     build: .
 #     restart: always
@@ -32,9 +35,8 @@ services:
 #       - redis
 #       - web
   client:
-    build:
-      context: .
-      dockerfile: docker.client.Dockerfile
+    image: ghcr.io/bocabitlabs/buho-stocks/buho-stocks-client:latest
+    container_name: client
     restart: always
     env_file:
       - ./.env.prod
