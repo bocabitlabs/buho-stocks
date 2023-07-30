@@ -40,6 +40,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .  # Path to your Dockerfile and other build context files
+          file: docker.client.Dockerfile
           push: true
           tags: |
             ghcr.io/${{ github.repository }}-client:latest

@@ -9,7 +9,7 @@ ENV VITE_PORT=
 ENV VITE_API_URL=
 
 LABEL org.opencontainers.image.authors='renefernandez@duck.com' \
-      org.opencontainers.image.url='https://github.com/bocabitlabs/buho-stocks/pkgs/container/buho-stocks%2Fbuho-stocks-client' \
+      org.opencontainers.image.url='https://github.com/bocabitlabs/buho-stocks/pkgs/container/buho-stocks-client' \
       org.opencontainers.image.documentation='https://bocabitlabs.github.io/buho-stocks/' \
       org.opencontainers.image.source="https://github.com/bocabitlabs/buho-stocks" \
       org.opencontainers.image.vendor='Bocabitlabs (Rene Fernandez)' \

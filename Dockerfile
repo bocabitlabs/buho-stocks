@@ -14,7 +14,7 @@ ENV POETRY_CACHE_DIR ${WORKDIR}/.cache
 ENV VIRTUAL_ENVIRONMENT_PATH ${WORKDIR}/.venv
 
 LABEL org.opencontainers.image.authors='renefernandez@duck.com' \
-      org.opencontainers.image.url='https://github.com/bocabitlabs/buho-stocks/pkgs/container/buho-stocks%2Fbuho-stocks' \
+      org.opencontainers.image.url='https://github.com/bocabitlabs/buho-stocks/pkgs/container/buho-stocks' \
       org.opencontainers.image.documentation='https://bocabitlabs.github.io/buho-stocks/' \
       org.opencontainers.image.source="https://github.com/bocabitlabs/buho-stocks" \
       org.opencontainers.image.vendor='Bocabitlabs (Rene Fernandez)' \
