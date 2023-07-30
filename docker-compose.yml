@@ -6,9 +6,9 @@ services:
     restart: always
     command: gunicorn buho_backend.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - ./volumes/logs:/app/logs
-      - ./volumes/static:/app/static
-      - ./volumes/media:/app/media
+      - logs:/app/logs
+      - static:/app/static
+      - media:/app/media
     env_file:
       - ./.env.prod
     environment:
@@ -45,8 +45,8 @@ services:
     ports:
       - 8080:80
     volumes:
-      - ./volumes/static:/app/static
-      - ./volumes/media:/app/media
+      - static:/app/static
+      - media:/app/media
     depends_on:
       - backend
   db:
@@ -58,4 +58,10 @@ services:
     env_file:
       - ./.env.prod
     volumes:
-      - ./volumes/mariadb_data:/var/lib/mysql
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
+  static:
+  media:
+  logs:
