@@ -31,8 +31,8 @@ jobs:
           context: .  # Path to your Dockerfile and other build context files
           push: true
           tags: |
-            ghcr.io/bocabitlabs/${{ github.repository }}:latest
-            ghcr.io/bocabitlabs/${{ github.repository }}:${{ github.head_ref || github.ref_name }}
+            ghcr.io/buho-stocks/${{ github.repository }}:latest
+            ghcr.io/buho-stocks/${{ github.repository }}:${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
 
@@ -42,7 +42,7 @@ jobs:
           context: .  # Path to your Dockerfile and other build context files
           push: true
           tags: |
-            ghcr.io/bocabitlabs/${{ github.repository }}-client:latest
-            ghcr.io/bocabitlabs/${{ github.repository }}-client:${{ github.head_ref || github.ref_name }}
+            ghcr.io/buho-stocks/${{ github.repository }}-client:latest
+            ghcr.io/buho-stocks/${{ github.repository }}-client:${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
