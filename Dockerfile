@@ -1,35 +1,28 @@
-FROM tiangolo/uwsgi-nginx:python3.10
+FROM python:3.10-slim
 
-RUN apt-get update
-RUN apt-get -y install curl gnupg
-RUN curl -sL https://deb.nodesource.com/setup_16.x  | bash -
-RUN apt-get -y install nodejs
-
-VOLUME /usr/src/data
-VOLUME /usr/src/media
-
-RUN npm install --global yarn
-
-# set work directory
 WORKDIR /usr/src/app
 
-# set environment variables
+ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
-ENV LISTEN_PORT 34800
-ENV UWSGI_INI /usr/src/uwsgi.ini
-# The following environment variables are used by Poetry to install dependencies
+
 ENV POETRY_VERSION 1.5.0
 ENV POETRY_HOME /opt/poetry
 ENV POETRY_VIRTUALENVS_IN_PROJECT true
-ENV POETRY_CACHE_DIR ${WORKING_DIR}/.cache
-ENV VIRTUAL_ENVIRONMENT_PATH ${WORKING_DIR}/.venv
+ENV POETRY_CACHE_DIR ${WORKDIR}/.cache
+ENV VIRTUAL_ENVIRONMENT_PATH ${WORKDIR}/.venv
 
+LABEL org.opencontainers.image.authors='renefernandez@duck.com' \
+      org.opencontainers.image.url='https://github.com/bocabitlabs/buho-stocks/pkgs/container/buho-stocks' \
+      org.opencontainers.image.documentation='https://bocabitlabs.github.io/buho-stocks/' \
+      org.opencontainers.image.source="https://github.com/bocabitlabs/buho-stocks" \
+      org.opencontainers.image.vendor='Bocabitlabs (Rene Fernandez)' \
+      org.opencontainers.image.licenses='GPL-3.0-or-later'
 
-COPY ./uwsgi.ini /usr/src/uwsgi.ini
-COPY ./nginx-app.conf /etc/nginx/conf.d/custom.conf
-COPY ./prestart.sh /app/prestart.sh
+# Required to have netcat-openbsd
+RUN apt-get update
+RUN apt-get install default-libmysqlclient-dev netcat-openbsd gcc -y
 
 # Install Poetry and dependencies
 COPY pyproject.toml ./
@@ -38,29 +31,11 @@ COPY poetry.lock ./
 # Using Poetry to install dependencies without requiring the project main files to be present
 RUN pip install poetry==${POETRY_VERSION} && poetry install --only main --no-root --no-directory
 
-WORKDIR /usr/src/client
-COPY ./client/package.json /usr/src/client/package.json
-COPY ./client/yarn.lock /usr/src/client/yarn.lock
-COPY ./client/yarn.lock /usr/src/client/vite.config.ts
-RUN yarn --production --pure-lockfile
-COPY ./client /usr/src/client
+COPY ./backend $WORKDIR
+COPY ./etc /usr/src/etc
 
-RUN yarn build
-RUN rm -rf /usr/src/client/node_modules/
-RUN mkdir /app/frontend/
-RUN mv ./dist/* /app/frontend/
+RUN chmod +x /usr/src/etc/entrypoint.sh
 
-WORKDIR /usr/src/app
-COPY ./backend /usr/src/app
+EXPOSE 8000
 
-RUN mkdir /usr/src/media/
-RUN mkdir /usr/src/logs/
-# copy project
-COPY ./backend/config/config.sample.py /usr/src/app/config/config.py
-
-EXPOSE 34800
-
-RUN poetry run python manage.py collectstatic
-RUN sed -i -e "s/REPLACE_SECRET_KEY/$(od -x /dev/urandom | head -1 | awk '{OFS="-"; print $2$3,$4,$5,$6,$7$8$9}')/g" /usr/src/app/config/config.py
-
-
+ENTRYPOINT ["/usr/src/etc/entrypoint.sh"]

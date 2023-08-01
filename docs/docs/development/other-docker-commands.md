@@ -6,7 +6,7 @@ sidebar_position: 6
 Login in the Docker registry:
 
 ```
-docker login docker.io --username bocabitlabs
+docker login docker.io --username <username>
 ```
 
 Logout from the registry:

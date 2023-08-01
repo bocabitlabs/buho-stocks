@@ -10,6 +10,13 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.200.0] - 2023-07-30
+
+# Improved
+
+- Now using Docker Compose for the deployment as default.
+- Using python-decouple to have different environments using .env files.
+
 ## [0.100.7] - 2023-06-04
 ### Fix
 - Backend: Fix the company year stats update (PUT)

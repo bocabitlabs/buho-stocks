@@ -37,7 +37,7 @@ exclude = ["**/migrations", "**/__pycache__"]
 
 [tool.poetry]
 name = "buho-stocks"
-version = "0.100.7"
+version = "0.200.0"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
@@ -60,6 +60,8 @@ pillow = "9.3.0"
 requests = "2.31.0"
 sentry-sdk = "1.14.0"
 yfinance = "0.2.12"
+gunicorn = "^21.2.0"
+python-decouple = "^3.8"
 
 
 [tool.poetry.group.dev.dependencies]
