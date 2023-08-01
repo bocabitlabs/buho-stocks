@@ -1,9 +1,9 @@
 ---
 sidebar_position: 2
 ---
-# Deploy using the command line
+# Deploy using Docker
 
-You can deploy this application using Docker and the command line. To do so, follow these steps.
+You can deploy this application using Docker Compose. To do so, follow these steps.
 
 ## Requirements
 
@@ -13,40 +13,30 @@ You can deploy this application using Docker and the command line. To do so, fol
 
 Please refer to [Choosing a database docs](/docs/development/database-selection) to select and run a database for the application.
 
-### Configuring the volumes
+You can choose between `SQLite` and `MySQL`/`MariaDB`.
 
-Before starting, keep in mind that the application uses 2 volumes to persist the config and the uploads. Create a volume for each of these folders and map them to the following locations.
+## Create a .env.prod file
 
-- `/usr/src/app/config`: Folder with the configuration files (application and DB).
-- `/usr/src/media`: Folder for the uploads.
+Use the `.env.sample` file and rename it to `.env.prod` (`cp .env.sample .env.prod`) and populate all its values to the desired ones.
 
-## Rename the sample config files update their values
-
-Rename the following files and update its values accordingly:
-
-- `backend/config/config.sample.py`: Application configuration. ([link to the file](https://github.com/bocabitlabs/buho-stocks/blob/main/backend/config/config.sample.py))
-- `backend/config/mysql.conf`: Database configuration. ([link to the file](https://github.com/bocabitlabs/buho-stocks/blob/main/backend/config/mysql.sample.conf))
-
-The final location of these files in the container must be the following:
-
-- `/usr/src/app/config/`:
-    - `config.py`
-    - `mysql.conf`
-
-## Run the container
-:::tip Paths
-
-  These two paths are paths in your host machine:
-
-  - `$HOME/projects/buho-volumes/media/`
-  - `$HOME/projects/buho-volumes/data/`
-
-:::
+### Deploy the application with Docker Compose
 
 ```bash
-docker run \
- --publish 34800:34800 \
-  -v $HOME/projects/buho-volumes/media/:/usr/src/media:rw \
-  -v $HOME/projects/buho-volumes/data/:/usr/src/app/config:rw \
-  bocabitlabs/buho-stocks:latest
+docker-compose up
 ```
+
+This command will deploy all the containers required by the application (backend, frontend, database, redis and celery).
+
+It will take the values from the `.env.prod` file.
+
+### Configuring the volumes (optional)
+
+By default, the volumes will be handled automatically by Docker itself (check the `docker-compose.yml`` file). If you want to point them to your own paths, you can modify this file to specify it.
+
+An example pointing to your own path:
+
+```yaml
+volumes:
+  - /volume2/buho-stocks/logs:/app/media
+```
+

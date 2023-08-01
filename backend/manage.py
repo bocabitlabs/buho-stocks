@@ -3,10 +3,13 @@
 import os
 import sys
 
+from buho_backend.settings_loader import get_settings_module
+
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buho_backend.settings")
+    settings_module = get_settings_module()
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
 
     try:
         from django.core.management import execute_from_command_line

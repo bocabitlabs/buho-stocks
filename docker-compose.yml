@@ -1,0 +1,67 @@
+version: '3'
+services:
+  backend:
+    image: ghcr.io/bocabitlabs/buho-stocks/buho-stocks:latest
+    container_name: backend
+    restart: always
+    command: gunicorn buho_backend.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - logs:/app/logs
+      - static:/app/static
+      - media:/app/media
+    env_file:
+      - ./.env.prod
+    environment:
+      - DJANGO_ENV=prod
+    expose:
+      - 8000
+    depends_on:
+      - redis
+      - db
+  redis:
+    image: redis:7
+    container_name: db
+
+#   celery:
+#     build: .
+#     restart: always
+#     command: celery -A config worker -l info
+#     volumes:
+#       - .:/code
+#     env_file:
+#       - ./.env
+#     depends_on:
+#       - db
+#       - redis
+#       - web
+  client:
+    image: ghcr.io/bocabitlabs/buho-stocks/buho-stocks-client:latest
+    container_name: client
+    restart: always
+    env_file:
+      - ./.env.prod
+    environment:
+      - NGINX_PORT=8080
+    ports:
+      - 8080:80
+    volumes:
+      - static:/app/static
+      - media:/app/media
+    depends_on:
+      - backend
+  db:
+    image: mariadb:10
+    container_name: db
+    expose:
+      - 3306
+    restart: always
+    env_file:
+      - ./.env.prod
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:
+  static:
+  media:
+  logs:

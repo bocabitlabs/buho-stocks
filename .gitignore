@@ -126,3 +126,8 @@ mysql.conf
 media
 client/src/config.js
 client/.env.production
+volumes/mariadb_data
+volumes/static
+volumes/media
+volumes/logs
+.env.prod
