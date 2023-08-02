@@ -46,7 +46,6 @@ class ExchangeRateDetailAPIView(APIView):
         Retrieve the market item with given exchange_name
         """
         service = ExchangeRateService()
-        # exchange_date_str = exchange_date.strftime("%Y-%m-%d")
         exchange_rate = service.get_exchange_rate_for_date(exchange_from, exchange_to, exchange_date)
         serializer = ExchangeRateSerializer(exchange_rate)
 
