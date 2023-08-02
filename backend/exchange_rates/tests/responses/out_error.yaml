@@ -1,0 +1,9 @@
+responses:
+- response:
+    auto_calculate_content_length: false
+    body: '{"chart":{"result":null,"error":{"code":"Not Found","description":"No data
+      found, symbol may be delisted"}}}'
+    content_type: text/plain
+    method: GET
+    status: 404
+    url: https://query2.finance.yahoo.com/v8/finance/chart/ABCDEEUR=X?range=380d&interval=1d&includePrePost=False&events=div%2Csplits%2CcapitalGains
