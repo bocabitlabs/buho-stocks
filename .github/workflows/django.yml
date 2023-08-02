@@ -30,7 +30,9 @@ jobs:
           path: ./.venv
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
-        run: poetry install
+        run: |
+          mv .env.sample .env
+          poetry install
       - name: Run Tests
         run: |
           poetry run coverage run backend/manage.py test
