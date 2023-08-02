@@ -36,6 +36,7 @@ export default function CorporateActionsImportForm({
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formSent, setFormSent] = useState(false);
+  const dateValue = Form.useWatch("date", form);
 
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     undefined,
@@ -237,12 +238,12 @@ export default function CorporateActionsImportForm({
                   <Col span={6}>
                     <Form.Item
                       name="exchangeRate"
-                      label={`${t("Exchange rate")}`}
-                      help={`${
+                      label={t("Exchange rate")}
+                      help={
                         corporateAction.currency &&
                         portfolio?.baseCurrency.code &&
                         `${corporateAction.currency} to ${portfolio.baseCurrency.code}`
-                      }`}
+                      }
                       rules={[
                         {
                           required: true,
@@ -262,7 +263,7 @@ export default function CorporateActionsImportForm({
                     <ExchangeRateFetchButton
                       fromCurrency={corporateAction.currency}
                       toCurrency={portfolio?.baseCurrency.code}
-                      date={corporateAction.date}
+                      date={dateValue}
                       onChange={onExchangeRateChange}
                       onError={onExchangeError}
                     />

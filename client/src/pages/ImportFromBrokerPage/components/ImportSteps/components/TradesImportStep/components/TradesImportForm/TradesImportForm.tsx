@@ -15,10 +15,10 @@ import {
 import TextArea from "antd/lib/input/TextArea";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
-import CompanyTickerSelect from "../../../../../CompanyTickerSelect/CompanyTickerSelect";
-import ExchangeRateFetchButton from "../../../../../ExchangeRateFetchButton/ExchangeRateFetchButton";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
+import CompanyTickerSelect from "pages/ImportFromBrokerPage/components/CompanyTickerSelect/CompanyTickerSelect";
+import ExchangeRateFetchButton from "pages/ImportFromBrokerPage/components/ExchangeRateFetchButton/ExchangeRateFetchButton";
 import { ICompany } from "types/company";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
 
@@ -36,6 +36,7 @@ export default function TradesImportForm({
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formSent, setFormSent] = useState(false);
+  const dateValue = Form.useWatch("date", form);
 
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     undefined,
@@ -242,12 +243,12 @@ export default function TradesImportForm({
                   <Col span={6}>
                     <Form.Item
                       name="exchangeRate"
-                      label={`${t("Exchange rate")}`}
-                      help={`${
+                      label={t("Exchange rate")}
+                      help={
                         trade.currency &&
                         portfolio?.baseCurrency.code &&
                         `${trade.currency} to ${portfolio.baseCurrency.code}`
-                      }`}
+                      }
                       rules={[
                         {
                           required: true,
@@ -267,7 +268,7 @@ export default function TradesImportForm({
                     <ExchangeRateFetchButton
                       fromCurrency={trade.currency}
                       toCurrency={portfolio?.baseCurrency.code}
-                      date={trade.date}
+                      date={dateValue}
                       onChange={onExchangeRateChange}
                       onError={onExchangeError}
                     />
