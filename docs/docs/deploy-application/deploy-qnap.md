@@ -106,24 +106,3 @@ In the Shared Folders section, mount the `config` and `media` folders in the cor
 Click on Create and confirm all the settings in the Summary window.
 
 ![buho-stock container image in Container Station](/img/qnap-installation/container_config_5.png)
-
-
-
-## 6. Create super user
-
-:::info
-
-This step is deprecated and is not needed anymore since version `0.100.0`.
-
-:::
-
-SSH into QNAP NAS and start an interactive bash session into `buho-stocks` container.
-
-```
-[User@qnap ~]$ docker exec -it buho-stocks-1 bash
-root@qnapy:/usr/src/app#
-```
-
-Execute `manage.py` to create super user as described [here](./create-initial-admin-user).
-
-The application is now deployed and available on port 34800.
