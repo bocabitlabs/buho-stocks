@@ -41,7 +41,7 @@ export default function PortfolioDetailsPage() {
       <Alert
         style={{ marginTop: 20 }}
         showIcon
-        message={`${t("Unable to load portfolio")}`}
+        message={t("Unable to load portfolio")}
         description={error.message}
         type="error"
       />

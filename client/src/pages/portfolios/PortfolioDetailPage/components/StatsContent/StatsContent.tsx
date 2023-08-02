@@ -20,7 +20,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
     <Row gutter={24} style={{ marginTop: 16 }}>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Invested")}`}
+          title={t("Invested")}
           value={stats?.invested}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -28,7 +28,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Accum. investment")}`}
+          title={t("Accum. investment")}
           value={stats?.accumulatedInvestment}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -36,7 +36,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Portfolio value")}`}
+          title={t("Portfolio value")}
           value={stats?.portfolioValue}
           valueStyle={{
             color:
@@ -51,7 +51,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Dividends")}`}
+          title={t("Dividends")}
           value={stats?.dividends}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -59,7 +59,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Accum. Dividends")}`}
+          title={t("Accum. Dividends")}
           value={stats?.accumulatedDividends}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -67,7 +67,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Dividends yield")}`}
+          title={t("Dividends yield")}
           value={stats?.dividendsYield}
           precision={2}
           suffix="%"
@@ -75,7 +75,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Return")}`}
+          title={t("Return")}
           value={stats?.returnValue}
           precision={2}
           suffix={stats?.portfolioCurrency}
@@ -87,7 +87,7 @@ export default function StatsContent({ stats }: Props): ReactElement {
       </Col>
       <Col {...columnProps}>
         <Statistic
-          title={`${t("Return + dividends")}`}
+          title={t("Return + dividends")}
           value={stats?.returnWithDividends}
           precision={2}
           valueStyle={{

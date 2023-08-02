@@ -74,7 +74,7 @@ function CompanyDetailsPageHeader({
       tags={[
         <CountryFlag code={companyCountryCode} key={companyCountryCode} />,
         <Tag color="blue" key="url" style={{ marginLeft: 16 }}>
-          <a href={`${companyUrl}`} target="_blank" rel="noopener noreferrer">
+          <a href={companyUrl} target="_blank" rel="noopener noreferrer">
             <LinkOutlined />
           </a>
         </Tag>,
