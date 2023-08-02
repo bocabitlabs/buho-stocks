@@ -1,14 +1,9 @@
 import logging
 
 from exchange_rates.models import ExchangeRate
-from exchange_rates.services.ecb_api_client import EcbApiClient
 from exchange_rates.services.yfinance_api_client import YFinanceExchangeClient
 
 logger = logging.getLogger("buho_backend")
-
-
-class EcbApiClientError(Exception):
-    pass
 
 
 class ExchangeRateService:
@@ -56,17 +51,12 @@ class ExchangeRateService:
             return exchange_rate
 
         except ExchangeRate.DoesNotExist:
-            if to_currency == "EUR":
-                ecb_api = EcbApiClient()
-                exchange_rate_dict = ecb_api.get_exchange_rate_for_date(from_currency, to_currency, transaction_date)
-            else:
-                api_client = YFinanceExchangeClient()
-                exchange_rate_dict = api_client.get_exchange_rate_for_date(from_currency, to_currency, transaction_date)
+            api_client = YFinanceExchangeClient()
+            logger.debug("Getting exchange rate from YFinance API")
+            exchange_rate_dict = api_client.get_exchange_rate_for_date(from_currency, to_currency, transaction_date)
 
             if exchange_rate_dict:
                 saved_exchange_rate = self.save_exchange_rate(exchange_rate_dict)
                 return saved_exchange_rate
 
-        except EcbApiClientError as error:
-            logger.debug(str(error), exc_info=True)
             return None
