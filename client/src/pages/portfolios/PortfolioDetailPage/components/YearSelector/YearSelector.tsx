@@ -57,7 +57,7 @@ export default function YearSelector({
           disabled={loadingStats}
           loading={loadingStats}
         >
-          <Select.Option value="all">{`${t("All")}`}</Select.Option>
+          <Select.Option value="all">{t("All")}</Select.Option>
           {years.map((yearItem: any) => (
             <Select.Option key={yearItem} value={yearItem}>
               {yearItem}

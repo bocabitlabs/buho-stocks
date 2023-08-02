@@ -219,7 +219,7 @@ export default function RightsTransactionAddEditForm({
           >
             <InputNumber
               decimalSeparator="."
-              addonAfter={`${companyBaseCurrency.code}`}
+              addonAfter={companyBaseCurrency.code}
               min={0}
               step={0.001}
             />
@@ -236,7 +236,7 @@ export default function RightsTransactionAddEditForm({
           >
             <InputNumber
               decimalSeparator="."
-              addonAfter={`${companyBaseCurrency.code}`}
+              addonAfter={companyBaseCurrency.code}
               min={0}
               step={0.001}
             />
@@ -253,7 +253,7 @@ export default function RightsTransactionAddEditForm({
             ]}
           >
             <InputNumber
-              addonAfter={`${companyBaseCurrency.code}`}
+              addonAfter={companyBaseCurrency.code}
               decimalSeparator="."
               min={0}
               step={0.001}
