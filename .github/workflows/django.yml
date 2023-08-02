@@ -8,6 +8,8 @@ on:
 
 jobs:
   build:
+    env:
+      DJANGO_ENV: test
     runs-on: ubuntu-latest
     strategy:
       max-parallel: 4
