@@ -1,6 +1,7 @@
 import logging
 from decimal import Decimal
 
+import responses
 from django.urls import reverse
 from exchange_rates.models import ExchangeRate
 from exchange_rates.tests.factory import ExchangeRateFactory
@@ -43,6 +44,7 @@ class ExchangeRatesDetailTestCase(APITestCase):
             instances.append(instance)
         cls.instances = instances
 
+    @responses.activate
     def test_get_exchange_rate(self):
         index = 0
         self.assertEqual(len(ExchangeRate.objects.all()), 4)
@@ -55,7 +57,7 @@ class ExchangeRatesDetailTestCase(APITestCase):
             ],
         )
         response = self.client.get(url)
-        # # # Check status response
+        # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
             response.data["exchange_from"],

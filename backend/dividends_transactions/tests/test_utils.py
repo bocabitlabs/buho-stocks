@@ -58,8 +58,7 @@ class DividendsUtilsTestCase(APITestCase):
     def test_get_dividends_on_year(self):
         index = 0
         utils = DividendsTransactionsUtils(self.company.dividends_transactions)
-        for dividend_transaction in self.company.dividends_transactions.all():
-            logger.info(f"Dividend transaction: {dividend_transaction}")
+
         self.assertEqual(
             utils.get_dividends_of_year(self.years[index]),
             self.prices_times_counts[index],

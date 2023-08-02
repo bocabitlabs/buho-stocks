@@ -218,7 +218,7 @@ function CompanyAddEditForm({
               {fileName ? `${t("Selected")} ${fileName}` : ""}
             </Upload>
           </Form.Item>
-          <Form.Item name="baseCurrency" label={t("Currency")}>
+          <Form.Item name="baseCurrency" label={t("Currency")} required>
             <Select
               showSearch
               placeholder={t("Select a currency")}
@@ -236,7 +236,11 @@ function CompanyAddEditForm({
                 ))}
             </Select>
           </Form.Item>
-          <Form.Item name="dividendsCurrency" label={t("Dividends currency")}>
+          <Form.Item
+            name="dividendsCurrency"
+            label={t("Dividends currency")}
+            required
+          >
             <Select
               showSearch
               placeholder={t("Select a currency for the dividends")}
@@ -254,7 +258,7 @@ function CompanyAddEditForm({
                 ))}
             </Select>
           </Form.Item>
-          <Form.Item name="market" label={t("Market")}>
+          <Form.Item name="market" label={t("Market")} required>
             <Select
               placeholder={t("Select a market")}
               allowClear
@@ -271,7 +275,7 @@ function CompanyAddEditForm({
                 ))}
             </Select>
           </Form.Item>
-          <Form.Item name="sector" label={t("Sector")}>
+          <Form.Item name="sector" label={t("Sector")} required>
             <Select
               placeholder={t("Select a sector")}
               allowClear
@@ -302,7 +306,7 @@ function CompanyAddEditForm({
           <Form.Item name="url" label={t("URL")}>
             <Input type="text" />
           </Form.Item>
-          <Form.Item name="countryCode" label={t("Country")}>
+          <Form.Item name="countryCode" label={t("Country")} required>
             <CountrySelector
               handleChange={handleCountryChange}
               initialValue={countryCode}

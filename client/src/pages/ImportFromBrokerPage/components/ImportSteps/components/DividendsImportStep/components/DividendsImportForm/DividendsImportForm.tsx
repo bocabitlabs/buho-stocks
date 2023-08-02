@@ -35,6 +35,7 @@ export default function DividendsImportForm({
   const { t } = useTranslation();
   const [form] = Form.useForm();
   const [formSent, setFormSent] = useState(false);
+  const dateValue = Form.useWatch("date", form);
 
   const [selectedCompany, setSelectedCompany] = useState<ICompany | undefined>(
     undefined,
@@ -165,12 +166,12 @@ export default function DividendsImportForm({
                   <Col span={6}>
                     <Form.Item
                       name="exchangeRate"
-                      label={`${t("Exchange rate")}`}
-                      help={`${
+                      label={t("Exchange rate")}
+                      help={
                         dividend.currency &&
                         portfolio?.baseCurrency.code &&
                         `${dividend.currency} to ${portfolio.baseCurrency.code}`
-                      }`}
+                      }
                       rules={[
                         {
                           required: true,
@@ -190,7 +191,7 @@ export default function DividendsImportForm({
                     <ExchangeRateFetchButton
                       fromCurrency={dividend.currency}
                       toCurrency={portfolio?.baseCurrency.code}
-                      date={dividend.date}
+                      date={dateValue}
                       onChange={onExchangeRateChange}
                       onError={onExchangeError}
                     />
