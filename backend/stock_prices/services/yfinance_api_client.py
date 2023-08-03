@@ -85,6 +85,7 @@ class YFinanceApiClient(StockPriceServiceBase):
             raise error
 
     def convert_api_data_to_dict(self, api_data: Any) -> dict | None:
+        logger.debug(f"Converting API data to dict: {api_data}")
         result = api_data.sort_values("Date", ascending=False)
         dates_dict = result.to_dict("index")
         if dates_dict == {}:

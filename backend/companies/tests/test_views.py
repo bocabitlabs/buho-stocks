@@ -1,6 +1,7 @@
 import logging
 
 import factory
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.models import Company
 from companies.tests.factory import CompanyFactory
 from django.urls import reverse
@@ -8,13 +9,12 @@ from faker import Faker
 from markets.tests.factory import MarketFactory
 from portfolios.tests.factory import PortfolioFactory
 from rest_framework import status
-from rest_framework.test import APITestCase
 from sectors.tests.factory import SectorFactory
 
 logger = logging.getLogger("buho_backend")
 
 
-class CompaniesListTestCase(APITestCase):
+class CompaniesListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -36,7 +36,7 @@ class CompaniesListTestCase(APITestCase):
         self.assertEqual(len(response.data), 4)
 
 
-class CompanisDetailTestCase(APITestCase):
+class CompanisDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

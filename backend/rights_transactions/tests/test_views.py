@@ -2,18 +2,18 @@ import logging
 from decimal import Decimal
 
 import factory
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.tests.factory import CompanyFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase
 from rights_transactions.models import RightsTransaction
 from rights_transactions.tests.factory import RightsTransactionFactory
 
 logger = logging.getLogger("buho_backend")
 
 
-class RightsTransactionsListTestCase(APITestCase):
+class RightsTransactionsListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -40,7 +40,7 @@ class RightsTransactionsListTestCase(APITestCase):
         self.assertEqual(len(response.data), 4)
 
 
-class RightsTransactionsDetailTestCase(APITestCase):
+class RightsTransactionsDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

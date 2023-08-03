@@ -1,11 +1,11 @@
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
 from markets.tests.factory import MarketFactory
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 
-class MarketsListTestCase(APITestCase):
+class MarketsListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -26,7 +26,7 @@ class MarketsListTestCase(APITestCase):
         self.assertEqual(len(response.data), 4)
 
 
-class MarketsDetailTestCase(APITestCase):
+class MarketsDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

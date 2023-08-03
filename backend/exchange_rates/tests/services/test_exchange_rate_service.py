@@ -1,20 +1,17 @@
 import datetime
 import logging
-import pathlib
 from decimal import Decimal
-from os import path
 
-import responses
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from exchange_rates.services.exchange_rate_service import ExchangeRateService
 from exchange_rates.tests.factory import ExchangeRateFactory
 from faker import Faker
-from responses import _recorder
-from rest_framework.test import APITestCase
+from stock_prices.tests.mocks.mock_yfinance import create_empty_download_mock_df
 
 logger = logging.getLogger("buho_backend")
 
 
-class ExchangeRateServiceTestCase(APITestCase):
+class ExchangeRateServiceTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -41,9 +38,6 @@ class ExchangeRateServiceTestCase(APITestCase):
             )
             instances.append(instance)
         cls.instances = instances
-
-    # def setUp(self):
-    #     pass
 
     def test_get_exchange_rate_for_date(self):
         index = 3
@@ -105,16 +99,7 @@ class ExchangeRateServiceTestCase(APITestCase):
             same_currency_exchange_rate["exchange_rate"],
         )
 
-    @responses.activate
     def test_get_exchange_rate_not_found_in_db(self):
-        responses_path = path.join(
-            pathlib.Path(__file__).parent.parent,
-            "responses",
-            "out.yaml",
-        )
-        responses.patch("https://query2.finance.yahoo.com")
-        responses._add_from_file(file_path=responses_path)
-
         service = ExchangeRateService()
         result = service.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.not_found_date)
 
@@ -123,18 +108,10 @@ class ExchangeRateServiceTestCase(APITestCase):
 
         self.assertEqual(result.exchange_from, "USD")
         self.assertEqual(result.exchange_to, "EUR")
-        self.assertEqual(result.exchange_rate, 0.9844800233840942)
+        self.assertEqual(result.exchange_rate, 120)
 
-    @responses.activate
     def test_get_exchange_rate_not_found_at_all(self):
-        responses_path = path.join(
-            pathlib.Path(__file__).parent.parent,
-            "responses",
-            "out_error.yaml",
-        )
-        responses.patch("https://query2.finance.yahoo.com")
-        responses._add_from_file(file_path=responses_path)
-
         service = ExchangeRateService()
+        self.mock_download.return_value = create_empty_download_mock_df()
         result = service.get_exchange_rate_for_date("ABCDE", self.to_currency, self.not_found_date)
         self.assertIsNone(result)
