@@ -1,13 +1,13 @@
 import logging
 
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.tests.factory import CompanyFactory
-from rest_framework.test import APITestCase
 from stock_prices.tests.factory import StockPriceTransactionFactory
 
 logger = logging.getLogger("buho_backend")
 
 
-class StockPricesTransactionsDetailTestCase(APITestCase):
+class StockPricesTransactionsDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

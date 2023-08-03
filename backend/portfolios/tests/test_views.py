@@ -1,18 +1,18 @@
 import logging
 
 import factory
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
 from initialize_data.initializers.currencies import create_initial_currencies
 from portfolios.models import Portfolio
 from portfolios.tests.factory import PortfolioFactory
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
 
-class PortfoliosListTestCase(APITestCase):
+class PortfoliosListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -53,7 +53,7 @@ class PortfoliosListTestCase(APITestCase):
         self.assertEqual(len(response.data["companies"]), 0)
 
 
-class PortfoliosDetailTestCase(APITestCase):
+class PortfoliosDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

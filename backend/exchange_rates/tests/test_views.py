@@ -2,17 +2,17 @@ import logging
 from decimal import Decimal
 
 import responses
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from exchange_rates.models import ExchangeRate
 from exchange_rates.tests.factory import ExchangeRateFactory
 from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
 
-class ExchangeRatesListTestCase(APITestCase):
+class ExchangeRatesListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -34,7 +34,7 @@ class ExchangeRatesListTestCase(APITestCase):
         self.assertEqual(len(response.data["results"]), 4)
 
 
-class ExchangeRatesDetailTestCase(APITestCase):
+class ExchangeRatesDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

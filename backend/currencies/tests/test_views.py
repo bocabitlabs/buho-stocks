@@ -1,10 +1,10 @@
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from initialize_data.initializers.currencies import create_initial_currencies
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 
-class CurrenciesViewsTestCase(APITestCase):
+class CurrenciesViewsTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

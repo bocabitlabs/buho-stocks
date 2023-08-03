@@ -3,17 +3,17 @@ import logging
 from decimal import Decimal
 from functools import reduce
 
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
 from faker import Faker
-from rest_framework.test import APITestCase
 from rights_transactions.tests.factory import RightsTransactionFactory
 from rights_transactions.utils import RightsTransactionsUtils
 
 logger = logging.getLogger("buho_backend")
 
 
-class RightsInvestedTestCase(APITestCase):
+class RightsInvestedTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

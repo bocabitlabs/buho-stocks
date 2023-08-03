@@ -1,9 +1,9 @@
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 
-class UserSettingsDetailTestCase(APITestCase):
+class UserSettingsDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
