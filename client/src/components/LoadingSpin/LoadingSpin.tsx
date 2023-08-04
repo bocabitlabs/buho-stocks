@@ -22,7 +22,13 @@ export default function LoadingSpin({ text = "Loading..." }: Props) {
         color: token.colorText,
       }}
     >
-      <Spin tip={t(text)} />
+      <Spin tip={t(text)}>
+        <div
+          style={{
+            padding: 50,
+          }}
+        />
+      </Spin>
     </div>
   );
 }
