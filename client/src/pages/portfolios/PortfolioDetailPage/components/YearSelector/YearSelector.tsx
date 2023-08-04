@@ -50,25 +50,27 @@ export default function YearSelector({
   return (
     <div style={{ marginTop: 16 }}>
       <Form layout="inline">
-        <Select
-          defaultValue={selectedYear}
-          style={{ width: 120 }}
-          onChange={handleYearChange}
-          disabled={loadingStats}
-          loading={loadingStats}
-        >
-          <Select.Option value="all">{t("All")}</Select.Option>
-          {years.map((yearItem: any) => (
-            <Select.Option key={yearItem} value={yearItem}>
-              {yearItem}
-            </Select.Option>
-          ))}
-        </Select>
-        <StatsRefreshModal
-          id={id}
-          selectedYear={selectedYear}
-          companies={companies}
-        />
+        <Form.Item name="gender" label={t("Year")}>
+          <Select
+            defaultValue={selectedYear}
+            style={{ width: 120 }}
+            onChange={handleYearChange}
+            disabled={loadingStats}
+            loading={loadingStats}
+          >
+            <Select.Option value="all">{t("All")}</Select.Option>
+            {years.map((yearItem: any) => (
+              <Select.Option key={yearItem} value={yearItem}>
+                {yearItem}
+              </Select.Option>
+            ))}
+          </Select>
+          <StatsRefreshModal
+            id={id}
+            selectedYear={selectedYear}
+            companies={companies}
+          />
+        </Form.Item>
       </Form>
       <div style={{ marginTop: 16 }}>
         <StatsContent stats={stats} />
