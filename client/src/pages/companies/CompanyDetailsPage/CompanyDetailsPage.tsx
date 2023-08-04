@@ -35,13 +35,13 @@ export default function CompanyDetailsPage(): ReactElement {
   return (
     <CompanyDetailsPageHeader
       companyName={company.name}
-      companyTicker={company.ticker}
-      companyLogo={company.logo}
-      companyCountryCode={company.countryCode}
       portfolioName={company.portfolio.name}
-      companyUrl={company.url}
+      companyCountryCode={company.countryCode}
     >
       <CompanyInfo
+        companyTicker={company.ticker}
+        companyLogo={company.logo}
+        companyUrl={company.url}
         companySectorName={company.sector.name}
         companySuperSectorName={company.sector.superSector?.name}
         marketName={company.market.name}

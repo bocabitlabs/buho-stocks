@@ -22,7 +22,7 @@ export default function CountrySelector({
         aria-label={element.name}
         style={{ paddingRight: "1em" }}
       >
-        <CountryFlag code={element.code} />
+        <CountryFlag code={element.code} width={15} />
       </span>
       {element.name}
     </div>
