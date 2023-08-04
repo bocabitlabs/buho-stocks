@@ -131,4 +131,4 @@ volumes/static
 volumes/media
 volumes/logs
 .env.prod
-backend/yfinance.cache
+*yfinance.cache
