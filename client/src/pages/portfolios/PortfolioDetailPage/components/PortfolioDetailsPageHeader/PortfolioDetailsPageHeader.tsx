@@ -66,12 +66,15 @@ function PortfolioDetailsPageHeader({
         background: token.colorBgContainer,
       }}
       title={<Typography.Title level={2}>{portfolioName}</Typography.Title>}
-      subTitle={portfolioDescription}
+      tags={[
+        <CountryFlag
+          code={portfolioCountryCode}
+          key={portfolioCountryCode}
+          width={20}
+        />,
+      ]}
       breadcrumb={{ items: routes }}
       breadcrumbRender={breadCrumbRender}
-      tags={[
-        <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
-      ]}
       extra={[
         <Button
           key="company-view-logs"
@@ -110,6 +113,7 @@ function PortfolioDetailsPageHeader({
         </Popconfirm>,
       ]}
     >
+      <Typography.Paragraph>{portfolioDescription}</Typography.Paragraph>
       {children}
       <CompanyAddEditForm
         title={t("Add new company")}
