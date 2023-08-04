@@ -35,6 +35,7 @@ export default function CompaniesList({
       dataIndex: "logo",
       key: "logo",
       render: (text: string) => <Avatar src={text} />,
+      fixed: "left",
     },
     {
       title: t("Name"),
@@ -59,6 +60,7 @@ export default function CompaniesList({
       ),
       sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
         a.name.localeCompare(b.name),
+      fixed: "left",
     },
     {
       title: t("Ticker"),

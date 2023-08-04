@@ -1,43 +1,6 @@
-[tool.black]
-line-length = 120 # override black's default line-length
-exclude = '''
-/(
-    \.git
-  | \.mypy_cache
-  | \.tox
-  | venv
-  | \.venv
-  | _build
-  | buck-out
-  | build
-  | dist
-  | client
-  | docs
-  | data
-  | media
-  | migrations
-)/
-'''
-
-[tool.isort]
-# make it compatible with black
-profile = "black"
-# isort configuration:
-# https://github.com/PyCQA/isort/wiki/isort-Settings
-include_trailing_comma = true
-use_parentheses = true
-# See https://github.com/PyCQA/isort#multi-line-output-modes
-multi_line_output = 3
-line_length = 120
-
-[tool.pyright]
-
-include = ["backend"]
-exclude = ["**/migrations", "**/__pycache__"]
-
 [tool.poetry]
 name = "buho-stocks"
-version = "0.201.0"
+version = "0.202.0"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
@@ -85,3 +48,40 @@ types-requests = "2.28.11.13"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120 # override black's default line-length
+exclude = '''
+/(
+    \.git
+  | \.mypy_cache
+  | \.tox
+  | venv
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+  | client
+  | docs
+  | data
+  | media
+  | migrations
+)/
+'''
+
+[tool.isort]
+# make it compatible with black
+profile = "black"
+# isort configuration:
+# https://github.com/PyCQA/isort/wiki/isort-Settings
+include_trailing_comma = true
+use_parentheses = true
+# See https://github.com/PyCQA/isort#multi-line-output-modes
+multi_line_output = 3
+line_length = 120
+
+[tool.pyright]
+
+include = ["backend"]
+exclude = ["**/migrations", "**/__pycache__"]
