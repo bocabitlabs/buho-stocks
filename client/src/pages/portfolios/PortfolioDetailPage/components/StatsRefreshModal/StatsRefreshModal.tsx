@@ -61,6 +61,11 @@ export default function StatsRefreshModal({
   const showModal = () => {
     setVisible(true);
   };
+
+  const handleCancelButton = () => {
+    setVisible(false);
+  };
+
   const onCheckAllChange = (e: any) => {
     setCheckedList(
       e.target.checked ? checkboxes.map((company) => company.id) : [],
@@ -78,21 +83,33 @@ export default function StatsRefreshModal({
     setCheckAll(checkedValue.length === checkboxes.length);
   };
 
-  const getStatsForced = useCallback(
-    async (companyId: number, companyName: string) => {
-      setUpdateMessage(`${t("Updating stats for company")}: ${companyName}`);
+  const getStatsForCompany = useCallback(
+    async (
+      companyId: number,
+      companyName: string,
+      companiesCount: number,
+      currentCompany: number,
+    ) => {
+      setUpdateMessage(
+        `${currentCompany}/${companiesCount} - ${t(
+          "Updating stats for company",
+        )}: ${companyName} `,
+      );
       try {
-        await updateCompanyStats({
+        const response = await updateCompanyStats({
           companyId: +companyId,
           year: selectedYear,
           updateApiPrice: updateStockPriceSwitch,
         });
-        setUpdateMessage(
-          `${t("Stats updated for company")}: ${companyName} ${t(
-            "and year",
-          )} ${selectedYear}`,
-        );
-        return { result: true, message: "" };
+        if (response.status === 200) {
+          setUpdateMessage(
+            `${t("Stats updated for company")}: ${companyName} ${t(
+              "and year",
+            )} ${selectedYear}`,
+          );
+          return { result: true, message: "" };
+        }
+        throw new Error("Error updating stats for company");
       } catch (e) {
         const message = `${t(
           "Error updating stats for company",
@@ -104,11 +121,9 @@ export default function StatsRefreshModal({
     [selectedYear, t, updateCompanyStats, updateStockPriceSwitch],
   );
 
-  const updatePortfolioStatsForced = useCallback(async () => {
+  const updatePortfolioStatsAction = useCallback(async () => {
     setUpdateMessage(
-      `${t("Updating stats for portfolio")} #${id} ${t("and year")} ${t(
-        selectedYear,
-      )}`,
+      `${t("Updating stats for portfolio on year")} ${t(selectedYear)}`,
     );
     try {
       await updatePortfolioStats({
@@ -116,56 +131,64 @@ export default function StatsRefreshModal({
         year: selectedYear,
         updateApiPrice: updateStockPriceSwitch,
       });
-      toast.success<string>(
-        t(
-          `${t("Stats updated for portfolio")} #${id} ${t("and year")} ${t(
-            selectedYear,
-          )}`,
-        ),
-      );
-      setUpdateMessage(
-        `${t("Stats updated for portfolio")} #${id} ${t("and year")} ${t(
-          selectedYear,
-        )}`,
-      );
+      const message = `${t("Stats updated for portfolioon year")} ${t(
+        selectedYear,
+      )}`;
+      toast.success<string>(message);
+      setUpdateMessage(message);
+      return { result: true, message };
     } catch (e) {
-      setUpdateMessage(
-        `${t("Error updating stats for portfolio")} #${id} ${t("and year")} ${t(
-          selectedYear,
-        )}`,
-      );
+      const message = `${t("Error updating stats for portfolio on year")} ${t(
+        selectedYear,
+      )}`;
+      setUpdateMessage(message);
+      return { result: false, message };
     }
   }, [t, id, selectedYear, updatePortfolioStats, updateStockPriceSwitch]);
 
-  const handleOk = async () => {
+  const updatePorFolioStats = async () => {
     setConfirmLoading(true);
     setErrorsList([]);
     const updatesErrorList: string[] = [];
+
     if (updateStatsSwitch) {
-      setConfirmLoading(true);
+      const companiesCount = checkedList.length;
+      let currentCompany = 0;
       await asyncForEach(checkedList, async (companyId: number) => {
         const companyName = checkboxes.filter(
           (company) => company.id === companyId,
         )[0].name;
-        console.log(`updateStatsSwitch: Company name: ${companyName}`);
-
-        const result = await getStatsForced(companyId, companyName);
-        if (!result.result) {
-          updatesErrorList.push(result.message);
+        try {
+          const result = await getStatsForCompany(
+            companyId,
+            companyName,
+            companiesCount,
+            currentCompany,
+          );
+          if (!result.result) {
+            updatesErrorList.push(result.message);
+          }
+        } catch (e) {
+          updatesErrorList.push(
+            `${t("Error updating stats for company")} ${companyName}: ${e}`,
+          );
         }
+        currentCompany += 1;
       });
       setErrorsList(updatesErrorList);
       setConfirmLoading(false);
     }
-    await updatePortfolioStatsForced();
-    setConfirmLoading(false);
+    const result = await updatePortfolioStatsAction();
+    if (!result.result) {
+      updatesErrorList.push(result.message);
+    }
     onCheckAllChange({ target: { checked: false } });
     setUpdateStockPriceSwitch(false);
     setUpdateStatsSwitch(false);
-  };
-
-  const handleCancel = () => {
-    setVisible(false);
+    setConfirmLoading(false);
+    if (updatesErrorList.length === 0) {
+      setVisible(false);
+    }
   };
 
   const onStockPriceChange = (e: any) => {
@@ -178,10 +201,10 @@ export default function StatsRefreshModal({
 
   const handleFormSubmit = async () => {
     try {
-      await handleOk();
+      await updatePorFolioStats();
       form.resetFields();
     } catch (error) {
-      console.log("Validate Failed:", error);
+      console.log("Error during form submit", error);
     }
   };
 
@@ -197,74 +220,81 @@ export default function StatsRefreshModal({
         title={`${t("Refresh stats and stock prices for")} ${t(selectedYear)}`}
         open={visible}
         confirmLoading={confirmLoading}
-        onCancel={handleCancel}
+        onCancel={handleCancelButton}
         okText={t("Update stats")}
         cancelText={t("Close")}
         onOk={handleFormSubmit}
         cancelButtonProps={{ disabled: confirmLoading }}
         closable={!confirmLoading}
       >
-        <Form form={form} layout="vertical">
-          {t("For each company:")}
-          <Form.Item
-            name="updateStockPrice"
-            valuePropName="checked"
-            style={{ marginBottom: 0 }}
-          >
-            <Checkbox onChange={onStockPriceChange}>
-              {t("Update the stock price from API")}
-            </Checkbox>
-          </Form.Item>
-          <Form.Item name="updateStats" valuePropName="checked">
-            <Checkbox onChange={onStatsChange}>
-              {t("Update the stats for the year")} {t(selectedYear)}
-            </Checkbox>
-          </Form.Item>
-          <Typography.Title level={5}>
-            {t("Select the companies to update")}
+        {confirmLoading && (
+          <Typography.Title level={4}>
+            {t("Updating portfolio stats...")}
           </Typography.Title>
-          <Form.Item>
-            <Checkbox
-              indeterminate={indeterminate}
-              onChange={onCheckAllChange}
-              checked={checkAll}
+        )}
+        <Typography.Paragraph>{updateMessage}</Typography.Paragraph>
+        <Typography.Paragraph type="danger">
+          {errorsList.length > 0 ? (
+            <ul>
+              {errorsList.length &&
+                errorsList.map((item: string) => (
+                  <li key={encodeURI(item)}>{item}</li>
+                ))}
+            </ul>
+          ) : (
+            ""
+          )}
+        </Typography.Paragraph>
+        {!confirmLoading && (
+          <Form form={form} layout="vertical">
+            {t("For each company:")}
+            <Form.Item
+              name="updateStockPrice"
+              valuePropName="checked"
+              style={{ marginBottom: 0 }}
             >
-              {t("Check all")}
-            </Checkbox>
-          </Form.Item>
-          <Form.Item
-            name="companies"
-            style={{ marginBottom: 10 }}
-            valuePropName="checked"
-          >
-            <Checkbox.Group
-              onChange={onChange}
-              value={checkedList}
-              style={{ display: "block" }}
+              <Checkbox onChange={onStockPriceChange}>
+                {t("Update the stock price from API")}
+              </Checkbox>
+            </Form.Item>
+            <Form.Item name="updateStats" valuePropName="checked">
+              <Checkbox onChange={onStatsChange}>
+                {t("Update the stats for the year")} {t(selectedYear)}
+              </Checkbox>
+            </Form.Item>
+            <Typography.Title level={5}>
+              {t("Select the companies to update")}
+            </Typography.Title>
+            <Form.Item>
+              <Checkbox
+                indeterminate={indeterminate}
+                onChange={onCheckAllChange}
+                checked={checkAll}
+              >
+                {t("Check all")}
+              </Checkbox>
+            </Form.Item>
+            <Form.Item
+              name="companies"
+              style={{ marginBottom: 10 }}
+              valuePropName="checked"
             >
-              {checkboxes.map((company: CheckboxesProps) => (
-                <div key={company.id}>
-                  <Checkbox value={company.id}>
-                    {company.ticker} - {company.name}
-                  </Checkbox>
-                </div>
-              ))}
-            </Checkbox.Group>
-          </Form.Item>
-          <Typography.Paragraph>{updateMessage}</Typography.Paragraph>
-          <Typography.Paragraph type="danger">
-            {errorsList.length > 0 ? (
-              <ul>
-                {errorsList.length &&
-                  errorsList.map((item: string) => (
-                    <li key={encodeURI(item)}>{item}</li>
-                  ))}
-              </ul>
-            ) : (
-              ""
-            )}
-          </Typography.Paragraph>
-        </Form>
+              <Checkbox.Group
+                onChange={onChange}
+                value={checkedList}
+                style={{ display: "block" }}
+              >
+                {checkboxes.map((company: CheckboxesProps) => (
+                  <div key={company.id}>
+                    <Checkbox value={company.id}>
+                      {company.ticker} - {company.name}
+                    </Checkbox>
+                  </div>
+                ))}
+              </Checkbox.Group>
+            </Form.Item>
+          </Form>
+        )}
       </Modal>
     </>
   );
