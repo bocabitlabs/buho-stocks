@@ -198,8 +198,8 @@ export default function StatsRefreshModal({
         open={visible}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
-        okText={`${t("Update stats")}`}
-        cancelText={`${t("Close")}`}
+        okText={t("Update stats")}
+        cancelText={t("Close")}
         onOk={handleFormSubmit}
         cancelButtonProps={{ disabled: confirmLoading }}
         closable={!confirmLoading}

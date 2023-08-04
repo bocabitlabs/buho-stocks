@@ -1,17 +1,17 @@
 import logging
 
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
 from log_messages.models import LogMessage
 from log_messages.tests.factory import LogMessageFactory
 from portfolios.tests.factory import PortfolioFactory
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
 
-class LogMessagesListTestCase(APITestCase):
+class LogMessagesListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -33,7 +33,7 @@ class LogMessagesListTestCase(APITestCase):
         self.assertEqual(len(response.data), 4)
 
 
-class CompanisDetailTestCase(APITestCase):
+class CompanisDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

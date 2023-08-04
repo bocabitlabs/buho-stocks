@@ -21,7 +21,7 @@
       "args": ["runserver", "0.0.0.0:8001"],
       "django": true,
       "env": {
-        "DJANGO_ENV": "development"
+        "DJANGO_ENV": "dev"
       }
     },
 

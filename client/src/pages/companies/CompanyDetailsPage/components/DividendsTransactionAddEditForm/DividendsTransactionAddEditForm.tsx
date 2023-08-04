@@ -192,7 +192,7 @@ export default function DividendsTransactionAddEditForm({
             ]}
           >
             <InputNumber
-              addonAfter={`${companyDividendsCurrency.code}`}
+              addonAfter={companyDividendsCurrency.code}
               decimalSeparator="."
               min={0}
               step={0.001}

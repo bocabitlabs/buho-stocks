@@ -2,10 +2,12 @@ import logging
 import time
 from typing import Any, Tuple, TypedDict
 
+import requests_cache
 import yfinance as yf
 from pandas import Timestamp
 from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice
 
+session = requests_cache.CachedSession("yfinance.cache")
 logger = logging.getLogger("buho_backend")
 
 
@@ -69,13 +71,21 @@ class YFinanceApiClient(StockPriceServiceBase):
         return price
 
     def get_company_currency(self, ticker: str) -> str:
-        company = yf.Ticker(ticker)
-        currency = company.fast_info["currency"]
-        currency = currency.upper()
-        logger.info(f"{ticker} currency: {currency}")
-        return currency
+        company = yf.Ticker(ticker, session=session)
+        if not company:
+            logger.warning(f"{ticker}: Company not found.")
+        logger.info(f"{ticker} company.")
+        try:
+            currency = company.info["currency"]
+            currency = currency.upper()
+            logger.info(f"{ticker} currency: {currency}")
+            return currency
+        except KeyError as error:
+            logger.error(f"{ticker}: Currency not found.")
+            raise error
 
     def convert_api_data_to_dict(self, api_data: Any) -> dict | None:
+        logger.debug(f"Converting API data to dict: {api_data}")
         result = api_data.sort_values("Date", ascending=False)
         dates_dict = result.to_dict("index")
         if dates_dict == {}:
@@ -85,14 +95,14 @@ class YFinanceApiClient(StockPriceServiceBase):
     def get_company_data_between_dates(
         self, ticker: str, from_date: str, to_date: str
     ) -> tuple[dict[Timestamp, TypedYFinanceStockPrice] | None, str] | Tuple[None, None]:
-        currency = self.get_company_currency(ticker)
-        result = yf.download(ticker, start=from_date, end=to_date)
-
         try:
+            currency = self.get_company_currency(ticker)
+            result = yf.download(ticker, start=from_date, end=to_date, session=session)
+            logger.info(result)
             result_as_dict = self.convert_api_data_to_dict(result)
-            logger.info(f"{ticker} dates returned from API {result_as_dict}")
+            logger.info(f"{ticker} ({from_date}/{to_date}) dates returned from YFinance API {result_as_dict}")
             return result_as_dict, currency
 
-        except (IndexError, TypeError) as error:
+        except (IndexError, TypeError, KeyError) as error:
             logger.warning(f"{ticker}: Error: {error}. Skipping.")
             return None, None

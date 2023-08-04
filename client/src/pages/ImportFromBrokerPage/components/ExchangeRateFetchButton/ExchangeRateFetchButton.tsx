@@ -19,6 +19,7 @@ export default function ExchangeRateFetchButton({
   onError,
 }: Props) {
   const { t } = useTranslation();
+  const [currentDate, setCurrentDate] = React.useState<string>(date);
   const {
     isRefetching: exchangeRateRefetching,
     isFetching: exchangeRateFetching,
@@ -26,11 +27,15 @@ export default function ExchangeRateFetchButton({
     data: exchangeRateData,
     error: errorFetchingExchangeRate,
     isRefetchError: errorRefetchingExchangeRate,
-  } = useExchangeRate(fromCurrency, toCurrency, date);
+  } = useExchangeRate(fromCurrency, toCurrency, currentDate);
 
   const fetchExchangeRate = async () => {
     getExchangeRate();
   };
+
+  useEffect(() => {
+    setCurrentDate(date);
+  }, [date]);
 
   useEffect(() => {
     if (exchangeRateData) {

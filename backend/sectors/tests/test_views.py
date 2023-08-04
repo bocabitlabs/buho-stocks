@@ -1,15 +1,15 @@
 import logging
 
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
-from rest_framework.test import APITestCase
 from sectors.tests.factory import SectorFactory
 
 logger = logging.getLogger("buho_backend")
 
 
-class SectorsListTestCase(APITestCase):
+class SectorsListTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -31,7 +31,7 @@ class SectorsListTestCase(APITestCase):
         self.assertEqual(len(response.data), 4)
 
 
-class SectorsDetailTestCase(APITestCase):
+class SectorsDetailTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()

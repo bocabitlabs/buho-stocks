@@ -26,7 +26,7 @@ class Company(models.Model):
     description: models.TextField = models.TextField(blank=True, default="")
     url: models.URLField = models.URLField(max_length=200, blank=True, default="")
     color: models.CharField = models.CharField(max_length=200)
-    broker: models.CharField = models.CharField(max_length=200)
+    broker: models.CharField = models.CharField(max_length=200, blank=True)
     country_code: models.CharField = models.CharField(max_length=200)
     isin: models.CharField = models.CharField(max_length=200, blank=True, default="")
 

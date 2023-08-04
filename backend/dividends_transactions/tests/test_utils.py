@@ -3,16 +3,16 @@ import logging
 from decimal import Decimal
 from functools import reduce
 
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.tests.factory import CompanyFactory
 from dividends_transactions.tests.factory import DividendsTransactionFactory
 from dividends_transactions.utils import DividendsTransactionsUtils
 from faker import Faker
-from rest_framework.test import APITestCase
 
 logger = logging.getLogger("buho_backend")
 
 
-class DividendsUtilsTestCase(APITestCase):
+class DividendsUtilsTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -58,8 +58,7 @@ class DividendsUtilsTestCase(APITestCase):
     def test_get_dividends_on_year(self):
         index = 0
         utils = DividendsTransactionsUtils(self.company.dividends_transactions)
-        for dividend_transaction in self.company.dividends_transactions.all():
-            logger.info(f"Dividend transaction: {dividend_transaction}")
+
         self.assertEqual(
             utils.get_dividends_of_year(self.years[index]),
             self.prices_times_counts[index],
