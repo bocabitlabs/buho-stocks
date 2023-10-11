@@ -29,6 +29,8 @@ celery = "^5.3.4"
 redis = "^5.0.1"
 django-celery-results = "^2.5.1"
 mysqlclient = "^2.2.0"
+channels = {extras = ["daphne"], version = "^4.0.0"}
+channels-redis = "^4.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
