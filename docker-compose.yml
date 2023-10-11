@@ -22,18 +22,22 @@ services:
     image: redis:7
     container_name: db
 
-#   celery:
-#     build: .
-#     restart: always
-#     command: celery -A config worker -l info
-#     volumes:
-#       - .:/code
-#     env_file:
-#       - ./.env
-#     depends_on:
-#       - db
-#       - redis
-#       - web
+  celery:
+    image: ghcr.io/bocabitlabs/buho-stocks/buho-stocks:latest
+    container_name: celery
+    restart: always
+    command: celery -A buho_backend.celery_app:app worker -l info
+    volumes:
+      - logs:/app/logs
+      - static:/app/static
+      - media:/app/media
+    env_file:
+      - ./.env.prod
+    environment:
+      - DJANGO_ENV=prod
+    depends_on:
+      - db
+      - redis
   client:
     image: ghcr.io/bocabitlabs/buho-stocks/buho-stocks-client:latest
     container_name: client

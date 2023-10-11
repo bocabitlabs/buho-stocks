@@ -13,8 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import re
+
 from benchmarks.urls import router as benchmarks_router
-from buho_backend import path_converters
+from buho_backend import consumers, path_converters
+from buho_backend.views import TaskResultList, start_task_view
 from currencies.urls import router as currencies_router
 from dividends_transactions.urls import router as dividends_transactions_router
 from django.conf import settings
@@ -32,6 +35,7 @@ from shares_transactions.urls import router as shares_transactions_router
 from stock_prices.urls import router as stock_prices_router
 
 register_converter(path_converters.DateConverter, "date")
+uuid_regex = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -73,6 +77,7 @@ urlpatterns = [
     ),
     path("api/v1/settings/", include("settings.urls")),
     path("api/v1/stats/", include("stats.urls")),
+    path("api/v1/tasks-results/", TaskResultList.as_view(), name="task_result_list"),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),  # type: ignore
@@ -80,4 +85,10 @@ urlpatterns = [
     ),
     re_path(r"^swagger/$", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),  # type: ignore
     re_path(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),  # type: ignore
+    path("api/v1/start-task/", start_task_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+websocket_urlpatterns = [
+    re_path(r"ws/tasks/$", consumers.TaskConsumer.as_asgi()),
+]
