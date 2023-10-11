@@ -1,6 +1,7 @@
 import logging
 from decimal import Decimal
 
+from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from companies.utils import CompanyUtils
 from exchange_rates.services.exchange_rate_service import ExchangeRateService
@@ -11,12 +12,10 @@ logger = logging.getLogger("buho_backend")
 
 
 class CompanyStatsUtils:
-    year_for_all = 9999
-
     def __init__(
         self,
         company_id: int,
-        year=year_for_all,
+        year=YEAR_FOR_ALL,
         use_portfolio_currency: bool = True,
         update_api_price: bool = False,
     ):
@@ -118,7 +117,7 @@ class CompanyStatsUtils:
             portfolio_value, accumulated_dividends, accumulated_investment
         )
         return_with_dividends_percent = self.get_return_percent(return_with_dividends, accumulated_investment)
-        if year == self.year_for_all:
+        if year == YEAR_FOR_ALL:
             dividends_yield = self.get_dividends_yield(accumulated_dividends, portfolio_value)
         else:
             dividends_yield = self.get_dividends_yield(dividends, portfolio_value)
@@ -165,7 +164,7 @@ class CompanyStatsUtils:
         return instance
 
     def get_stats_for_year(self):
-        temp_year = self.year_for_all if self.year == "all" else self.year
+        temp_year = YEAR_FOR_ALL if self.year == "all" else self.year
 
         if not self.update_api_price:
             instance = self.get_stats_for_year_from_db(temp_year)
@@ -178,7 +177,7 @@ class CompanyStatsUtils:
         return instance
 
     def update_stats_for_year(self):
-        temp_year = self.year_for_all if self.year == "all" else self.year
+        temp_year = YEAR_FOR_ALL if self.year == "all" else self.year
         results_dict = self.calculate_stats_for_year(temp_year)
         instance = self.update_or_create_stats_for_year(temp_year, results_dict)
         logger.debug(instance.company)
