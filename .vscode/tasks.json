@@ -32,5 +32,14 @@
          "${command:workbench.action.acceptSelectedQuickOpenItem}",
       ],
    },
+   {
+      "label": "Start Redis",
+      "command": "redis-server",
+      "type": "shell",
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+  }
   ]
 }
