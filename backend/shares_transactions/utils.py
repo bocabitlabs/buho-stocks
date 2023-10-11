@@ -163,5 +163,5 @@ class SharesTransactionsUtils:
         query = self._get_sell_transactions_query(year, use_accumulated=True)
         transactions_utils = TransactionsUtils()
         total = transactions_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
-        logger.debug(f"Total accumulated return from sales: {total}")
+        # logger.debug(f"Total accumulated return from sales: {total}")
         return total
