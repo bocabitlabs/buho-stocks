@@ -15,6 +15,7 @@
     },
     {
       "name": "Python: Django",
+      "consoleTitle": "Django",
       "type": "python",
       "request": "launch",
       "program": "${workspaceFolder}/backend/manage.py",
@@ -43,6 +44,30 @@
       "env": {
         "DJANGO_ENV": "test"
       }
-    }
+    },
+    {
+      "name": "Python: Celery",
+      "type": "python",
+      "request": "launch",
+      "cwd": "${workspaceRoot}/backend",
+      "module": "celery",
+      "console": "integratedTerminal",
+      "consoleTitle": "Celery",
+      "django": true,
+      "env": {
+        "DJANGO_ENV": "dev"
+      },
+      "stopOnEntry": false,
+      "args": [
+        "-A",
+        "buho_backend.celery_app:app",
+        "worker",
+        "-l",
+        "INFO",
+        "--concurrency=2",
+        // "-P",
+        // "solo"
+      ]
+    },
   ]
 }
