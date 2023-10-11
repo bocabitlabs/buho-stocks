@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from stats.models.company_stats import CompanyStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
+from stats.tasks import update_company_stats
 from stats.utils.company_stats_utils import CompanyStatsUtils
 
 logger = logging.getLogger("buho_backend")
@@ -21,13 +22,12 @@ class CompanyStatsAPIView(APIView):
         except Company.DoesNotExist:
             return None
 
-    def update_object(self, portfolio_id, year, update_api_price=False):
+    def update_object(self, company_id, year, update_api_price=False):
         logger.debug("Updating company stats")
         if year == "all":
             year = 9999
-        company_stats = CompanyStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
-        stats = company_stats.update_stats_for_year()
-        return stats
+        update_company_stats.delay(company_id, year, update_api_price)
+        return True
 
     # 3. Retrieve
     @swagger_auto_schema(tags=["company_stats"])

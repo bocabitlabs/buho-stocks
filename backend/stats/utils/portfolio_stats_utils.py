@@ -1,6 +1,7 @@
 import datetime
 import logging
 
+from buho_backend.settings.common import YEAR_FOR_ALL
 from buho_backend.transaction_types import TransactionType
 from companies.utils import CompanyUtils
 from dividends_transactions.models import DividendsTransaction
@@ -16,12 +17,10 @@ logger = logging.getLogger("buho_backend")
 
 
 class PortfolioStatsUtils:
-    year_for_all = 9999
-
     def __init__(
         self,
         portfolio_id: int,
-        year: int = year_for_all,
+        year: int = YEAR_FOR_ALL,
         use_portfolio_currency: bool = True,
         update_api_price: bool = False,
     ):
@@ -37,7 +36,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.rights_transactions
-            if self.year == "all" or self.year == self.year_for_all:
+            if self.year == "all" or self.year == YEAR_FOR_ALL:
                 query = query.all()
             else:
                 query = query.filter(
@@ -60,7 +59,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.shares_transactions
-            if self.year == "all" or self.year == self.year_for_all:
+            if self.year == "all" or self.year == YEAR_FOR_ALL:
                 query = query.filter(type=TransactionType.BUY)
             else:
                 query = query.filter(transaction_date__year=self.year, type=TransactionType.BUY)
@@ -80,7 +79,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.shares_transactions
-            if self.year == "all" or self.year == self.year_for_all:
+            if self.year == "all" or self.year == YEAR_FOR_ALL:
                 query = query.filter(type=TransactionType.BUY)
             else:
                 query = query.filter(transaction_date__year__lte=self.year, type=TransactionType.BUY)
@@ -100,7 +99,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.rights_transactions
-            if self.year == "all" or self.year == self.year_for_all:
+            if self.year == "all" or self.year == YEAR_FOR_ALL:
                 query = query.filter(type=TransactionType.BUY)
             else:
                 query = query.filter(transaction_date__year__lte=self.year, type=TransactionType.BUY)
@@ -117,7 +116,7 @@ class PortfolioStatsUtils:
         total = 0
         for company in self.portfolio.companies.all():
             query = company.dividends_transactions
-            if self.year == "all" or self.year == self.year_for_all:
+            if self.year == "all" or self.year == YEAR_FOR_ALL:
                 query = query.all()
             else:
                 query = query.filter(transaction_date__year=self.year)
@@ -137,7 +136,7 @@ class PortfolioStatsUtils:
                 continue
 
             query = company.dividends_transactions
-            if self.year == "all" or self.year == self.year_for_all:
+            if self.year == "all" or self.year == YEAR_FOR_ALL:
                 query = query.all()
             else:
                 query = query.filter(transaction_date__year__lte=self.year)
@@ -171,7 +170,7 @@ class PortfolioStatsUtils:
 
             first_year = CompanyUtils(company.id).get_company_first_year()
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
-            if self.year != "all" or self.year != self.year_for_all:
+            if self.year != "all" or self.year != YEAR_FOR_ALL:
                 if not first_year or first_year > int(self.year):
                     total += 0
                     continue
@@ -184,7 +183,7 @@ class PortfolioStatsUtils:
             shares_count = company_stats.get_accumulated_shares_count_until_year(self.year)
             api_service = YFinanceApiClient()
             api = StockPricesApi(api_service)
-            if self.year == self.year_for_all:
+            if self.year == YEAR_FOR_ALL:
                 stock_price = api.get_last_data_from_last_month(company.ticker)
             else:
                 stock_price = api.get_last_data_from_year(company.ticker, self.year)
@@ -208,7 +207,7 @@ class PortfolioStatsUtils:
         return 0
 
     def get_stats_for_year(self):
-        temp_year = self.year_for_all if self.year == "all" else self.year
+        temp_year = YEAR_FOR_ALL if self.year == "all" else self.year
 
         results = None
         if PortfolioStatsForYear.objects.filter(portfolio=self.portfolio, year=temp_year).exists():
@@ -222,7 +221,7 @@ class PortfolioStatsUtils:
         return results
 
     def update_stats_for_year(self):
-        temp_year = self.year_for_all if self.year == "all" else self.year
+        temp_year = YEAR_FOR_ALL if self.year == "all" else self.year
 
         results = None
         if PortfolioStatsForYear.objects.filter(portfolio=self.portfolio, year=temp_year).exists():
@@ -259,14 +258,14 @@ class PortfolioStatsUtils:
             data["return_with_dividends"], data["accumulated_investment"]
         )
 
-        if temp_year == self.year_for_all:
+        if temp_year == YEAR_FOR_ALL:
             data["dividends_yield"] = self.get_dividends_yield(data["accumulated_dividends"], data["portfolio_value"])
         else:
             data["dividends_yield"] = self.get_dividends_yield(data["dividends"], data["portfolio_value"])
 
         if results:
             for key in data:
-                logger.debug(f"{key}: {data[key]}")
+                # logger.debug(f"{key}: {data[key]}")
                 setattr(results, key, data[key])
             results.save()
         else:
@@ -276,8 +275,6 @@ class PortfolioStatsUtils:
                 year=temp_year,
                 **data,
             )
-        logger.debug(f"{data['invested']}")
-
         return results
 
     def get_stats_for_year_by_company(self):
@@ -346,7 +343,7 @@ class PortfolioStatsUtils:
                 data["return_with_dividends"], data["accumulatedInvestment"]
             )
 
-            if year == self.year_for_all:
+            if year == YEAR_FOR_ALL:
                 data["dividendsYield"] = self.get_dividends_yield(data["accumulatedDividends"], data["portfolioValue"])
             else:
                 data["dividendsYield"] = self.get_dividends_yield(data["dividends"], data["portfolioValue"])
