@@ -34,6 +34,7 @@ function HomePageHeader({ children }: Props) {
   const onCancel = () => {
     setIsModalVisible(false);
   };
+
   return (
     <PageHeader
       className="site-page-header"
