@@ -67,14 +67,29 @@ interface IUpdateYearStatsMutationProps {
   portfolioId: number | undefined;
   year: string | undefined;
   updateApiPrice: boolean | undefined;
+  companiesIds?: number[];
 }
 
-export const useUpdatePortfolioYearStatsForced = () => {
+export const useUpdatePortfolioYearStats = () => {
   return useMutation(
-    ({ portfolioId, year, updateApiPrice }: IUpdateYearStatsMutationProps) =>
-      apiClient.put(`/stats/portfolio/${portfolioId}/year/${year}/`, {
-        updateApiPrice,
-      }),
+    ({
+      portfolioId,
+      year,
+      updateApiPrice,
+      companiesIds,
+    }: IUpdateYearStatsMutationProps) => {
+      let companiesIdsQuery = "";
+      if (companiesIds) {
+        companiesIdsQuery = `?companiesIds=${companiesIds.join(",")}`;
+      }
+
+      return apiClient.put(
+        `/stats/portfolio/${portfolioId}/year/${year}/${companiesIdsQuery}`,
+        {
+          updateApiPrice,
+        },
+      );
+    },
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries([
