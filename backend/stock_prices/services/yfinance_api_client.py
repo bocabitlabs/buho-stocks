@@ -7,7 +7,7 @@ import yfinance as yf
 from pandas import Timestamp
 from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice
 
-session = requests_cache.CachedSession("yfinance.cache")
+session = requests_cache.CachedSession("yfinance.cache", backend="redis")
 logger = logging.getLogger("buho_backend")
 
 
