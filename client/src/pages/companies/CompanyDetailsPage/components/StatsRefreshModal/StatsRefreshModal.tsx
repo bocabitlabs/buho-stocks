@@ -2,8 +2,7 @@ import React, { ReactElement, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 import { SyncOutlined } from "@ant-design/icons";
-import { Button, Checkbox, Form, Modal, Typography } from "antd";
-import axios from "axios";
+import { Button, Checkbox, Form, Modal } from "antd";
 import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 
 interface Props {
@@ -18,12 +17,10 @@ export default function StatsRefreshModal({
   const { t } = useTranslation();
 
   const [visible, setVisible] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
   const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
-  const [errorsList, setErrorsList] = useState<string[]>([]);
 
-  const { mutateAsync: updateStats } = useUpdateYearStats();
+  const { mutate: updateStats } = useUpdateYearStats();
 
   const showModal = () => {
     setVisible(true);
@@ -39,38 +36,22 @@ export default function StatsRefreshModal({
   };
 
   const getStatsForced = async () => {
-    try {
-      await updateStats({
-        companyId: +companyId!,
-        year: selectedYear,
-        updateApiPrice: updateStockPriceSwitch,
-      });
-      toast.success<string>(t("Stats for company updated"));
-      return { result: true, message: "" };
-    } catch (error: any) {
-      let message = error;
-      if (axios.isAxiosError(error)) {
-        message = error.message;
-      }
-      return { result: false, message };
-    }
+    updateStats({
+      companyId: +companyId!,
+      year: selectedYear,
+      updateApiPrice: updateStockPriceSwitch,
+    });
+    setVisible(false);
+
+    toast.success<string>(t("Updating company stats..."));
+    return { result: true, message: "" };
   };
 
   const handleOk = async () => {
     console.log("handleOk");
-    setConfirmLoading(true);
-    setErrorsList([]);
-    const updatesErrorList: string[] = [];
     if (updateStatsSwitch) {
-      setConfirmLoading(true);
-      const result = await getStatsForced();
-      console.log(result);
-      if (!result.result) {
-        updatesErrorList.push(result.message);
-      }
+      getStatsForced();
     }
-    setErrorsList(updatesErrorList);
-    setConfirmLoading(false);
 
     onStockPriceChange({ target: { checked: false } });
     onStatsChange({ target: { checked: false } });
@@ -92,12 +73,9 @@ export default function StatsRefreshModal({
         title={t("Refresh stats and stock prices")}
         open={visible}
         onOk={handleOk}
-        confirmLoading={confirmLoading}
         onCancel={handleCancel}
         okText={t("Update stats")}
         cancelText={t("Close")}
-        cancelButtonProps={{ disabled: confirmLoading }}
-        closable={!confirmLoading}
       >
         <Form>
           {t("Do you want to update the stats and the stock price?")}
@@ -116,18 +94,6 @@ export default function StatsRefreshModal({
             </Checkbox>
           </Form.Item>
         </Form>
-        <Typography.Paragraph type="danger">
-          {errorsList.length > 0 ? (
-            <ul>
-              {errorsList.length &&
-                errorsList.map((item: string) => (
-                  <li key={encodeURI(item)}>{item}</li>
-                ))}
-            </ul>
-          ) : (
-            ""
-          )}
-        </Typography.Paragraph>
       </Modal>
     </>
   );
