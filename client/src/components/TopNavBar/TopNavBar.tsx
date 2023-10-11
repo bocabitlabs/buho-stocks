@@ -2,6 +2,7 @@ import React, { ReactElement, useState } from "react";
 import { BulbOutlined, MenuOutlined } from "@ant-design/icons";
 import { Drawer, Button, Typography, Avatar, Layout, theme } from "antd";
 import "./TopNavBar.css";
+import TasksModal from "./components/TasksModal/TasksModal";
 
 interface TopNavBarProps {
   menu: ReactElement;
@@ -12,7 +13,10 @@ const { useToken } = theme;
 
 function TopNavBar({ menu, changeTheme }: TopNavBarProps) {
   const [visible, setVisible] = useState(false);
+  // List of tasks and their statuses
+
   const { token } = useToken();
+  // const { data, error, isLoading } = useTasksResults();
 
   const hideDrawer = () => {
     console.log("Hide drawer");
@@ -52,11 +56,14 @@ function TopNavBar({ menu, changeTheme }: TopNavBarProps) {
               Buho Stocks
             </Typography.Title>
           </div>
-          <Button
-            type="default"
-            icon={<BulbOutlined />}
-            onClick={changeTheme}
-          />
+          <div>
+            <Button
+              type="default"
+              icon={<BulbOutlined />}
+              onClick={changeTheme}
+            />
+            <TasksModal />
+          </div>
         </div>
         <Drawer
           title="Navigation"
