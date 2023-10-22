@@ -22,7 +22,7 @@ LABEL org.opencontainers.image.authors='renefernandez@duck.com' \
 
 # Required to have netcat-openbsd
 RUN apt-get update
-RUN apt-get install default-libmysqlclient-dev netcat-openbsd gcc -y
+RUN apt-get install default-libmysqlclient-dev netcat-openbsd gcc pkg-config -y
 
 # Install Poetry and dependencies
 COPY pyproject.toml ./
