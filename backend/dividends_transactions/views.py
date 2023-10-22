@@ -7,7 +7,7 @@ from dividends_transactions.serializers import DividendsTransactionSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from log_messages.models import LogMessage
 from rest_framework import viewsets
-from stats.utils.company_stats_utils import CompanyStatsUtils
+from stats.tasks import update_portolfio_stats
 
 logger = logging.getLogger("buho_backend")
 
@@ -30,8 +30,8 @@ class DividendsViewSet(viewsets.ModelViewSet):
     def add_dividends_update_company_stats(self, serializer, company):
         logger.debug(f"Updating company stats for {company.name} after adding dividend")
         transaction_date = datetime.strptime(serializer.data.get("transaction_date"), "%Y-%m-%d")
-        company_stats = CompanyStatsUtils(company.id, year=transaction_date.year, update_api_price=True)
-        company_stats.get_stats_for_year()
+
+        update_portolfio_stats.delay(company.portfolio_id, [company.id], transaction_date.year)
 
     def create_add_dividends_log_message(self, serializer, company):
         LogMessage.objects.create(
