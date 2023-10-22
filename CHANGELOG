@@ -10,9 +10,21 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
-## [0.200.0] - 2023-07-30
+## [0.203.0] - 2023-10-22
+
+### Added
+
+- Redis
+- Celery tasks to run the portfolio/company stats updates.
+- Use websockets to update the status of the running tasks.
+- Update the portfolio/company automatically when shares/dividends/rights are added.
+- Tasks icon and modal to display the current running tasks.
 
 # Improved
+
+## [0.200.0] - 2023-07-30
+
+### Improved
 
 - Now using Docker Compose for the deployment as default.
 - Using python-decouple to have different environments using .env files.

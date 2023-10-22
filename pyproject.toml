@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "buho-stocks"
-version = "0.202.0"
+version = "0.203.0"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
