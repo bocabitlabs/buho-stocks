@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingOutlined, RightSquareOutlined } from "@ant-design/icons";
 import { Button, Modal, Progress, Space, Typography } from "antd";
+import config from "config";
 import { ITaskResult } from "types/task-result";
 
 function TasksModal() {
@@ -65,8 +66,9 @@ function TasksModal() {
   };
 
   useEffect(() => {
-    console.log(`Connecting to websocket: ${`ws://127.0.0.1:8001/ws/tasks/`}`);
-    const ws = new WebSocket(`ws://127.0.0.1:8001/ws/tasks/`);
+    const websocketUrl = `ws://${config.WEBSOCKETS_URL}/ws/tasks/`;
+    console.log(`Connecting to websocket: ${websocketUrl}`);
+    const ws = new WebSocket(websocketUrl);
 
     ws.onmessage = (event) => {
       const messageData = JSON.parse(event.data);

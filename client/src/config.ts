@@ -2,15 +2,16 @@ import { IConfig } from "types/config";
 
 const dev: IConfig = {
   ENABLE_SENTRY: false,
-  SENTRY_DSN: "",
-  SENTRY_ENV: "",
+  SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,
+  SENTRY_ENV: import.meta.env.VITE_SENTRY_ENV,
+  WEBSOCKETS_URL: import.meta.env.VITE_WEBSOCKETS_URL,
 };
 
 const prod: IConfig = {
   ENABLE_SENTRY: true,
-  SENTRY_DSN:
-    "https://863c26cf130741e594cb5d93e3339568@o301826.ingest.sentry.io/1727901",
-  SENTRY_ENV: "",
+  SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN,
+  SENTRY_ENV: import.meta.env.VITE_SENTRY_ENV,
+  WEBSOCKETS_URL: import.meta.env.VITE_WEBSOCKETS_URL,
 };
 
 const test: IConfig = {
