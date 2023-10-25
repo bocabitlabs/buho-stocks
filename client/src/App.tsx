@@ -3,8 +3,11 @@ import "./index.css";
 import "./App.css";
 import { useTranslation } from "react-i18next";
 import { ToastContainer, toast } from "react-toastify";
+import * as Sentry from "@sentry/react";
+import { BrowserTracing } from "@sentry/react";
 import { ConfigProvider, theme } from "antd";
 import AppLayout from "AppLayout";
+import config from "config";
 import { useSettings } from "hooks/use-settings/use-settings";
 import i18n from "i18n";
 
@@ -31,6 +34,18 @@ function App() {
   useEffect(() => {
     if (data) {
       i18n.changeLanguage(data?.language);
+
+      Sentry.init({
+        dsn: data.sentryDsn,
+        enabled: data.sentryEnabled,
+        environment: config.SENTRY_ENV,
+        integrations: [new BrowserTracing()],
+
+        // Set tracesSampleRate to 1.0 to capture 100%
+        // of transactions for performance monitoring.
+        // We recommend adjusting this value in production
+        tracesSampleRate: 0.5,
+      });
     }
   }, [data]);
 

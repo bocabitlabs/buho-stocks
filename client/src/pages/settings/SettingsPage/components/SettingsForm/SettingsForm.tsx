@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Select } from "antd";
+import { Button, Form, Input, Select } from "antd";
 import { useTimezones } from "hooks/use-markets/use-markets";
 import {
   useSettings,
@@ -21,6 +21,9 @@ function SettingsForm(): ReactElement | null {
       // companySortBy,
       language,
       timezone,
+      sentryDsn,
+      sentryEnabled,
+      backendHostname,
       // mainPortfolio,
       // portfolioDisplayMode,
       // portfolioSortBy
@@ -28,6 +31,9 @@ function SettingsForm(): ReactElement | null {
     const newSettings: ISettingsFormFields = {
       language,
       timezone,
+      sentryDsn,
+      sentryEnabled,
+      backendHostname,
       companyDisplayMode: "TODO",
       companySortBy: "TODO",
       mainPortfolio: "TODO",
@@ -58,6 +64,9 @@ function SettingsForm(): ReactElement | null {
         // companySortBy: settings.companySortBy,
         language: data?.language,
         timezone: data?.timezone,
+        sentryDsn: data?.sentryDsn,
+        sentryEnabled: data?.sentryEnabled,
+        backendHostname: data?.backendHostname,
         // mainPortfolio: settings.mainPortfolio,
         // portfolioDisplayMode: settings.portfolioDisplayMode,
         // portfolioSortBy: settings.portfolioSortBy
@@ -94,6 +103,17 @@ function SettingsForm(): ReactElement | null {
             </Select.Option>
           ))}
         </Select>
+      </Form.Item>
+      <Form.Item
+        name="sentryEnabled"
+        label={t("Sentry enabled")}
+        valuePropName="checked"
+      />
+      <Form.Item name="sentryDsn" label={t("Sentry DSN")}>
+        <Input type="text" />
+      </Form.Item>
+      <Form.Item name="backendHostname" label={t("Backend hostname")}>
+        <Input type="text" />
       </Form.Item>
       <Form.Item>
         <Button type="primary" htmlType="submit">

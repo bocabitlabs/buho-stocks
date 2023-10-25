@@ -6,6 +6,9 @@ export interface ISettingsFormFields {
   portfolioSortBy: string;
   portfolioDisplayMode: string;
   timezone: string;
+  sentryDsn: string;
+  sentryEnabled: boolean;
+  backendHostname: string;
 }
 
 export interface ISettings extends ISettingsFormFields {

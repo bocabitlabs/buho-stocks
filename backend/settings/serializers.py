@@ -15,4 +15,7 @@ class UserSettingsSerializer(serializers.ModelSerializer):
             "portfolio_display_mode",
             "id",
             "timezone",
+            "sentry_dsn",
+            "sentry_enabled",
+            "backend_hostname",
         ]
