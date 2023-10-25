@@ -2,13 +2,14 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingOutlined, RightSquareOutlined } from "@ant-design/icons";
 import { Button, Modal, Progress, Space, Typography } from "antd";
-import config from "config";
+import { useSettings } from "hooks/use-settings/use-settings";
 import { ITaskResult } from "types/task-result";
 
 function TasksModal() {
   // List of tasks and their statuses
   const [tasks, setTasks] = useState<ITaskResult[]>([]);
   const { t } = useTranslation();
+  const { isFetching, data: settings } = useSettings();
 
   const [isTasksModalOpen, setIsTasksModalOpen] = useState(false);
 
@@ -66,31 +67,33 @@ function TasksModal() {
   };
 
   useEffect(() => {
-    const websocketUrl = `ws://${config.WEBSOCKETS_URL}/ws/tasks/`;
-    console.log(`Connecting to websocket: ${websocketUrl}`);
-    const ws = new WebSocket(websocketUrl);
+    let ws: WebSocket;
+    if (settings) {
+      const websocketUrl = `ws://${settings.backendHostname}/ws/tasks/`;
+      console.log(`Connecting to websocket: ${websocketUrl}`);
+      ws = new WebSocket(websocketUrl);
 
-    ws.onmessage = (event) => {
-      const messageData = JSON.parse(event.data);
-      console.log(messageData.status);
-      updateTaskProgress(
-        messageData.status.task_id,
-        messageData.status.task_name,
-        messageData.status.progress,
-        messageData.status.status,
-        messageData.status.details,
-      );
-    };
+      ws.onmessage = (event) => {
+        const messageData = JSON.parse(event.data);
+        console.log(messageData.status);
+        updateTaskProgress(
+          messageData.status.task_id,
+          messageData.status.task_name,
+          messageData.status.progress,
+          messageData.status.status,
+          messageData.status.details,
+        );
+      };
 
-    ws.onclose = (event) => {
-      console.log("Closed", event);
-    };
-
+      ws.onclose = (event) => {
+        console.log("Closed", event);
+      };
+    }
     return () => {
       console.log("Disconnecting websocket");
       ws.close();
     };
-  }, []);
+  }, [settings]);
 
   return (
     <>
@@ -101,7 +104,7 @@ function TasksModal() {
           tasks.filter(
             (task: ITaskResult) =>
               task.status !== "COMPLETED" && task.status !== "FAILED",
-          ).length > 0 ? (
+          ).length > 0 || isFetching ? (
             <LoadingOutlined />
           ) : (
             <RightSquareOutlined />

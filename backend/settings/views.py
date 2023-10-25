@@ -59,6 +59,9 @@ class UserSettingsDetailAPIView(APIView):
             "mainPortfolio": request.data.get("mainPortfolio"),
             "portfolioSortBy": request.data.get("portfolioSortBy"),
             "portfolioDisplayMode": request.data.get("portfolioDisplayMode"),
+            "sentryDsn": request.data.get("sentryDsn"),
+            "sentryEnabled": request.data.get("sentryEnabled"),
+            "backendHostname": request.data.get("backendHostname"),
         }
         serializer = UserSettingsSerializer(instance=todo_instance, data=data, partial=True)
         if serializer.is_valid():
