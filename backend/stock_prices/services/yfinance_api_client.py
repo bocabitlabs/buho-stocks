@@ -4,8 +4,11 @@ from typing import Any, Tuple, TypedDict
 
 import requests_cache
 import yfinance as yf
+from django.conf import settings
 from pandas import Timestamp
 from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice
+
+backend = requests_cache.RedisCache(host=settings.REDIS_HOSTNAME, port=settings.REDIS_PORT)
 
 session = requests_cache.CachedSession("yfinance.cache", backend="redis")
 logger = logging.getLogger("buho_backend")
