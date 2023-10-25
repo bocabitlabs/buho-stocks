@@ -217,14 +217,19 @@ if config("ENABLE_SENTRY", default=False, cast=bool):
 
 CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=lambda v: [s.strip() for s in v.split(",")])
 
+# Redis Configuration Options
+REDIS_HOSTNAME = config("REDIS_HOSTNAME", default="redis")
+REDIS_PORT = config("REDIS_PORT", default=6379, cast=int)
+REDIS_DB = config("REDIS_DB", default="0", cast=int)
+
 # Celery Configuration Options
+CELERY_BROKER_URL = f"redis://{REDIS_HOSTNAME}:{REDIS_PORT}/{REDIS_DB}"
+DJANGO_CELERY_RESULTS_TASK_ID_MAX_LENGTH = 191
 CELERY_TIMEZONE = "Europe/Zurich"
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT = 30 * 60
 CELERY_RESULT_BACKEND = "django-db"
 CELERY_CACHE_BACKEND = "django-cache"
-CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://redis:6379/0")
-DJANGO_CELERY_RESULTS_TASK_ID_MAX_LENGTH = 191
 
 ASGI_APPLICATION = "buho_backend.asgi.application"
 
@@ -232,7 +237,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(REDIS_HOSTNAME, REDIS_PORT)],
         },
     },
 }
