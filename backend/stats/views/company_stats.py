@@ -5,7 +5,6 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from stats.models.company_stats import CompanyStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.tasks import update_portolfio_stats
 from stats.utils.company_stats_utils import CompanyStatsUtils
@@ -59,5 +58,4 @@ class CompanyStatsAPIView(APIView):
                 {"res": "Object with transaction id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        serializer = CompanyStatsForYearSerializer(instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(instance, status=status.HTTP_200_OK)
