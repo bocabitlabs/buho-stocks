@@ -81,7 +81,7 @@ class YFinanceApiClient(StockPriceServiceBase):
             logger.warning(f"{ticker}: Company not found.")
         logger.info(f"{ticker} company.")
         try:
-            currency = company.info["currency"]
+            currency = company.fast_info["currency"]
             currency = currency.upper()
             logger.info(f"{ticker} currency: {currency}")
             return currency
