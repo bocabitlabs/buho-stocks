@@ -16,7 +16,7 @@ Including another URLconf
 import re
 
 from benchmarks.urls import router as benchmarks_router
-from buho_backend import consumers, path_converters
+from buho_backend import path_converters
 from buho_backend.views import TaskResultList, start_task_view
 from currencies.urls import router as currencies_router
 from dividends_transactions.urls import router as dividends_transactions_router
@@ -87,8 +87,3 @@ urlpatterns = [
     re_path(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),  # type: ignore
     path("api/v1/start-task/", start_task_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-websocket_urlpatterns = [
-    re_path(r"ws/tasks/$", consumers.TaskConsumer.as_asgi()),
-]
