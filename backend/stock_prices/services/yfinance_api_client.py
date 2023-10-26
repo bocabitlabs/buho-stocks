@@ -6,11 +6,13 @@ import requests_cache
 import yfinance as yf
 from django.conf import settings
 from pandas import Timestamp
+from redis import Redis
 from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice
 
-backend = requests_cache.RedisCache(host=settings.REDIS_HOSTNAME, port=settings.REDIS_PORT)
+connection = Redis(host=settings.REDIS_HOSTNAME, port=settings.REDIS_PORT)
+backend = requests_cache.RedisCache(connection=connection)
 
-session = requests_cache.CachedSession("yfinance.cache", backend="redis")
+session = requests_cache.CachedSession("yfinance.cache", backend=backend)
 logger = logging.getLogger("buho_backend")
 
 
