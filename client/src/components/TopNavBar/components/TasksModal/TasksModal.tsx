@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { LoadingOutlined, RightSquareOutlined } from "@ant-design/icons";
 import { Button, Modal, Progress, Space, Typography } from "antd";
@@ -9,9 +9,10 @@ function TasksModal() {
   // List of tasks and their statuses
   const [tasks, setTasks] = useState<ITaskResult[]>([]);
   const { t } = useTranslation();
-  const { isFetching, data: settings } = useSettings();
+  const ws = useRef<any>(null);
 
   const [isTasksModalOpen, setIsTasksModalOpen] = useState(false);
+  const { data: settings } = useSettings();
 
   const showTasksModal = () => {
     setIsTasksModalOpen(true);
@@ -67,33 +68,50 @@ function TasksModal() {
   };
 
   useEffect(() => {
-    let ws: WebSocket;
     if (settings) {
-      const websocketUrl = `ws://${settings.backendHostname}/ws/tasks/`;
-      console.log(`Connecting to websocket: ${websocketUrl}`);
-      ws = new WebSocket(websocketUrl);
-
-      ws.onmessage = (event) => {
-        const messageData = JSON.parse(event.data);
-        console.log(messageData.status);
-        updateTaskProgress(
-          messageData.status.task_id,
-          messageData.status.task_name,
-          messageData.status.progress,
-          messageData.status.status,
-          messageData.status.details,
-        );
-      };
-
-      ws.onclose = (event) => {
-        console.log("Closed", event);
-      };
+      // If using https, replace ws with wss
+      const wsUrl = `ws://${settings.backendHostname}/ws/tasks/`;
+      // Replace ws with wss for https
+      if (document.location.protocol === "https:") {
+        wsUrl.replace("ws://", "wss://");
+      }
+      console.log(`Connecting to websocket`);
+      console.log(wsUrl);
+      ws.current = new WebSocket(wsUrl);
     }
+
+    const wsCurrent = ws.current;
+
     return () => {
+      if (!settings) return;
       console.log("Disconnecting websocket");
-      ws.close();
+      wsCurrent.close();
     };
   }, [settings]);
+
+  useEffect(() => {
+    if (!ws.current) return;
+
+    ws.current.onopen = (event: any) => {
+      console.log("Connected", event);
+    };
+
+    ws.current.onclose = (event: any) => {
+      console.log("Closed", event);
+    };
+
+    ws.current.onmessage = (event: any) => {
+      const messageData = JSON.parse(event.data);
+      console.log(messageData);
+      updateTaskProgress(
+        messageData.status.task_id,
+        messageData.status.task_name,
+        messageData.status.progress,
+        messageData.status.status,
+        messageData.status.details,
+      );
+    };
+  }, []);
 
   return (
     <>
@@ -104,7 +122,7 @@ function TasksModal() {
           tasks.filter(
             (task: ITaskResult) =>
               task.status !== "COMPLETED" && task.status !== "FAILED",
-          ).length > 0 || isFetching ? (
+          ).length > 0 ? (
             <LoadingOutlined />
           ) : (
             <RightSquareOutlined />
