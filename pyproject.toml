@@ -9,7 +9,7 @@ packages = [{include = "backend"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
-django = "4.1.10"
+django = "4.1.13"
 django-cors-headers = "3.14.0"
 django-filter = "22.1"
 django-money = "3.0.0"
