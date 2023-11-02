@@ -10,6 +10,17 @@ All notable changes to this project will be documented in this file.
 ### Removed
 ### Security
 
+## [0.203.1] - 2023-11-02
+
+### Added
+
+- Backend: Add Redis
+- Backend: Revoke queued tasks with the same name when a new one is triggered again.
+- Backend/Client: Celery tasks to run the portfolio/company stats updates.
+- Backend/Client: Use websockets to update the status of the running tasks.
+- Backend/Client: Update the portfolio/company automatically when shares/dividends/rights are added.
+- Client: Tasks icon and modal to display the current running tasks.
+
 ## [0.203.0] - 2023-10-22
 
 ### Added

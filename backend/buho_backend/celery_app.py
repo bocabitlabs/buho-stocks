@@ -21,3 +21,16 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks()
 
 logger = logging.getLogger("buho_backend")
+
+
+def revoke_scheduled_tasks_by_name(task_name):
+    i = app.control.inspect()
+
+    # Get all active tasks
+    scheduled_tasks = i.scheduled()
+
+    for worker, tasks in scheduled_tasks.items():
+        for task in tasks:
+            # If the task name matches, revoke the task
+            if task["name"] == task_name:
+                i.revoke(task["id"], terminate=True)
