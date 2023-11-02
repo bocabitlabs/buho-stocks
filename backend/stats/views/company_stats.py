@@ -1,5 +1,6 @@
 import logging
 
+from buho_backend.celery_app import revoke_scheduled_tasks_by_name
 from companies.models import Company
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -26,6 +27,7 @@ class CompanyStatsAPIView(APIView):
         if year == "all":
             year = 9999
         company = Company.objects.get(id=company_id)
+        revoke_scheduled_tasks_by_name("stats.tasks.update_portolfio_stats")
         update_portolfio_stats.delay(company.portfolio_id, [company_id], year, update_api_price)
         return True
 

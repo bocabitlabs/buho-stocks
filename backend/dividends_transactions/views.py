@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime
 
+from buho_backend.celery_app import revoke_scheduled_tasks_by_name
 from companies.models import Company
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
@@ -31,6 +32,7 @@ class DividendsViewSet(viewsets.ModelViewSet):
         logger.debug(f"Updating company stats for {company.name} after adding dividend")
         transaction_date = datetime.strptime(serializer.data.get("transaction_date"), "%Y-%m-%d")
 
+        revoke_scheduled_tasks_by_name("stats.tasks.update_portolfio_stats")
         update_portolfio_stats.delay(company.portfolio_id, [company.id], transaction_date.year)
 
     def create_add_dividends_log_message(self, serializer, company):

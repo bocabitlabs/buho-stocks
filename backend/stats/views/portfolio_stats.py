@@ -1,5 +1,6 @@
 import logging
 
+from buho_backend.celery_app import revoke_scheduled_tasks_by_name
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -64,6 +65,7 @@ class PortfolioStatsAPIView(APIView):
         if year == "all":
             year = 9999
         logger.debug(companies_ids)
+        revoke_scheduled_tasks_by_name("stats.tasks.update_portolfio_stats")
         update_portolfio_stats.delay(portfolio_id, companies_ids, year, update_api_price)
         return True
 
