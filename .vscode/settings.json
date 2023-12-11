@@ -1,33 +1,20 @@
 {
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
-  "eslint.workingDirectories": ["/client"],
-  "prettier.configPath": ".prettierrc.js",
-  "eslint.format.enable": true,
-  "python.formatting.provider": "black",
-  "python.languageServer": "Default",
-  "python.linting.flake8Enabled": true,
-  "python.linting.flake8Path": "venv/bin/flake8",
-  "python.linting.banditEnabled": true,
-  "python.linting.banditPath": "venv/bin/bandit",
-  "python.linting.enabled": true,
-  "python.linting.ignorePatterns": [
-    "**/site-packages/**/*.py",
-    "**/migrations/*.py"
-  ],
-  "python.autoComplete.extraPaths": ["venv", "/backend"],
-  "python.analysis.extraPaths": ["backend"],
-  "python.analysis.autoSearchPaths": true,
-  "python.analysis.typeCheckingMode": "basic",
-  "python.analysis.completeFunctionParens": true,
-  "python.analysis.autoImportCompletions": true,
-  "python.analysis.useLibraryCodeForTypes": true,
-  "python.analysis.ignore": ["**/site-packages/**/*.py", "**/migrations/*.py"],
-  "[python]": {
-    "editor.codeActionsOnSave": {
-      "source.organizeImports": true
-    }
+  "files.associations": {
+    "*.html": "jinja-html",
+    "*.xml": "jinja-xml"
   },
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "eslint.validate": [
+    "javascript"
+  ],
+  "isort.check": true,
+  "isort.args": [
+    "--profile",
+    "black"
+  ],
   "[html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
@@ -40,4 +27,24 @@
   "[jinja-html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
+  "python.autoComplete.extraPaths": [
+    "venv",
+    "backend"
+  ],
+  "python.analysis.ignore": [
+    "**/site-packages/**/*.py",
+    "**/migrations/*.py"
+  ],
+  "python.analysis.autoSearchPaths": true,
+  "python.terminal.activateEnvInCurrentTerminal": true,
+  "python.testing.pytestEnabled": true,
+  "[python]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    }
+  },
+  "python.analysis.extraPaths": [
+    "venv",
+    "backend"
+  ]
 }
