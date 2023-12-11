@@ -38,7 +38,7 @@ export default function StatsRefreshModal({
   const getStatsForced = async () => {
     updateStats({
       companyId: +companyId!,
-      year: selectedYear,
+      years: [selectedYear, "all"],
       updateApiPrice: updateStockPriceSwitch,
     });
     setVisible(false);

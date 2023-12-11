@@ -1,6 +1,5 @@
 import logging
 
-from buho_backend.celery_app import revoke_scheduled_tasks_by_name
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
@@ -22,6 +21,12 @@ update_api_price_param = openapi.Parameter(
     openapi.IN_FORM,
     description="Whether to update the companies stock prices from the API or not",
     type=openapi.TYPE_BOOLEAN,
+)
+years = openapi.Parameter(
+    "years",
+    openapi.IN_FORM,
+    description="Years to be updated",
+    type=openapi.TYPE_ARRAY,
 )
 
 
@@ -60,13 +65,16 @@ class PortfolioStatsAPIView(APIView):
             stats = serializer.data
         return stats
 
-    def update_object(self, portfolio_id, year, update_api_price=False, companies_ids=[]):
+    def update_object(self, portfolio_id, years, update_api_price=False, companies_ids=[]):
         logger.debug("Updating portfolio stats")
-        if year == "all":
-            year = 9999
+
+        # replace year 9999 with "all" in the years list
+        if "all" in years:
+            years.remove("all")
+            years.append(9999)
+
         logger.debug(companies_ids)
-        revoke_scheduled_tasks_by_name("stats.tasks.update_portolfio_stats")
-        update_portolfio_stats.delay(portfolio_id, companies_ids, year, update_api_price)
+        update_portolfio_stats.delay(portfolio_id, companies_ids, years, update_api_price)
         return True
 
     # 3. Retrieve
@@ -89,19 +97,20 @@ class PortfolioStatsAPIView(APIView):
     # 3. Retrieve
     @swagger_auto_schema(
         tags=["portfolio_stats"],
-        manual_parameters=[ids_param, update_api_price_param],
+        manual_parameters=[ids_param, update_api_price_param, years],
     )
-    def put(self, request, portfolio_id, year, *args, **kwargs):
+    def put(self, request, portfolio_id, *args, **kwargs):
         """
         Update the portfolio item with given id
         """
         update_api_price = request.data.get("update_api_price", False)
+        years = request.data.get("years", [])
         companies_ids = request.query_params.get("companiesIds", "").split(",")
         if companies_ids == [""]:
             companies_ids = []
         logger.debug(f"Update API Price: {update_api_price}")
         logger.debug(f"Data: {request.data}")
-        stats = self.update_object(portfolio_id, year, update_api_price=update_api_price, companies_ids=companies_ids)
+        stats = self.update_object(portfolio_id, years, update_api_price=update_api_price, companies_ids=companies_ids)
         if not stats:
             return Response(
                 {"res": "Stats with id does not exists"},
