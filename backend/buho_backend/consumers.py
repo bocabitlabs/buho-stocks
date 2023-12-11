@@ -62,7 +62,7 @@ class TaskConsumer(AsyncWebsocketConsumer):
 async def send_task_status(task_id, task_name, details, status, progress):
     channel_layer = get_channel_layer()
     # task_group_name = f"task_{task_id}"
-    task_group_name = f"tasks"
+    task_group_name = "tasks"
 
     # Send message to task group
     await channel_layer.group_send(
@@ -85,7 +85,7 @@ async def send_close_websocket(task_id):
     channel_layer = get_channel_layer()
     # Close the WebSocket connection
     async_to_sync(channel_layer.group_send)(
-        f"tasks",
+        "tasks",
         {
             "task_id": task_id,
             "type": "websocket.close",
