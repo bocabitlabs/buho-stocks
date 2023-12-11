@@ -12,6 +12,7 @@ import {
   Row,
   Select,
 } from "antd";
+import type { DatePickerProps } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
@@ -112,14 +113,16 @@ export default function SharesTransactionAddEditForm({
     } else {
       createTransaction({
         newTransaction: newTransactionValues,
+        updatePortfolio: true,
       });
     }
   };
 
-  const currentTransactionDateChange = (
-    value: moment.Moment | null,
-    dateString: string,
+  const currentTransactionDateChange: DatePickerProps["onChange"] = (
+    date,
+    dateString,
   ) => {
+    console.log(date, dateString);
     setCurrentTransactionDate(dateString);
   };
 
@@ -192,7 +195,7 @@ export default function SharesTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the type of transaction"),
+                message: t<string>("Please input the type of transaction"),
               },
             ]}
           >
@@ -207,7 +210,7 @@ export default function SharesTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the number of shares"),
+                message: t<string>("Please input the number of shares"),
               },
             ]}
           >
@@ -219,7 +222,7 @@ export default function SharesTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the gross price per share"),
+                message: t<string>("Please input the gross price per share"),
               },
             ]}
           >
@@ -236,7 +239,7 @@ export default function SharesTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the total amount"),
+                message: t<string>("Please input the total amount"),
               },
             ]}
           >
@@ -253,7 +256,7 @@ export default function SharesTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the total commission"),
+                message: t<string>("Please input the total commission"),
               },
             ]}
           >
@@ -270,7 +273,7 @@ export default function SharesTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the date of the operation"),
+                message: t<string>("Please input the date of the operation"),
               },
             ]}
           >
@@ -290,7 +293,7 @@ export default function SharesTransactionAddEditForm({
                   rules={[
                     {
                       required: true,
-                      message: t("Please input the exchange rate"),
+                      message: t<string>("Please input the exchange rate"),
                     },
                   ]}
                 >

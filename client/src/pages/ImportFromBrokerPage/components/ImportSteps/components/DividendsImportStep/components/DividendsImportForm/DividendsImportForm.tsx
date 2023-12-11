@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import {
@@ -92,6 +92,7 @@ export default function DividendsImportForm({
     console.log(transaction);
     createDividendsTransaction({
       newTransaction: transaction,
+      updatePortfolio: false,
     });
     setFormSent(true);
     onDividendImported();
@@ -149,7 +150,10 @@ export default function DividendsImportForm({
                   name="company"
                   label={t("Company")}
                   rules={[
-                    { required: true, message: t("Please select a company") },
+                    {
+                      required: true,
+                      message: t<string>("Please select a company"),
+                    },
                   ]}
                   help={`${t("Received")}: ${dividend.ticker}`}
                 >
@@ -175,7 +179,7 @@ export default function DividendsImportForm({
                       rules={[
                         {
                           required: true,
-                          message: t("Please input the exchange rate"),
+                          message: t<string>("Please input the exchange rate"),
                         },
                       ]}
                     >

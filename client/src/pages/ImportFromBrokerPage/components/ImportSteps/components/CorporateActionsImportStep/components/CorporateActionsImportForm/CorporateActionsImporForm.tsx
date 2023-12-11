@@ -106,6 +106,7 @@ export default function CorporateActionsImportForm({
     console.log(transaction);
     createRightsTransaction({
       newTransaction: transaction,
+      updatePortfolio: false,
     });
     setFormSent(false);
     onImported();
@@ -221,7 +222,10 @@ export default function CorporateActionsImportForm({
                   name="company"
                   label={t("Company")}
                   rules={[
-                    { required: true, message: t("Please select a company") },
+                    {
+                      required: true,
+                      message: t<string>("Please select a company"),
+                    },
                   ]}
                   help={`${t("Received")}: ${corporateAction.ticker}`}
                 >
@@ -247,7 +251,7 @@ export default function CorporateActionsImportForm({
                       rules={[
                         {
                           required: true,
-                          message: t("Please input the exchange rate"),
+                          message: t<string>("Please input the exchange rate"),
                         },
                       ]}
                     >
