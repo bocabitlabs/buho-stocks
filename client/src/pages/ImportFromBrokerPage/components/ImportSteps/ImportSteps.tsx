@@ -1,9 +1,5 @@
-import React, { useCallback, useEffect, useState } from "react";
-import {
-  CheckCircleTwoTone,
-  MinusCircleOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
+import { useCallback, useEffect, useState } from "react";
+import { CheckCircleTwoTone, UpOutlined } from "@ant-design/icons";
 import { Button, Steps, Row, Col, Space } from "antd";
 import CorporateActionsImportStep from "./components/CorporateActionsImportStep/CorporateActionsImportStep";
 import DividendsImportStep from "./components/DividendsImportStep/DividendsImportStep";
@@ -13,6 +9,7 @@ import { processDividendsData } from "./components/DragAndDropCsvParser/utils/di
 import { processTradesData } from "./components/DragAndDropCsvParser/utils/trades-parsing";
 import PortfolioSelector from "./components/PortfolioSelector/PortfolioSelector";
 import TradesImportStep from "./components/TradesImportStep/TradesImportStep";
+import UpdatePortfolioStep from "./components/UpdatePortfolioStep/UpdatePortfolioStep";
 
 export default function ImportSteps() {
   const [current, setCurrent] = useState(0);
@@ -31,6 +28,7 @@ export default function ImportSteps() {
   const [importedTradesCount, setImportedTradesCount] = useState<number>(0);
   const [importedCorporateActionsCount, setImportedCorporateActionsCount] =
     useState<number>(0);
+  const [portfolioUpdated, setPortfolioUpdated] = useState(false);
 
   const onDividendImported = () => {
     setImportedDividendsCount((previousValue) => {
@@ -48,6 +46,10 @@ export default function ImportSteps() {
     setImportedCorporateActionsCount((previousValue) => {
       return previousValue + 1;
     });
+  };
+
+  const onPortfolioUpdated = () => {
+    setPortfolioUpdated(true);
   };
 
   const next = useCallback(() => {
@@ -110,8 +112,6 @@ export default function ImportSteps() {
           {importedDividendsCount >= trades.length && (
             <CheckCircleTwoTone twoToneColor="#52c41a" />
           )}
-          {importedDividendsCount > 0 &&
-            importedDividendsCount < trades.length && <MinusCircleOutlined />}
         </span>
       ),
       content: (
@@ -128,9 +128,6 @@ export default function ImportSteps() {
         <span>
           {importedTradesCount >= trades.length && (
             <CheckCircleTwoTone twoToneColor="#52c41a" />
-          )}
-          {importedTradesCount > 0 && importedTradesCount < trades.length && (
-            <MinusCircleOutlined />
           )}
         </span>
       ),
@@ -149,10 +146,6 @@ export default function ImportSteps() {
           {importedCorporateActionsCount >= corporateActions.length && (
             <CheckCircleTwoTone twoToneColor="#52c41a" />
           )}
-          {importedCorporateActionsCount > 0 &&
-            importedCorporateActionsCount < corporateActions.length && (
-              <MinusCircleOutlined />
-            )}
         </span>
       ),
       content: (
@@ -160,6 +153,20 @@ export default function ImportSteps() {
           corporateActions={corporateActions}
           portfolioId={selectedPortfolio}
           onImported={onCorporateActionImported}
+        />
+      ),
+    },
+    {
+      title: "Update portfolio",
+      icon: (
+        <span>
+          {portfolioUpdated && <CheckCircleTwoTone twoToneColor="#52c41a" />}
+        </span>
+      ),
+      content: (
+        <UpdatePortfolioStep
+          portfolioId={selectedPortfolio}
+          onPortfolioUpdated={onPortfolioUpdated}
         />
       ),
     },
