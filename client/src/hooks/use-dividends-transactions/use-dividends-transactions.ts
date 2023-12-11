@@ -9,6 +9,7 @@ import {
 
 interface AddTransactionMutationProps {
   newTransaction: IDividendsTransactionFormFields;
+  updatePortfolio: boolean | undefined;
 }
 
 interface UpdateTransactionMutationProps {
@@ -42,8 +43,16 @@ export const fetchTransaction = async (transactionId: number | undefined) => {
 
 export const useAddDividendsTransaction = () => {
   return useMutation(
-    ({ newTransaction }: AddTransactionMutationProps) =>
-      apiClient.post(`/dividends/`, newTransaction),
+    ({ newTransaction, updatePortfolio }: AddTransactionMutationProps) => {
+      let updatePortfolioQuery = "";
+      if (updatePortfolio) {
+        updatePortfolioQuery = `?updatePortfolio=true`;
+      }
+      return apiClient.post(
+        `/dividends/${updatePortfolioQuery}`,
+        newTransaction,
+      );
+    },
     {
       onSuccess: () => {
         toast.success("Transaction created successfully");

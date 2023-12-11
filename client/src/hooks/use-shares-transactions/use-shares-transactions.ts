@@ -14,6 +14,7 @@ interface IUpdateSharesMutationProps {
 
 interface IAddSharesMutationProps {
   newTransaction: ISharesTransactionFormFields;
+  updatePortfolio: boolean | undefined;
 }
 
 interface DeleteTransactionMutationProps {
@@ -46,8 +47,13 @@ export const fetchSharesTransaction = async (
 
 export const useAddSharesTransaction = () => {
   return useMutation(
-    ({ newTransaction }: IAddSharesMutationProps) =>
-      apiClient.post(`/shares/`, newTransaction),
+    ({ newTransaction, updatePortfolio }: IAddSharesMutationProps) => {
+      let updatePortfolioQuery = "";
+      if (updatePortfolio) {
+        updatePortfolioQuery = `?updatePortfolio=true`;
+      }
+      return apiClient.post(`/shares/${updatePortfolioQuery}`, newTransaction);
+    },
     {
       onSuccess: () => {
         toast.success("Trades added successfully");

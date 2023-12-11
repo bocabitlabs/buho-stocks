@@ -14,6 +14,7 @@ interface IUpdateRightsMutationProps {
 
 interface IAddRightsMutationProps {
   newTransaction: IRightsTransactionFormFields;
+  updatePortfolio: boolean | undefined;
 }
 
 interface IDeleteTransactionMutationProps {
@@ -46,8 +47,13 @@ export const fetchRightsTransaction = async (
 
 export const useAddRightsTransaction = () => {
   return useMutation(
-    ({ newTransaction }: IAddRightsMutationProps) =>
-      apiClient.post(`/rights/`, newTransaction),
+    ({ newTransaction, updatePortfolio }: IAddRightsMutationProps) => {
+      let updatePortfolioQuery = "";
+      if (updatePortfolio) {
+        updatePortfolioQuery = `?updatePortfolio=true`;
+      }
+      return apiClient.post(`/rights/${updatePortfolioQuery}`, newTransaction);
+    },
     {
       onSuccess: () => {
         toast.success(`Rights added successfully`);
