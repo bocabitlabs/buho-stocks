@@ -11,6 +11,7 @@ import {
   Modal,
   Row,
 } from "antd";
+import type { DatePickerProps } from "antd";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
@@ -112,14 +113,16 @@ export default function DividendsTransactionAddEditForm({
     } else {
       createTransaction({
         newTransaction: newTransactionValues,
+        updatePortfolio: true,
       });
     }
   };
 
-  const currentTransactionDateChange = (
-    value: moment.Moment | null,
-    dateString: string,
+  const currentTransactionDateChange: DatePickerProps["onChange"] = (
+    date,
+    dateString,
   ) => {
+    console.log(date, dateString);
     setCurrentTransactionDate(dateString);
   };
 
@@ -174,7 +177,7 @@ export default function DividendsTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the amount"),
+                message: t<string>("Please input the amount"),
               },
             ]}
           >
@@ -187,7 +190,7 @@ export default function DividendsTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the total commission"),
+                message: t<string>("Please input the total commission"),
               },
             ]}
           >
@@ -204,7 +207,7 @@ export default function DividendsTransactionAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the date of the operation"),
+                message: t<string>("Please input the date of the operation"),
               },
             ]}
           >
@@ -222,7 +225,7 @@ export default function DividendsTransactionAddEditForm({
                   rules={[
                     {
                       required: true,
-                      message: t("Please input the exchange rate"),
+                      message: t<string>("Please input the exchange rate"),
                     },
                   ]}
                   help={`${companyDividendsCurrency.code} ${t("to")}

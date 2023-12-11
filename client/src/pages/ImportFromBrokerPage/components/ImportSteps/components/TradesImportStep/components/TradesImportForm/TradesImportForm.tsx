@@ -110,6 +110,7 @@ export default function TradesImportForm({
     console.log(transaction);
     createTradesTransaction({
       newTransaction: transaction,
+      updatePortfolio: false,
     });
     setFormSent(true);
     onTradeImported();
@@ -226,7 +227,10 @@ export default function TradesImportForm({
                   name="company"
                   label={t("Company")}
                   rules={[
-                    { required: true, message: t("Please select a company") },
+                    {
+                      required: true,
+                      message: t<string>("Please select a company"),
+                    },
                   ]}
                   help={`${t("Received")}: ${trade.ticker}`}
                 >
@@ -252,7 +256,7 @@ export default function TradesImportForm({
                       rules={[
                         {
                           required: true,
-                          message: t("Please input the exchange rate"),
+                          message: t<string>("Please input the exchange rate"),
                         },
                       ]}
                     >
