@@ -18,6 +18,7 @@ years = openapi.Parameter(
     openapi.IN_FORM,
     description="Years to be updated",
     type=openapi.TYPE_ARRAY,
+    items=openapi.Items(type=openapi.TYPE_STRING),
 )
 
 
