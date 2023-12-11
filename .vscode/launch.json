@@ -64,7 +64,7 @@
         "worker",
         "-l",
         "INFO",
-        "--concurrency=2",
+        "--concurrency=3",
         // "-P",
         // "solo"
       ]
