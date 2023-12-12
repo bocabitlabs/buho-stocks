@@ -100,7 +100,7 @@ export default function CompanyInfo({
       ),
       children: (
         <a href={companyUrl} target="_blank" rel="noopener noreferrer">
-          Company Website
+          {t("Company Website")}
         </a>
       ),
     },

@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import TradesImportForm from "./components/TradesImportForm/TradesImportForm";
 
 interface Props {
@@ -11,18 +12,22 @@ export default function TradesImportStep({
   portfolioId,
   onTradeImported,
 }: Props) {
-  return (
-    <div>
-      {trades &&
-        trades.length > 0 &&
-        trades.map((trade) => (
+  const { t } = useTranslation();
+
+  if (trades && trades.length > 0) {
+    return (
+      <div>
+        {trades.map((trade: any) => (
           <TradesImportForm
-            key={`${trade.date}-${trade.companyIsin}`}
-            trade={trade}
+            key={trade.id}
             portfolioId={portfolioId}
+            trade={trade}
             onTradeImported={onTradeImported}
           />
         ))}
-    </div>
-  );
+      </div>
+    );
+  }
+
+  return <div>{t("No trades found on the CSV file")}</div>;
 }

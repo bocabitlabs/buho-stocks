@@ -50,7 +50,7 @@ export default function YearSelector({
   return (
     <div style={{ marginTop: 16 }}>
       <Form layout="inline">
-        <Form.Item name="gender" label={t("Year")}>
+        <Form.Item name="year" label={t("Year")}>
           <Select
             defaultValue={selectedYear}
             style={{ width: 120 }}
