@@ -52,10 +52,7 @@ function parseCorporateActions(rows: any[][]) {
 
     const regExp = /\(([^()]*)\)/g;
     const matches = description.match(regExp);
-    console.log(matches);
     const tradeInfo = matches[matches.length - 1].split(",");
-    console.log(matches);
-    console.log(tradeInfo);
     let ticker = "";
     let companyName = "";
     let isin = "";
@@ -69,6 +66,7 @@ function parseCorporateActions(rows: any[][]) {
     const totalWithCommission = total;
 
     parsedRows.push({
+      id: Math.random().toString(16).slice(2),
       transactionType: transaction,
       date: `${year}-${month}-${day}`,
       ticker,
