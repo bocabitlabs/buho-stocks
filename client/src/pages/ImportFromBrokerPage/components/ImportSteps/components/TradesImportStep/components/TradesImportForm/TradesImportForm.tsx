@@ -128,7 +128,7 @@ export default function TradesImportForm({
           </Typography.Title>
           <Typography.Paragraph>
             <Typography.Text type="secondary">
-              {trade.companyName} - ISIN: {trade.companyISIN} - Market:{" "}
+              {trade.companyName} - ISIN: {trade.companyISIN} - {t("Market")}:{" "}
               {trade.market}
             </Typography.Text>
           </Typography.Paragraph>
@@ -232,7 +232,7 @@ export default function TradesImportForm({
                       message: t<string>("Please select a company"),
                     },
                   ]}
-                  help={`${t("Received")}: ${trade.ticker}`}
+                  help={`${t("Received from CSV")}: ${trade.ticker}`}
                 >
                   <CompanyTickerSelect
                     onSelect={onCompanyChange}
@@ -280,7 +280,7 @@ export default function TradesImportForm({
                 </>
               )}
               <Col span={24}>
-                <Form.Item label="Description" name="description">
+                <Form.Item label={t("Description")} name="description">
                   <TextArea
                     placeholder="input placeholder"
                     name="description"
@@ -296,7 +296,7 @@ export default function TradesImportForm({
                     loading={isLoading}
                     disabled={formSent || !selectedCompany || !portfolio}
                   >
-                    Add trade
+                    {t("Add trade")}
                   </Button>
                 </Form.Item>
               </Col>

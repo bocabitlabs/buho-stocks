@@ -2,7 +2,6 @@ import logging
 
 from buho_backend.celery_app import revoke_scheduled_tasks_by_name
 from companies.models import Company
-from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
@@ -12,14 +11,6 @@ from stats.tasks import update_portolfio_stats
 from stats.utils.company_stats_utils import CompanyStatsUtils
 
 logger = logging.getLogger("buho_backend")
-
-years = openapi.Parameter(
-    "years",
-    openapi.IN_FORM,
-    description="Years to be updated",
-    type=openapi.TYPE_ARRAY,
-    items=openapi.Items(type=openapi.TYPE_STRING),
-)
 
 
 class CompanyStatsAPIView(APIView):
@@ -31,14 +22,11 @@ class CompanyStatsAPIView(APIView):
         except Company.DoesNotExist:
             return None
 
-    def update_object(self, company_id, years, update_api_price=False):
+    def update_object(self, company_id, year, update_api_price=False):
         logger.debug("Updating company stats")
-        if "all" in years:
-            years.remove("all")
-            years.append(9999)
         company = Company.objects.get(id=company_id)
         revoke_scheduled_tasks_by_name("stats.tasks.update_portolfio_stats")
-        update_portolfio_stats.delay(company.portfolio_id, [company_id], years, update_api_price)
+        update_portolfio_stats.delay(company.portfolio_id, [company_id], year, update_api_price)
         return True
 
     # 3. Retrieve
@@ -58,16 +46,13 @@ class CompanyStatsAPIView(APIView):
 
     @swagger_auto_schema(
         tags=["company_stats"],
-        manual_parameters=[years],
     )
-    def put(self, request, company_id, *args, **kwargs):
+    def put(self, request, company_id, year, *args, **kwargs):
         """
         Update the company stats for a given year
         """
         update_api_price = request.data.get("update_api_price", False)
-        years = request.data.get("years", [])
-
-        instance = self.update_object(company_id, years, update_api_price=update_api_price)
+        instance = self.update_object(company_id, year, update_api_price=update_api_price)
 
         if not instance:
             return Response(

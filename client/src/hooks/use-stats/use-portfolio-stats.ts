@@ -65,7 +65,7 @@ export function usePortfolioAllYearStats(
 
 interface IUpdateYearStatsMutationProps {
   portfolioId: number | undefined;
-  years: string[] | undefined;
+  year: string | undefined;
   updateApiPrice: boolean | undefined;
   companiesIds?: number[];
 }
@@ -74,7 +74,7 @@ export const useUpdatePortfolioYearStats = () => {
   return useMutation(
     ({
       portfolioId,
-      years,
+      year,
       updateApiPrice,
       companiesIds,
     }: IUpdateYearStatsMutationProps) => {
@@ -84,10 +84,9 @@ export const useUpdatePortfolioYearStats = () => {
       }
 
       return apiClient.put(
-        `/stats/portfolio/${portfolioId}/years/${companiesIdsQuery}`,
+        `/stats/portfolio/${portfolioId}/year/${year}/${companiesIdsQuery}`,
         {
           updateApiPrice,
-          years,
         },
       );
     },
@@ -96,6 +95,7 @@ export const useUpdatePortfolioYearStats = () => {
         queryClient.invalidateQueries([
           "portfolioYearStats",
           variables.portfolioId,
+          variables.year,
         ]);
       },
     },
