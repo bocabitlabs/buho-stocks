@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { CheckCircleTwoTone, UpOutlined } from "@ant-design/icons";
+import { useTranslation } from "react-i18next";
+import {
+  CheckCircleTwoTone,
+  DownOutlined,
+  UpOutlined,
+} from "@ant-design/icons";
 import { Button, Steps, Row, Col, Space } from "antd";
 import CorporateActionsImportStep from "./components/CorporateActionsImportStep/CorporateActionsImportStep";
 import DividendsImportStep from "./components/DividendsImportStep/DividendsImportStep";
@@ -13,6 +18,7 @@ import UpdatePortfolioStep from "./components/UpdatePortfolioStep/UpdatePortfoli
 
 export default function ImportSteps() {
   const [current, setCurrent] = useState(0);
+  const { t } = useTranslation();
 
   const [selectedPortfolio, setSelectedPortfolio] = useState<
     number | undefined
@@ -72,7 +78,6 @@ export default function ImportSteps() {
   };
 
   const onCsvParsingComplete = (value: any) => {
-    console.log(value);
     setParsedCsvData(value);
     const dividendsFound = processDividendsData(value);
     setDividends(dividendsFound);
@@ -98,15 +103,15 @@ export default function ImportSteps() {
 
   const steps = [
     {
-      title: "Select a portfolio",
+      title: t("Select a portfolio"),
       content: <PortfolioSelector onSelect={onPortfolioSelect} />,
     },
     {
-      title: "Parse IB's CSV",
+      title: t("Parse IB's CSV"),
       content: <DragAndDropCsvParser onComplete={onCsvParsingComplete} />,
     },
     {
-      title: "Import dividends",
+      title: t("Import dividends"),
       icon: (
         <span>
           {importedDividendsCount >= trades.length && (
@@ -123,7 +128,7 @@ export default function ImportSteps() {
       ),
     },
     {
-      title: "Import trades",
+      title: t("Import trades"),
       icon: (
         <span>
           {importedTradesCount >= trades.length && (
@@ -140,7 +145,7 @@ export default function ImportSteps() {
       ),
     },
     {
-      title: "Import corporate actions",
+      title: t("Import corporate actions"),
       icon: (
         <span>
           {importedCorporateActionsCount >= corporateActions.length && (
@@ -157,7 +162,7 @@ export default function ImportSteps() {
       ),
     },
     {
-      title: "Update portfolio",
+      title: t("Update portfolio"),
       icon: (
         <span>
           {portfolioUpdated && <CheckCircleTwoTone twoToneColor="#52c41a" />}
@@ -180,7 +185,36 @@ export default function ImportSteps() {
           <Steps current={current} items={items} />
         </Col>
       </Row>
-
+      {current > 1 && (
+        <Row>
+          <Col span={24}>
+            <div className="steps-action">
+              {current < steps.length - 1 && (
+                <Button
+                  type="primary"
+                  onClick={() => next()}
+                  disabled={isDisabled()}
+                >
+                  {t("Next")}
+                </Button>
+              )}
+              {current > 0 && (
+                <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
+                  {t("Previous")}
+                </Button>
+              )}
+              <Button
+                icon={<DownOutlined />}
+                type="link"
+                onClick={() => window.scrollTo(0, document.body.scrollHeight)}
+                disabled={current === 0 || current === steps.length - 1}
+              >
+                {t("Scroll to bottom")}
+              </Button>
+            </div>
+          </Col>
+        </Row>
+      )}
       <Row>
         <Col span={24}>
           <div className="steps-content">{steps[current].content}</div>
@@ -195,20 +229,21 @@ export default function ImportSteps() {
                 onClick={() => next()}
                 disabled={isDisabled()}
               >
-                Next
+                {t("Next")}
               </Button>
             )}
             {current > 0 && (
               <Button style={{ margin: "0 8px" }} onClick={() => prev()}>
-                Previous
+                {t("Previous")}
               </Button>
             )}
             <Button
               icon={<UpOutlined />}
               type="link"
               onClick={() => window.scrollTo(0, 0)}
+              disabled={current < 2 || current === steps.length - 1}
             >
-              Scroll to top
+              {t("Scroll to top")}
             </Button>
           </div>
         </Col>

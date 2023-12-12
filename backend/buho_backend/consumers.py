@@ -2,8 +2,8 @@ import json
 import logging
 
 from asgiref.sync import async_to_sync
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.layers import get_channel_layer
+from channels.generic.websocket import AsyncWebsocketConsumer  # type: ignore
+from channels.layers import get_channel_layer  # type: ignore
 
 logger = logging.getLogger("buho_backend")
 

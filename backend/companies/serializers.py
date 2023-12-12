@@ -1,11 +1,12 @@
 import logging
 
+from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
-from drf_extra_fields.fields import Base64ImageField
+from drf_extra_fields.fields import Base64ImageField  # type: ignore
 from markets.models import Market
 from markets.serializers import MarketSerializer
 from portfolios.models import Portfolio
@@ -69,7 +70,7 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
     def get_all_stats(self, obj):
-        query = CompanyStatsForYear.objects.filter(company=obj.id, year=9999)
+        query = CompanyStatsForYear.objects.filter(company=obj.id, year=YEAR_FOR_ALL)
         if query.exists():
             serializer = CompanyStatsForYearSerializer(query[0])
             return serializer.data

@@ -10,7 +10,6 @@ export default function DragAndDropCsvParser({ onComplete }: Props) {
   const { t } = useTranslation();
 
   const handleCsvDrop = (fileData: any) => {
-    console.log("fileData", fileData);
     onComplete(fileData);
   };
   const handleOnError = (err: any, file: any, inputElem: any, reason: any) => {

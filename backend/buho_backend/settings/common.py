@@ -16,7 +16,7 @@ from pathlib import Path
 import sentry_sdk
 
 # from decouple import Config, RepositoryEnv
-from decouple import config
+from decouple import config  # type: ignore [import]
 from django.db.models import ForeignKey
 from django.db.models.manager import BaseManager
 from django.db.models.query import QuerySet

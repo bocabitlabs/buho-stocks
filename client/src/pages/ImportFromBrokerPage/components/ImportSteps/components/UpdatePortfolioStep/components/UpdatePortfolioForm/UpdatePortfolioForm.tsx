@@ -19,7 +19,8 @@ export default function TradesImportForm({
 
   const { data: portfolio } = usePortfolio(portfolioId);
   const [formSent, setFormSent] = useState(false);
-  const { mutate: updatePortfolioStats } = useUpdatePortfolioYearStats();
+  const { mutate: updatePortfolioStats, isLoading } =
+    useUpdatePortfolioYearStats();
 
   const updatePortfolioAction = () => {
     setFormSent(true);
@@ -32,7 +33,7 @@ export default function TradesImportForm({
 
     updatePortfolioStats({
       portfolioId: portfolio?.id,
-      years: [selectedYear, "all"],
+      year: selectedYear,
       updateApiPrice: true,
       companiesIds,
     });
@@ -55,11 +56,11 @@ export default function TradesImportForm({
           type="primary"
           htmlType="submit"
           icon={formSent ? <CheckOutlined /> : null}
-          //   loading={isLoading}
+          loading={isLoading}
           disabled={!portfolio}
           onClick={updatePortfolioAction}
         >
-          Update portfolio
+          {t("Update portfolio")}
         </Button>
       </Col>
     </Row>

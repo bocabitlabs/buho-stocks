@@ -1,5 +1,6 @@
 from typing import Optional
 
+from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from companies.utils import CompanyUtils
 from stock_prices.api import StockPricesApi
@@ -35,7 +36,7 @@ class StockPricesUtils:
         api_service = YFinanceApiClient()
         api = StockPricesApi(api_service)
 
-        if self.year == 9999:
+        if self.year == YEAR_FOR_ALL:
             stock_price = api.get_last_data_from_last_month(self.company.ticker)
             if not stock_price:
                 stock_price = self.get_stock_price_for_tickers(self.company.alt_tickers)

@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Input, Select } from "antd";
+import { Button, Form, Input, Select, Switch } from "antd";
 import { useTimezones } from "hooks/use-markets/use-markets";
 import {
   useSettings,
@@ -108,14 +108,25 @@ function SettingsForm(): ReactElement | null {
         name="sentryEnabled"
         label={t("Sentry enabled")}
         valuePropName="checked"
-      />
+        help={t(
+          "If enabled, errors will be sent to Sentry. You need to set the Sentry DSN below.",
+        )}
+      >
+        <Switch />
+      </Form.Item>
       <Form.Item name="sentryDsn" label={t("Sentry DSN")}>
         <Input type="text" />
       </Form.Item>
-      <Form.Item name="backendHostname" label={t("Backend hostname")}>
+      <Form.Item
+        name="backendHostname"
+        label={t("Backend hostname")}
+        help={t(
+          "It needs to be set in order to retrieve the status of the background tasks",
+        )}
+      >
         <Input type="text" />
       </Form.Item>
-      <Form.Item>
+      <Form.Item style={{ marginTop: "3em" }}>
         <Button type="primary" htmlType="submit">
           {t("Update settings")}
         </Button>

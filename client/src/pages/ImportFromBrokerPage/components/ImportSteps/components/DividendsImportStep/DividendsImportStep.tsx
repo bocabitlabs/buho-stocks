@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import DividendsImportForm from "./components/DividendsImportForm/DividendsImportForm";
 
 interface Props {
@@ -11,18 +12,21 @@ export default function DividendsImportStep({
   portfolioId,
   onDividendImported,
 }: Props) {
-  return (
-    <div>
-      {dividends &&
-        dividends.length > 0 &&
-        dividends.map((dividend) => (
+  const { t } = useTranslation();
+  if (dividends && dividends.length > 0) {
+    return (
+      <div>
+        {dividends.map((dividend: any) => (
           <DividendsImportForm
-            key={`${dividend.date}-${dividend.isin}`}
+            key={dividend.id}
             dividend={dividend}
             portfolioId={portfolioId}
             onDividendImported={onDividendImported}
           />
         ))}
-    </div>
-  );
+      </div>
+    );
+  }
+
+  return <div>{t("No dividends found on the CSV file")}</div>;
 }

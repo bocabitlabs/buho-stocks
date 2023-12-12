@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import CorporateActionsImportForm from "./components/CorporateActionsImportForm/CorporateActionsImporForm";
 
 interface Props {
@@ -11,19 +12,20 @@ export default function CorporateActionsImportStep({
   portfolioId,
   onImported,
 }: Props) {
-  console.log(corporateActions);
-  return (
-    <div>
-      {corporateActions &&
-        corporateActions.length > 0 &&
-        corporateActions.map((corporateAction) => (
+  const { t } = useTranslation();
+  if (corporateActions && corporateActions.length > 0) {
+    return (
+      <div>
+        {corporateActions.map((corporateAction: any) => (
           <CorporateActionsImportForm
-            key={`${corporateAction.date}-${corporateAction.isin}`}
+            key={corporateAction.id}
             corporateAction={corporateAction}
             portfolioId={portfolioId}
             onImported={onImported}
           />
         ))}
-    </div>
-  );
+      </div>
+    );
+  }
+  return <div>{t("No corporate actions found on the CSV file")}</div>;
 }

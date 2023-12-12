@@ -33,7 +33,7 @@ export default function PortfolioDetailsPage() {
   }, [companies, showClosed]);
 
   if (!portfolio) {
-    return <LoadingSpin style={{ marginTop: 20 }} />;
+    return <LoadingSpin />;
   }
 
   if (error) {
