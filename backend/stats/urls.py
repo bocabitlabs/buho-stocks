@@ -5,8 +5,6 @@ from stats.views.portfolio_stats import PortfolioStatsAllYearsAPIView, Portfolio
 
 urlpatterns = [
     path("portfolio/<int:portfolio_id>/", PortfolioStatsAllYearsAPIView.as_view()),
-    path("portfolio/<int:portfolio_id>/years/", PortfolioStatsAPIView.as_view()),
     path("portfolio/<int:portfolio_id>/year/<str:year>/", PortfolioStatsAPIView.as_view()),
-    path("company/<int:company_id>/years/", CompanyStatsAPIView.as_view()),
     path("company/<int:company_id>/year/<str:year>/", CompanyStatsAPIView.as_view()),
 ]

@@ -72,7 +72,7 @@ export default function StatsRefreshModal({
   const updatePortfolioStatsAction = useCallback(async () => {
     updatePortfolioStats({
       portfolioId: +id!,
-      years: [selectedYear, "all"],
+      year: selectedYear,
       updateApiPrice: updateStockPriceSwitch,
       companiesIds: checkedList.map((item) => +item),
     });

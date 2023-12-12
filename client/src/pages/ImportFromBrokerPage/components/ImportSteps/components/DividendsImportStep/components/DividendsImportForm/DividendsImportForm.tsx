@@ -106,8 +106,8 @@ export default function DividendsImportForm({
           </Typography.Title>
           <Typography.Paragraph>
             <Typography.Text type="secondary">
-              {dividend.companyName} - ISIN: {dividend.isin} - Market:{" "}
-              {dividend.market}
+              {dividend.companyName ? `${dividend.companyName} - ` : ""}ISIN:{" "}
+              {dividend.isin} - {t("Market")}: {dividend.market}
             </Typography.Text>
           </Typography.Paragraph>
 
@@ -123,12 +123,15 @@ export default function DividendsImportForm({
           >
             <Row gutter={24}>
               <Col span={12}>
-                <Form.Item label="Date" name="date">
-                  <Input placeholder="Date of the dividend" name="date" />
+                <Form.Item label={t("Date")} name="date">
+                  <Input
+                    placeholder={t<string>("Date of the dividend")}
+                    name="date"
+                  />
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Amount" name="amount">
+                <Form.Item label={t("Amount")} name="amount">
                   <Input
                     placeholder="input placeholder"
                     name="amount"
@@ -137,7 +140,7 @@ export default function DividendsImportForm({
                 </Form.Item>
               </Col>
               <Col span={12}>
-                <Form.Item label="Commission" name="commissions">
+                <Form.Item label={t("Commission")} name="commissions">
                   <Input
                     placeholder="input placeholder"
                     name="commissions"
@@ -203,7 +206,7 @@ export default function DividendsImportForm({
                 </>
               )}
               <Col span={24}>
-                <Form.Item label="Description" name="description">
+                <Form.Item label={t("Description")} name="description">
                   <TextArea
                     placeholder="input placeholder"
                     name="description"
@@ -219,7 +222,7 @@ export default function DividendsImportForm({
                     loading={isLoading}
                     disabled={formSent || !selectedCompany || !portfolio}
                   >
-                    Add dividend
+                    {t("Add dividend")}
                   </Button>
                 </Form.Item>
               </Col>

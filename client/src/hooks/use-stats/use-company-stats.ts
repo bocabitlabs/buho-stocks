@@ -29,22 +29,22 @@ export function useCompanyYearStats(
 
 interface IUpdateYearStatsMutationProps {
   companyId: number | undefined;
-  years: string[] | undefined;
+  year: string | undefined;
   updateApiPrice: boolean | undefined;
 }
 
 export const useUpdateYearStats = () => {
   return useMutation(
-    ({ companyId, years, updateApiPrice }: IUpdateYearStatsMutationProps) =>
-      apiClient.put(`/stats/company/${companyId}/`, {
+    ({ companyId, year, updateApiPrice }: IUpdateYearStatsMutationProps) =>
+      apiClient.put(`/stats/company/${companyId}/year/${year}/`, {
         updateApiPrice,
-        years,
       }),
     {
       onSuccess: (data, variables) => {
         queryClient.invalidateQueries([
           "companyYearStats",
           variables.companyId,
+          variables.year,
         ]);
       },
     },

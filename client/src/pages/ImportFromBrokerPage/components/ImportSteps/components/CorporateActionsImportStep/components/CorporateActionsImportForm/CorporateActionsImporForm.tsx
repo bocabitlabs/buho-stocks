@@ -127,7 +127,6 @@ export default function CorporateActionsImportForm({
               {corporateAction.companyName} - ISIN: {corporateAction.isin}
             </Typography.Text>
           </Typography.Paragraph>
-
           <Form
             form={form}
             initialValues={{
@@ -144,30 +143,29 @@ export default function CorporateActionsImportForm({
             <Row gutter={24}>
               <Col span={12}>
                 <Form.Item
-                  label="Date"
+                  label={t("Date")}
                   name="date"
                   rules={[{ required: true }]}
                 >
-                  <Input placeholder="Date of the transaction" name="date" />
+                  <Input
+                    placeholder={t<string>("Date of the transaction")}
+                    name="date"
+                  />
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item
-                  label="Count"
+                  label={t("Count")}
                   name="count"
                   rules={[{ required: true }]}
                 >
-                  <Input
-                    placeholder="input placeholder"
-                    name="count"
-                    suffix={corporateAction.currency}
-                  />
+                  <Input placeholder="input placeholder" name="count" />
                 </Form.Item>
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label="Type"
+                  label={t("Type")}
                   name="type"
                   rules={[{ required: true }]}
                 >
@@ -180,7 +178,7 @@ export default function CorporateActionsImportForm({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label="Amount"
+                  label={t("Total")}
                   name="amount"
                   rules={[{ required: true }]}
                 >
@@ -193,7 +191,7 @@ export default function CorporateActionsImportForm({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label="Price per share"
+                  label={t("Price per right")}
                   name="price"
                   rules={[{ required: true }]}
                 >
@@ -206,7 +204,7 @@ export default function CorporateActionsImportForm({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label="Commission"
+                  label={t("Commission")}
                   name="commission"
                   rules={[{ required: true }]}
                 >
@@ -227,7 +225,7 @@ export default function CorporateActionsImportForm({
                       message: t<string>("Please select a company"),
                     },
                   ]}
-                  help={`${t("Received")}: ${corporateAction.ticker}`}
+                  help={`${t("Received from CSV")}: ${corporateAction.ticker}`}
                 >
                   <CompanyTickerSelect
                     onSelect={onCompanyChange}
@@ -275,7 +273,7 @@ export default function CorporateActionsImportForm({
                 </>
               )}
               <Col span={24}>
-                <Form.Item label="Description" name="description">
+                <Form.Item label={t("Description")} name="description">
                   <TextArea
                     placeholder="input placeholder"
                     name="description"
@@ -291,7 +289,7 @@ export default function CorporateActionsImportForm({
                     loading={isLoading}
                     disabled={formSent || !selectedCompany || !portfolio}
                   >
-                    Add right
+                    {t("Add corporate actions")}
                   </Button>
                 </Form.Item>
               </Col>
