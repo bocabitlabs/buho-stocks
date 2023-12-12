@@ -88,6 +88,7 @@ function parseTrades(tradesRows: any[][]) {
     const day = newDate.getDay();
 
     const parsedRow = {
+      id: Math.random().toString(16).slice(2),
       transactionType: transaction,
       date: `${year}-${month}-${day}`,
       ticker,
@@ -113,12 +114,9 @@ export function processTradesData(data: []) {
   try {
     const dataLines = convertDataLinesToList(data);
     const tradesRows = extractTradesRows(dataLines);
-    console.log(tradesRows);
     const infoRows = extractInfoRows(data);
     const matchedTradesWithInfo = matchTradesWithInfo(tradesRows, infoRows);
-    console.log(matchedTradesWithInfo);
     const parsedTrades = parseTrades(matchedTradesWithInfo);
-    console.log(parsedTrades);
 
     return parsedTrades; // Success.
   } catch (error) {

@@ -85,9 +85,6 @@ function matchDividedsWithTaxes(
             companyNameInTax === companyNameInDividend &&
             tax[3] === dividend[3]
           ) {
-            console.log(
-              `Matched ${companyNameInTax} with ${companyNameInDividend}`,
-            );
             // eslint-disable-next-line prefer-destructuring
             taxes = +tax[5]; // Taxes
           }
@@ -148,6 +145,7 @@ function parseDividendsWithTaxes(matchedDividendsWithTaxes: any[][]) {
     const newDate = new Date(date);
 
     const handledLine = {
+      id: Math.random().toString(16).slice(2),
       transactionType: transaction,
       date: newDate.toISOString().substring(0, 10),
       ticker,
@@ -185,7 +183,6 @@ export function processDividendsData(data: []) {
     const parsedDividendsWithTaxes = parseDividendsWithTaxes(
       matchedDividendsWithInfo,
     );
-    console.log(parsedDividendsWithTaxes);
     return parsedDividendsWithTaxes;
   } catch (error) {
     console.error(error);
