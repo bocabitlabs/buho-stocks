@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Alert, Switch } from "antd";
@@ -54,11 +54,7 @@ export default function PortfolioDetailsPage() {
       portfolioDescription={portfolio.description}
       portfolioCountryCode={portfolio.countryCode}
     >
-      <YearSelector
-        id={id}
-        firstYear={portfolio.firstYear}
-        companies={portfolio ? portfolio.companies : []}
-      />
+      <YearSelector id={id} firstYear={portfolio.firstYear} />
       <Switch
         checkedChildren={t("Displaying open companies")}
         unCheckedChildren={t("Displaying closed companies")}

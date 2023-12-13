@@ -1,23 +1,17 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, Select } from "antd";
 import PortfolioCharts from "../PortfolioCharts/PortfolioCharts";
 import StatsContent from "../StatsContent/StatsContent";
 import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { ICompanyListItem } from "types/company";
 
 interface Props {
   id: string | undefined;
   firstYear: number | null;
-  companies: ICompanyListItem[];
 }
 
-export default function YearSelector({
-  id,
-  firstYear,
-  companies,
-}: Props): ReactElement {
+export default function YearSelector({ id, firstYear }: Props): ReactElement {
   const { t } = useTranslation();
 
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
@@ -65,11 +59,9 @@ export default function YearSelector({
               </Select.Option>
             ))}
           </Select>
-          <StatsRefreshModal
-            id={id}
-            selectedYear={selectedYear}
-            companies={companies}
-          />
+          {selectedYear !== "all" && (
+            <StatsRefreshModal id={id} selectedYear={selectedYear} />
+          )}
         </Form.Item>
       </Form>
       <div style={{ marginTop: 16 }}>

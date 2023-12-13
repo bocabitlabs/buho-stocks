@@ -4,6 +4,7 @@ import time
 from buho_backend.celery_app import app
 from buho_backend.consumers import update_task_status
 from buho_backend.settings.common import YEAR_FOR_ALL
+from companies.models import Company
 from portfolios.models import Portfolio
 from stats.utils.company_stats_utils import CompanyStatsUtils
 from stats.utils.portfolio_stats_utils import PortfolioStatsUtils
@@ -37,24 +38,40 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
     logger.info(f"Updating portfolio stats for portfolio {portfolio_id}")
 
     logger.debug(
-        f"Portfolio update info - Portfolio: {portfolio_id}, " f"Companies: {companies_ids}",
-        f"Year: {year} ",
-        f"Update from API: {update_api_price}",
+        f"Portfolio update info - Portfolio: {portfolio_id}, "
+        f"Companies: {companies_ids}"
+        f"Year: {year}" + f"Update from API: {update_api_price}"
     )
 
     portfolio = Portfolio.objects.get(id=portfolio_id)
 
-    total_companies = portfolio.companies.count() + 1
+    companies = []
+    if len(companies_ids) > 0:
+        # Given a list of Company id's, create an array of all these companies
+        companies = []
+        company_queryset = Company.objects.filter(pk__in=companies_ids)
+        for company in company_queryset:
+            companies.append(company)
+        total_companies = len(companies)
+    else:
+        total_companies = portfolio.companies.count() + 1
+        companies = portfolio.companies.all()
+
     current = 0
     percent = 0
-    for company in portfolio.companies.all():
+    for company in companies:
+        year_text = year
+        if year == YEAR_FOR_ALL:
+            year_text = "All"
         try:
             # Print the percentage of total progress
             percent = 0 if current == 0 else int(current / total_companies * 100)
             logger.debug(f"{self.request.id} - Progress: {percent}")
+            if year == YEAR_FOR_ALL:
+                year_text = "All"
             update_task_status(
                 self.request.id,
-                f"Updating portfolio stats ({year})",
+                f"Updating portfolio stats ({year_text})",
                 f"Updating company {company.name}",
                 "PROGRESS",
                 percent,
@@ -66,7 +83,7 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
             logger.error(f"Error updating company stats for {company.name}: {error}", exc_info=True)
             update_task_status(
                 self.request.id,
-                f"Updating portfolio stats ({year})",
+                f"Updating portfolio stats ({year_text})",
                 f"Error updating company stats for {company.name}",
                 "FAILED",
                 100,
@@ -77,7 +94,9 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
         portfolio_stats.update_stats_for_year()
 
-        update_task_status(self.request.id, f"Updating portfolio stats ({year})", "Stats updated", "COMPLETED", 100)
+        update_task_status(
+            self.request.id, f"Updating portfolio stats ({year_text})", "Stats updated", "COMPLETED", 100
+        )
 
         if year != YEAR_FOR_ALL:
             update_portolfio_stats.delay(portfolio_id, companies_ids, YEAR_FOR_ALL, update_api_price)
@@ -87,7 +106,7 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
         logger.error(f"Error updating portfolio stats for {portfolio.name}: {error}", exc_info=True)
         update_task_status(
             self.request.id,
-            f"Updating portfolio stats ({year})",
+            f"Updating portfolio stats ({year_text})",
             f"Error updating portfolio stats for {portfolio.name}",
             "FAILED",
             100,
