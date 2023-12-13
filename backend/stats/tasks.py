@@ -72,8 +72,8 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
                 year_text = "All"
             update_task_status(
                 self.request.id,
-                f"Updating portfolio stats ({year_text})",
-                f"Updating company {company.name}",
+                "Updating portfolio stats",
+                {"year": year_text, "task_description": "Updating company", "company": company.name},
                 "PROGRESS",
                 percent,
             )
@@ -84,8 +84,8 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
             logger.error(f"Error updating company stats for {company.name}: {error}", exc_info=True)
             update_task_status(
                 self.request.id,
-                f"Updating portfolio stats ({year_text})",
-                f"Error updating company stats for {company.name}",
+                "Updating portfolio stats",
+                {"year": year_text, "task_description": "Error updating company stats", "company": company.name},
                 "FAILED",
                 100,
             )
@@ -96,7 +96,11 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
         portfolio_stats.update_stats_for_year()
 
         update_task_status(
-            self.request.id, f"Updating portfolio stats ({year_text})", "Stats updated", "COMPLETED", 100
+            self.request.id,
+            "Updating portfolio stats",
+            {"year": year_text, "task_description": "Stats updated", "company": company.name},
+            "COMPLETED",
+            100,
         )
 
         if year != YEAR_FOR_ALL:
@@ -107,8 +111,8 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
         logger.error(f"Error updating portfolio stats for {portfolio.name}: {error}", exc_info=True)
         update_task_status(
             self.request.id,
-            f"Updating portfolio stats ({year_text})",
-            f"Error updating portfolio stats for {portfolio.name}",
+            "Updating portfolio stats",
+            {"year": year_text, "task_description": "Error updating portfolio stats", "company": portfolio.name},
             "FAILED",
             100,
         )

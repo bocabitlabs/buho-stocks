@@ -8,7 +8,7 @@ import {
 } from "@ant-design/icons";
 import { Button, Modal, Progress, Space, Typography } from "antd";
 import { useSettings } from "hooks/use-settings/use-settings";
-import { ITaskResult } from "types/task-result";
+import { ITaskDetails, ITaskResult } from "types/task-result";
 
 function TasksModal() {
   // List of tasks and their statuses
@@ -58,7 +58,7 @@ function TasksModal() {
     task_name: string,
     progress: number,
     status: string,
-    details: string,
+    details: ITaskDetails,
   ) => {
     setTasks((prevTasks: ITaskResult[]) => {
       const updatedTasks = prevTasks.map((task: ITaskResult) => {
@@ -138,13 +138,15 @@ function TasksModal() {
             {tasks.length > 0 &&
               tasks.map((task: ITaskResult) => (
                 <div key={task.task_id}>
-                  <Typography.Text>{task.task_name}:</Typography.Text>
+                  <Typography.Text>
+                    {t(task.task_name)} ({task.details.year}):
+                  </Typography.Text>
                   <Progress
                     percent={task.progress}
                     status={getProgressStatus(task.status)}
                   />
                   <Typography.Text type="secondary">
-                    {task.details}
+                    {t(task.details.task_description)} {task.details.company}
                   </Typography.Text>
                 </div>
               ))}
