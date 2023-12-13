@@ -55,7 +55,8 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
         total_companies = len(companies)
     else:
         total_companies = portfolio.companies.count() + 1
-        companies = portfolio.companies.all()
+        # Get only companies that are not closed
+        companies = portfolio.companies.filter(is_closed=False)
 
     current = 0
     percent = 0
