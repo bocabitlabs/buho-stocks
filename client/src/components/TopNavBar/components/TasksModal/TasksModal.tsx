@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import useWebSocket, { ReadyState } from "react-use-websocket";
 import {
   ApiOutlined,
   LoadingOutlined,
@@ -12,12 +13,26 @@ import { ITaskResult } from "types/task-result";
 function TasksModal() {
   // List of tasks and their statuses
   const [tasks, setTasks] = useState<ITaskResult[]>([]);
-  const [connected, setConnected] = useState(false);
   const { t } = useTranslation();
-  const ws = useRef<any>(null);
-
   const [isTasksModalOpen, setIsTasksModalOpen] = useState(false);
   const { data: settings } = useSettings();
+  const getWebsocketUrl = () => {
+    if (settings) {
+      // If using https, replace ws with wss
+      const wsUrl = `ws://${settings.backendHostname}/ws/tasks/`;
+      // Replace ws with wss for https
+      if (document.location.protocol === "https:") {
+        wsUrl.replace("ws://", "wss://");
+      }
+      return wsUrl;
+    }
+    return null;
+  };
+
+  const { lastJsonMessage, readyState } = useWebSocket(getWebsocketUrl(), {
+    share: false,
+    shouldReconnect: () => true,
+  });
 
   const showTasksModal = () => {
     setIsTasksModalOpen(true);
@@ -72,78 +87,20 @@ function TasksModal() {
     return "active";
   };
 
-  const reconnectSocket = () => {
-    if (!settings) return;
-    // If using https, replace ws with wss
-    const wsUrl = `ws://${settings.backendHostname}/ws/tasks/`;
-    // Replace ws with wss for https
-    if (document.location.protocol === "https:") {
-      wsUrl.replace("ws://", "wss://");
-    }
-    console.log(`Connecting to websocket`);
-    console.log(wsUrl);
-    try {
-      ws.current = new WebSocket(wsUrl);
-    } catch (e) {
-      console.log(e);
-      setConnected(false);
-    }
-  };
-
   useEffect(() => {
-    if (settings) {
-      // If using https, replace ws with wss
-      const wsUrl = `ws://${settings.backendHostname}/ws/tasks/`;
-      // Replace ws with wss for https
-      if (document.location.protocol === "https:") {
-        wsUrl.replace("ws://", "wss://");
-      }
-      console.log(`Connecting to websocket`);
-      console.log(wsUrl);
-      try {
-        ws.current = new WebSocket(wsUrl);
-      } catch (e) {
-        console.log(e);
-        setConnected(false);
-      }
-    }
-
-    const wsCurrent = ws.current;
-
-    return () => {
-      if (!settings) return;
-      console.log("Disconnecting websocket");
-      wsCurrent.close();
-    };
-  }, [settings]);
-
-  useEffect(() => {
-    if (!ws.current) return;
-
-    ws.current.onopen = (event: any) => {
-      console.log("Connected", event);
-      setConnected(true);
-    };
-
-    ws.current.onclose = (event: any) => {
-      console.log("Closed", event);
-      setConnected(false);
-    };
-
-    ws.current.onmessage = (event: any) => {
-      const messageData = JSON.parse(event.data);
-      console.log(messageData);
+    if (lastJsonMessage) {
+      const jsonMessage: any = lastJsonMessage;
       updateTaskProgress(
-        messageData.status.task_id,
-        messageData.status.task_name,
-        messageData.status.progress,
-        messageData.status.status,
-        messageData.status.details,
+        jsonMessage.status.task_id,
+        jsonMessage.status.task_name,
+        jsonMessage.status.progress,
+        jsonMessage.status.status,
+        jsonMessage.status.details,
       );
-    };
-  }, []);
+    }
+  }, [lastJsonMessage]);
 
-  if (connected) {
+  if (readyState === ReadyState.OPEN) {
     return (
       <>
         <Button
@@ -175,7 +132,9 @@ function TasksModal() {
           ]}
         >
           <Space direction="vertical" style={{ display: "flex" }}>
-            {tasks.length === 0 && <Typography.Text>No tasks</Typography.Text>}
+            {tasks.length === 0 && (
+              <Typography.Text>{t("No tasks")}</Typography.Text>
+            )}
             {tasks.length > 0 &&
               tasks.map((task: ITaskResult) => (
                 <div key={task.task_id}>
@@ -196,10 +155,7 @@ function TasksModal() {
   }
 
   return (
-    <Button
-      onClick={reconnectSocket}
-      title="Reconnect to get the tasks updates"
-    >
+    <Button title={t<string>("Websocket disconnected")}>
       <ApiOutlined />
     </Button>
   );
