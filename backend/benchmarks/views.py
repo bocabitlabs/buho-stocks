@@ -1,12 +1,13 @@
 import logging
 
-from benchmarks.models import Benchmark, BenchmarkYear
-from benchmarks.serializers import BenchmarkSerializer, BenchmarkSerializerDetails, BenchmarkYearSerializer
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+
+from benchmarks.models import Benchmark, BenchmarkYear
+from benchmarks.serializers import BenchmarkSerializer, BenchmarkSerializerDetails, BenchmarkYearSerializer
 
 logger = logging.getLogger("buho_backend")
 
