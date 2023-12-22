@@ -1,5 +1,6 @@
-from benchmarks import views
 from rest_framework.routers import DefaultRouter
+
+from benchmarks import views
 
 router = DefaultRouter()
 
