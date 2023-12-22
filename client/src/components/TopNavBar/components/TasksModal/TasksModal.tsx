@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import {
@@ -13,6 +13,7 @@ import { ITaskDetails, ITaskResult } from "types/task-result";
 function TasksModal() {
   // List of tasks and their statuses
   const [tasks, setTasks] = useState<ITaskResult[]>([]);
+  const [connected, setConnected] = useState(false);
   const { t } = useTranslation();
   const [isTasksModalOpen, setIsTasksModalOpen] = useState(false);
   const { data: settings } = useSettings();
@@ -147,6 +148,58 @@ function TasksModal() {
                   />
                   <Typography.Text type="secondary">
                     {t(task.details.task_description)} {task.details.company}
+                  </Typography.Text>
+                </div>
+              ))}
+          </Space>
+        </Modal>
+      </>
+    );
+  }
+
+  if (connected) {
+    return (
+      <>
+        <Button
+          style={{ marginLeft: 10 }}
+          type="default"
+          icon={
+            tasks.filter(
+              (task: ITaskResult) =>
+                task.status !== "COMPLETED" && task.status !== "FAILED",
+            ).length > 0 ? (
+              <LoadingOutlined />
+            ) : (
+              <RightSquareOutlined />
+            )
+          }
+          onClick={showTasksModal}
+        />
+        <Modal
+          title={t("Tasks")}
+          open={isTasksModalOpen}
+          onCancel={handleTasksOk}
+          footer={[
+            <Button key="clear" onClick={clearCompletedTasksList}>
+              {t("Clear completed tasks")}
+            </Button>,
+            <Button key="submit" type="primary" onClick={handleTasksOk}>
+              {t("Close")}
+            </Button>,
+          ]}
+        >
+          <Space direction="vertical" style={{ display: "flex" }}>
+            {tasks.length === 0 && <Typography.Text>No tasks</Typography.Text>}
+            {tasks.length > 0 &&
+              tasks.map((task: ITaskResult) => (
+                <div key={task.task_id}>
+                  <Typography.Text>{task.task_name}:</Typography.Text>
+                  <Progress
+                    percent={task.progress}
+                    status={getProgressStatus(task.status)}
+                  />
+                  <Typography.Text type="secondary">
+                    {task.details}
                   </Typography.Text>
                 </div>
               ))}
