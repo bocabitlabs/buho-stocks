@@ -1,5 +1,6 @@
 # type: ignore
 from rest_framework.routers import DefaultRouter
+
 from sectors import views
 
 router = DefaultRouter()

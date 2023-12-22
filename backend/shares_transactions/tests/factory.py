@@ -1,6 +1,7 @@
+from factory import Faker, SubFactory, django
+
 from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
-from factory import Faker, SubFactory, django
 from shares_transactions.models import SharesTransaction
 
 

@@ -1,8 +1,9 @@
 import logging
 
+from rest_framework import viewsets
+
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
-from rest_framework import viewsets
 
 logger = logging.getLogger("buho_backend")
 

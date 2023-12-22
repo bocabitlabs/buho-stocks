@@ -1,7 +1,8 @@
-from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
-from initialize_data.initializers.currencies import create_initial_currencies
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
+from initialize_data.initializers.currencies import create_initial_currencies
 
 
 class CurrenciesViewsTestCase(BaseApiTestCase):

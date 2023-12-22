@@ -1,12 +1,13 @@
 import datetime
 import logging
 
-from buho_backend.transaction_types import TransactionType
-from companies.models import Company
 from django.db import models
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 from rest_framework import serializers
+
+from buho_backend.transaction_types import TransactionType
+from companies.models import Company
 
 logger = logging.getLogger("buho_backend")
 

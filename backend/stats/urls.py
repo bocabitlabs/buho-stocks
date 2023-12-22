@@ -1,5 +1,6 @@
 # type: ignore
 from django.urls import path
+
 from stats.views.company_stats import CompanyStatsAPIView
 from stats.views.portfolio_stats import PortfolioStatsAllYearsAPIView, PortfolioStatsAPIView
 

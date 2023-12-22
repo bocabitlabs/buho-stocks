@@ -9,13 +9,14 @@ https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 
 import os
 
-from buho_backend import consumers
-from buho_backend.settings_loader import get_settings_module
 from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 from django.urls import re_path
+
+from buho_backend import consumers
+from buho_backend.settings_loader import get_settings_module
 
 settings_module = get_settings_module()
 

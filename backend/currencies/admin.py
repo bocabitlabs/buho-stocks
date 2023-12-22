@@ -1,6 +1,7 @@
 from django.contrib import admin
-from currencies.models import Currency
+
 from buho_backend.admin import BaseAdmin
+from currencies.models import Currency
 
 
 # Register your models here.

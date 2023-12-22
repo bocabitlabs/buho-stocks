@@ -1,13 +1,14 @@
 import logging
 
 import factory
-from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
+from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from initialize_data.initializers.currencies import create_initial_currencies
 from portfolios.models import Portfolio
 from portfolios.tests.factory import PortfolioFactory
-from rest_framework import status
 
 logger = logging.getLogger("buho_backend")
 

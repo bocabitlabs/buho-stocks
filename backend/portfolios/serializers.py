@@ -1,10 +1,11 @@
 import logging
 
+from rest_framework import serializers
+
 from companies.serializers_lite import CompanySerializerLite
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from portfolios.models import Portfolio
-from rest_framework import serializers
 from shares_transactions.models import SharesTransaction
 
 logger = logging.getLogger("buho_backend")

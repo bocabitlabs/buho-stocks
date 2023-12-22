@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from shares_transactions.models import SharesTransaction
 
 logger = logging.getLogger("buho_backend")

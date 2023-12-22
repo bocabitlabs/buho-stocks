@@ -1,14 +1,16 @@
 from typing import TYPE_CHECKING
 
 from django.db import models
+
 from markets.models import Market
 from portfolios.models import Portfolio
 from sectors.models import Sector
 
 if TYPE_CHECKING:
     # This doesn't really exists on django so it always need to be imported this way
-    from dividends_transactions.models import DividendsTransaction  # noqa
     from django.db.models.manager import RelatedManager
+
+    from dividends_transactions.models import DividendsTransaction  # noqa
     from rights_transactions.models import RightsTransaction  # noqa
     from shares_transactions.models import SharesTransaction  # noqa
 
@@ -57,4 +59,7 @@ class Company(models.Model):
         verbose_name_plural = "Companies"
 
     def __str__(self) -> str:
-        return f"Name: {self.name}, Ticker: {self.ticker}, B.Currency: {self.base_currency} D.Currency: {self.dividends_currency}"
+        return (
+            f"Name: {self.name}, Ticker: {self.ticker}, "
+            f"B.Currency: {self.base_currency} D.Currency: {self.dividends_currency}"
+        )

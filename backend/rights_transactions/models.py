@@ -1,7 +1,8 @@
-from buho_backend.transaction_types import TransactionType
-from companies.models import Company
 from django.db import models
 from djmoney.models.fields import MoneyField
+
+from buho_backend.transaction_types import TransactionType
+from companies.models import Company
 from shares_transactions.models import Transaction
 
 

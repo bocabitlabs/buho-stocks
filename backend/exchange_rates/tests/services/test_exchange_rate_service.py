@@ -2,10 +2,11 @@ import datetime
 import logging
 from decimal import Decimal
 
+from faker import Faker
+
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from exchange_rates.services.exchange_rate_service import ExchangeRateService
 from exchange_rates.tests.factory import ExchangeRateFactory
-from faker import Faker
 from stock_prices.tests.mocks.mock_yfinance import create_empty_download_mock_df
 
 logger = logging.getLogger("buho_backend")

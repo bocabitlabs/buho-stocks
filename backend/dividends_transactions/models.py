@@ -1,6 +1,7 @@
-from companies.models import Company
 from django.db import models
 from djmoney.models.fields import MoneyField
+
+from companies.models import Company
 from shares_transactions.models import Transaction
 
 

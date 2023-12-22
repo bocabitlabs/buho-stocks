@@ -1,5 +1,6 @@
-from buho_backend.admin import BaseAdmin
 from django.contrib import admin
+
+from buho_backend.admin import BaseAdmin
 from log_messages.models import LogMessage
 
 

@@ -1,6 +1,7 @@
+from factory import Faker, SubFactory, django
+
 from companies.tests.factory import CompanyFactory
 from dividends_transactions.models import DividendsTransaction
-from factory import Faker, SubFactory, django
 
 
 class DividendsTransactionFactory(django.DjangoModelFactory):

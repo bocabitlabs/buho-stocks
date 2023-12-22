@@ -3,9 +3,10 @@ import logging
 import pathlib
 from os import path
 
-from benchmarks.models import Benchmark, BenchmarkYear
 from django.db import IntegrityError
 from moneyed import Money
+
+from benchmarks.models import Benchmark, BenchmarkYear
 
 logger = logging.getLogger("buho_backend")
 

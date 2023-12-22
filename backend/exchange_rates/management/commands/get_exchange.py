@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from exchange_rates.services.yfinance_api_client import YFinanceExchangeClient
 
 logger = logging.getLogger("buho_backend")

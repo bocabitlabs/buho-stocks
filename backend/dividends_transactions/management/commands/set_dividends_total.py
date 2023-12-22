@@ -1,7 +1,8 @@
 import logging
 
-from dividends_transactions.models import DividendsTransaction
 from django.core.management.base import BaseCommand
+
+from dividends_transactions.models import DividendsTransaction
 
 logger = logging.getLogger("buho_backend")
 

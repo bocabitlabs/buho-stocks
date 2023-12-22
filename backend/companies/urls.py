@@ -1,6 +1,7 @@
 # type: ignore
-from companies import views as company_views
 from django.urls import path
+
+from companies import views as company_views
 
 urlpatterns = [
     path("", company_views.CompanyViewSet.as_view({"get": "list", "post": "create"}), name="company-list"),

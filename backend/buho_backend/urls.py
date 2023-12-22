@@ -15,20 +15,21 @@ Including another URLconf
 """
 import re
 
-from benchmarks.urls import router as benchmarks_router
-from buho_backend import path_converters
-from buho_backend.views import TaskResultList, start_task_view
-from currencies.urls import router as currencies_router
-from dividends_transactions.urls import router as dividends_transactions_router
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path, re_path, register_converter
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
+from rest_framework import permissions
+
+from benchmarks.urls import router as benchmarks_router
+from buho_backend import path_converters
+from buho_backend.views import TaskResultList, start_task_view
+from currencies.urls import router as currencies_router
+from dividends_transactions.urls import router as dividends_transactions_router
 from exchange_rates.urls import router as exchange_rates_router
 from markets.urls import router as markets_router
-from rest_framework import permissions
 from rights_transactions.urls import router as rights_transactions_router
 from sectors.urls import router as sectors_router
 from shares_transactions.urls import router as shares_transactions_router

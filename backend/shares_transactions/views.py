@@ -1,11 +1,12 @@
 import logging
 from datetime import datetime
 
-from companies.models import Company
 from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
-from log_messages.models import LogMessage
 from rest_framework import viewsets
+
+from companies.models import Company
+from log_messages.models import LogMessage
 from shares_transactions.models import SharesTransaction
 from shares_transactions.serializers import SharesTransactionSerializer
 from stats.tasks import update_portolfio_stats

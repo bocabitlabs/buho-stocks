@@ -1,6 +1,7 @@
 import logging
 
 from rest_framework import viewsets
+
 from sectors.models import Sector, SuperSector
 from sectors.serializers import SectorSerializer, SectorSerializerGet, SuperSectorSerializer
 

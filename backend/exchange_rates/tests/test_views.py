@@ -2,12 +2,13 @@ import logging
 from decimal import Decimal
 
 import responses
-from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
-from exchange_rates.models import ExchangeRate
-from exchange_rates.tests.factory import ExchangeRateFactory
 from faker import Faker
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
+from exchange_rates.models import ExchangeRate
+from exchange_rates.tests.factory import ExchangeRateFactory
 
 logger = logging.getLogger("buho_backend")
 

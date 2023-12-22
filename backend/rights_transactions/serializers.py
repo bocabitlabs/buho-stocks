@@ -1,6 +1,7 @@
-from companies.models import Company
 from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
+
+from companies.models import Company
 from rights_transactions.models import RightsTransaction
 
 

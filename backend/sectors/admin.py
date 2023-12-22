@@ -1,6 +1,7 @@
 from django.contrib import admin
-from sectors.models import Sector, SuperSector
+
 from buho_backend.admin import BaseAdmin
+from sectors.models import Sector, SuperSector
 
 
 # Register your models here.

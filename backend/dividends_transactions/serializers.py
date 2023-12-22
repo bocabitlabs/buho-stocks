@@ -1,7 +1,8 @@
-from companies.models import Company
-from dividends_transactions.models import DividendsTransaction
 from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
+
+from companies.models import Company
+from dividends_transactions.models import DividendsTransaction
 
 
 class DividendsTransactionSerializer(serializers.ModelSerializer):

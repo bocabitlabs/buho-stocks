@@ -2,13 +2,14 @@ import logging
 from decimal import Decimal
 
 import factory
+from django.urls import reverse
+from faker import Faker
+from rest_framework import status
+
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.tests.factory import CompanyFactory
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.tests.factory import DividendsTransactionFactory
-from django.urls import reverse
-from faker import Faker
-from rest_framework import status
 
 logger = logging.getLogger("buho_backend")
 

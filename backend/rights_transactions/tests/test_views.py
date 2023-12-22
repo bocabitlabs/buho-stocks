@@ -2,11 +2,12 @@ import logging
 from decimal import Decimal
 
 import factory
-from buho_backend.tests.base_test_case import BaseApiTestCase
-from companies.tests.factory import CompanyFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
+from companies.tests.factory import CompanyFactory
 from rights_transactions.models import RightsTransaction
 from rights_transactions.tests.factory import RightsTransactionFactory
 

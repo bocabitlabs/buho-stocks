@@ -1,14 +1,15 @@
 import logging
 
 import factory
+from django.urls import reverse
+from faker import Faker
+from rest_framework import status
+
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.models import Company
 from companies.tests.factory import CompanyFactory
-from django.urls import reverse
-from faker import Faker
 from markets.tests.factory import MarketFactory
 from portfolios.tests.factory import PortfolioFactory
-from rest_framework import status
 from sectors.tests.factory import SectorFactory
 
 logger = logging.getLogger("buho_backend")

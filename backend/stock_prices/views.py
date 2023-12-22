@@ -2,6 +2,7 @@ import logging
 
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
+
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
 

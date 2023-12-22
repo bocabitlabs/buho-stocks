@@ -1,11 +1,12 @@
 import logging
 
-from buho_backend.celery_app import revoke_scheduled_tasks_by_name
-from companies.models import Company
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from buho_backend.celery_app import revoke_scheduled_tasks_by_name
+from companies.models import Company
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.tasks import update_portolfio_stats
 from stats.utils.company_stats_utils import CompanyStatsUtils

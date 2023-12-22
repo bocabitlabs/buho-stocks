@@ -1,12 +1,13 @@
 import logging
 
-from companies.models import Company
-from companies.serializers import CompanySerializer, CompanySerializerGet
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
+
+from companies.models import Company
+from companies.serializers import CompanySerializer, CompanySerializerGet
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
-from rest_framework import viewsets
 
 logger = logging.getLogger("buho_backend")
 

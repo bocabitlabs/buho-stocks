@@ -1,6 +1,7 @@
 import logging
 
 from django.db import models
+
 from portfolios.models import Portfolio
 
 logger = logging.getLogger("buho_backend")

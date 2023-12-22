@@ -1,6 +1,7 @@
+from django.contrib import admin
+
 from buho_backend.admin import BaseAdmin
 from companies.models import Company
-from django.contrib import admin
 
 
 # Register your models here.

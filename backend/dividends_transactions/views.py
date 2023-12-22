@@ -1,13 +1,14 @@
 import logging
 from datetime import datetime
 
+from django_filters.rest_framework import DjangoFilterBackend
+from drf_yasg import openapi
+from rest_framework import viewsets
+
 from companies.models import Company
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
-from django_filters.rest_framework import DjangoFilterBackend
-from drf_yasg import openapi
 from log_messages.models import LogMessage
-from rest_framework import viewsets
 from stats.tasks import update_portolfio_stats
 
 logger = logging.getLogger("buho_backend")

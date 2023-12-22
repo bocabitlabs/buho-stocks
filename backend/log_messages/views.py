@@ -1,9 +1,10 @@
 from drf_yasg.utils import swagger_auto_schema
-from log_messages.models import LogMessage
-from log_messages.serializers import LogMessageSerializer
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from log_messages.models import LogMessage
+from log_messages.serializers import LogMessageSerializer
 
 
 class LogMessageListAPIView(APIView):

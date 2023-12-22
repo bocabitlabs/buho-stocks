@@ -1,6 +1,7 @@
 # type: ignore
-from currencies import views
 from rest_framework.routers import DefaultRouter
+
+from currencies import views
 
 router = DefaultRouter()
 

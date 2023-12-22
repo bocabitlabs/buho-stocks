@@ -2,6 +2,7 @@ import logging
 from decimal import Decimal
 
 from django.db.models.query import QuerySet
+
 from shares_transactions.models import Transaction
 
 logger = logging.getLogger("buho_backend")

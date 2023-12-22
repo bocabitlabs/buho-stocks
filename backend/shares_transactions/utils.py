@@ -2,8 +2,9 @@ import logging
 from datetime import date
 from decimal import Decimal
 
-from buho_backend.transaction_types import TransactionType
 from django.db.models.query import QuerySet
+
+from buho_backend.transaction_types import TransactionType
 from shares_transactions.models import SharesTransaction
 from shares_transactions.new_utils.transaction_utils import TransactionCalculator
 

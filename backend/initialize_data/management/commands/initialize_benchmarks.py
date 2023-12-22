@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from initialize_data.initializers.benchmarks import create_initial_benchmark_years, create_initial_benchmarks
 
 logger = logging.getLogger("buho_backend")

@@ -1,8 +1,9 @@
 from datetime import date
 from decimal import Decimal
 
-from dividends_transactions.models import DividendsTransaction
 from django.db.models.query import QuerySet
+
+from dividends_transactions.models import DividendsTransaction
 
 
 class DividendsTransactionCalculator:

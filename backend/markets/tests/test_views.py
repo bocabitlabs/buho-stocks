@@ -1,8 +1,9 @@
-from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
-from markets.tests.factory import MarketFactory
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
+from markets.tests.factory import MarketFactory
 
 
 class MarketsListTestCase(BaseApiTestCase):

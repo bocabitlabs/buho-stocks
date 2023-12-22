@@ -1,13 +1,14 @@
 import logging
 
 from drf_yasg.utils import swagger_auto_schema
-from exchange_rates.models import ExchangeRate
-from exchange_rates.serializers import ExchangeRateSerializer
-from exchange_rates.services.exchange_rate_service import ExchangeRateService
 from rest_framework import status, viewsets
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from exchange_rates.models import ExchangeRate
+from exchange_rates.serializers import ExchangeRateSerializer
+from exchange_rates.services.exchange_rate_service import ExchangeRateService
 
 logger = logging.getLogger("buho_backend")
 

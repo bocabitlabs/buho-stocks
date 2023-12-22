@@ -1,4 +1,5 @@
 from factory import Faker, django
+
 from settings.models import UserSettings
 
 

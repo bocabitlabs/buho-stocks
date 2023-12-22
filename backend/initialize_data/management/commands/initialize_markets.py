@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from initialize_data.initializers.markets import create_initial_markets
 
 logger = logging.getLogger("buho_backend")

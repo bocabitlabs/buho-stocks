@@ -1,5 +1,6 @@
-from sectors.models import Sector, SuperSector
 from rest_framework import serializers
+
+from sectors.models import Sector, SuperSector
 
 
 class SectorSerializer(serializers.ModelSerializer):

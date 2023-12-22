@@ -2,6 +2,7 @@
 
 # type: ignore
 from django.urls import path
+
 from initialize_data import views
 
 urlpatterns = [

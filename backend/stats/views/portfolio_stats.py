@@ -1,11 +1,12 @@
 import logging
 
-from buho_backend.settings.common import YEAR_FOR_ALL
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from buho_backend.settings.common import YEAR_FOR_ALL
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer

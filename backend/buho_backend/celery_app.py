@@ -1,9 +1,10 @@
 import logging
 import os
 
-from buho_backend.settings_loader import get_settings_module
 from celery import Celery
 from celery.app.control import Control
+
+from buho_backend.settings_loader import get_settings_module
 
 settings_module = get_settings_module()
 

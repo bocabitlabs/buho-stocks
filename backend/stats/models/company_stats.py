@@ -1,7 +1,8 @@
 import logging
 
-from companies.models import Company
 from django.db import models
+
+from companies.models import Company
 
 logger = logging.getLogger("buho_backend")
 

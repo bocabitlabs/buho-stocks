@@ -1,6 +1,7 @@
+from rest_framework import serializers
+
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
-from rest_framework import serializers
 
 
 class LogMessageSerializer(serializers.ModelSerializer):

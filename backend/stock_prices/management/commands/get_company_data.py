@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 logger = logging.getLogger("buho_backend")

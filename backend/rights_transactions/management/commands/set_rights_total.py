@@ -1,6 +1,7 @@
 import logging
 
 from django.core.management.base import BaseCommand
+
 from rights_transactions.models import RightsTransaction
 
 logger = logging.getLogger("buho_backend")

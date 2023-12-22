@@ -1,6 +1,7 @@
 from unittest.mock import patch
 
 from rest_framework.test import APITestCase
+
 from stock_prices.tests.mocks.mock_yfinance import create_download_mock_2, create_ticker_mock_2
 
 

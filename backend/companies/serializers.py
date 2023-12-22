@@ -1,18 +1,19 @@
 import logging
 
+from drf_extra_fields.fields import Base64ImageField  # type: ignore
+from rest_framework import serializers
+from rest_framework.fields import SerializerMethodField
+
 from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
-from drf_extra_fields.fields import Base64ImageField  # type: ignore
 from markets.models import Market
 from markets.serializers import MarketSerializer
 from portfolios.models import Portfolio
 from portfolios.serializers_lite import PortfolioSerializerLite
-from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 from rights_transactions.serializers import RightsTransactionSerializer
 from sectors.models import Sector
 from sectors.serializers import SectorSerializerGet

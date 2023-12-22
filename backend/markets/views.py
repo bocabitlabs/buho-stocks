@@ -2,9 +2,10 @@ import logging
 
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import generics, viewsets
+
 from markets.models import Market, get_all_timezones
 from markets.serializers import MarketSerializer, TimezoneSerializer
-from rest_framework import generics, viewsets
 
 logger = logging.getLogger("buho_backend")
 

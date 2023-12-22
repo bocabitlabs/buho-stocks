@@ -2,7 +2,6 @@ from django.db import models
 
 
 class ExchangeRate(models.Model):
-
     exchange_from = models.CharField(max_length=200)
     exchange_to = models.CharField(max_length=200)
     exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
