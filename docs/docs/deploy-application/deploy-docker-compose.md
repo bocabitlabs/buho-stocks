@@ -1,7 +1,7 @@
 ---
 sidebar_position: 2
 ---
-# Deploy using Docker
+# Deploy using Docker Compose
 
 You can deploy this application using Docker Compose. To do so, follow these steps.
 
@@ -31,7 +31,7 @@ It will take the values from the `.env.prod` file.
 
 ### Configuring the volumes (optional)
 
-By default, the volumes will be handled automatically by Docker itself (check the `docker-compose.yml`` file). If you want to point them to your own paths, you can modify this file to specify it.
+By default, the volumes will be handled automatically by Docker itself (check the `docker-compose.yml` file). If you want to point them to your own paths, you can modify this file to specify it.
 
 An example pointing to your own path:
 

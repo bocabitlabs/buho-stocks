@@ -16,6 +16,18 @@ sidebar_position: 1
 
 Using a spreadsheet to manage a portfolio can become a complicated and tedious task, as well as calculating investment returns. That's why I decided to create this application, to simplify these periodic and monotonous tasks of portfolio management.
 
+## Architecture
+
+<p align="center"><img src="/buho-stocks/img/buho-stocks-architecture.png" alt="Buho-Stocks Architecture" style={{width: 600 }}/></p>
+
+The application is composed of several nodes, each one with function:
+
+- **Nginx**: Is the entrypoint of the user. It servers the static files and acts as a reverse proxy to access the Django application.
+- **Django**: The application itself. Manages all the logic.
+- **Celery**: Runs several tasks in the background, like updating the company and portfolio stats.
+- **Redis**: Key/value db used by the application.
+- **Database**: Database to store all the application data.
+
 ## Development
 
 If you are a developer and want to contribute, please check the [Contribution guideliness](https://github.com/bocabitlabs/buho-stocks/blob/main/.github/CONTRIBUTING.md) and the [Development guides](/docs/development/requirements)
