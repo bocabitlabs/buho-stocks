@@ -1,11 +1,12 @@
 import logging
+
 from django.contrib import admin
 
-
-from buho_backend.admin import BaseAdmin
 from benchmarks.models import Benchmark, BenchmarkYear
+from buho_backend.admin import BaseAdmin
 
 logger = logging.getLogger("buho_backend")
+
 
 # Register your models here.
 @admin.register(Benchmark)
