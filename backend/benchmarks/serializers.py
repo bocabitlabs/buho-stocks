@@ -1,6 +1,7 @@
-from benchmarks.models import Benchmark, BenchmarkYear
 from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
+
+from benchmarks.models import Benchmark, BenchmarkYear
 
 
 class BenchmarkSerializer(serializers.ModelSerializer):
