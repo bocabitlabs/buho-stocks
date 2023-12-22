@@ -45,7 +45,6 @@ faker = "11.3.0"
 flake8 = "5.0.4"
 flake8-django = "1.1.5"
 isort = "5.12.0"
-pyright = "1.1.296"
 pre-commit = "2.15.0"
 responses = "0.23.0"
 types-requests = "2.28.11.13"
@@ -90,6 +89,8 @@ use_parentheses = true
 # See https://github.com/PyCQA/isort#multi-line-output-modes
 multi_line_output = 3
 line_length = 120
+combine_as_imports = true
+src_paths = ["backend"]
 
 [tool.mypy]
 plugins = ["mypy_django_plugin.main"]
