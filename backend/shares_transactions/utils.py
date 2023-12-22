@@ -5,12 +5,12 @@ from decimal import Decimal
 from buho_backend.transaction_types import TransactionType
 from django.db.models.query import QuerySet
 from shares_transactions.models import SharesTransaction
-from shares_transactions.new_utils.transaction_utils import TransactionsUtils
+from shares_transactions.new_utils.transaction_utils import TransactionCalculator
 
 logger: logging.Logger = logging.getLogger("buho_backend")
 
 
-class SharesTransactionsUtils:
+class SharesTransactionCalculator:
     def __init__(
         self,
         shares_transactions: QuerySet[SharesTransaction],
@@ -95,14 +95,14 @@ class SharesTransactionsUtils:
         """
         total: Decimal = Decimal(0)
         query: QuerySet[SharesTransaction] = self._get_buy_transactions_query(year)
-        transaction_utils: TransactionsUtils = TransactionsUtils()
+        transaction_utils = TransactionCalculator()
         total = transaction_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         return total
 
     def get_accumulated_investment_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
         query = self._get_buy_transactions_query(year, use_accumulated=True)
-        transaction_utils = TransactionsUtils()
+        transaction_utils = TransactionCalculator()
         total = transaction_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         return total
 
@@ -161,7 +161,7 @@ class SharesTransactionsUtils:
         if year == "all":
             year = date.today().year
         query = self._get_sell_transactions_query(year, use_accumulated=True)
-        transactions_utils = TransactionsUtils()
+        transactions_utils = TransactionCalculator()
         total = transactions_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         # logger.debug(f"Total accumulated return from sales: {total}")
         return total

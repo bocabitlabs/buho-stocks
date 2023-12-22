@@ -7,7 +7,7 @@ from shares_transactions.models import Transaction
 logger = logging.getLogger("buho_backend")
 
 
-class TransactionsUtils:
+class TransactionCalculator:
     def get_transaction_amount(
         self,
         transaction: Transaction,

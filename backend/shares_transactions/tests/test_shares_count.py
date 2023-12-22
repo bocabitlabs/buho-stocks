@@ -7,7 +7,7 @@ from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
 from faker import Faker
 from shares_transactions.tests.factory import SharesTransactionFactory
-from shares_transactions.utils import SharesTransactionsUtils
+from shares_transactions.utils import SharesTransactionCalculator
 
 logger = logging.getLogger("buho_backend")
 
@@ -69,12 +69,12 @@ class SharesCountTestCase(BaseApiTestCase):
         self.assertEqual(len(self.company.shares_transactions.all()), self.total_transactions)
 
     def test_get_shares_count_for_all(self):
-        utils = SharesTransactionsUtils(self.company.shares_transactions)
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
         self.assertEqual(utils.get_shares_count_until_current_year(), self.shares_count)
 
     def test_get_shares_count_for_year(self):
         for index in range(0, len(self.years)):
-            utils = SharesTransactionsUtils(self.company.shares_transactions)
+            utils = SharesTransactionCalculator(self.company.shares_transactions)
             self.assertEqual(
                 utils.get_shares_count_on_year(self.years[index]),
                 self.counts[index],
@@ -98,13 +98,13 @@ class SharesCountTestCase(BaseApiTestCase):
             self.total_transactions += 1
         self.assertEqual(len(self.company.shares_transactions.all()), self.total_transactions)
 
-        # utils = SharesTransactionsUtils(self.company.shares_transactions)
+        # utils = SharesTransactionCalculator(self.company.shares_transactions)
         # self.assertEqual(
         #     utils.get_accumulated_investment_until_current_year(), self.shares_count
         # )
 
         for index in range(0, len(self.years)):
-            utils = SharesTransactionsUtils(self.company.shares_transactions)
+            utils = SharesTransactionCalculator(self.company.shares_transactions)
 
             self.assertEqual(
                 utils.get_shares_count_until_year(self.years[index]),

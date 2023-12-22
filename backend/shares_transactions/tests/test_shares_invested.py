@@ -8,7 +8,7 @@ from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
 from faker import Faker
 from shares_transactions.tests.factory import SharesTransactionFactory
-from shares_transactions.utils import SharesTransactionsUtils
+from shares_transactions.utils import SharesTransactionCalculator
 
 logger = logging.getLogger("buho_backend")
 
@@ -58,14 +58,14 @@ class SharesInvestedTestCase(BaseApiTestCase):
 
     def test_get_invested_on_year(self):
         index = 3
-        utils = SharesTransactionsUtils(self.company.shares_transactions)
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
         self.assertEqual(
             utils.get_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
         index = 0
-        utils = SharesTransactionsUtils(self.company.shares_transactions)
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
         self.assertEqual(
             utils.get_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
@@ -73,7 +73,7 @@ class SharesInvestedTestCase(BaseApiTestCase):
 
     def test_get_accumulated_investment_until_current_year(self):
         index = 3
-        utils = SharesTransactionsUtils(self.company.shares_transactions)
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
         self.assertEqual(
             utils.get_accumulated_investment_until_current_year(),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
@@ -81,7 +81,7 @@ class SharesInvestedTestCase(BaseApiTestCase):
 
     def test_get_invested_on_year_all(self):
         index = 3
-        utils = SharesTransactionsUtils(
+        utils = SharesTransactionCalculator(
             self.company.shares_transactions,
         )
         self.assertEqual(
@@ -91,7 +91,7 @@ class SharesInvestedTestCase(BaseApiTestCase):
 
     def test_get_accumulated_investment_on_year(self):
         index = 3
-        utils = SharesTransactionsUtils(
+        utils = SharesTransactionCalculator(
             self.company.shares_transactions,
         )
         self.assertEqual(
@@ -99,7 +99,7 @@ class SharesInvestedTestCase(BaseApiTestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 1
-        utils = SharesTransactionsUtils(
+        utils = SharesTransactionCalculator(
             self.company.shares_transactions,
         )
         self.assertEqual(
@@ -107,7 +107,7 @@ class SharesInvestedTestCase(BaseApiTestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         # index = 0
-        # utils = SharesTransactionsUtils(
+        # utils = SharesTransactionCalculator(
         #     self.company.shares_transactions, self.years[index]
         # )
         # self.assertEqual(utils.get_invested_on_year(), self.prices_times_counts[index])
@@ -137,11 +137,11 @@ class SharesInvestedTestCase(BaseApiTestCase):
     #         len(self.company.shares_transactions.all()), self.total_transactions
     #     )
 
-    #     utils = SharesTransactionsUtils(self.company.shares_transactions, 'all')
+    #     utils = SharesTransactionCalculator(self.company.shares_transactions, 'all')
     #     self.assertEqual(utils.get_shares_count_until_year(), self.shares_count)
 
     #     for index in range(0, len(self.years)):
-    #         utils = SharesTransactionsUtils(self.company.shares_transactions, year=self.years[index])
+    #         utils = SharesTransactionCalculator(self.company.shares_transactions, year=self.years[index])
 
     #         self.assertEqual(
     #             utils.get_shares_count_until_year(), self.accumulated_counts_after_sell[index]

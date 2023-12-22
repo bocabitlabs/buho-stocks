@@ -6,7 +6,7 @@ from functools import reduce
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.tests.factory import CompanyFactory
 from dividends_transactions.tests.factory import DividendsTransactionFactory
-from dividends_transactions.utils import DividendsTransactionsUtils
+from dividends_transactions.utils import DividendsTransactionCalculator
 from faker import Faker
 
 logger = logging.getLogger("buho_backend")
@@ -57,7 +57,7 @@ class DividendsUtilsTestCase(BaseApiTestCase):
 
     def test_get_dividends_on_year(self):
         index = 0
-        utils = DividendsTransactionsUtils(self.company.dividends_transactions)
+        utils = DividendsTransactionCalculator(self.company.dividends_transactions)
 
         self.assertEqual(
             utils.get_dividends_of_year(self.years[index]),
@@ -65,7 +65,7 @@ class DividendsUtilsTestCase(BaseApiTestCase):
         )
 
         index = 0
-        utils = DividendsTransactionsUtils(self.company.dividends_transactions)
+        utils = DividendsTransactionCalculator(self.company.dividends_transactions)
         self.assertEqual(
             utils.get_dividends_of_year(self.years[index]),
             self.prices_times_counts[index],
@@ -73,7 +73,7 @@ class DividendsUtilsTestCase(BaseApiTestCase):
 
     def test_get_accumulated_dividends_until_current_year(self):
         index = 3
-        utils = DividendsTransactionsUtils(self.company.dividends_transactions)
+        utils = DividendsTransactionCalculator(self.company.dividends_transactions)
         self.assertEqual(
             utils.get_accumulated_dividends_until_current_year(),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),

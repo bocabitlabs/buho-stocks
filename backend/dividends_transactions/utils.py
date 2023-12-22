@@ -5,7 +5,7 @@ from dividends_transactions.models import DividendsTransaction
 from django.db.models.query import QuerySet
 
 
-class DividendsTransactionsUtils:
+class DividendsTransactionCalculator:
     def __init__(
         self,
         transactions: QuerySet[DividendsTransaction],

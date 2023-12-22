@@ -1,13 +1,13 @@
 from typing import Optional
 
 from buho_backend.settings.common import YEAR_FOR_ALL
+from companies.calculators import CompanyStatsCalculator
 from companies.models import Company
-from companies.utils import CompanyUtils
 from stock_prices.api import StockPricesApi
 from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 
-class StockPricesUtils:
+class CompanyStockPriceFetcher:
     def __init__(self, company: Company, year: int, update_api_price=False):
         self.company = company
         self.year = year
@@ -42,7 +42,7 @@ class StockPricesUtils:
                 stock_price = self.get_stock_price_for_tickers(self.company.alt_tickers)
 
         else:
-            company_utils = CompanyUtils(self.company.id)
+            company_utils = CompanyStatsCalculator(self.company.id)
             first_year = company_utils.get_company_first_year()
             if not first_year or first_year > int(self.year):
                 return None

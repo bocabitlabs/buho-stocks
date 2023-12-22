@@ -2,11 +2,11 @@ import logging
 from decimal import Decimal
 
 from buho_backend.settings.common import YEAR_FOR_ALL
+from companies.calculators import CompanyStatsCalculator
 from companies.models import Company
-from companies.utils import CompanyUtils
 from exchange_rates.services.exchange_rate_service import ExchangeRateService
 from stats.models.company_stats import CompanyStatsForYear
-from stock_prices.utils import StockPricesUtils
+from stock_prices.utils import CompanyStockPriceFetcher
 
 logger = logging.getLogger("buho_backend")
 
@@ -23,9 +23,9 @@ class CompanyStatsUtils:
         self.year = year
         self.use_portfolio_currency = use_portfolio_currency
         self.update_api_price = update_api_price
-        self.company_utils = CompanyUtils(self.company.id, use_portfolio_currency=self.use_portfolio_currency)
+        self.company_utils = CompanyStatsCalculator(self.company.id, use_portfolio_currency=self.use_portfolio_currency)
 
-        self.stock_prices_utils = StockPricesUtils(self.company, self.year, update_api_price=update_api_price)
+        self.stock_prices_utils = CompanyStockPriceFetcher(self.company, self.year, update_api_price=update_api_price)
         self.exchange_rates_utils = ExchangeRateService()
 
     def get_portfolio_value(self, stock_price, shares_count):

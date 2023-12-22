@@ -5,7 +5,7 @@ from shares_transactions.models import SharesTransaction
 logger = logging.getLogger("buho_backend")
 
 
-class PortfolioUtils:
+class PortfolioStatsCalculator:
     def get_portfolio_first_year(self, portfolio_id):
         """_summary_
 

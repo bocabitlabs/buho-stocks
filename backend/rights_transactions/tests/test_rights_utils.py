@@ -7,8 +7,8 @@ from buho_backend.tests.base_test_case import BaseApiTestCase
 from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
 from faker import Faker
+from rights_transactions.calculators import RightsTransactionCalculator
 from rights_transactions.tests.factory import RightsTransactionFactory
-from rights_transactions.utils import RightsTransactionsUtils
 
 logger = logging.getLogger("buho_backend")
 
@@ -61,14 +61,14 @@ class RightsInvestedTestCase(BaseApiTestCase):
     def test_get_invested_on_year(self):
         index = 0
         logger.debug(self.company)
-        utils = RightsTransactionsUtils(self.company.rights_transactions)
+        utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
             utils.get_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
         index = 3
-        utils = RightsTransactionsUtils(self.company.rights_transactions)
+        utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
             utils.get_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
@@ -77,7 +77,7 @@ class RightsInvestedTestCase(BaseApiTestCase):
     def test_get_accumulated_investment_until_current_year(self):
         index = len(self.prices_times_counts) - 1
 
-        utils = RightsTransactionsUtils(self.company.rights_transactions)
+        utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
             utils.get_accumulated_investment_until_current_year(),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
@@ -85,7 +85,7 @@ class RightsInvestedTestCase(BaseApiTestCase):
 
     def test_get_invested_on_year_all(self):
         index = 3
-        utils = RightsTransactionsUtils(
+        utils = RightsTransactionCalculator(
             self.company.rights_transactions,
         )
         self.assertEqual(
@@ -95,7 +95,7 @@ class RightsInvestedTestCase(BaseApiTestCase):
 
     def test_get_accumulated_investment_on_year(self):
         index = 3
-        utils = RightsTransactionsUtils(
+        utils = RightsTransactionCalculator(
             self.company.rights_transactions,
         )
         self.assertEqual(
@@ -103,7 +103,7 @@ class RightsInvestedTestCase(BaseApiTestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 1
-        utils = RightsTransactionsUtils(
+        utils = RightsTransactionCalculator(
             self.company.rights_transactions,
         )
         self.assertEqual(
@@ -111,7 +111,7 @@ class RightsInvestedTestCase(BaseApiTestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 0
-        utils = RightsTransactionsUtils(self.company.rights_transactions)
+        utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
             utils.get_invested_on_year(self.years[index]),
             self.prices_times_counts[index],

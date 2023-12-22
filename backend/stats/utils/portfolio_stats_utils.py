@@ -3,10 +3,10 @@ import logging
 
 from buho_backend.settings.common import YEAR_FOR_ALL
 from buho_backend.transaction_types import TransactionType
-from companies.utils import CompanyUtils
+from companies.calculators import CompanyStatsCalculator
 from dividends_transactions.models import DividendsTransaction
+from portfolios.calculators import PortfolioStatsCalculator
 from portfolios.models import Portfolio
-from portfolios.utils import PortfolioUtils
 from shares_transactions.models import SharesTransaction
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.utils.company_stats_utils import CompanyStatsUtils
@@ -168,7 +168,7 @@ class PortfolioStatsUtils:
             if company.is_closed:
                 continue
 
-            first_year = CompanyUtils(company.id).get_company_first_year()
+            first_year = CompanyStatsCalculator(company.id).get_company_first_year()
             logger.debug(f"{company.name} First year: {first_year} vs {self.year}")
             if self.year != "all" or self.year != YEAR_FOR_ALL:
                 if not first_year or first_year > int(self.year):
@@ -383,7 +383,7 @@ class PortfolioStatsUtils:
     def get_dividends_for_all_years_monthly(self):
         logger.debug("Get dividends for all years monthly")
         years = {}
-        portolio_utils = PortfolioUtils()
+        portolio_utils = PortfolioStatsCalculator()
         first_year = portolio_utils.get_portfolio_first_year(self.portfolio)
         if first_year is None:
             return {}

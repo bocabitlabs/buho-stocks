@@ -4,10 +4,10 @@ from decimal import Decimal
 from buho_backend.transaction_types import TransactionType
 from django.db.models.query import QuerySet
 from rights_transactions.models import RightsTransaction
-from shares_transactions.new_utils.transaction_utils import TransactionsUtils
+from shares_transactions.new_utils.transaction_utils import TransactionCalculator
 
 
-class RightsTransactionsUtils:
+class RightsTransactionCalculator:
     def __init__(self, transactions: QuerySet[RightsTransaction], use_portfolio_currency: bool = True):
         self.transactions = transactions
         self.use_portfolio_currency = use_portfolio_currency
@@ -42,7 +42,7 @@ class RightsTransactionsUtils:
         """
         total: Decimal = Decimal(0)
         query = self._get_transactions_query(year)
-        transactions_utils = TransactionsUtils()
+        transactions_utils = TransactionCalculator()
         total = transactions_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         return total
 
@@ -54,7 +54,7 @@ class RightsTransactionsUtils:
         """
         total: Decimal = Decimal(0)
         query = self._get_transactions_query(year, use_accumulated=True)
-        transactions_utils = TransactionsUtils()
+        transactions_utils = TransactionCalculator()
 
         total = transactions_utils.get_transactions_amount(query, use_portfolio_currency=self.use_portfolio_currency)
         return total

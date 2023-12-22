@@ -1,27 +1,27 @@
 from decimal import Decimal
 
 from companies.models import Company
-from dividends_transactions.utils import DividendsTransactionsUtils
-from rights_transactions.utils import RightsTransactionsUtils
+from dividends_transactions.utils import DividendsTransactionCalculator
+from rights_transactions.calculators import RightsTransactionCalculator
 from shares_transactions.models import SharesTransaction
-from shares_transactions.utils import SharesTransactionsUtils
+from shares_transactions.utils import SharesTransactionCalculator
 
 
-class CompanyUtils:
+class CompanyStatsCalculator:
     def __init__(self, company_id: int, use_portfolio_currency: bool = True):
         self.company: Company = Company.objects.get(id=company_id)
         self.use_portfolio_currency: bool = use_portfolio_currency
 
-        self.shares_utils = SharesTransactionsUtils(
+        self.shares_utils = SharesTransactionCalculator(
             self.company.shares_transactions,
             use_portfolio_currency=self.use_portfolio_currency,
         )
-        self.rights_utils = RightsTransactionsUtils(
+        self.rights_utils = RightsTransactionCalculator(
             self.company.rights_transactions,
             use_portfolio_currency=self.use_portfolio_currency,
         )
 
-        self.dividends_utils = DividendsTransactionsUtils(
+        self.dividends_utils = DividendsTransactionCalculator(
             self.company.dividends_transactions,
             use_portfolio_currency=self.use_portfolio_currency,
         )
