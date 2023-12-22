@@ -64,7 +64,7 @@
     "lint": "eslint -c .eslintrc.js ./src --ext .tsx,.ts,.js,.jsx",
     "prettier:fix": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "prepare": "is-ci || (cd .. && husky install app/client/.husky)",
+    "prepare": "is-ci || (cd .. && husky install client/.husky)",
     "version": "node src/make_version.js > ./src/version.js",
     "prebuild": "yarn run version",
     "prestart": "yarn run version"
