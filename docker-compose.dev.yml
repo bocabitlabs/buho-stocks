@@ -1,8 +1,11 @@
 version: '3'
 services:
   backend:
-    image: ghcr.io/bocabitlabs/buho-stocks:latest
-    container_name: buho-backend
+    # image: ghcr.io/bocabitlabs/buho-stocks:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: backend
     restart: always
     command: daphne -b 0.0.0.0 -p 8000 buho_backend.asgi:application
     volumes:
@@ -20,12 +23,15 @@ services:
       - db
   redis:
     image: redis:7
-    container_name: buho-redis
+    container_name: redis
     expose:
       - 6379
   celery:
-    image: ghcr.io/bocabitlabs/buho-stocks:latest
-    container_name: buho-celery
+    # image: ghcr.io/bocabitlabs/buho-stocks:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: celery
     restart: always
     command: celery -A buho_backend.celery_app:app worker -l info
     volumes:
@@ -40,8 +46,11 @@ services:
       - db
       - redis
   client:
-    image: ghcr.io/bocabitlabs/buho-stocks-client:latest
-    container_name: buho-client
+    # image: ghcr.io/bocabitlabs/buho-stocks-client:latest
+    build:
+      context: .
+      dockerfile: docker.client.Dockerfile
+    container_name: client
     restart: always
     env_file:
       - ./.env.prod
@@ -56,7 +65,7 @@ services:
       - backend
   db:
     image: mariadb:10
-    container_name: buho-db
+    container_name: db
     expose:
       - 3306
     restart: always
