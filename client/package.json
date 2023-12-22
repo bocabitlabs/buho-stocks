@@ -28,6 +28,7 @@
     "eslint-plugin-vitest": "^0.0.54",
     "history": "^5.3.0",
     "i18next": "^22.4.14",
+    "is-ci": "^3.0.1",
     "lodash": "^4.17.21",
     "moment-timezone": "^0.5.35",
     "path-to-regexp": "^6.2.0",
@@ -63,7 +64,7 @@
     "lint": "eslint -c .eslintrc.js ./src --ext .tsx,.ts,.js,.jsx",
     "prettier:fix": "prettier --write .",
     "prettier:check": "prettier --check .",
-    "prepare-husky": "cd .. && husky install client/.husky",
+    "prepare": "is-ci || (cd .. && husky install app/client/.husky)",
     "version": "node src/make_version.js > ./src/version.js",
     "prebuild": "yarn run version",
     "prestart": "yarn run version"
