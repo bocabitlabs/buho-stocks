@@ -5,14 +5,14 @@ from decimal import Decimal
 from faker import Faker
 
 from buho_backend.tests.base_test_case import BaseApiTestCase
-from exchange_rates.services.exchange_rate_service import ExchangeRateService
+from exchange_rates.services.exchange_rate_fetcher import ExchangeRateFetcher
 from exchange_rates.tests.factory import ExchangeRateFactory
 from stock_prices.tests.mocks.mock_yfinance import create_empty_download_mock_df
 
 logger = logging.getLogger("buho_backend")
 
 
-class ExchangeRateServiceTestCase(BaseApiTestCase):
+class ExchangeRateFetcherTestCase(BaseApiTestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
@@ -42,7 +42,7 @@ class ExchangeRateServiceTestCase(BaseApiTestCase):
 
     def test_get_exchange_rate_for_date(self):
         index = 3
-        service = ExchangeRateService()
+        service = ExchangeRateFetcher()
         rate = service.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.exchange_dates[index])
         if not rate:
             self.fail("Rate not found")
@@ -74,7 +74,7 @@ class ExchangeRateServiceTestCase(BaseApiTestCase):
             "exchange_date": "2022-01-01",
             "exchange_rate": "1.000",
         }
-        service = ExchangeRateService()
+        service = ExchangeRateFetcher()
         value = service.get_exchange_rate_for_date(self.from_currency, self.from_currency, self.exchange_dates[index])
 
         if not value:
@@ -101,7 +101,7 @@ class ExchangeRateServiceTestCase(BaseApiTestCase):
         )
 
     def test_get_exchange_rate_not_found_in_db(self):
-        service = ExchangeRateService()
+        service = ExchangeRateFetcher()
         result = service.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.not_found_date)
 
         if not result:
@@ -112,7 +112,7 @@ class ExchangeRateServiceTestCase(BaseApiTestCase):
         self.assertEqual(result.exchange_rate, 120)
 
     def test_get_exchange_rate_not_found_at_all(self):
-        service = ExchangeRateService()
+        service = ExchangeRateFetcher()
         self.mock_download.return_value = create_empty_download_mock_df()
         result = service.get_exchange_rate_for_date("ABCDE", self.to_currency, self.not_found_date)
         self.assertIsNone(result)

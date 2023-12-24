@@ -3,9 +3,9 @@ import time
 from typing import Any, Tuple, TypedDict
 
 import requests_cache
-import yfinance as yf
+import yfinance as yf  # type: ignore
 from django.conf import settings
-from pandas import Timestamp
+from pandas import Timestamp  # type: ignore
 from redis import Redis
 
 from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice

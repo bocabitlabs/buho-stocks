@@ -7,11 +7,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from buho_backend.settings.common import YEAR_FOR_ALL
+from stats.calculators.portfolio_stats_utils import PortfolioStatsUtils
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.serializers.portfolio_stats import PortfolioStatsForYearSerializer
 from stats.tasks import update_portolfio_stats
-from stats.utils.portfolio_stats_utils import PortfolioStatsUtils
 
 logger = logging.getLogger("buho_backend")
 
@@ -33,14 +33,17 @@ class PortfolioStatsAPIView(APIView):
                 stats = self.get_stats_grouped(portfolio_id, year, update_api_price, group_by)
                 return stats
 
-            stats = self.get_stats_for_year(portfolio_id, year, update_api_price)
+            stats = self.get_year_stats(portfolio_id, year, update_api_price)
             return stats
         except PortfolioStatsForYear.DoesNotExist:
             return None
 
-    def get_stats_for_year(self, portfolio_id, year, update_api_price):
+    def get_year_stats(self, portfolio_id, year, update_api_price):
+        if year == "all":
+            year = YEAR_FOR_ALL
+
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
-        stats = portfolio_stats.get_stats_for_year()
+        stats = portfolio_stats.get_year_stats()
         logger.debug(stats)
         serializer = PortfolioStatsForYearSerializer(stats)
         stats = serializer.data
@@ -51,12 +54,12 @@ class PortfolioStatsAPIView(APIView):
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
         stats = {}
         if group_by == "month":
-            if year == "all":
+            if year == YEAR_FOR_ALL:
                 stats = portfolio_stats.get_dividends_for_all_years_monthly()
             else:
                 stats = portfolio_stats.get_dividends_for_year_monthly()
         if group_by == "company":
-            stats = portfolio_stats.get_stats_for_year_by_company()
+            stats = portfolio_stats.get_year_stats_by_company()
             serializer = CompanyStatsForYearSerializer(stats, many=True)
             stats = serializer.data
         return stats
@@ -74,6 +77,9 @@ class PortfolioStatsAPIView(APIView):
         Retrieve the company item with given id
         """
         group_by = self.request.query_params.get("groupBy")
+
+        if year == "all":
+            year = YEAR_FOR_ALL
 
         stats = self.get_object(portfolio_id, year, group_by=group_by)
         if not stats:
@@ -112,12 +118,12 @@ class PortfolioStatsAPIView(APIView):
 class PortfolioStatsAllYearsAPIView(APIView):
     def get_object(self, portfolio_id):
         try:
-            stats = self.get_stats_for_year(portfolio_id)
+            stats = self.get_year_stats(portfolio_id)
             return stats
         except PortfolioStatsForYear.DoesNotExist:
             return None
 
-    def get_stats_for_year(self, portfolio_id):
+    def get_year_stats(self, portfolio_id):
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=YEAR_FOR_ALL)
         stats = portfolio_stats.get_all_years_stats()
         return stats

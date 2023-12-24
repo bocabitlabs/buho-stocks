@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.serializers import ExchangeRateSerializer
-from exchange_rates.services.exchange_rate_service import ExchangeRateService
+from exchange_rates.services.exchange_rate_fetcher import ExchangeRateFetcher
 
 logger = logging.getLogger("buho_backend")
 
@@ -46,14 +46,13 @@ class ExchangeRateDetailAPIView(APIView):
         """
         Retrieve the market item with given exchange_name
         """
-        service = ExchangeRateService()
+        service = ExchangeRateFetcher()
         exchange_rate = service.get_exchange_rate_for_date(exchange_from, exchange_to, exchange_date)
-        serializer = ExchangeRateSerializer(exchange_rate)
 
-        if not serializer:
+        if not exchange_rate:
             return Response(
                 {"res": "Exchange rate does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
+        serializer = ExchangeRateSerializer(exchange_rate)
         return Response(serializer.data, status=status.HTTP_200_OK)

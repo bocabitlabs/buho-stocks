@@ -6,7 +6,7 @@ from exchange_rates.services.yfinance_api_client import YFinanceExchangeClient
 logger = logging.getLogger("buho_backend")
 
 
-class ExchangeRateService:
+class ExchangeRateFetcher:
     def save_exchange_rate(self, data: dict) -> ExchangeRate:
         """Saves the exchange rate in the database
 

@@ -59,19 +59,19 @@ class RightsInvestedTestCase(BaseApiTestCase):
     # def setUp(self):
     #     pass
 
-    def test_get_invested_on_year(self):
+    def test_calculate_invested_on_year(self):
         index = 0
         logger.debug(self.company)
         utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
         index = 3
         utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
@@ -84,13 +84,13 @@ class RightsInvestedTestCase(BaseApiTestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
 
-    def test_get_invested_on_year_all(self):
+    def test_calculate_invested_on_year_all(self):
         index = 3
         utils = RightsTransactionCalculator(
             self.company.rights_transactions,
         )
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
@@ -100,7 +100,7 @@ class RightsInvestedTestCase(BaseApiTestCase):
             self.company.rights_transactions,
         )
         self.assertEqual(
-            utils.get_accumulated_investment_until_year(self.years[index]),
+            utils.calculate_accumulated_investment_until_year(self.years[index]),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 1
@@ -108,12 +108,12 @@ class RightsInvestedTestCase(BaseApiTestCase):
             self.company.rights_transactions,
         )
         self.assertEqual(
-            utils.get_accumulated_investment_until_year(self.years[index]),
+            utils.calculate_accumulated_investment_until_year(self.years[index]),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 0
         utils = RightsTransactionCalculator(self.company.rights_transactions)
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )

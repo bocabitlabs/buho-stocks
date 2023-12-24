@@ -6,10 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from buho_backend.celery_app import revoke_scheduled_tasks_by_name
+from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
+from stats.calculators.company_stats_utils import CompanyStatsCalculator
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
 from stats.tasks import update_portolfio_stats
-from stats.utils.company_stats_utils import CompanyStatsUtils
 
 logger = logging.getLogger("buho_backend")
 
@@ -17,8 +18,8 @@ logger = logging.getLogger("buho_backend")
 class CompanyStatsAPIView(APIView):
     def get_object(self, company_id, year, update_api_price=False):
         try:
-            company_stats = CompanyStatsUtils(company_id, year=year, update_api_price=update_api_price)
-            instance = company_stats.get_stats_for_year()
+            company_stats = CompanyStatsCalculator(company_id, year=year, update_api_price=update_api_price)
+            instance = company_stats.get_year_stats(year)
             return instance
         except Company.DoesNotExist:
             return None
@@ -36,6 +37,8 @@ class CompanyStatsAPIView(APIView):
         """
         Retrieve the company item with given company_id
         """
+        if year == "all":
+            year = YEAR_FOR_ALL
         instance = self.get_object(company_id, year)
         if not instance:
             return Response(

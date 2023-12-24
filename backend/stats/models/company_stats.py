@@ -40,4 +40,7 @@ class CompanyStatsForYear(models.Model):
         verbose_name_plural = "Companies Stats"
 
     def __str__(self):
-        return f"Company Stats: {self.company.name} ({self.year})"
+        return (
+            f"Company Stats: {self.company.name} ({self.year}) - "
+            f"{self.portfolio_currency} - Dv.yield: {self.dividends_yield}"
+        )

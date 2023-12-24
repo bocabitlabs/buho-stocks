@@ -7,8 +7,8 @@ from faker import Faker
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
+from shares_transactions.calculators.shares_transaction_calculator import SharesTransactionCalculator
 from shares_transactions.tests.factory import SharesTransactionFactory
-from shares_transactions.utils import SharesTransactionCalculator
 
 logger = logging.getLogger("buho_backend")
 
@@ -77,7 +77,7 @@ class SharesCountTestCase(BaseApiTestCase):
         for index in range(0, len(self.years)):
             utils = SharesTransactionCalculator(self.company.shares_transactions)
             self.assertEqual(
-                utils.get_shares_count_on_year(self.years[index]),
+                utils.calculate_shares_count_on_year(self.years[index]),
                 self.counts[index],
             )
 
@@ -108,6 +108,6 @@ class SharesCountTestCase(BaseApiTestCase):
             utils = SharesTransactionCalculator(self.company.shares_transactions)
 
             self.assertEqual(
-                utils.get_shares_count_until_year(self.years[index]),
+                utils.calculate_shares_count_until_year(self.years[index]),
                 self.accumulated_counts_after_sell[index],
             )

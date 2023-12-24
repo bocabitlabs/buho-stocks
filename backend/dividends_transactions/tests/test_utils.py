@@ -61,14 +61,14 @@ class DividendsUtilsTestCase(BaseApiTestCase):
         utils = DividendsTransactionCalculator(self.company.dividends_transactions)
 
         self.assertEqual(
-            utils.get_dividends_of_year(self.years[index]),
+            utils.calculate_dividends_of_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
         index = 0
         utils = DividendsTransactionCalculator(self.company.dividends_transactions)
         self.assertEqual(
-            utils.get_dividends_of_year(self.years[index]),
+            utils.calculate_dividends_of_year(self.years[index]),
             self.prices_times_counts[index],
         )
 

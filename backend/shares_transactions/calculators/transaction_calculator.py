@@ -9,7 +9,7 @@ logger = logging.getLogger("buho_backend")
 
 
 class TransactionCalculator:
-    def get_transaction_amount(
+    def calculate_single_transaction_amount(
         self,
         transaction: Transaction,
         use_portfolio_currency: bool = True,
@@ -31,13 +31,13 @@ class TransactionCalculator:
         exchange_rate: Decimal = Decimal(1)
         if use_portfolio_currency:
             exchange_rate = transaction.exchange_rate
-        # logger.debug(f"Exchange rate: {exchange_rate}")
+
         total = (transaction.total_amount.amount * exchange_rate) + (
             transaction.total_commission.amount * exchange_rate
         )
         return total
 
-    def get_transactions_amount(self, transactions: QuerySet, use_portfolio_currency: bool = True) -> Decimal:
+    def calculate_transactions_amount(self, transactions: QuerySet, use_portfolio_currency: bool = True) -> Decimal:
         """Get the total amount of a list of transactions
 
         Args:
@@ -52,5 +52,5 @@ class TransactionCalculator:
         """
         total: Decimal = Decimal(0)
         for item in transactions:
-            total += self.get_transaction_amount(item, use_portfolio_currency=use_portfolio_currency)
+            total += self.calculate_single_transaction_amount(item, use_portfolio_currency=use_portfolio_currency)
         return total

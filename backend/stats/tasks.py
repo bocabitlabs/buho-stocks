@@ -6,8 +6,8 @@ from buho_backend.consumers import update_task_status
 from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from portfolios.models import Portfolio
-from stats.utils.company_stats_utils import CompanyStatsUtils
-from stats.utils.portfolio_stats_utils import PortfolioStatsUtils
+from stats.calculators.company_stats_utils import CompanyStatsCalculator
+from stats.calculators.portfolio_stats_utils import PortfolioStatsUtils
 
 logger = logging.getLogger("buho_backend")
 
@@ -77,8 +77,8 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
                 "PROGRESS",
                 percent,
             )
-            company_stats = CompanyStatsUtils(company.id, year=year, update_api_price=update_api_price)
-            company_stats.update_stats_for_year()
+            company_stats = CompanyStatsCalculator(company.id, year=year, update_api_price=update_api_price)
+            company_stats.update_year_stats()
             current += 1
         except Exception as error:
             logger.error(f"Error updating company stats for {company.name}: {error}", exc_info=True)
@@ -93,7 +93,7 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
     try:
         # Update the portfolio
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
-        portfolio_stats.update_stats_for_year()
+        portfolio_stats.update_year_stats()
 
         update_task_status(
             self.request.id,

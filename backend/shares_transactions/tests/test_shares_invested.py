@@ -8,8 +8,8 @@ from faker import Faker
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
+from shares_transactions.calculators.shares_transaction_calculator import SharesTransactionCalculator
 from shares_transactions.tests.factory import SharesTransactionFactory
-from shares_transactions.utils import SharesTransactionCalculator
 
 logger = logging.getLogger("buho_backend")
 
@@ -57,18 +57,18 @@ class SharesInvestedTestCase(BaseApiTestCase):
     # def setUp(self):
     #     pass
 
-    def test_get_invested_on_year(self):
+    def test_calculate_invested_on_year(self):
         index = 3
         utils = SharesTransactionCalculator(self.company.shares_transactions)
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
         index = 0
         utils = SharesTransactionCalculator(self.company.shares_transactions)
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
@@ -80,13 +80,13 @@ class SharesInvestedTestCase(BaseApiTestCase):
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
 
-    def test_get_invested_on_year_all(self):
+    def test_calculate_invested_on_year_all(self):
         index = 3
         utils = SharesTransactionCalculator(
             self.company.shares_transactions,
         )
         self.assertEqual(
-            utils.get_invested_on_year(self.years[index]),
+            utils.calculate_invested_on_year(self.years[index]),
             self.prices_times_counts[index],
         )
 
@@ -96,7 +96,7 @@ class SharesInvestedTestCase(BaseApiTestCase):
             self.company.shares_transactions,
         )
         self.assertEqual(
-            utils.get_accumulated_investment_until_year(self.years[index]),
+            utils.calculate_accumulated_investment_until_year(self.years[index]),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
         index = 1
@@ -104,46 +104,6 @@ class SharesInvestedTestCase(BaseApiTestCase):
             self.company.shares_transactions,
         )
         self.assertEqual(
-            utils.get_accumulated_investment_until_year(self.years[index]),
+            utils.calculate_accumulated_investment_until_year(self.years[index]),
             reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
         )
-        # index = 0
-        # utils = SharesTransactionCalculator(
-        #     self.company.shares_transactions, self.years[index]
-        # )
-        # self.assertEqual(utils.get_invested_on_year(), self.prices_times_counts[index])
-
-    # def test_get_shares_count_with_sells(self):
-    #     for index in range(0, len(self.years)):
-    #         first_datetime = datetime.datetime.strptime(
-    #             f"{self.years[index]}-01-01", "%Y-%m-%d"
-    #         )
-    #         SharesTransactionFactory.create(
-    #             user=self.user_saved,
-    #             company=self.company,
-    #             gross_price_per_share=self.sell_prices[index],
-    #             gross_price_per_share_currency=self.company.base_currency,
-    #             total_commission=self.commissions[index],
-    #             total_commission_currency=self.company.base_currency,
-    #             count=self.sell_counts[index],
-    #             type=TransactionType.SELL,
-    #             exchange_rate=self.exchange_rate,
-    #             transaction_date=datetime.date(
-    #                 first_datetime.year, first_datetime.month, first_datetime.day
-    #             ),
-    #         )
-    #         self.shares_count -= self.sell_counts[index]
-    #         self.total_transactions += 1
-    #     self.assertEqual(
-    #         len(self.company.shares_transactions.all()), self.total_transactions
-    #     )
-
-    #     utils = SharesTransactionCalculator(self.company.shares_transactions, 'all')
-    #     self.assertEqual(utils.get_shares_count_until_year(), self.shares_count)
-
-    #     for index in range(0, len(self.years)):
-    #         utils = SharesTransactionCalculator(self.company.shares_transactions, year=self.years[index])
-
-    #         self.assertEqual(
-    #             utils.get_shares_count_until_year(), self.accumulated_counts_after_sell[index]
-    #         )
