@@ -1,4 +1,6 @@
+import { useTranslation } from "react-i18next";
 import { useMutation, useQuery } from "react-query";
+import { toast } from "react-toastify";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ISettings, ISettingsFormFields } from "types/settings";
@@ -13,12 +15,17 @@ export const fetchSettings = async () => {
 };
 
 export const useUpdateSettings = () => {
+  const { t } = useTranslation();
   return useMutation(
     ({ newSettings }: UpdateSettingsMutationProps) =>
       apiClient.put(`/settings/`, newSettings),
     {
       onSuccess: () => {
+        toast.success<string>(t("Settings updated succesfully"));
         queryClient.invalidateQueries("settings");
+      },
+      onError: () => {
+        toast.error<string>(t("Unable to update settings"));
       },
     },
   );
