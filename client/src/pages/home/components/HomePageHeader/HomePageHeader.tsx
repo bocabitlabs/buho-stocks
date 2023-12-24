@@ -26,8 +26,7 @@ function HomePageHeader({ children }: Props) {
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
+  const onCreate = () => {
     setIsModalVisible(false);
   };
 
