@@ -9,8 +9,10 @@ class StockPrice(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    def __str___(self):
-        return f"{self.ticker} - {self.price} ({self.transaction_date})"
-
     class Meta:
         unique_together = ("ticker", "transaction_date")
+        verbose_name = "Stock Price"
+        verbose_name_plural = "Stock Prices"
+
+    def __str__(self):
+        return f"{self.ticker} - {self.price} ({self.transaction_date})"

@@ -1,14 +1,14 @@
+import logging
 from decimal import Decimal
 
-from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from dividends_transactions.utils import DividendsTransactionCalculator
 from exchange_rates.services.exchange_rate_fetcher import ExchangeRateFetcher
 from rights_transactions.calculators import RightsTransactionCalculator
 from shares_transactions.calculators.shares_transaction_calculator import SharesTransactionCalculator
-from shares_transactions.models import SharesTransaction
-from stock_prices.api import StockPricesApi
-from stock_prices.services.yfinance_api_client import YFinanceApiClient
+from stock_prices.fetchers import CompanyStockPriceFetcher
+
+logger = logging.getLogger("buho_backend")
 
 
 class CompanyDataCalculator:
@@ -29,12 +29,6 @@ class CompanyDataCalculator:
             self.company.dividends_transactions,
             use_portfolio_currency=self.use_portfolio_currency,
         )
-
-    def get_company_first_year(self) -> int | None:
-        query = SharesTransaction.objects.filter(company_id=self.company.id).order_by("transaction_date")
-        if query.exists():
-            return query[0].transaction_date.year
-        return None
 
     def calculate_total_invested_on_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
@@ -66,17 +60,14 @@ class CompanyDataCalculator:
 
     def calculate_company_value_on_year(self, year: int) -> Decimal:
         total = 0
+        logger.debug(f"Calculating company value for {self.company.ticker} in {year}")
         shares_count = self.calculate_accumulated_shares_count_until_year(year)
         if shares_count > 0:
-            api_service = YFinanceApiClient()
-            stock_api = StockPricesApi(api_service)
-            if year == YEAR_FOR_ALL:
-                stock_price = stock_api.get_last_data_from_last_month(self.company.ticker)
-            else:
-                stock_price = stock_api.get_last_data_from_year(self.company.ticker, year)
+            stock_price_fetcher = CompanyStockPriceFetcher(self.company, year, update_api_price=False)
+            stock_price = stock_price_fetcher.get_year_last_stock_price()
             if stock_price:
-                price = stock_price["price"]
-                transaction_date = stock_price["transaction_date"]
+                price = stock_price.price.amount
+                transaction_date = stock_price.transaction_date
 
                 exchange_rates_fetcher = ExchangeRateFetcher()
 

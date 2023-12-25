@@ -56,11 +56,9 @@ class CompanyStatsCalculator:
         dividends_yield = self.company_data_calculator.calculate_dividends_yield_on_year(year)
         logger.debug(f"Dividends_yield on {year}: {dividends_yield}")
         # Fixes
-        last_stock_price_value = last_stock_price["price"] if last_stock_price else 0
-        last_stock_price_currency = last_stock_price["price_currency"] if last_stock_price else ""
-        last_stock_price_transaction_date = (
-            last_stock_price["transaction_date"] if last_stock_price else f"{year}-01-01"
-        )
+        last_stock_price_value = last_stock_price.price if last_stock_price else 0
+        last_stock_price_currency = self.company.base_currency
+        last_stock_price_transaction_date = last_stock_price.transaction_date if last_stock_price else f"{year}-01-01"
         portfolio_currency = self.company.portfolio.base_currency
         portfolio_is_down = portfolio_value < accumulated_investment
 

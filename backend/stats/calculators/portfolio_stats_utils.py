@@ -84,7 +84,7 @@ class PortfolioStatsUtils:
         results = []
         for company in self.portfolio.companies.all():
             company_stats = CompanyStatsCalculator(company.id, year=self.year, update_api_price=self.update_api_price)
-            instance = company_stats.get_year_stats()
+            instance = company_stats.get_year_stats(self.year)
             results.append(instance)
 
         return results
@@ -101,32 +101,25 @@ class PortfolioStatsUtils:
             first_year = first_year["year"]
             years_array = range(int(first_year), datetime.datetime.now().year + 1)
 
-        for year in years_array:
-            invested_on_year = self.portfolio_data_calculator.calculate_total_invested_on_year(year)
-            accummulated_invetment = self.portfolio_data_calculator.calculate_accumulated_investment_until_year(year)
-            year_dividends = self.portfolio_data_calculator.calculate_total_dividends_of_year(year)
-            accummulated_dividends = self.portfolio_data_calculator.calculate_accumulated_dividends_until_year(year)
-            portfolio_value = self.portfolio_data_calculator.calculate_portfolio_value_on_year(year)
-            return_value = self.portfolio_data_calculator.calculate_return_on_year(year)
-            return_yield = self.portfolio_data_calculator.calculate_return_yield_on_year(year)
-            return_with_dividends = self.portfolio_data_calculator.calculate_return_with_dividends_on_year(year)
-            return_with_dividends_yield = self.portfolio_data_calculator.calculate_return_with_dividends_yield_on_year(
-                year
-            )
-            dividends_yield = self.portfolio_data_calculator.calculate_accummulated_dividends_yield(year)
+        # Array with the stats of all the years
+        years_list = PortfolioStatsForYear.objects.filter(portfolio=self.portfolio, year__in=years_array).order_by(
+            "year"
+        )
+
+        for year in years_list:
             data = {
-                "year": year,
-                "invested": invested_on_year,
-                "dividends": year_dividends,
+                "year": year.year,
+                "invested": year.invested,
+                "dividends": year.dividends,
                 "portfolioCurrency": self.portfolio.base_currency,
-                "accumulatedInvestment": accummulated_invetment,
-                "accumulatedDividends": accummulated_dividends,
-                "portfolioValue": portfolio_value,
-                "dividendsYield": dividends_yield,
-                "returnValue": return_value,
-                "returnPercent": return_yield,
-                "return_with_dividends": return_with_dividends,
-                "return_with_dividends_percent": return_with_dividends_yield,
+                "accumulatedInvestment": year.accumulated_investment,
+                "accumulatedDividends": year.accumulated_dividends,
+                "portfolioValue": year.portfolio_value,
+                "dividendsYield": year.dividends_yield,
+                "returnValue": year.return_value,
+                "returnPercent": year.return_percent,
+                "return_with_dividends": year.return_with_dividends,
+                "return_with_dividends_percent": year.return_with_dividends_percent,
             }
 
             years_result.append(data)

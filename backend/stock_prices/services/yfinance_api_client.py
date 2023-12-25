@@ -8,7 +8,7 @@ from django.conf import settings
 from pandas import Timestamp  # type: ignore
 from redis import Redis
 
-from stock_prices.services.stock_price_service_base import StockPriceServiceBase, TypedStockPrice
+from stock_prices.services.types import TypedStockPrice
 
 connection = Redis(host=settings.REDIS_HOSTNAME, port=settings.REDIS_PORT)
 backend = requests_cache.RedisCache(connection=connection)
@@ -25,7 +25,7 @@ class TypedYFinanceStockPrice(TypedDict):
     Volume: int
 
 
-class YFinanceApiClient(StockPriceServiceBase):
+class YFinanceApiClient:
     def __init__(self, wait_time=2):
         self.wait_time = wait_time
 

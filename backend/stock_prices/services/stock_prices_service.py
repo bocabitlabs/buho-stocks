@@ -4,19 +4,41 @@ from typing import Optional, Union
 
 from stock_prices.models import StockPrice
 from stock_prices.serializers import StockPriceSerializer
-from stock_prices.services.stock_price_service_base import StockPriceServiceBase
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 logger = logging.getLogger("buho_backend")
 
 
-class StockPricesApi:
+class StockPricesService:
     def __init__(
         self,
-        stock_prices_service: StockPriceServiceBase,
     ):
-        self.stock_prices_service = stock_prices_service
+        self.api_client = YFinanceApiClient()
 
-    def get_historical_data(
+    def get_last_data_from_year(
+        self, ticker: str, from_date: datetime, to_date: datetime, update_api_price=False
+    ) -> Union[StockPrice, None]:
+        # logger.debug(f"Getting last data from year {year} for {ticker}")
+
+        results = self._get_historical_data(
+            ticker, from_date, to_date, minimum_values=1, update_api_price=update_api_price
+        )
+        if len(results) > 0:
+            serializer = StockPriceSerializer(instance=results[-1], many=False)
+            return serializer.data
+        return None
+
+    def get_last_data_from_last_month(self, ticker: str) -> Union[StockPrice, None]:
+        logger.debug(f"Getting last data from last month for {ticker}")
+        from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime("%Y-%m-%d")
+        to_date = datetime.date.today().strftime("%Y-%m-%d")
+        results = self._get_historical_data(ticker, from_date, to_date, minimum_values=1)
+        if len(results) > 0:
+            serializer = StockPriceSerializer(instance=results[-1], many=False)
+            return serializer.data
+        return None
+
+    def _get_historical_data(
         self,
         ticker: str,
         from_date: str,
@@ -40,6 +62,7 @@ class StockPricesApi:
             (
                 f"Getting historical data for {ticker} "
                 f"from {from_date} to {to_date}. update_api_price={update_api_price}, dry_run={dry_run} )"
+                f"minimum_values={minimum_values}"
             )
         )
 
@@ -49,7 +72,7 @@ class StockPricesApi:
         prices = StockPrice.objects.filter(ticker=ticker, transaction_date__range=[from_date, to_date])
 
         delta = to_datetime - from_datetime
-        prices_length = len(prices)
+        prices_length = prices.count()
 
         if minimum_values is None:
             minimum_values = int(delta.days / 2 - 1)
@@ -61,7 +84,8 @@ class StockPricesApi:
 
         if prices_length < minimum_values:
             logger.info(f"No historical data found locally for {ticker} on those dates. Searching remote.")
-            prices = self.stock_prices_service.get_stock_prices_list(ticker, from_date, to_date)
+            prices = self.api_client.get_stock_prices_list(ticker, from_date, to_date)
+
             if len(prices) > 0:
                 logger.info(f"Found {len(prices)} prices for {ticker} in the remote.")
             for price in prices:
@@ -94,31 +118,3 @@ class StockPricesApi:
         else:
             serializer = StockPriceSerializer(instance=prices, many=True)
             return serializer.data
-
-    def get_last_data_from_year(self, ticker: str, year: int, update_api_price=False) -> Union[dict, None]:
-        from_date, to_date = self.get_start_end_dates_for_year(year)
-        results = self.get_historical_data(
-            ticker, from_date, to_date, minimum_values=1, update_api_price=update_api_price
-        )
-        if len(results) > 0:
-            return results[-1]
-        return None
-
-    def get_start_end_dates_for_year(self, year: int) -> tuple[str, str]:
-        todays_date = datetime.date.today()
-        if todays_date.year == int(year):
-            # Get today minus 15 days
-            from_date = (todays_date - datetime.timedelta(days=15)).strftime("%Y-%m-%d")
-            to_date = todays_date.strftime("%Y-%m-%d")
-        else:
-            from_date = f"{year}-12-01"
-            to_date = f"{year}-12-31"
-        return from_date, to_date
-
-    def get_last_data_from_last_month(self, ticker: str) -> Union[dict, None]:
-        from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime("%Y-%m-%d")
-        to_date = datetime.date.today().strftime("%Y-%m-%d")
-        results = self.get_historical_data(ticker, from_date, to_date, minimum_values=1)
-        if len(results) > 0:
-            return results[-1]
-        return None
