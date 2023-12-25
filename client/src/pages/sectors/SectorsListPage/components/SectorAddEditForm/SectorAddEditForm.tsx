@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect } from "react";
+import { ReactElement, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Col, Form, Input, Modal, Row, Select } from "antd";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
@@ -113,7 +113,7 @@ function SectorAddEditForm({
               rules={[
                 {
                   required: true,
-                  message: t("Please input the name of the sector"),
+                  message: t<string>("Please input the name of the sector"),
                 },
               ]}
             >

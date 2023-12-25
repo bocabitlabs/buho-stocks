@@ -32,17 +32,13 @@ export default function SectorsListTable() {
     },
   ];
   const onMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("click", e);
     if (e.key === "1") {
-      console.log("Add sector");
       setAddSectorModalVisible(true);
     }
     if (e.key === "2") {
-      console.log("Add super sector");
       setAddSuperSectorModalVisible(true);
     }
     if (e.key === "3") {
-      console.log("Add sector");
       initializeSectors();
     }
   };

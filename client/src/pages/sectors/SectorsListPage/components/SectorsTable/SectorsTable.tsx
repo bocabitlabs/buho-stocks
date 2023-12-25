@@ -26,8 +26,7 @@ export default function SectorsTable() {
     deleteSector(recordId);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
+  const onCreate = () => {
     setIsModalVisible(false);
   };
 
