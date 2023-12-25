@@ -244,4 +244,5 @@ CHANNEL_LAYERS = {
     },
 }
 
+# This is the default year used to store the stats for the "All" year
 YEAR_FOR_ALL = 9999

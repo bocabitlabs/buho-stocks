@@ -1,6 +1,8 @@
 import os
 
-from .common import *
+from decouple import config  # type: ignore [import]
+
+from .common import *  # noqa: F401, F403
 
 LOG_LEVEL = config("LOG_LEVEL", default="INFO")
 LOGS_ROOT = config("LOGS_ROOT")
@@ -21,7 +23,7 @@ LOGGING = {
     },
     "handlers": {
         "console": {"class": "logging.StreamHandler", "formatter": "console"},
-        "file": {
+        "debug_file": {
             "level": "DEBUG",
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "file",
@@ -29,7 +31,7 @@ LOGGING = {
             "backupCount": 10,
             "filename": os.path.join(LOGS_ROOT, "debug.log"),
         },
-        "file": {
+        "info_file": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "file",
@@ -37,7 +39,7 @@ LOGGING = {
             "backupCount": 10,
             "filename": os.path.join(LOGS_ROOT, "info.log"),
         },
-        "file": {
+        "error_file": {
             "level": "ERROR",
             "class": "logging.handlers.RotatingFileHandler",
             "formatter": "file",
