@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Alert } from "antd";
@@ -17,7 +17,7 @@ export default function CompanyDetailsPage(): ReactElement {
   const { data: company, isFetching, error } = useCompany(+id!, +companyId!);
 
   if (isFetching || !company) {
-    return <LoadingSpin style={{ marginTop: 20 }} />;
+    return <LoadingSpin />;
   }
 
   if (error) {

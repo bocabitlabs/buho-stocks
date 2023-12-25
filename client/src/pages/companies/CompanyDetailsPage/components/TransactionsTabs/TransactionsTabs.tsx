@@ -1,4 +1,4 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Tabs } from "antd";
@@ -23,34 +23,49 @@ export default function TransactionsTabs({
   const navigate = useNavigate();
   const query = useQueryParameters();
 
+  const items = [
+    {
+      label: t("Dividends"),
+      key: "dividends",
+      children: (
+        <DividendsTabPane
+          companyDividendsCurrency={companyDividendsCurrency}
+          portfolioBaseCurrency={portfolioBaseCurrency}
+        />
+      ),
+    },
+    {
+      label: t("Shares"),
+      key: "shares",
+      children: (
+        <SharesTabPane
+          companyBaseCurrency={companyBaseCurrency}
+          portfolioBaseCurrency={portfolioBaseCurrency}
+        />
+      ),
+    },
+    {
+      label: t("Rights"),
+      key: "rights",
+      children: (
+        <RightsTabPane
+          companyBaseCurrency={companyBaseCurrency}
+          portfolioBaseCurrency={portfolioBaseCurrency}
+        />
+      ),
+    },
+  ];
+
   return (
     <Tabs
-      defaultActiveKey={query.get("tab") || "shares"}
+      items={items}
+      defaultActiveKey={query.get("tab") || "dividends"}
       onChange={(activeKey: string) => {
         navigate({
           pathname: window.location.pathname,
           search: `?tab=${activeKey}`,
         });
       }}
-    >
-      <Tabs.TabPane tab={t("Shares")} key="shares">
-        <SharesTabPane
-          companyBaseCurrency={companyBaseCurrency}
-          portfolioBaseCurrency={portfolioBaseCurrency}
-        />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab={t("Dividends")} key="dividends">
-        <DividendsTabPane
-          companyDividendsCurrency={companyDividendsCurrency}
-          portfolioBaseCurrency={portfolioBaseCurrency}
-        />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab={t("Rights")} key="rights">
-        <RightsTabPane
-          companyBaseCurrency={companyBaseCurrency}
-          portfolioBaseCurrency={portfolioBaseCurrency}
-        />
-      </Tabs.TabPane>
-    </Tabs>
+    />
   );
 }

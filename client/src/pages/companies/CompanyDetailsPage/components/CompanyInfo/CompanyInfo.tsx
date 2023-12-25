@@ -19,7 +19,7 @@ interface Props {
   dividendsCurrencyCode: string;
   companyUrl: string;
   isin: string;
-  companyLogo: string;
+  companyLogo?: string;
 }
 
 export default function CompanyInfo({
@@ -37,7 +37,7 @@ export default function CompanyInfo({
 
   const items: DescriptionsProps["items"] = [
     {
-      key: "1",
+      key: "0",
       label: (
         <strong>
           <Badge count={<ClusterOutlined />} /> {t("Ticker")}
@@ -46,7 +46,7 @@ export default function CompanyInfo({
       children: companyTicker,
     },
     {
-      key: "0",
+      key: "1",
       label: (
         <strong>
           <Badge count={<ClusterOutlined />} /> {t("Sector")}
@@ -56,7 +56,7 @@ export default function CompanyInfo({
       ${companySuperSectorName && ` - ${t(companySuperSectorName)}`}`,
     },
     {
-      key: "1",
+      key: "2",
       label: (
         <strong>
           <Badge count={<BankOutlined />} /> {t("Market")}{" "}
@@ -65,7 +65,7 @@ export default function CompanyInfo({
       children: marketName,
     },
     {
-      key: "2",
+      key: "3",
       label: (
         <strong>
           <Badge count={<BarcodeOutlined />} /> {t("ISIN")}
@@ -74,7 +74,7 @@ export default function CompanyInfo({
       children: isin,
     },
     {
-      key: "3",
+      key: "4",
       label: (
         <strong>
           <Badge count={<DollarCircleOutlined />} /> {t("Base currency")}
@@ -83,7 +83,7 @@ export default function CompanyInfo({
       children: currencyCode,
     },
     {
-      key: "4",
+      key: "5",
       label: (
         <strong>
           <Badge count={<DollarCircleOutlined />} /> {t("Dividends currency")}
@@ -92,7 +92,7 @@ export default function CompanyInfo({
       children: dividendsCurrencyCode,
     },
     {
-      key: "5",
+      key: "6",
       label: (
         <strong>
           <LinkOutlined />
@@ -120,4 +120,5 @@ export default function CompanyInfo({
 
 CompanyInfo.defaultProps = {
   companySuperSectorName: "",
+  companyLogo: undefined,
 };

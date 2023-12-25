@@ -44,9 +44,8 @@ export default function YearSelector({ id, firstYear }: Props): ReactElement {
   return (
     <div style={{ marginTop: 16 }}>
       <Form layout="inline">
-        <Form.Item name="year" label={t("Year")}>
+        <Form.Item name="year" label={t("Year")} initialValue={selectedYear}>
           <Select
-            defaultValue={selectedYear}
             style={{ width: 120 }}
             onChange={handleYearChange}
             disabled={loadingStats}
