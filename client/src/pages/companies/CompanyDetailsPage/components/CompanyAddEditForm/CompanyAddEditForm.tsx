@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
 import {
@@ -45,14 +45,11 @@ function CompanyAddEditForm({
   onCancel,
   portfolioId,
   companyId,
-}: AddEditFormProps): ReactElement | null {
+}: AddEditFormProps): ReactElement {
   const [form] = Form.useForm();
   const { t } = useTranslation();
 
-  const [fileList, setFileList] = useState<any[]>([]);
-  const [base64File, setBas64File] = useState<any>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-
+  // React Query
   const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
   const { data: markets, isFetching: marketsLoading } = useMarkets();
   const { data: sectors, isFetching: sectorsLoading } = useSectors();
@@ -64,7 +61,13 @@ function CompanyAddEditForm({
     isFetching,
     isSuccess,
   } = useCompany(portfolioId, companyId);
+
+  // Local state
+  const [fileList, setFileList] = useState<any[]>([]);
+  const [base64File, setBas64File] = useState<any>(null);
+  const [fileName, setFileName] = useState<string | null>(null);
   const [countryCode, setCountryCode] = useState(company?.countryCode || "");
+
   const getBase64 = (img: any, callback: any) => {
     const reader = new FileReader();
     reader.addEventListener("load", () => callback(reader.result));
@@ -170,6 +173,7 @@ function CompanyAddEditForm({
       cancelText={t("Cancel")}
       onCancel={onCancel}
       onOk={handleFormSubmit}
+      forceRender={!!company}
     >
       {isFetching && <LoadingSpin />}
       {errorFetching && (
@@ -188,7 +192,7 @@ function CompanyAddEditForm({
             rules={[
               {
                 required: true,
-                message: t("Please input the name of the company"),
+                message: t<string>("Please input the name of the company"),
               },
             ]}
           >
