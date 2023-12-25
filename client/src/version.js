@@ -1,2 +1,2 @@
-export const PACKAGE_VERSION = "0.204.0";
+export const PACKAGE_VERSION = "1.0.0-beta.1";
 export default { PACKAGE_VERSION };
