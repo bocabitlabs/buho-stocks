@@ -93,7 +93,11 @@ combine_as_imports = true
 src_paths = ["backend"]
 
 [tool.mypy]
-plugins = ["mypy_django_plugin.main"]
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+
+[[tool.mypy.overrides]]
+module = ["mypy-backend.*.migrations.*"]
+ignore_errors = true
 
 [tool.django-stubs]
 django_settings_module = "buho_backend.settings.dev"
