@@ -127,6 +127,8 @@ REST_FRAMEWORK = {
     },
 }
 
+SERIALIZATION_MODULES = {"json": "djmoney.serializers"}
+
 WSGI_APPLICATION = "buho_backend.wsgi.application"
 
 DB_TYPE = config("DB_TYPE")
