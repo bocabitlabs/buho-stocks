@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 from buho_backend.settings.common import YEAR_FOR_ALL
@@ -41,10 +42,14 @@ class CompanyStatsCalculator:
             self.company_data_calculator.dividends_calculator.calculate_accumulated_dividends_until_year(year)
         )
 
-        company_stock_prices_fetcher = CompanyStockPriceFetcher(
-            self.company, year, update_api_price=self.update_api_price
-        )
+        current_year = year
+        if year == YEAR_FOR_ALL:
+            # Current year
+            current_year = datetime.date.today().year
 
+        company_stock_prices_fetcher = CompanyStockPriceFetcher(
+            self.company, current_year, update_api_price=self.update_api_price
+        )
         last_stock_price = company_stock_prices_fetcher.get_year_last_stock_price()
 
         # Calculated values
@@ -54,9 +59,8 @@ class CompanyStatsCalculator:
         return_with_dividends = self.company_data_calculator.calculate_return_with_dividends_on_year(year)
         return_with_dividends_yield = self.company_data_calculator.calculate_return_yield_with_dividends_on_year(year)
         dividends_yield = self.company_data_calculator.calculate_dividends_yield_on_year(year)
-        logger.debug(f"Dividends_yield on {year}: {dividends_yield}")
         # Fixes
-        last_stock_price_value = last_stock_price.price if last_stock_price else 0
+        last_stock_price_value = last_stock_price.price.amount if last_stock_price else 0
         last_stock_price_currency = self.company.base_currency
         last_stock_price_transaction_date = last_stock_price.transaction_date if last_stock_price else f"{year}-01-01"
         portfolio_currency = self.company.portfolio.base_currency

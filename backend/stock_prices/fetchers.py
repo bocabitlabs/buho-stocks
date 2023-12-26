@@ -1,6 +1,6 @@
 import datetime
 import logging
-from typing import List, Optional
+from typing import Optional
 
 from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
@@ -17,16 +17,6 @@ class CompanyStockPriceFetcher:
         self.year = year
         self.update_api_price = update_api_price
 
-    def get_stock_price_of_multiple_tickers(self, tickers: Optional[str]) -> Optional[StockPrice]:
-        logger.debug(f"Fetching stock price for {tickers}")
-        stock_price_service = StockPricesService()
-        if tickers:
-            for ticker in tickers.split(","):
-                stock_price = stock_price_service.get_last_data_from_last_month(ticker)
-                if stock_price:
-                    return stock_price
-        return None
-
     def get_year_last_stock_price(self) -> Optional[StockPrice]:
         from_date, to_date = self.get_start_end_dates_for_year(self.year)
         stock_price = self.get_last_stock_price_from_db_of_year(self.company.ticker, from_date, to_date)
@@ -36,33 +26,30 @@ class CompanyStockPriceFetcher:
 
             if self.year == YEAR_FOR_ALL:
                 stock_price = stock_price_service.get_last_data_from_last_month(self.company.ticker)
-                if not stock_price:
-                    stock_price = self.get_stock_price_of_multiple_tickers(self.company.alt_tickers)
-
             else:
                 first_year = get_company_first_year(self.company.id)
                 if not first_year or first_year > int(self.year):
                     return None
 
-                stock_prices = self.get_last_stock_prices_from_db_of_year(self.company.ticker, from_date, to_date)
-                if stock_prices.count() > 0 and not self.update_api_price:
-                    stock_price = stock_prices[0]
-                else:
+                stock_price = self.get_last_stock_price_from_db_of_year(self.company.ticker, from_date, to_date)
+
+                if not stock_price or self.update_api_price:
                     logger.debug(f"Fetching stock price for {self.company.ticker} in {self.year}")
 
                     stock_price = stock_price_service.get_last_data_from_year(
                         self.company.ticker, from_date, to_date, update_api_price=self.update_api_price
                     )
-                    if not stock_price:
-                        stock_price = self.get_stock_price_of_multiple_tickers(self.company.alt_tickers)
+
         return stock_price
 
-    def get_last_stock_price_from_db_of_year(self, ticker: str, from_date: str, to_date: str) -> List[StockPrice]:
+    def get_last_stock_price_from_db_of_year(self, ticker: str, from_date: str, to_date: str) -> StockPrice | None:
         prices = StockPrice.objects.filter(ticker=ticker, transaction_date__range=[from_date, to_date]).order_by(
             "-transaction_date"
         )
 
-        return prices[0]
+        if prices.count() > 0:
+            return prices[0]
+        return None
 
     def get_start_end_dates_for_year(self, year: int) -> tuple[str, str]:
         todays_date = datetime.date.today()

@@ -1,5 +1,5 @@
 from django.db import models
-from djmoney.models.fields import MoneyField
+from djmoney.models.fields import MoneyField  # type: ignore
 
 
 class StockPrice(models.Model):

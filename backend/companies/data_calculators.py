@@ -1,6 +1,8 @@
+import datetime
 import logging
 from decimal import Decimal
 
+from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from dividends_transactions.utils import DividendsTransactionCalculator
 from exchange_rates.services.exchange_rate_fetcher import ExchangeRateFetcher
@@ -63,7 +65,11 @@ class CompanyDataCalculator:
         logger.debug(f"Calculating company value for {self.company.ticker} in {year}")
         shares_count = self.calculate_accumulated_shares_count_until_year(year)
         if shares_count > 0:
-            stock_price_fetcher = CompanyStockPriceFetcher(self.company, year, update_api_price=False)
+            current_year = year
+            if year == YEAR_FOR_ALL:
+                current_year = datetime.date.today().year
+
+            stock_price_fetcher = CompanyStockPriceFetcher(self.company, current_year, update_api_price=False)
             stock_price = stock_price_fetcher.get_year_last_stock_price()
             if stock_price:
                 price = stock_price.price.amount
