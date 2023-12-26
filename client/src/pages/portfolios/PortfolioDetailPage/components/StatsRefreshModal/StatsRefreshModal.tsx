@@ -15,7 +15,6 @@ export default function StatsRefreshModal({
   selectedYear,
 }: Props): ReactElement {
   const { t } = useTranslation();
-
   const [form] = Form.useForm();
   const [visible, setVisible] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);

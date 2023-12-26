@@ -15,10 +15,10 @@ export default function StatsRefreshModal({
   selectedYear,
 }: Props): ReactElement {
   const { t } = useTranslation();
+  const [form] = Form.useForm();
 
   const [visible, setVisible] = useState(false);
   const [updateStockPriceSwitch, setUpdateStockPriceSwitch] = useState(false);
-  const [updateStatsSwitch, setUpdateStatsSwitch] = useState(false);
 
   const { mutate: updateStats } = useUpdateYearStats();
 
@@ -30,31 +30,26 @@ export default function StatsRefreshModal({
     setUpdateStockPriceSwitch(e.target.checked);
   };
 
-  const onStatsChange = (e: any) => {
-    console.log("onStatsChange", e.target.checked);
-    setUpdateStatsSwitch(e.target.checked);
-  };
-
-  const getStatsForced = async () => {
+  const updateCompanyStatsAction = async () => {
     updateStats({
       companyId: +companyId!,
       year: selectedYear,
       updateApiPrice: updateStockPriceSwitch,
     });
+    const message = `${t("Updating company stats for year")} ${t(
+      selectedYear,
+    )}`;
     setVisible(false);
+    toast.success<string>(message);
 
-    toast.success<string>(t("Updating company stats..."));
     return { result: true, message: "" };
   };
 
-  const handleOk = async () => {
-    console.log("handleOk");
-    if (updateStatsSwitch) {
-      getStatsForced();
-    }
+  const handleFormSubmit = async () => {
+    updateCompanyStatsAction();
 
-    onStockPriceChange({ target: { checked: false } });
-    onStatsChange({ target: { checked: false } });
+    setUpdateStockPriceSwitch(false);
+    form.resetFields();
   };
 
   const handleCancel = () => {
@@ -72,12 +67,12 @@ export default function StatsRefreshModal({
       <Modal
         title={t("Refresh stats and stock prices")}
         open={visible}
-        onOk={handleOk}
+        onOk={handleFormSubmit}
         onCancel={handleCancel}
         okText={t("Update stats")}
         cancelText={t("Close")}
       >
-        <Form>
+        <Form form={form} layout="vertical">
           {t("Do you want to update the stats and the stock price?")}
           <Form.Item style={{ marginBottom: 0 }}>
             <Checkbox
@@ -85,12 +80,6 @@ export default function StatsRefreshModal({
               checked={updateStockPriceSwitch}
             >
               {t("Update the stock price from API")}
-            </Checkbox>
-          </Form.Item>
-
-          <Form.Item>
-            <Checkbox onChange={onStatsChange} checked={updateStatsSwitch}>
-              {t("Update the stats for the year")} &quot;{t(selectedYear)}&quot;
             </Checkbox>
           </Form.Item>
         </Form>

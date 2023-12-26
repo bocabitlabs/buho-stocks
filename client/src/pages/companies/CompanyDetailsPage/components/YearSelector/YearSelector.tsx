@@ -70,10 +70,12 @@ export default function YearSelector({
               ))}
             </Select>
           </Form.Item>
-          <StatsRefreshModal
-            companyId={companyId}
-            selectedYear={selectedYear}
-          />
+          {selectedYear !== "all" && (
+            <StatsRefreshModal
+              companyId={companyId}
+              selectedYear={selectedYear}
+            />
+          )}
         </Form>
       </div>
       <div style={{ marginTop: 16 }}>
