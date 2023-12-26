@@ -58,10 +58,10 @@ export default function YearSelector({ id, firstYear }: Props): ReactElement {
               </Select.Option>
             ))}
           </Select>
-          {selectedYear !== "all" && (
-            <StatsRefreshModal id={id} selectedYear={selectedYear} />
-          )}
         </Form.Item>
+        {selectedYear !== "all" && (
+          <StatsRefreshModal id={id} selectedYear={selectedYear} />
+        )}
       </Form>
       <div style={{ marginTop: 16 }}>
         <StatsContent stats={stats} />
