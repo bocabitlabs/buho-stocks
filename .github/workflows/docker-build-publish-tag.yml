@@ -33,7 +33,6 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:${{ github.head_ref || github.ref_name }}
-            ${{ github.repository }}:${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
 
@@ -46,6 +45,5 @@ jobs:
           push: true
           tags: |
             ghcr.io/${{ github.repository }}-client:${{ github.head_ref || github.ref_name }}
-            ${{ github.repository }}:${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
