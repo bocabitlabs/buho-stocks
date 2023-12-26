@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "buho-stocks"
-version = "1.0.0-beta.2"
+version = "1.0.0-beta.3"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
@@ -37,8 +37,10 @@ channels-redis = "^4.1.0"
 bandit = "1.7.4"
 black = "23.1.0"
 coverage = "6.2"
+djangorestframework-stubs = { extras = [
+  "compatible-mypy",
+], version = "^3.14.5" }
 django-types = "0.17.0"
-djangorestframework-stubs = "1.8.0"
 djlint = "1.19.14"
 factory-boy = "3.2.1"
 faker = "11.3.0"
@@ -91,14 +93,3 @@ multi_line_output = 3
 line_length = 120
 combine_as_imports = true
 src_paths = ["backend"]
-
-[tool.mypy]
-plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
-
-[[tool.mypy.overrides]]
-module = ["mypy-backend.*.migrations.*"]
-ignore_errors = true
-
-[tool.django-stubs]
-django_settings_module = "buho_backend.settings.dev"
-mypy_path = "./backend"
