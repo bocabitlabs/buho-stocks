@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from exchange_rates.models import ExchangeRate
 from exchange_rates.services.yfinance_api_client import YFinanceExchangeClient
@@ -21,7 +22,7 @@ class ExchangeRateFetcher:
         return exchange_rate
 
     def get_exchange_rate_for_date(
-        self, from_currency: str, to_currency: str, transaction_date: str
+        self, from_currency: str, to_currency: str, transaction_date: datetime
     ) -> ExchangeRate | None:
         """Gets the exchange rate object for a given date
 

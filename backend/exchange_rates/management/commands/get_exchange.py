@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from django.core.management.base import BaseCommand
 
@@ -21,8 +22,8 @@ class Command(BaseCommand):
         used_date = options["date"]
 
         self.stdout.write(f"Getting data for {from_currency} to {to_currency} on {used_date}")
-
+        used_date_as_datetime = datetime.strptime(used_date, "%Y-%m-%d")
         api_client = YFinanceExchangeClient()
-        currency = api_client.get_exchange_rate_for_date(from_currency, to_currency, used_date)
+        currency = api_client.get_exchange_rate_for_date(from_currency, to_currency, used_date_as_datetime)
 
         self.stdout.write(self.style.SUCCESS(f"{used_date} Data: {currency}"))

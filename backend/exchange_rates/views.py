@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime
 
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
@@ -46,8 +47,11 @@ class ExchangeRateDetailAPIView(APIView):
         """
         Retrieve the market item with given exchange_name
         """
-        service = ExchangeRateFetcher()
-        exchange_rate = service.get_exchange_rate_for_date(exchange_from, exchange_to, exchange_date)
+        exchange_date_as_datetime = datetime.strptime(exchange_date, "%Y-%m-%d")
+        exchange_rate_fetcher = ExchangeRateFetcher()
+        exchange_rate = exchange_rate_fetcher.get_exchange_rate_for_date(
+            exchange_from, exchange_to, exchange_date_as_datetime
+        )
 
         if not exchange_rate:
             return Response(
