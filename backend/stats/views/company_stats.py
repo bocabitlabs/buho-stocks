@@ -1,12 +1,11 @@
 import logging
 
+from django.conf import settings
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from buho_backend.celery_app import revoke_scheduled_tasks_by_name
-from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from stats.calculators.company_stats_utils import CompanyStatsCalculator
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
@@ -27,7 +26,6 @@ class CompanyStatsAPIView(APIView):
     def update_object(self, company_id, year, update_api_price=False):
         logger.debug("Updating company stats")
         company = Company.objects.get(id=company_id)
-        revoke_scheduled_tasks_by_name("stats.tasks.update_portolfio_stats")
         update_portolfio_stats.delay(company.portfolio_id, [company_id], year, update_api_price)
         return True
 
@@ -38,7 +36,7 @@ class CompanyStatsAPIView(APIView):
         Retrieve the company item with given company_id
         """
         if year == "all":
-            year = YEAR_FOR_ALL
+            year = settings.YEAR_FOR_ALL
         instance = self.get_object(company_id, year)
         if not instance:
             return Response(

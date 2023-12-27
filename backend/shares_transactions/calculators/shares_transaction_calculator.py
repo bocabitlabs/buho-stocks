@@ -2,9 +2,9 @@ import logging
 from datetime import date
 from decimal import Decimal
 
+from django.conf import settings
 from django.db.models.query import QuerySet
 
-from buho_backend.settings.common import YEAR_FOR_ALL
 from buho_backend.transaction_types import TransactionType
 from shares_transactions.calculators.transaction_calculator import TransactionCalculator
 from shares_transactions.models import SharesTransaction
@@ -64,7 +64,7 @@ class SharesTransactionCalculator:
         query = self.shares_transactions
         query = query.filter(type=TransactionType.SELL)
 
-        if year == YEAR_FOR_ALL:
+        if year == settings.YEAR_FOR_ALL:
             return query
 
         if use_accumulated:
@@ -83,7 +83,7 @@ class SharesTransactionCalculator:
 
         query = query.filter(type=TransactionType.BUY)
 
-        if year == YEAR_FOR_ALL:
+        if year == settings.YEAR_FOR_ALL:
             return query
 
         if use_accumulated:
@@ -171,7 +171,7 @@ class SharesTransactionCalculator:
 
     def calculate_accumulated_return_from_sales_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
-        if year == YEAR_FOR_ALL:
+        if year == settings.YEAR_FOR_ALL:
             year = date.today().year
         query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
         transactions_utils = TransactionCalculator()

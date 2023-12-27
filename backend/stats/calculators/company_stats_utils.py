@@ -1,7 +1,8 @@
 import datetime
 import logging
 
-from buho_backend.settings.common import YEAR_FOR_ALL
+from django.conf import settings
+
 from companies.data_calculators import CompanyDataCalculator
 from companies.models import Company
 from stats.models.company_stats import CompanyStatsForYear
@@ -14,7 +15,7 @@ class CompanyStatsCalculator:
     def __init__(
         self,
         company_id: int,
-        year=YEAR_FOR_ALL,
+        year=settings.YEAR_FOR_ALL,
         use_portfolio_currency: bool = True,
         update_api_price: bool = False,
     ):
@@ -43,7 +44,7 @@ class CompanyStatsCalculator:
         )
 
         current_year = year
-        if year == YEAR_FOR_ALL:
+        if year == settings.YEAR_FOR_ALL:
             # Current year
             current_year = datetime.date.today().year
 

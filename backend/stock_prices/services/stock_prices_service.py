@@ -16,11 +16,12 @@ class StockPricesService:
         self.api_client = YFinanceApiClient()
 
     def get_last_data_from_year(
-        self, ticker: str, from_date: datetime, to_date: datetime, update_api_price=False
+        self, ticker: str, from_date: datetime.datetime, to_date: datetime.datetime, update_api_price=False
     ) -> StockPrice | None:
         # logger.debug(f"Getting last data from year {year} for {ticker}")
-
-        results = self._get_historical_data(ticker, from_date, to_date, update_api_price=update_api_price)
+        from_date_str = from_date.strftime("%Y-%m-%d")
+        to_date_str = to_date.strftime("%Y-%m-%d")
+        results = self._get_historical_data(ticker, from_date_str, to_date_str, update_api_price=update_api_price)
         if len(results) > 0:
             return results[-1]
         return None

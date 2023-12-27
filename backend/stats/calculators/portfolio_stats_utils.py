@@ -1,7 +1,8 @@
 import datetime
 import logging
 
-from buho_backend.settings.common import YEAR_FOR_ALL
+from django.conf import settings
+
 from dividends_transactions.models import DividendsTransaction
 from portfolios.calculators import get_portfolio_first_year
 from portfolios.data_calculators import PortfolioDataCalculator
@@ -16,7 +17,7 @@ class PortfolioStatsUtils:
     def __init__(
         self,
         portfolio_id: int,
-        year: int = YEAR_FOR_ALL,
+        year: int = settings.YEAR_FOR_ALL,
         use_portfolio_currency: bool = True,
         update_api_price: bool = False,
     ):

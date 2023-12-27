@@ -29,7 +29,7 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         for company in self.portfolio.companies.all():
             if company.is_closed:
                 continue
@@ -39,7 +39,7 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_total_dividends_of_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         for company in self.portfolio.companies.all():
             data_calculator = CompanyDataCalculator(company.id, use_portfolio_currency=self.use_portfolio_currency)
             total += data_calculator.calculate_dividends_of_year(year)
@@ -47,14 +47,14 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_accumulated_dividends_until_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         for company in self.portfolio.companies.all():
             data_calculator = CompanyDataCalculator(company.id, use_portfolio_currency=self.use_portfolio_currency)
             total += data_calculator.calculate_accumulated_dividends_until_year(year)
         return total
 
     def calculate_portfolio_value_on_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         for company in self.portfolio.companies.all():
             if company.is_closed:
                 continue
@@ -65,7 +65,7 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_return_with_dividends_on_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         for company in self.portfolio.companies.all():
             if company.is_closed:
                 continue
@@ -75,7 +75,7 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_return_on_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         for company in self.portfolio.companies.all():
             if company.is_closed:
                 continue
@@ -85,7 +85,7 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_return_yield_on_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         return_on_year = self.calculate_return_on_year(year)
         accumulated_investment = self.calculate_accumulated_investment_until_year(year)
         if accumulated_investment == 0:
@@ -95,7 +95,7 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_return_with_dividends_yield_on_year(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         return_with_dividends_on_year = self.calculate_return_with_dividends_on_year(year)
         accumulated_investment = self.calculate_accumulated_investment_until_year(year)
         if accumulated_investment == 0:
@@ -105,10 +105,10 @@ class PortfolioDataCalculator:
         return total
 
     def calculate_accummulated_dividends_yield(self, year: int) -> Decimal:
-        total = 0
+        total = Decimal(0)
         accummulated_dividends = self.calculate_accumulated_dividends_until_year(year)
         portfolio_value = self.calculate_portfolio_value_on_year(year)
         if portfolio_value == 0:
-            return 0
+            return total
         total = (accummulated_dividends / portfolio_value) * 100
         return total

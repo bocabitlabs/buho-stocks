@@ -1,10 +1,10 @@
 import logging
 
+from django.conf import settings
 from drf_extra_fields.fields import Base64ImageField  # type: ignore
 from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
-from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
@@ -71,7 +71,7 @@ class CompanySerializer(serializers.ModelSerializer):
         ]
 
     def get_all_stats(self, obj):
-        query = CompanyStatsForYear.objects.filter(company=obj.id, year=YEAR_FOR_ALL)
+        query = CompanyStatsForYear.objects.filter(company=obj.id, year=settings.YEAR_FOR_ALL)
         if query.exists():
             serializer = CompanyStatsForYearSerializer(query[0])
             return serializer.data

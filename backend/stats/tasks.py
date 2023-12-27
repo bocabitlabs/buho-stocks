@@ -1,9 +1,10 @@
 import logging
 import time
 
+from django.conf import settings
+
 from buho_backend.celery_app import app
 from buho_backend.consumers import update_task_status
-from buho_backend.settings.common import YEAR_FOR_ALL
 from companies.models import Company
 from portfolios.models import Portfolio
 from stats.calculators.company_stats_utils import CompanyStatsCalculator
@@ -62,13 +63,13 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
     percent = 0
     for company in companies:
         year_text = year
-        if year == YEAR_FOR_ALL:
+        if year == settings.YEAR_FOR_ALL:
             year_text = "All"
         try:
             # Print the percentage of total progress
             percent = 0 if current == 0 else int(current / total_companies * 100)
             logger.debug(f"{self.request.id} - Progress: {percent}")
-            if year == YEAR_FOR_ALL:
+            if year == settings.YEAR_FOR_ALL:
                 year_text = "All"
             update_task_status(
                 self.request.id,
@@ -103,8 +104,8 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
             100,
         )
 
-        if year != YEAR_FOR_ALL:
-            update_portolfio_stats.delay(portfolio_id, companies_ids, YEAR_FOR_ALL, update_api_price)
+        if year != settings.YEAR_FOR_ALL:
+            update_portolfio_stats.delay(portfolio_id, companies_ids, settings.YEAR_FOR_ALL, update_api_price)
 
         return "OK"
     except Exception as error:

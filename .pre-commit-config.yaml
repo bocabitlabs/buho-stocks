@@ -24,4 +24,5 @@ repos:
     hooks:
       - id: mypy # It will read mypy.ini automatically
         additional_dependencies:
-          - djangorestframework-stubs==3.14.5
+          - types-pytz
+          - types-redis

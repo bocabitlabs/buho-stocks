@@ -1,12 +1,12 @@
 import logging
 
+from django.conf import settings
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from buho_backend.settings.common import YEAR_FOR_ALL
 from stats.calculators.portfolio_stats_utils import PortfolioStatsUtils
 from stats.models.portfolio_stats import PortfolioStatsForYear
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
@@ -40,7 +40,7 @@ class PortfolioStatsAPIView(APIView):
 
     def get_year_stats(self, portfolio_id, year, update_api_price):
         if year == "all":
-            year = YEAR_FOR_ALL
+            year = settings.YEAR_FOR_ALL
 
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
         stats = portfolio_stats.get_year_stats()
@@ -54,7 +54,7 @@ class PortfolioStatsAPIView(APIView):
         portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
         stats = {}
         if group_by == "month":
-            if year == YEAR_FOR_ALL:
+            if year == settings.YEAR_FOR_ALL:
                 stats = portfolio_stats.get_dividends_for_all_years_monthly()
             else:
                 stats = portfolio_stats.get_dividends_for_year_monthly()
@@ -79,7 +79,7 @@ class PortfolioStatsAPIView(APIView):
         group_by = self.request.query_params.get("groupBy")
 
         if year == "all":
-            year = YEAR_FOR_ALL
+            year = settings.YEAR_FOR_ALL
 
         stats = self.get_object(portfolio_id, year, group_by=group_by)
         if not stats:
@@ -124,7 +124,7 @@ class PortfolioStatsAllYearsAPIView(APIView):
             return None
 
     def get_year_stats(self, portfolio_id):
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=YEAR_FOR_ALL)
+        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=settings.YEAR_FOR_ALL)
         stats = portfolio_stats.get_all_years_stats()
         return stats
 
