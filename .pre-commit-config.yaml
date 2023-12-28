@@ -19,15 +19,24 @@ repos:
     hooks:
       - id: flake8
         additional_dependencies: [flake8-django==1.4.0]
-  # - repo: https://github.com/pre-commit/mirrors-mypy
-  #   rev: "v1.7.1" # Use the sha / tag you want to point at
-  #   hooks:
-  #     - id: mypy # It will read mypy.ini automatically
-  #       args: ["--ignore-missing-imports"]
-  #       additional_dependencies:
-  #         - types-pytz
-  #         - types-redis
-  #         - django-stubs
-  #         - celery
-  #         - sentry_sdk
-  #         - decouple
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.7.1" # Use the sha / tag you want to point at
+    hooks:
+      - id: mypy # It will read mypy.ini automatically
+        args: ["--config-file", "mypy.ini", "--ignore-missing-imports"]
+        additional_dependencies:
+          - types-pytz
+          - types-redis
+          - django-stubs
+          - celery
+          - sentry-sdk
+          - python-decouple
+          - daphne
+          - django-filter
+          - django-money
+          - djangorestframework
+          - drf-yasg
+          - django-cors-headers
+          - django-celery-results
+          - mysqlclient
+          - djangorestframework-stubs
