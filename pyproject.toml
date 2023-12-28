@@ -31,15 +31,14 @@ django-celery-results = "^2.5.1"
 mysqlclient = "^2.2.0"
 channels = { extras = ["daphne"], version = "^4.0.0" }
 channels-redis = "^4.1.0"
+dj-database-url = "^2.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
 bandit = "1.7.4"
 black = "23.1.0"
 coverage = "6.2"
-djangorestframework-stubs = { extras = [
-  "compatible-mypy",
-], version = "^3.14.5" }
+djangorestframework-stubs = {extras = ["compatible-mypy"], version = "^3.14.5"}
 djlint = "1.19.14"
 factory-boy = "3.2.1"
 faker = "11.3.0"
