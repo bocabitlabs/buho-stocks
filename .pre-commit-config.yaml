@@ -23,6 +23,9 @@ repos:
     rev: "v1.7.1" # Use the sha / tag you want to point at
     hooks:
       - id: mypy # It will read mypy.ini automatically
+        args: ["--config-file=./mypy.ini"]
         additional_dependencies:
           - types-pytz
           - types-redis
+          - django-stubs
+          - celery
