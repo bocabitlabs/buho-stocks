@@ -1,4 +1,4 @@
-# type: ignore]
+# type: ignore
 
 # type: ignore
 from django.urls import path
