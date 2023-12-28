@@ -28,4 +28,3 @@ repos:
           - types-pytz
           - types-redis
           - django-stubs
-          - celery
