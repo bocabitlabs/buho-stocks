@@ -10,13 +10,14 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 import logging
+import os
 from os import path
 from pathlib import Path
 
 import sentry_sdk
 
 # from decouple import Config, RepositoryEnv
-from decouple import config  # type: ignore [import]
+from decouple import config
 from django.db.models import ForeignKey
 from django.db.models.manager import BaseManager
 from django.db.models.query import QuerySet
@@ -198,7 +199,7 @@ STATIC_ROOT = "/app/static/"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = config("MEDIA_ROOT")
 
-SWAGGER_SETTINGS = {}
+SWAGGER_SETTINGS: dict = {}
 
 LOGS_ROOT = config("LOGS_ROOT")
 
@@ -246,3 +247,62 @@ CHANNEL_LAYERS = {
 
 # This is the default year used to store the stats for the "All" year
 YEAR_FOR_ALL = 9999
+
+
+LOG_LEVEL = config("LOG_LEVEL", default="INFO")
+LOGS_ROOT = config("LOGS_ROOT")
+LOGGER_HANDLERS = config("LOGGER_HANDLERS", cast=lambda v: [s.strip() for s in v.split(",")])
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "file": {
+            "format": "{levelname} | {asctime} | {module}:{lineno} | {process:d} | {thread:d} | {message}",
+            "style": "{",
+        },
+        "console": {
+            "format": "{levelname} | {asctime} | {message} | {pathname}:{lineno} | {module} | {funcName}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {"class": "logging.StreamHandler", "formatter": "console"},
+        "debug_file": {
+            "level": "DEBUG",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "file",
+            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
+            "backupCount": 10,
+            "filename": os.path.join(LOGS_ROOT, "debug.log"),
+        },
+        "info_file": {
+            "level": "INFO",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "file",
+            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
+            "backupCount": 10,
+            "filename": os.path.join(LOGS_ROOT, "info.log"),
+        },
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.handlers.RotatingFileHandler",
+            "formatter": "file",
+            "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
+            "backupCount": 10,
+            "filename": os.path.join(LOGS_ROOT, "error.log"),
+        },
+    },
+    "loggers": {
+        "*": {
+            "handlers": LOGGER_HANDLERS,
+            "level": "ERROR",
+            "propagate": True,
+        },
+        "buho_backend": {
+            "handlers": LOGGER_HANDLERS,
+            "level": LOG_LEVEL,
+            "propagate": True,
+        },
+    },
+}

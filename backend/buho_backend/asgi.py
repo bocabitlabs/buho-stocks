@@ -16,13 +16,10 @@ from django.core.asgi import get_asgi_application
 from django.urls import re_path
 
 from buho_backend import consumers
-from buho_backend.settings_loader import get_settings_module
 
-settings_module = get_settings_module()
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "buho_backend.settings")
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", settings_module)
 
-# print(settings_module)
 django_asgi_app = get_asgi_application()
 
 websocket_urlpatterns = [
