@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.query import QuerySet
+from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 
 from buho_backend.transaction_types import TransactionType
@@ -15,10 +17,10 @@ class RightsTransaction(Transaction):
     company: models.ForeignKey = models.ForeignKey(
         Company, on_delete=models.CASCADE, related_name="rights_transactions"
     )
-    company_id: int
+    objects: QuerySet["RightsTransaction"]  # To solve issue django-manager-missing
 
     def __str___(self):
         return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"
 
-    class Meta:
+    class Meta(TypedModelMeta):
         ordering = ["-transaction_date"]

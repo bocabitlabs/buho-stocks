@@ -29,6 +29,7 @@ class TransactionCalculator:
         """
 
         exchange_rate: Decimal = Decimal(1)
+        total = Decimal(0)
         if use_portfolio_currency:
             exchange_rate = transaction.exchange_rate
 

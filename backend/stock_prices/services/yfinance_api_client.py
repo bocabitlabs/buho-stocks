@@ -82,7 +82,7 @@ class YFinanceApiClient:
             logger.warning(f"{ticker}: Company not found.")
         logger.info(f"{ticker} company.")
         try:
-            currency = company.fast_info["currency"]
+            currency: str = company.fast_info["currency"]
             currency = currency.upper()
             logger.info(f"{ticker} currency: {currency}")
             return currency
@@ -93,9 +93,9 @@ class YFinanceApiClient:
     def convert_api_data_to_dict(self, api_data: Any) -> dict | None:
         logger.debug(f"Converting API data to dict: {api_data}")
         result = api_data.sort_values("Date", ascending=False)
-        dates_dict = result.to_dict("index")
+        dates_dict: dict = result.to_dict("index")
         if dates_dict == {}:
-            dates_dict = None
+            return None
         return dates_dict
 
     def get_company_data_between_dates(

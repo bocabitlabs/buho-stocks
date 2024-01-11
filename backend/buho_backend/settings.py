@@ -14,21 +14,16 @@ import os
 from os import path
 from pathlib import Path
 
+import django_stubs_ext
 import sentry_sdk
 
 # from decouple import Config, RepositoryEnv
 from decouple import config
-from django.db.models import ForeignKey
-from django.db.models.manager import BaseManager
-from django.db.models.query import QuerySet
 from sentry_sdk.integrations.django import DjangoIntegration
 
-logger = logging.getLogger("buho_backend")
+django_stubs_ext.monkeypatch()
 
-# NOTE: there are probably other items you'll need to monkey patch depending on
-# your version.
-for cls in [QuerySet, BaseManager, ForeignKey]:
-    cls.__class_getitem__ = classmethod(lambda cls, *args, **kwargs: cls)  # type: ignore [attr-defined]
+logger = logging.getLogger("buho_backend")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).parent.parent

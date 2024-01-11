@@ -3,7 +3,7 @@ import logging
 from django.conf import settings
 from drf_extra_fields.fields import Base64ImageField  # type: ignore
 from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
+from rest_framework.fields import Field
 
 from companies.models import Company
 from currencies.models import Currency
@@ -44,7 +44,7 @@ class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
-        fields: list[str] = [
+        fields = [
             "id",
             "alt_tickers",
             "base_currency",
@@ -92,16 +92,13 @@ class CompanySerializer(serializers.ModelSerializer):
         return None
 
 
-class CompanySerializerGet(CompanySerializer):
-    base_currency = SerializerMethodField()
-    dividends_currency = SerializerMethodField()
-
+class CompanySerializerGet(serializers.ModelSerializer):
     market: MarketSerializer = MarketSerializer(many=False, read_only=True)
     sector: SectorSerializerGet = SectorSerializerGet(many=False, read_only=True)
     shares_transactions = SharesTransactionSerializer(many=True, read_only=True)
     rights_transactions = RightsTransactionSerializer(many=True, read_only=True)
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
-    portfolio: PortfolioSerializerLite = PortfolioSerializerLite(many=False, read_only=True)
+    portfolio: Field = PortfolioSerializerLite(many=False, read_only=True)
     first_year = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)

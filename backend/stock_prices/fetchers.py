@@ -54,7 +54,8 @@ class CompanyStockPriceFetcher:
         )
 
         if prices.count() > 0:
-            return prices[0]
+            last_price: StockPrice = prices[0]
+            return last_price
         return None
 
     def get_start_end_dates_for_year(self, year: int) -> tuple[str, str]:

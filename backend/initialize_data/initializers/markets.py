@@ -23,8 +23,8 @@ def create_initia_markets_from_json(json_path: str) -> list[Market]:
     markets_list: list[Market] = []
 
     with open(json_path, "r", encoding="utf-8") as file:
-        data = file.read()
-        data = json.loads(data)
+        data_file = file.read()
+        data = json.loads(data_file)
         for market in data:
             # get the market by name
             existing = Market.objects.filter(name=market["name"]).exists()

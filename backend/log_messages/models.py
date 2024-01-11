@@ -25,8 +25,7 @@ class LogMessage(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    portfolio_id: int
-    portfolio = models.ForeignKey["Portfolio"](Portfolio, on_delete=models.CASCADE, related_name="log_messages")
+    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name="log_messages")
 
     class Meta:
         verbose_name = "Log Message"

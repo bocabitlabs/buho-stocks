@@ -101,7 +101,7 @@ class CompanyStatsCalculator:
         else:
             # Create a new CompanyStatsForYear
             year_stats = CompanyStatsForYear.objects.create(
-                portfolio=self.portfolio,
+                company=self.company,
                 year=self.year,
                 **calculated_data,
             )

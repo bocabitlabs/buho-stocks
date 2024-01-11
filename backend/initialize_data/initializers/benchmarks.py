@@ -30,8 +30,8 @@ def create_initial_benchmarks_from_json(json_path: str) -> list[Benchmark]:
         "r",
         encoding="utf-8",
     ) as file:
-        data = file.read()
-        data = json.loads(data)
+        data_file = file.read()
+        data = json.loads(data_file)
         for benchmark in data:
             existing = Benchmark.objects.filter(name=benchmark["name"]).exists()
             if existing:
@@ -59,8 +59,8 @@ def create_initial_benchmark_years_from_json(json_path: str) -> list[BenchmarkYe
     handled_years = []
 
     with open(json_path, "r", encoding="utf-8") as file:
-        data = file.read()
-        data = json.loads(data)
+        data_file = file.read()
+        data = json.loads(data_file)
         benchmarks = Benchmark.objects.all()
         for benchmark in benchmarks:
             for benchmark_year in data:
@@ -69,14 +69,16 @@ def create_initial_benchmark_years_from_json(json_path: str) -> list[BenchmarkYe
                         f"Creating benchmark year {benchmark_year['benchmark']} for benchmark {benchmark.name}"
                     )
                     try:
+                        benchmark_value = Money(
+                            benchmark_year["value"],
+                            benchmark_year["value_currency"],
+                        )
+
                         result = BenchmarkYear.objects.create(
                             year=benchmark_year["year"],
                             return_percentage=benchmark_year["return_percentage"],
                             benchmark=benchmark,
-                            value=Money(
-                                benchmark_year["value"],
-                                benchmark_year["value_currency"],
-                            ),
+                            value=benchmark_value,
                         )
                     except IntegrityError as error:
                         logger.warning(f"Benchmark year {benchmark_year['benchmark']} already exists ({error})")

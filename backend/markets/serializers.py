@@ -3,7 +3,7 @@ from rest_framework import serializers
 from markets.models import Market
 
 
-class MarketSerializer(serializers.ModelSerializer):
+class MarketSerializer(serializers.ModelSerializer[Market]):
     class Meta:
         model = Market
         fields = [

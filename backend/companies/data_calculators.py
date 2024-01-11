@@ -75,13 +75,14 @@ class CompanyDataCalculator:
             if stock_price:
                 price = stock_price.price.amount
                 transaction_date = stock_price.transaction_date
+                datetime_from_date = datetime.datetime.combine(transaction_date, datetime.datetime.min.time())
 
                 exchange_rates_fetcher = ExchangeRateFetcher()
 
                 exchange_rate = exchange_rates_fetcher.get_exchange_rate_for_date(
                     self.company.base_currency,
                     self.company.portfolio.base_currency,
-                    transaction_date,
+                    datetime_from_date,
                 )
                 if exchange_rate:
                     total = Decimal(price) * shares_count * Decimal(exchange_rate.exchange_rate)
@@ -122,7 +123,7 @@ class CompanyDataCalculator:
         company_value = self.calculate_company_value_on_year(year)
 
         if company_value != 0:
-            total = (dividends / company_value) * 100 if company_value else 0
+            total = (dividends / company_value) * 100
         return total
 
     def calculate_accummulated_dividends_yield(self, year: int) -> Decimal:
@@ -131,5 +132,5 @@ class CompanyDataCalculator:
         company_value = self.calculate_company_value_on_year(year)
 
         if company_value != 0:
-            total = (dividends / company_value) * 100 if company_value else 0
+            total = (dividends / company_value) * 100
         return total

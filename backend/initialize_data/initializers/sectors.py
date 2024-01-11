@@ -2,6 +2,7 @@ import json
 import logging
 import pathlib
 from os import path
+from typing import Dict, List
 
 from sectors.models import Sector, SuperSector
 
@@ -56,14 +57,14 @@ def create_initial_super_sectors_from_json(json_path: str) -> list[SuperSector]:
     return super_sector_list
 
 
-def load_sector_dicts(json_path: str) -> list[dict]:
+def load_sector_dicts(json_path: str) -> List[Dict]:
     with open(
         json_path,
         "r",
         encoding="utf-8",
     ) as file:
-        data = file.read()
-        data = json.loads(data)
+        file_data = file.read()
+        data: List[Dict] = json.loads(file_data)
 
         return data
 

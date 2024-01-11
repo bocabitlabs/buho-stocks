@@ -5,8 +5,8 @@ from companies.models import Company
 from shares_transactions.models import SharesTransaction
 
 
-class SharesTransactionSerializer(serializers.ModelSerializer):
-    company = serializers.PrimaryKeyRelatedField(
+class SharesTransactionSerializer(serializers.ModelSerializer[SharesTransaction]):
+    company: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
         queryset=Company.objects,
         many=False,
         read_only=False,

@@ -15,7 +15,9 @@ class PortfolioDataCalculator:
             company__portfolio=self.portfolio.id, company__is_closed=False
         ).order_by("transaction_date")
         if query.exists():
-            return query[0].transaction_date.year
+            transaction = query[0]
+            year: int = transaction.transaction_date.year
+            return year
         return None
 
     def calculate_total_invested_on_year(self, year: int) -> Decimal:

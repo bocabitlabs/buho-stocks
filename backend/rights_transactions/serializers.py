@@ -1,12 +1,13 @@
 from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
+from rest_framework.fields import Field
 
 from companies.models import Company
 from rights_transactions.models import RightsTransaction
 
 
 class RightsTransactionSerializer(serializers.ModelSerializer):
-    company = serializers.PrimaryKeyRelatedField(queryset=Company.objects, many=False, read_only=False)
+    company: Field = serializers.PrimaryKeyRelatedField(queryset=Company.objects, many=False, read_only=False)
     gross_price_per_share = MoneyField(max_digits=12, decimal_places=3)
     gross_price_per_share_currency = serializers.CharField(max_length=50)
 

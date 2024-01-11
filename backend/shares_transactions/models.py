@@ -2,6 +2,8 @@ import datetime
 import logging
 
 from django.db import models
+from django.db.models.query import QuerySet
+from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 from rest_framework import serializers
@@ -26,6 +28,8 @@ class Transaction(models.Model):
 
     class Meta:
         abstract = True
+        verbose_name = "Transaction"
+        verbose_name_plural = "Transactions"
 
     def __str__(self):
         return f"{self.count} - {self.gross_price_per_share} - {self.total_commission}"
@@ -41,12 +45,15 @@ class Transaction(models.Model):
 
 class SharesTransaction(Transaction):
     type = models.CharField(choices=TransactionType.choices, default=TransactionType.BUY, max_length=10)
-    total_amount = MoneyField(max_digits=12, decimal_places=3, default=0, default_currency="EUR")  # type: ignore
-    company_id: int
-    company = models.ForeignKey["Company"](Company, on_delete=models.CASCADE, related_name="shares_transactions")
+    total_amount = MoneyField(max_digits=12, decimal_places=3, default=0, default_currency="EUR")
+    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="shares_transactions")
 
-    def __str___(self):
-        return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"
+    objects: QuerySet["SharesTransaction"]  # To solve issue django-manager-missing
 
-    class Meta:
+    class Meta(TypedModelMeta):
         ordering = ["-transaction_date"]
+        verbose_name = "Shares Transaction"
+        verbose_name_plural = "Shares Transactions"
+
+    def __str__(self):
+        return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"

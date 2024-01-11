@@ -61,10 +61,8 @@ class StockPricesService:
         if update_api_price:
             logger.debug(f"Updating from API stock prices for {ticker} between {from_date} and {to_date}")
             prices_length = 0
-        else:
-            instances = prices.all()
 
-        instances = []
+        instances: List[StockPrice] = []
         if prices_length < 1:
             prices_from_api = self.api_client.get_stock_prices_list(ticker, from_date, to_date)
 
@@ -99,4 +97,5 @@ class StockPricesService:
                         logger.debug(f"{ticker} - {serialized_date}. Error on price :{serializer.errors}")
             return instances
         else:
+            instances = list(prices.all())
             return instances
