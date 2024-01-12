@@ -7,7 +7,11 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from benchmarks.models import Benchmark, BenchmarkYear
-from benchmarks.serializers import BenchmarkSerializer, BenchmarkSerializerDetails, BenchmarkYearSerializer
+from benchmarks.serializers import (
+    BenchmarkSerializer,
+    BenchmarkSerializerDetails,
+    BenchmarkYearSerializer,
+)
 
 logger = logging.getLogger("buho_backend")
 

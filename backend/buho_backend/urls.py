@@ -63,7 +63,9 @@ urlpatterns = [
     path("api/v1/", include(rights_transactions_router.urls)),
     path("api/v1/", include(shares_transactions_router.urls)),
     path("api/v1/", include(stock_prices_router.urls)),
-    path("api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"),
+    path(
+        "api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"
+    ),
     path("api/v1/initialize-data/", include("initialize_data.urls")),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
@@ -84,7 +86,13 @@ urlpatterns = [
         schema_view.without_ui(cache_timeout=0),  # type: ignore
         name="schema-json",
     ),
-    re_path(r"^swagger/$", schema_view.with_ui("swagger", cache_timeout=0), name="schema-swagger-ui"),  # type: ignore
-    re_path(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),  # type: ignore
+    re_path(
+        r"^swagger/$",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    re_path(
+        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+    ),
     path("api/v1/start-task/", start_task_view),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

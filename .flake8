@@ -1,6 +1,7 @@
 [flake8]
 exclude = migrations
-
+# black compatibility
+max-line-length = 88
 extend-exclude =
     client
     docs
@@ -10,5 +11,5 @@ extend-exclude =
     env
 
 select = C,E,F,W,DJ,DJ10
-
-extend-ignore = E203
+# black compatibility
+extend-ignore = E203,W503

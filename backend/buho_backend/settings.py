@@ -35,7 +35,9 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", default=False, cast=bool)
 TEMPLATE_DEBUG = DEBUG
 
-ALLOWED_HOSTS = config("ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")])
+ALLOWED_HOSTS = config(
+    "ALLOWED_HOSTS", cast=lambda v: [s.strip() for s in v.split(",")]
+)
 
 # Application definition
 
@@ -109,7 +111,8 @@ REST_FRAMEWORK = {
         # Any other renders
     ),
     "DEFAULT_PARSER_CLASSES": (
-        # If you use MultiPartFormParser or FormParser, we also have a camel case version
+        # If you use MultiPartFormParser or FormParser,
+        # we also have a camel case version
         "djangorestframework_camel_case.parser.CamelCaseFormParser",
         "djangorestframework_camel_case.parser.CamelCaseMultiPartParser",
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
@@ -154,7 +157,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",  # noqa
     },
     {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
@@ -210,7 +213,9 @@ if config("ENABLE_SENTRY", default=False, cast=bool):
         send_default_pii=True,
     )
 
-CORS_ALLOWED_ORIGINS = config("CORS_ALLOWED_ORIGINS", cast=lambda v: [s.strip() for s in v.split(",")])
+CORS_ALLOWED_ORIGINS = config(
+    "CORS_ALLOWED_ORIGINS", cast=lambda v: [s.strip() for s in v.split(",")]
+)
 
 # Redis Configuration Options
 REDIS_HOSTNAME = config("REDIS_HOSTNAME", default="redis")
@@ -243,18 +248,20 @@ YEAR_FOR_ALL = 9999
 
 LOG_LEVEL = config("LOG_LEVEL", default="INFO")
 LOGS_ROOT = config("LOGS_ROOT")
-LOGGER_HANDLERS = config("LOGGER_HANDLERS", cast=lambda v: [s.strip() for s in v.split(",")])
+LOGGER_HANDLERS = config(
+    "LOGGER_HANDLERS", cast=lambda v: [s.strip() for s in v.split(",")]
+)
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
         "file": {
-            "format": "{levelname} | {asctime} | {module}:{lineno} | {process:d} | {thread:d} | {message}",
+            "format": "{levelname} | {asctime} | {pathname}:{lineno} | {message} | {module} | {funcName}",  # noqa
             "style": "{",
         },
         "console": {
-            "format": "{levelname} | {asctime} | {message} | {pathname}:{lineno} | {module} | {funcName}",
+            "format": "{levelname} | {asctime} | {pathname}:{lineno} | {message} | {module} | {funcName}",  # noqa
             "style": "{",
         },
     },

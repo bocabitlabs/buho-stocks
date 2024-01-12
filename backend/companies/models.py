@@ -25,7 +25,9 @@ class Company(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
     ticker = models.CharField(max_length=200)
-    alt_tickers: models.CharField = models.CharField(max_length=200, blank=True, default="")
+    alt_tickers: models.CharField = models.CharField(
+        max_length=200, blank=True, default=""
+    )
     description = models.TextField(blank=True, default="")
     url = models.URLField(max_length=200, blank=True, default="")
     color = models.CharField(max_length=200)
@@ -41,9 +43,15 @@ class Company(models.Model):
     base_currency = models.CharField(max_length=50)
     dividends_currency = models.CharField(max_length=50)
 
-    sector = models.ForeignKey(Sector, on_delete=models.RESTRICT, related_name="companies")
-    market = models.ForeignKey(Market, on_delete=models.RESTRICT, related_name="companies")
-    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name="companies")
+    sector = models.ForeignKey(
+        Sector, on_delete=models.RESTRICT, related_name="companies"
+    )
+    market = models.ForeignKey(
+        Market, on_delete=models.RESTRICT, related_name="companies"
+    )
+    portfolio = models.ForeignKey(
+        Portfolio, on_delete=models.CASCADE, related_name="companies"
+    )
     logo = models.ImageField(upload_to=user_directory_path, blank=True, null=True)
 
     shares_transactions: QuerySet["SharesTransaction"]

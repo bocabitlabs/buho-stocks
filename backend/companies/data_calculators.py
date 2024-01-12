@@ -8,7 +8,9 @@ from companies.models import Company
 from dividends_transactions.utils import DividendsTransactionCalculator
 from exchange_rates.services.exchange_rate_fetcher import ExchangeRateFetcher
 from rights_transactions.calculators import RightsTransactionCalculator
-from shares_transactions.calculators.shares_transaction_calculator import SharesTransactionCalculator
+from shares_transactions.calculators.shares_transaction_calculator import (
+    SharesTransactionCalculator,
+)
 from stock_prices.fetchers import CompanyStockPriceFetcher
 
 logger = logging.getLogger("buho_backend")
@@ -41,8 +43,12 @@ class CompanyDataCalculator:
 
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
-        total += self.shares_calculator.calculate_accumulated_investment_until_year(year)
-        total += self.rights_calculator.calculate_accumulated_investment_until_year(year)
+        total += self.shares_calculator.calculate_accumulated_investment_until_year(
+            year
+        )
+        total += self.rights_calculator.calculate_accumulated_investment_until_year(
+            year
+        )
         return total
 
     def calculate_accumulated_shares_count_until_year(self, year: int) -> int:
@@ -54,11 +60,17 @@ class CompanyDataCalculator:
         return dividends
 
     def calculate_accumulated_dividends_until_year(self, year: int) -> Decimal:
-        accumulated_dividends = self.dividends_calculator.calculate_accumulated_dividends_until_year(year)
+        accumulated_dividends = (
+            self.dividends_calculator.calculate_accumulated_dividends_until_year(year)
+        )
         return accumulated_dividends
 
     def calculate_accumulated_return_from_sales_until_year(self, year: int) -> Decimal:
-        accumulated_sales_return = self.shares_calculator.calculate_accumulated_return_from_sales_until_year(year)
+        accumulated_sales_return = (
+            self.shares_calculator.calculate_accumulated_return_from_sales_until_year(
+                year
+            )
+        )
         return accumulated_sales_return
 
     def calculate_company_value_on_year(self, year: int) -> Decimal:
@@ -70,12 +82,16 @@ class CompanyDataCalculator:
             if year == settings.YEAR_FOR_ALL:
                 current_year = datetime.date.today().year
 
-            stock_price_fetcher = CompanyStockPriceFetcher(self.company, current_year, update_api_price=False)
+            stock_price_fetcher = CompanyStockPriceFetcher(
+                self.company, current_year, update_api_price=False
+            )
             stock_price = stock_price_fetcher.get_year_last_stock_price()
             if stock_price:
                 price = stock_price.price.amount
                 transaction_date = stock_price.transaction_date
-                datetime_from_date = datetime.datetime.combine(transaction_date, datetime.datetime.min.time())
+                datetime_from_date = datetime.datetime.combine(
+                    transaction_date, datetime.datetime.min.time()
+                )
 
                 exchange_rates_fetcher = ExchangeRateFetcher()
 
@@ -85,7 +101,12 @@ class CompanyDataCalculator:
                     datetime_from_date,
                 )
                 if exchange_rate:
-                    total = Decimal(price) * shares_count * Decimal(exchange_rate.exchange_rate)
+                    total = (
+                        Decimal(price)
+                        * shares_count
+                        * Decimal(exchange_rate.exchange_rate)
+                    )
+
         return total
 
     def calculate_return_with_dividends_on_year(self, year: int) -> Decimal:
@@ -128,7 +149,9 @@ class CompanyDataCalculator:
 
     def calculate_accummulated_dividends_yield(self, year: int) -> Decimal:
         total = Decimal(0)
-        dividends = self.dividends_calculator.calculate_accumulated_dividends_until_year(year)
+        dividends = (
+            self.dividends_calculator.calculate_accumulated_dividends_until_year(year)
+        )
         company_value = self.calculate_company_value_on_year(year)
 
         if company_value != 0:
