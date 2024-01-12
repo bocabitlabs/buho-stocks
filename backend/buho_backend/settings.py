@@ -14,14 +14,11 @@ import os
 from os import path
 from pathlib import Path
 
-import django_stubs_ext
 import sentry_sdk
 
 # from decouple import Config, RepositoryEnv
 from decouple import config
 from sentry_sdk.integrations.django import DjangoIntegration
-
-django_stubs_ext.monkeypatch()
 
 logger = logging.getLogger("buho_backend")
 
