@@ -10,7 +10,11 @@ from shares_transactions.calculators.transaction_calculator import TransactionCa
 
 
 class RightsTransactionCalculator:
-    def __init__(self, rights_transactions: QuerySet[RightsTransaction], use_portfolio_currency: bool = True):
+    def __init__(
+        self,
+        rights_transactions: QuerySet[RightsTransaction],
+        use_portfolio_currency: bool = True,
+    ):
         self.rights_transactions = rights_transactions
         self.use_portfolio_currency = use_portfolio_currency
 

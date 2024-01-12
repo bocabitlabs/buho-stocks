@@ -19,9 +19,9 @@ class TransactionCalculator:
 
         Args:
             transaction (Transaction): A given Transaction object
-            use_portfolio_currency (bool, optional): If set to portfolio, it will use the exchange
-            rate stored on the transaction (Will correspond to the exchange rate
-            of the portfolio's currency).
+            use_portfolio_currency (bool, optional): If set to portfolio,
+            it will use the exchange rate stored on the transaction
+            (Will correspond to the exchange rate of the portfolio's currency).
             Defaults to "True". Otherwise, there won't be any exchange rate conversion.
 
         Returns:
@@ -38,14 +38,16 @@ class TransactionCalculator:
         )
         return total
 
-    def calculate_transactions_amount(self, transactions: QuerySet, use_portfolio_currency: bool = True) -> Decimal:
+    def calculate_transactions_amount(
+        self, transactions: QuerySet, use_portfolio_currency: bool = True
+    ) -> Decimal:
         """Get the total amount of a list of transactions
 
         Args:
             transactions (list[Transaction]): A list of transactions
-            use_portfolio_currency (bool, optional): If set to portfolio, it will use the exchange
-            rate stored on the transaction (Will correspond to the exchange rate
-            of the portfolio's currency).
+            use_portfolio_currency (bool, optional): If set to portfolio,
+            it will use the exchange rate stored on the transaction
+            (Will correspond to the exchange rate of the portfolio's currency).
             Defaults to "True". Otherwise, there won't be any exchange rate conversion.
 
         Returns:
@@ -53,5 +55,7 @@ class TransactionCalculator:
         """
         total: Decimal = Decimal(0)
         for item in transactions:
-            total += self.calculate_single_transaction_amount(item, use_portfolio_currency=use_portfolio_currency)
+            total += self.calculate_single_transaction_amount(
+                item, use_portfolio_currency=use_portfolio_currency
+            )
         return total

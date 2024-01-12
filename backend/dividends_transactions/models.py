@@ -8,8 +8,12 @@ from shares_transactions.models import Transaction
 
 
 class DividendsTransaction(Transaction):
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="dividends_transactions")
-    total_amount = MoneyField(max_digits=12, decimal_places=3, default=0, default_currency="EUR")
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="dividends_transactions"
+    )
+    total_amount = MoneyField(
+        max_digits=12, decimal_places=3, default=0, default_currency="EUR"
+    )
 
     objects: QuerySet["DividendsTransaction"]  # To solve issue django-manager-missing
 
@@ -19,4 +23,7 @@ class DividendsTransaction(Transaction):
         verbose_name_plural = "Dividends Transactions"
 
     def __str__(self):
-        return f"Amount: {self.total_amount} - PPS: {self.gross_price_per_share} - Commission: {self.total_commission}"
+        return (
+            f"Amount: {self.total_amount} - PPS: {self.gross_price_per_share} "
+            f"- Commission: {self.total_commission}"
+        )

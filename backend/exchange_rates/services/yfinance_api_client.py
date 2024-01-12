@@ -11,7 +11,10 @@ class YFinanceExchangeClient:
     def get_exchange_rate_for_date(
         self, from_currency: str, to_currency: str, exchange_date: datetime
     ) -> Union[dict, None]:
-        logger.debug(f"Call the Yfinance exchange lib. From: {from_currency} To: {to_currency} Date: {exchange_date}.")
+        logger.debug(
+            f"Call the Yfinance exchange lib. From: {from_currency} To: {to_currency} "
+            f"Date: {exchange_date}."
+        )
 
         ticker = f"{from_currency}{to_currency}=X"
         api_client = YFinanceApiClient()
@@ -19,7 +22,9 @@ class YFinanceExchangeClient:
         previous_day = (exchange_date - timedelta(days=1)).strftime("%Y-%m-%d")
         # exchange_date + 1 day
         next_day = (exchange_date + timedelta(days=1)).strftime("%Y-%m-%d")
-        exchange_rate_dict = api_client.get_company_data_between_dates(ticker, previous_day, next_day)
+        exchange_rate_dict = api_client.get_company_data_between_dates(
+            ticker, previous_day, next_day
+        )
 
         # Get the close value for the first key of the dict
         logger.debug((exchange_rate_dict[0]))

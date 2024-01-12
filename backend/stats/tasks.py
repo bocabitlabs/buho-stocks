@@ -21,7 +21,9 @@ def debug_task(self):
         # Print the percentage of total progress
         percent = 0 if i == 0 else int(i / total * 100)
         logger.debug(f"{self.request.id} - Progress: {percent}")
-        update_task_status(self.request.id, "Sample task", "Details 1", "PROGRESS", percent)
+        update_task_status(
+            self.request.id, "Sample task", "Details 1", "PROGRESS", percent
+        )
         time.sleep(1)
     # update_task_status(self.request.id, "Sample task", "Details 2", "COMPLETED", 100)
     update_task_status(
@@ -35,7 +37,9 @@ def debug_task(self):
 
 
 @app.task(bind=True, ignore_result=False)
-def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_price=False):
+def update_portolfio_stats(
+    self, portfolio_id, companies_ids, year, update_api_price=False
+):
     logger.info(f"Updating portfolio stats for portfolio {portfolio_id}")
 
     logger.debug(
@@ -74,46 +78,74 @@ def update_portolfio_stats(self, portfolio_id, companies_ids, year, update_api_p
             update_task_status(
                 self.request.id,
                 "Updating portfolio stats",
-                {"year": year_text, "task_description": "Updating company", "company": company.name},
+                {
+                    "year": year_text,
+                    "task_description": "Updating company",
+                    "company": company.name,
+                },
                 "PROGRESS",
                 percent,
             )
-            company_stats = CompanyStatsCalculator(company.id, year=year, update_api_price=update_api_price)
+            company_stats = CompanyStatsCalculator(
+                company.id, year=year, update_api_price=update_api_price
+            )
             company_stats.update_year_stats()
             current += 1
         except Exception as error:
-            logger.error(f"Error updating company stats for {company.name}: {error}", exc_info=True)
+            logger.error(
+                f"Error updating company stats for {company.name}: {error}",
+                exc_info=True,
+            )
             update_task_status(
                 self.request.id,
                 "Updating portfolio stats",
-                {"year": year_text, "task_description": "Error updating company stats", "company": company.name},
+                {
+                    "year": year_text,
+                    "task_description": "Error updating company stats",
+                    "company": company.name,
+                },
                 "FAILED",
                 100,
             )
             return "FAILED"
     try:
         # Update the portfolio
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
+        portfolio_stats = PortfolioStatsUtils(
+            portfolio_id, year=year, update_api_price=update_api_price
+        )
         portfolio_stats.update_year_stats()
 
         update_task_status(
             self.request.id,
             "Updating portfolio stats",
-            {"year": year_text, "task_description": "Stats updated", "company": company.name},
+            {
+                "year": year_text,
+                "task_description": "Stats updated",
+                "company": company.name,
+            },
             "COMPLETED",
             100,
         )
 
         if year != settings.YEAR_FOR_ALL:
-            update_portolfio_stats.delay(portfolio_id, companies_ids, settings.YEAR_FOR_ALL, update_api_price)
+            update_portolfio_stats.delay(
+                portfolio_id, companies_ids, settings.YEAR_FOR_ALL, update_api_price
+            )
 
         return "OK"
     except Exception as error:
-        logger.error(f"Error updating portfolio stats for {portfolio.name}: {error}", exc_info=True)
+        logger.error(
+            f"Error updating portfolio stats for {portfolio.name}: {error}",
+            exc_info=True,
+        )
         update_task_status(
             self.request.id,
             "Updating portfolio stats",
-            {"year": year_text, "task_description": "Error updating portfolio stats", "company": portfolio.name},
+            {
+                "year": year_text,
+                "task_description": "Error updating portfolio stats",
+                "company": portfolio.name,
+            },
             "FAILED",
             100,
         )

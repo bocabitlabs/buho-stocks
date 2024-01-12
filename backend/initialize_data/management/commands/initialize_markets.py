@@ -15,4 +15,8 @@ class Command(BaseCommand):
 
         markets = create_initial_markets()
 
-        self.stdout.write(self.style.SUCCESS(f"Created {len(markets)}{[market.name for market in markets]}"))
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Created {len(markets)}{[market.name for market in markets]}"
+            )
+        )

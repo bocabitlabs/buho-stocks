@@ -19,7 +19,9 @@ class Transaction(models.Model):
     count = models.IntegerField(default=0)
     exchange_rate = models.DecimalField(max_digits=12, decimal_places=3)
     transaction_date = models.DateField()
-    gross_price_per_share = MoneyField(max_digits=12, decimal_places=3, default=Money("0", "USD"))  # type: ignore
+    gross_price_per_share = MoneyField(
+        max_digits=12, decimal_places=3, default=Money("0", "USD")
+    )
     total_amount = MoneyField(max_digits=12, decimal_places=3)
     total_commission = MoneyField(max_digits=12, decimal_places=3)
     notes = models.TextField()
@@ -39,14 +41,21 @@ class Transaction(models.Model):
         if self.transaction_date > datetime.date.today():
             logger.debug(f"Clean called: {self.transaction_date}")
             raise serializers.ValidationError(
-                {"transaction_date": "Transaction cannot be created in the future"}, code="invalid"
+                {"transaction_date": "Transaction cannot be created in the future"},
+                code="invalid",
             )
 
 
 class SharesTransaction(Transaction):
-    type = models.CharField(choices=TransactionType.choices, default=TransactionType.BUY, max_length=10)
-    total_amount = MoneyField(max_digits=12, decimal_places=3, default=0, default_currency="EUR")
-    company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name="shares_transactions")
+    type = models.CharField(
+        choices=TransactionType.choices, default=TransactionType.BUY, max_length=10
+    )
+    total_amount = MoneyField(
+        max_digits=12, decimal_places=3, default=0, default_currency="EUR"
+    )
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name="shares_transactions"
+    )
 
     objects: QuerySet["SharesTransaction"]  # To solve issue django-manager-missing
 
@@ -56,4 +65,7 @@ class SharesTransaction(Transaction):
         verbose_name_plural = "Shares Transactions"
 
     def __str__(self):
-        return f"{self.type} - {self.count} - {self.gross_price_per_share} ({self.total_commission}"
+        return (
+            f"{self.type} - {self.count} - "
+            f"{self.gross_price_per_share} ({self.total_commission}"
+        )

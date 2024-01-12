@@ -43,7 +43,15 @@ class ExchangeRateDetailAPIView(APIView):
     """Operations for a single Exchange rate"""
 
     @swagger_auto_schema(tags=["exchange_rates"])
-    def get(self, request, exchange_from: str, exchange_to: str, exchange_date: str, *args, **kwargs):
+    def get(
+        self,
+        request,
+        exchange_from: str,
+        exchange_to: str,
+        exchange_date: str,
+        *args,
+        **kwargs,
+    ):
         """
         Retrieve the market item with given exchange_name
         """

@@ -29,7 +29,9 @@ class SuperSector(SectorBase):
 class Sector(SectorBase):
     """Sector model class"""
 
-    super_sector = models.ForeignKey(SuperSector, on_delete=models.SET_NULL, related_name="sectors", null=True)
+    super_sector = models.ForeignKey(
+        SuperSector, on_delete=models.SET_NULL, related_name="sectors", null=True
+    )
 
     class Meta:
         ordering = ["name"]

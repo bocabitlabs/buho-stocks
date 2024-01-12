@@ -14,12 +14,17 @@ class Command(BaseCommand):
         self.stdout.write("Updating total amount for rights transactions")
         # Iterate all the dividends transactions and set the total amount
         for transaction in RightsTransaction.objects.all():
-            transaction.total_amount = transaction.count * transaction.gross_price_per_share
+            transaction.total_amount = (
+                transaction.count * transaction.gross_price_per_share
+            )
             transaction.save()
         self.stdout.write("Updating total amount currency for rights transactions")
-        # Iterate all the dividends transactions and set the total amount currency to the company dividends currency
+        # Iterate all the dividends transactions and set the total amount currency to
+        # the company dividends currency
         for transaction in RightsTransaction.objects.all():
             transaction.total_amount.currency = transaction.company.base_currency
             transaction.save()
 
-        self.stdout.write(self.style.SUCCESS("Successfully set the rights total amount"))
+        self.stdout.write(
+            self.style.SUCCESS("Successfully set the rights total amount")
+        )

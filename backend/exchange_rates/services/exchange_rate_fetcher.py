@@ -54,7 +54,9 @@ class ExchangeRateFetcher:
         except ExchangeRate.DoesNotExist:
             api_client = YFinanceExchangeClient()
             logger.debug("Getting exchange rate from YFinance API")
-            exchange_rate_dict = api_client.get_exchange_rate_for_date(from_currency, to_currency, transaction_date)
+            exchange_rate_dict = api_client.get_exchange_rate_for_date(
+                from_currency, to_currency, transaction_date
+            )
 
             if exchange_rate_dict:
                 saved_exchange_rate = self.save_exchange_rate(exchange_rate_dict)

@@ -66,7 +66,8 @@ def create_initial_benchmark_years_from_json(json_path: str) -> list[BenchmarkYe
             for benchmark_year in data:
                 if benchmark_year["benchmark"] == benchmark.name:
                     logger.debug(
-                        f"Creating benchmark year {benchmark_year['benchmark']} for benchmark {benchmark.name}"
+                        f"Creating benchmark year {benchmark_year['benchmark']} "
+                        f"for benchmark {benchmark.name}"
                     )
                     try:
                         benchmark_value = Money(
@@ -81,7 +82,10 @@ def create_initial_benchmark_years_from_json(json_path: str) -> list[BenchmarkYe
                             value=benchmark_value,
                         )
                     except IntegrityError as error:
-                        logger.warning(f"Benchmark year {benchmark_year['benchmark']} already exists ({error})")
+                        logger.warning(
+                            f"Benchmark year {benchmark_year['benchmark']} "
+                            f"already exists ({error})"
+                        )
                         continue
 
                     if result:

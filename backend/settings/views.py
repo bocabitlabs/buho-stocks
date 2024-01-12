@@ -64,7 +64,9 @@ class UserSettingsDetailAPIView(APIView):
             "sentry_enabled": request.data.get("sentry_enabled"),
             "backend_hostname": request.data.get("backend_hostname"),
         }
-        serializer = UserSettingsSerializer(instance=todo_instance, data=data, partial=True)
+        serializer = UserSettingsSerializer(
+            instance=todo_instance, data=data, partial=True
+        )
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)

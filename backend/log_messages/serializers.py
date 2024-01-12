@@ -6,7 +6,9 @@ from portfolios.models import Portfolio
 
 
 class LogMessageSerializer(serializers.ModelSerializer):
-    portfolio: Field = serializers.PrimaryKeyRelatedField(queryset=Portfolio.objects, many=False, read_only=False)
+    portfolio: Field = serializers.PrimaryKeyRelatedField(
+        queryset=Portfolio.objects, many=False, read_only=False
+    )
 
     class Meta:
         model = LogMessage

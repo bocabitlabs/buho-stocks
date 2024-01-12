@@ -8,7 +8,10 @@ from rest_framework.views import APIView
 
 from benchmarks.serializers import BenchmarkSerializer
 from currencies.serializers import CurrencySerializer
-from initialize_data.initializers.benchmarks import create_initial_benchmark_years, create_initial_benchmarks
+from initialize_data.initializers.benchmarks import (
+    create_initial_benchmark_years,
+    create_initial_benchmarks,
+)
 from initialize_data.initializers.currencies import create_initial_currencies
 from initialize_data.initializers.markets import create_initial_markets
 from initialize_data.initializers.sectors import initialize_all_sectors
@@ -23,7 +26,9 @@ class InitializeMarketsView(APIView):
     A viewset for viewing and editing market instances.
     """
 
-    @swagger_auto_schema(tags=["initializers"], responses={201: MarketSerializer(many=True)})
+    @swagger_auto_schema(
+        tags=["initializers"], responses={201: MarketSerializer(many=True)}
+    )
     def post(self, request, format=None):
         """
         Initialize all the markets
@@ -38,7 +43,9 @@ class InitializeBenchmarksView(APIView):
     A viewset for viewing and editing market instances.
     """
 
-    @swagger_auto_schema(tags=["initializers"], responses={201: BenchmarkSerializer(many=True)})
+    @swagger_auto_schema(
+        tags=["initializers"], responses={201: BenchmarkSerializer(many=True)}
+    )
     def post(self, request, format=None):
         """
         Initialize all the benchmarks
@@ -54,7 +61,9 @@ class InitializeSectorsView(APIView):
     A viewset for viewing and editing market instances.
     """
 
-    @swagger_auto_schema(tags=["initializers"], responses={201: SectorSerializer(many=True)})
+    @swagger_auto_schema(
+        tags=["initializers"], responses={201: SectorSerializer(many=True)}
+    )
     def post(self, request, format=None):
         """
         Initialize all the sectors
@@ -69,7 +78,9 @@ class InitializeCurrenciesView(APIView):
     A viewset for viewing and editing market instances.
     """
 
-    @swagger_auto_schema(tags=["initializers"], responses={201: CurrencySerializer(many=True)})
+    @swagger_auto_schema(
+        tags=["initializers"], responses={201: CurrencySerializer(many=True)}
+    )
     def post(self, request, format=None):
         """
         Initialize all the sectors

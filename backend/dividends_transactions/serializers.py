@@ -7,7 +7,9 @@ from dividends_transactions.models import DividendsTransaction
 
 
 class DividendsTransactionSerializer(serializers.ModelSerializer):
-    company: Field = serializers.PrimaryKeyRelatedField(queryset=Company.objects, many=False, read_only=False)
+    company: Field = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects, many=False, read_only=False
+    )
 
     total_commission = MoneyField(max_digits=12, decimal_places=3)
     total_commission_currency = serializers.CharField(max_length=50)

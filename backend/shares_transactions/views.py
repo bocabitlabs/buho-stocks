@@ -13,10 +13,13 @@ from stats.tasks import update_portolfio_stats
 
 logger = logging.getLogger("buho_backend")
 
+update_portfolio_desc = (
+    "Whether or not to update the portfolio stats after adding the dividend"
+)
 update_portfolio_param = openapi.Parameter(
     "updatePortfolio",
     openapi.IN_FORM,
-    description="Whether or not to update the portfolio stats after adding the dividend",
+    description=update_portfolio_desc,
     type=openapi.TYPE_BOOLEAN,
 )
 
@@ -38,19 +41,25 @@ class SharesViewSet(viewsets.ModelViewSet):
 
     def add_shares_update_company_stats(self, serializer, company):
         logger.debug(f"Updating company stats for {company.name} after adding shares")
-        transaction_date = datetime.strptime(serializer.data.get("transaction_date"), "%Y-%m-%d")
+        transaction_date = datetime.strptime(
+            serializer.data.get("transaction_date"), "%Y-%m-%d"
+        )
 
         update_portfolio = self.request.data.get("updatePortfolio", False)
         if update_portfolio:
-            update_portolfio_stats.delay(company.portfolio_id, [company.id], transaction_date.year)
+            update_portolfio_stats.delay(
+                company.portfolio_id, [company.id], transaction_date.year
+            )
 
     def create_add_shares_log_message(self, serializer, company):
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_ADD_SHARES,
             message_text=(
                 f"Shares added: {company.name} ({company.ticker}). "
-                f"Total: {serializer.data.get('total_amount')} - {serializer.data.get('count')} - "
-                f"{serializer.data.get('gross_price_per_share')}. {serializer.data.get('notes')}"
+                f"Total: {serializer.data.get('total_amount')} - "
+                f"{serializer.data.get('count')} - "
+                f"{serializer.data.get('gross_price_per_share')}. "
+                f"{serializer.data.get('notes')}"
             ),
             portfolio=company.portfolio,
         )

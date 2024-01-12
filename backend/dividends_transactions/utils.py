@@ -15,7 +15,9 @@ class DividendsTransactionCalculator:
         self.transactions = transactions
         self.use_portfolio_currency = use_portfolio_currency
 
-    def _get_multiple_transactions_query(self, year: int, use_accumulated: bool = False):
+    def _get_multiple_transactions_query(
+        self, year: int, use_accumulated: bool = False
+    ):
         """[summary]
 
         Args:
@@ -33,15 +35,21 @@ class DividendsTransactionCalculator:
 
         return query
 
-    def _calculate_single_transaction_amount(self, item: DividendsTransaction) -> Decimal:
+    def _calculate_single_transaction_amount(
+        self, item: DividendsTransaction
+    ) -> Decimal:
         exchange_rate = Decimal(1)
         total = Decimal(0)
         if self.use_portfolio_currency:
             exchange_rate = item.exchange_rate
-        total = (item.total_amount.amount * exchange_rate) - (item.total_commission.amount * exchange_rate)
+        total = (item.total_amount.amount * exchange_rate) - (
+            item.total_commission.amount * exchange_rate
+        )
         return total
 
-    def _calculate_multiple_transactions_amount(self, query: QuerySet[DividendsTransaction]) -> Decimal:
+    def _calculate_multiple_transactions_amount(
+        self, query: QuerySet[DividendsTransaction]
+    ) -> Decimal:
         total: Decimal = Decimal(0)
         for item in query:
             total += self._calculate_single_transaction_amount(item)

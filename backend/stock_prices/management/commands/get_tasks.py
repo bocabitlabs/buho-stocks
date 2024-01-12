@@ -13,4 +13,6 @@ class Command(BaseCommand):
         self.stdout.write("Running sample task")
         results = TaskResult.objects.all()
         for result in results:
-            self.stdout.write(f"{result.task_id} - {result.status} - {result.date_done}")
+            self.stdout.write(
+                f"{result.task_id} - {result.status} - {result.date_done}"
+            )

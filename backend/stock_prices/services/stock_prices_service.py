@@ -16,19 +16,27 @@ class StockPricesService:
         self.api_client = YFinanceApiClient()
 
     def get_last_data_from_year(
-        self, ticker: str, from_date: datetime.datetime, to_date: datetime.datetime, update_api_price=False
+        self,
+        ticker: str,
+        from_date: datetime.datetime,
+        to_date: datetime.datetime,
+        update_api_price=False,
     ) -> StockPrice | None:
         # logger.debug(f"Getting last data from year {year} for {ticker}")
         from_date_str = from_date.strftime("%Y-%m-%d")
         to_date_str = to_date.strftime("%Y-%m-%d")
-        results = self._get_historical_data(ticker, from_date_str, to_date_str, update_api_price=update_api_price)
+        results = self._get_historical_data(
+            ticker, from_date_str, to_date_str, update_api_price=update_api_price
+        )
         if len(results) > 0:
             return results[-1]
         return None
 
     def get_last_data_from_last_month(self, ticker: str) -> StockPrice | None:
         logger.debug(f"Getting last data from last month for {ticker}")
-        from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime("%Y-%m-%d")
+        from_date = (datetime.date.today() - datetime.timedelta(days=31)).strftime(
+            "%Y-%m-%d"
+        )
         to_date = datetime.date.today().strftime("%Y-%m-%d")
         results = self._get_historical_data(ticker, from_date, to_date)
         if len(results) > 0:
@@ -54,31 +62,46 @@ class StockPricesService:
             dict: [description]
         """
 
-        prices = StockPrice.objects.filter(ticker=ticker, transaction_date__range=[from_date, to_date])
+        prices = StockPrice.objects.filter(
+            ticker=ticker, transaction_date__range=[from_date, to_date]
+        )
         prices_length = prices.count()
-        logger.debug(f"Found {prices_length} stock prices locally for {ticker} between {from_date} and {to_date}")
+        logger.debug(
+            f"Found {prices_length} stock prices locally for {ticker} "
+            f"between {from_date} and {to_date}"
+        )
 
         if update_api_price:
-            logger.debug(f"Updating from API stock prices for {ticker} between {from_date} and {to_date}")
+            logger.debug(
+                f"Updating from API stock prices for {ticker} "
+                f"between {from_date} and {to_date}"
+            )
             prices_length = 0
 
         instances: List[StockPrice] = []
         if prices_length < 1:
-            prices_from_api = self.api_client.get_stock_prices_list(ticker, from_date, to_date)
+            prices_from_api = self.api_client.get_stock_prices_list(
+                ticker, from_date, to_date
+            )
 
             if len(prices_from_api) > 0:
                 logger.info(f"Found {len(prices)} prices for {ticker} in the remote.")
             for price in prices_from_api:
                 serialized_date = price["transaction_date"]
                 try:
-                    price_instance = StockPrice.objects.get(ticker=ticker, transaction_date=serialized_date)
+                    price_instance = StockPrice.objects.get(
+                        ticker=ticker, transaction_date=serialized_date
+                    )
 
-                    serializer = StockPriceSerializer(price_instance, data=price)  # type: ignore
+                    serializer = StockPriceSerializer(price_instance, data=price)
                     if serializer and serializer.is_valid():
                         if not dry_run:
                             instance = serializer.save()
                             instances.append(instance)
-                            logger.debug(f"Saving price for {ticker} on {serialized_date}: {serializer.data}")
+                            logger.debug(
+                                f"Saving price for {ticker} on {serialized_date}: "
+                                f"{serializer.data}"
+                            )
                         else:
                             logger.debug("Dry run. Not saving element.")
 
@@ -90,11 +113,17 @@ class StockPricesService:
                         if not dry_run:
                             instance = serializer.save()
                             instances.append(instance)
-                            logger.debug(f"Saving price for {ticker} on {serialized_date}: {serializer.data}")
+                            logger.debug(
+                                f"Saving price for {ticker} on {serialized_date}: "
+                                f"{serializer.data}"
+                            )
                         else:
                             logger.debug("Dry run. Not saving element.")
                     else:
-                        logger.debug(f"{ticker} - {serialized_date}. Error on price :{serializer.errors}")
+                        logger.debug(
+                            f"{ticker} - {serialized_date}. "
+                            f"Error on price :{serializer.errors}"
+                        )
             return instances
         else:
             instances = list(prices.all())

@@ -11,8 +11,12 @@ class LogMessageListAPIView(APIView):
     # 1. List all
     @swagger_auto_schema(tags=["messages_log"])
     def get(self, request, portfolio_id, *args, **kwargs):
-        items = LogMessage.objects.filter(portfolio=portfolio_id).order_by("-date_created")
-        serializer = LogMessageSerializer(items, many=True, context={"request": request})
+        items = LogMessage.objects.filter(portfolio=portfolio_id).order_by(
+            "-date_created"
+        )
+        serializer = LogMessageSerializer(
+            items, many=True, context={"request": request}
+        )
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 

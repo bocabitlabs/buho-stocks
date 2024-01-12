@@ -7,7 +7,9 @@ from rights_transactions.models import RightsTransaction
 
 
 class RightsTransactionSerializer(serializers.ModelSerializer):
-    company: Field = serializers.PrimaryKeyRelatedField(queryset=Company.objects, many=False, read_only=False)
+    company: Field = serializers.PrimaryKeyRelatedField(
+        queryset=Company.objects, many=False, read_only=False
+    )
     gross_price_per_share = MoneyField(max_digits=12, decimal_places=3)
     gross_price_per_share_currency = serializers.CharField(max_length=50)
 

@@ -98,7 +98,9 @@ def match_super_sectors() -> int:
         for sector in sectors_list:
             if sector["super_sector_id"] == super_sector_id:
                 sector_object = Sector.objects.get(name=sector["name"])
-                sector_object.super_sector = SuperSector.objects.get(name=super_sector["name"])
+                sector_object.super_sector = SuperSector.objects.get(
+                    name=super_sector["name"]
+                )
                 sector_object.save()
                 logger.debug(f"Setting super sector {super_sector} for sector {sector}")
                 super_sectors_set += 1
