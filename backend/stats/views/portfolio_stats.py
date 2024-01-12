@@ -16,7 +16,10 @@ from stats.tasks import update_portolfio_stats
 logger = logging.getLogger("buho_backend")
 
 ids_param = openapi.Parameter(
-    "companiesIds", openapi.IN_QUERY, description="List of ids separated by ','", type=openapi.TYPE_STRING
+    "companiesIds",
+    openapi.IN_QUERY,
+    description="List of ids separated by ','",
+    type=openapi.TYPE_STRING,
 )
 update_api_price_param = openapi.Parameter(
     "updateApiPrice",
@@ -30,7 +33,9 @@ class PortfolioStatsAPIView(APIView):
     def get_object(self, portfolio_id, year, update_api_price=False, group_by=None):
         try:
             if group_by in ["month", "company"]:
-                stats = self.get_stats_grouped(portfolio_id, year, update_api_price, group_by)
+                stats = self.get_stats_grouped(
+                    portfolio_id, year, update_api_price, group_by
+                )
                 return stats
 
             stats = self.get_year_stats(portfolio_id, year, update_api_price)
@@ -42,7 +47,9 @@ class PortfolioStatsAPIView(APIView):
         if year == "all":
             year = settings.YEAR_FOR_ALL
 
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
+        portfolio_stats = PortfolioStatsUtils(
+            portfolio_id, year=year, update_api_price=update_api_price
+        )
         stats = portfolio_stats.get_year_stats()
         logger.debug(stats)
         serializer = PortfolioStatsForYearSerializer(stats)
@@ -51,7 +58,9 @@ class PortfolioStatsAPIView(APIView):
         return stats
 
     def get_stats_grouped(self, portfolio_id, year, update_api_price, group_by):
-        portfolio_stats = PortfolioStatsUtils(portfolio_id, year=year, update_api_price=update_api_price)
+        portfolio_stats = PortfolioStatsUtils(
+            portfolio_id, year=year, update_api_price=update_api_price
+        )
         stats = {}
         if group_by == "month":
             if year == settings.YEAR_FOR_ALL:
@@ -64,10 +73,14 @@ class PortfolioStatsAPIView(APIView):
             stats = serializer.data
         return stats
 
-    def update_object(self, portfolio_id, year, update_api_price=False, companies_ids=[]):
+    def update_object(
+        self, portfolio_id, year, update_api_price=False, companies_ids=[]
+    ):
         logger.debug("Updating portfolio stats")
 
-        update_portolfio_stats.delay(portfolio_id, companies_ids, year, update_api_price)
+        update_portolfio_stats.delay(
+            portfolio_id, companies_ids, year, update_api_price
+        )
         return True
 
     # 3. Retrieve
@@ -105,7 +118,12 @@ class PortfolioStatsAPIView(APIView):
             companies_ids = []
         logger.debug(f"Update API Price: {update_api_price}")
         logger.debug(f"Data: {request.data}")
-        stats = self.update_object(portfolio_id, year, update_api_price=update_api_price, companies_ids=companies_ids)
+        stats = self.update_object(
+            portfolio_id,
+            year,
+            update_api_price=update_api_price,
+            companies_ids=companies_ids,
+        )
         if not stats:
             return Response(
                 {"res": "Stats with id does not exists"},

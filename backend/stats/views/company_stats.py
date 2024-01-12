@@ -17,7 +17,9 @@ logger = logging.getLogger("buho_backend")
 class CompanyStatsAPIView(APIView):
     def get_object(self, company_id, year, update_api_price=False):
         try:
-            company_stats = CompanyStatsCalculator(company_id, year=year, update_api_price=update_api_price)
+            company_stats = CompanyStatsCalculator(
+                company_id, year=year, update_api_price=update_api_price
+            )
             instance = company_stats.get_year_stats(year)
             return instance
         except Company.DoesNotExist:
@@ -26,7 +28,9 @@ class CompanyStatsAPIView(APIView):
     def update_object(self, company_id, year, update_api_price=False):
         logger.debug("Updating company stats")
         company = Company.objects.get(id=company_id)
-        update_portolfio_stats.delay(company.portfolio_id, [company_id], year, update_api_price)
+        update_portolfio_stats.delay(
+            company.portfolio_id, [company_id], year, update_api_price
+        )
         return True
 
     # 3. Retrieve
@@ -54,7 +58,9 @@ class CompanyStatsAPIView(APIView):
         Update the company stats for a given year
         """
         update_api_price = request.data.get("update_api_price", False)
-        instance = self.update_object(company_id, year, update_api_price=update_api_price)
+        instance = self.update_object(
+            company_id, year, update_api_price=update_api_price
+        )
 
         if not instance:
             return Response(

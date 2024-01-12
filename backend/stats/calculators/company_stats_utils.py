@@ -35,12 +35,24 @@ class CompanyStatsCalculator:
         return result
 
     def calculate_stats_for_year(self, year: int):
-        accum_shares_count = self.company_data_calculator.calculate_accumulated_shares_count_until_year(year)
-        total_invested = self.company_data_calculator.calculate_total_invested_on_year(year)
-        dividends = self.company_data_calculator.dividends_calculator.calculate_dividends_of_year(year)
-        accumulated_investment = self.company_data_calculator.calculate_accumulated_investment_until_year(year)
+        accum_shares_count = (
+            self.company_data_calculator.calculate_accumulated_shares_count_until_year(
+                year
+            )
+        )
+        total_invested = self.company_data_calculator.calculate_total_invested_on_year(
+            year
+        )
+        div_calculator = self.company_data_calculator.dividends_calculator
+        dividends = div_calculator.calculate_dividends_of_year(year)
+        accumulated_investment = (
+            self.company_data_calculator.calculate_accumulated_investment_until_year(
+                year
+            )
+        )
+
         accumulated_dividends = (
-            self.company_data_calculator.dividends_calculator.calculate_accumulated_dividends_until_year(year)
+            div_calculator.calculate_accumulated_dividends_until_year(year)
         )
 
         current_year = year
@@ -54,16 +66,32 @@ class CompanyStatsCalculator:
         last_stock_price = company_stock_prices_fetcher.get_year_last_stock_price()
 
         # Calculated values
-        portfolio_value = self.company_data_calculator.calculate_company_value_on_year(year)
+        portfolio_value = self.company_data_calculator.calculate_company_value_on_year(
+            year
+        )
         return_value = self.company_data_calculator.calculate_return_on_year(year)
-        return_percent = self.company_data_calculator.calculate_return_yield_on_year(year)
-        return_with_dividends = self.company_data_calculator.calculate_return_with_dividends_on_year(year)
-        return_with_dividends_yield = self.company_data_calculator.calculate_return_yield_with_dividends_on_year(year)
-        dividends_yield = self.company_data_calculator.calculate_dividends_yield_on_year(year)
+        return_percent = self.company_data_calculator.calculate_return_yield_on_year(
+            year
+        )
+        return_with_dividends = (
+            self.company_data_calculator.calculate_return_with_dividends_on_year(year)
+        )
+        return_with_dividends_yield = (
+            self.company_data_calculator.calculate_return_yield_with_dividends_on_year(
+                year
+            )
+        )
+        dividends_yield = (
+            self.company_data_calculator.calculate_dividends_yield_on_year(year)
+        )
         # Fixes
-        last_stock_price_value = last_stock_price.price.amount if last_stock_price else 0
+        last_stock_price_value = (
+            last_stock_price.price.amount if last_stock_price else 0
+        )
         last_stock_price_currency = self.company.base_currency
-        last_stock_price_transaction_date = last_stock_price.transaction_date if last_stock_price else f"{year}-01-01"
+        last_stock_price_transaction_date = (
+            last_stock_price.transaction_date if last_stock_price else f"{year}-01-01"
+        )
         portfolio_currency = self.company.portfolio.base_currency
         portfolio_is_down = portfolio_value < accumulated_investment
 
@@ -95,7 +123,9 @@ class CompanyStatsCalculator:
         if year_stats:
             for key in calculated_data:
                 setattr(year_stats, key, calculated_data[key])
-                logger.debug(f"Year: {self.year} Setting {key} to {calculated_data[key]}")
+                logger.debug(
+                    f"Year: {self.year} Setting {key} to {calculated_data[key]}"
+                )
             logger.debug(f"Year: {self.year} Saving year stats. {year_stats}")
             year_stats.save()
         else:

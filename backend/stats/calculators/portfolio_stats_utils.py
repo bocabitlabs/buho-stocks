@@ -32,27 +32,39 @@ class PortfolioStatsUtils:
 
     def get_year_stats(self):
         results = None
-        if PortfolioStatsForYear.objects.filter(portfolio=self.portfolio, year=self.year).exists():
-            results = PortfolioStatsForYear.objects.get(portfolio=self.portfolio, year=self.year)
+        if PortfolioStatsForYear.objects.filter(
+            portfolio=self.portfolio, year=self.year
+        ).exists():
+            results = PortfolioStatsForYear.objects.get(
+                portfolio=self.portfolio, year=self.year
+            )
 
             return results
         return None
 
     def update_year_stats(self):
         results = self.get_year_stats()
-
-        invested_on_year = self.portfolio_data_calculator.calculate_total_invested_on_year(self.year)
-        accummulated_invetment = self.portfolio_data_calculator.calculate_accumulated_investment_until_year(self.year)
-        year_dividends = self.portfolio_data_calculator.calculate_total_dividends_of_year(self.year)
-        accummulated_dividends = self.portfolio_data_calculator.calculate_accumulated_dividends_until_year(self.year)
-        portfolio_value = self.portfolio_data_calculator.calculate_portfolio_value_on_year(self.year)
-        return_value = self.portfolio_data_calculator.calculate_return_on_year(self.year)
-        return_yield = self.portfolio_data_calculator.calculate_return_yield_on_year(self.year)
-        return_with_dividends = self.portfolio_data_calculator.calculate_return_with_dividends_on_year(self.year)
-        return_with_dividends_yield = self.portfolio_data_calculator.calculate_return_with_dividends_yield_on_year(
+        portfolio_calc = self.portfolio_data_calculator
+        invested_on_year = portfolio_calc.calculate_total_invested_on_year(self.year)
+        accummulated_invetment = (
+            portfolio_calc.calculate_accumulated_investment_until_year(self.year)
+        )
+        year_dividends = portfolio_calc.calculate_total_dividends_of_year(self.year)
+        accummulated_dividends = (
+            portfolio_calc.calculate_accumulated_dividends_until_year(self.year)
+        )
+        portfolio_value = portfolio_calc.calculate_portfolio_value_on_year(self.year)
+        return_value = portfolio_calc.calculate_return_on_year(self.year)
+        return_yield = portfolio_calc.calculate_return_yield_on_year(self.year)
+        return_with_dividends = portfolio_calc.calculate_return_with_dividends_on_year(
             self.year
         )
-        dividends_yield = self.portfolio_data_calculator.calculate_accummulated_dividends_yield(self.year)
+        return_with_dividends_yield = (
+            portfolio_calc.calculate_return_with_dividends_yield_on_year(self.year)
+        )
+        dividends_yield = portfolio_calc.calculate_accummulated_dividends_yield(
+            self.year
+        )
 
         data = {
             "accumulated_dividends": accummulated_dividends,
@@ -84,7 +96,9 @@ class PortfolioStatsUtils:
     def get_year_stats_by_company(self):
         results = []
         for company in self.portfolio.companies.all():
-            company_stats = CompanyStatsCalculator(company.id, year=self.year, update_api_price=self.update_api_price)
+            company_stats = CompanyStatsCalculator(
+                company.id, year=self.year, update_api_price=self.update_api_price
+            )
             instance = company_stats.get_year_stats(self.year)
             results.append(instance)
 
@@ -103,9 +117,9 @@ class PortfolioStatsUtils:
             years_array = range(int(first_year), datetime.datetime.now().year + 1)
 
         # Array with the stats of all the years
-        years_list = PortfolioStatsForYear.objects.filter(portfolio=self.portfolio, year__in=years_array).order_by(
-            "year"
-        )
+        years_list = PortfolioStatsForYear.objects.filter(
+            portfolio=self.portfolio, year__in=years_array
+        ).order_by("year")
 
         for year in years_list:
             data = {
@@ -138,9 +152,9 @@ class PortfolioStatsUtils:
         result = {}
 
         def get_transaction_value(transaction):
-            current_value = (transaction.total_amount.amount * transaction.exchange_rate) - (
-                transaction.total_commission.amount * transaction.exchange_rate
-            )
+            current_value = (
+                transaction.total_amount.amount * transaction.exchange_rate
+            ) - (transaction.total_commission.amount * transaction.exchange_rate)
             return current_value
 
         for transaction in transactions:

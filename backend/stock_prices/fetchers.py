@@ -22,22 +22,30 @@ class CompanyStockPriceFetcher:
         from_date, to_date = self.get_start_end_dates_for_year(self.year)
         from_date_datetime = datetime.datetime.strptime(from_date, "%Y-%m-%d")
         to_date_datetime = datetime.datetime.strptime(to_date, "%Y-%m-%d")
-        stock_price = self.get_last_stock_price_from_db_of_year(self.company.ticker, from_date, to_date)
+        stock_price = self.get_last_stock_price_from_db_of_year(
+            self.company.ticker, from_date, to_date
+        )
 
         if not stock_price or self.update_api_price:
             stock_price_service = StockPricesService()
 
             if self.year == settings.YEAR_FOR_ALL:
-                stock_price = stock_price_service.get_last_data_from_last_month(self.company.ticker)
+                stock_price = stock_price_service.get_last_data_from_last_month(
+                    self.company.ticker
+                )
             else:
                 first_year = get_company_first_year(self.company.id)
                 if not first_year or first_year > int(self.year):
                     return None
 
-                stock_price = self.get_last_stock_price_from_db_of_year(self.company.ticker, from_date, to_date)
+                stock_price = self.get_last_stock_price_from_db_of_year(
+                    self.company.ticker, from_date, to_date
+                )
 
                 if not stock_price or self.update_api_price:
-                    logger.debug(f"Fetching stock price for {self.company.ticker} in {self.year}")
+                    logger.debug(
+                        f"Fetching stock price for {self.company.ticker} in {self.year}"
+                    )
 
                     stock_price = stock_price_service.get_last_data_from_year(
                         self.company.ticker,
@@ -48,10 +56,12 @@ class CompanyStockPriceFetcher:
 
         return stock_price
 
-    def get_last_stock_price_from_db_of_year(self, ticker: str, from_date: str, to_date: str) -> StockPrice | None:
-        prices = StockPrice.objects.filter(ticker=ticker, transaction_date__range=[from_date, to_date]).order_by(
-            "-transaction_date"
-        )
+    def get_last_stock_price_from_db_of_year(
+        self, ticker: str, from_date: str, to_date: str
+    ) -> StockPrice | None:
+        prices = StockPrice.objects.filter(
+            ticker=ticker, transaction_date__range=[from_date, to_date]
+        ).order_by("-transaction_date")
 
         if prices.count() > 0:
             last_price: StockPrice = prices[0]

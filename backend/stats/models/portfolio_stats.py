@@ -24,7 +24,9 @@ class PortfolioStatsForYear(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    portfolio = models.ForeignKey(Portfolio, on_delete=models.CASCADE, related_name="stats")
+    portfolio = models.ForeignKey(
+        Portfolio, on_delete=models.CASCADE, related_name="stats"
+    )
 
     class Meta:
         unique_together = [["year", "portfolio"]]
