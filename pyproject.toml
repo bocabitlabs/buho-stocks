@@ -61,7 +61,6 @@ requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.black]
-line-length = 120 # override black's default line-length
 exclude = '''
 /(
     \.git
@@ -90,6 +89,5 @@ include_trailing_comma = true
 use_parentheses = true
 # See https://github.com/PyCQA/isort#multi-line-output-modes
 multi_line_output = 3
-line_length = 120
 combine_as_imports = true
 src_paths = ["backend"]
