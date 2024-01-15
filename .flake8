@@ -1,5 +1,4 @@
 [flake8]
-exclude = migrations
 # black compatibility
 max-line-length = 88
 extend-exclude =
@@ -9,6 +8,7 @@ extend-exclude =
     media
     venv
     env
+    migrations
 
 select = C,E,F,W,DJ,DJ10
 # black compatibility
