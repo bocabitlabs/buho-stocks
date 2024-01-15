@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 
 from django.db import models
 from django.db.models.query import QuerySet
-from django_stubs_ext.db.models import TypedModelMeta
 
 from markets.models import Market
 from portfolios.models import Portfolio
@@ -58,7 +57,7 @@ class Company(models.Model):
     dividends_transactions: QuerySet["DividendsTransaction"]
     rights_transactions: QuerySet["RightsTransaction"]
 
-    class Meta(TypedModelMeta):
+    class Meta:
         ordering = ["name"]
         verbose_name = "Company"
         verbose_name_plural = "Companies"

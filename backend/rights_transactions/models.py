@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models.query import QuerySet
-from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 
 from buho_backend.transaction_types import TransactionType
@@ -30,5 +29,5 @@ class RightsTransaction(Transaction):
             f"{self.gross_price_per_share} ({self.total_commission}"
         )
 
-    class Meta(TypedModelMeta):
+    class Meta:
         ordering = ["-transaction_date"]

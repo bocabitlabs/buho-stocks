@@ -2,7 +2,6 @@ from decimal import Decimal
 
 from django.db import models
 from django.db.models.query import QuerySet
-from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 
 
@@ -41,7 +40,7 @@ class BenchmarkYear(models.Model):
 
     objects: QuerySet["BenchmarkYear"]  # To solve issue django-manager-missing
 
-    class Meta(TypedModelMeta):
+    class Meta:
         verbose_name = "Benchmark Year"
         verbose_name_plural = "Benchmark Years"
         unique_together = ("benchmark", "year")

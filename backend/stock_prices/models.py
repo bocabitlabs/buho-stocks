@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models.query import QuerySet
-from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 
 
@@ -13,7 +12,7 @@ class StockPrice(models.Model):
 
     objects: QuerySet["StockPrice"]  # To solve issue django-manager-missing
 
-    class Meta(TypedModelMeta):
+    class Meta:
         unique_together = ("ticker", "transaction_date")
         verbose_name = "Stock Price"
         verbose_name_plural = "Stock Prices"

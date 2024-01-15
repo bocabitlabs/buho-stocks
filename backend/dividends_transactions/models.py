@@ -1,6 +1,5 @@
 from django.db import models
 from django.db.models.query import QuerySet
-from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 
 from companies.models import Company
@@ -17,7 +16,7 @@ class DividendsTransaction(Transaction):
 
     objects: QuerySet["DividendsTransaction"]  # To solve issue django-manager-missing
 
-    class Meta(TypedModelMeta):
+    class Meta:
         ordering = ["-transaction_date"]
         verbose_name = "Dividends Transaction"
         verbose_name_plural = "Dividends Transactions"

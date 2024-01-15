@@ -3,7 +3,6 @@ import logging
 
 from django.db import models
 from django.db.models.query import QuerySet
-from django_stubs_ext.db.models import TypedModelMeta
 from djmoney.models.fields import MoneyField
 from moneyed import Money
 from rest_framework import serializers
@@ -59,7 +58,7 @@ class SharesTransaction(Transaction):
 
     objects: QuerySet["SharesTransaction"]  # To solve issue django-manager-missing
 
-    class Meta(TypedModelMeta):
+    class Meta:
         ordering = ["-transaction_date"]
         verbose_name = "Shares Transaction"
         verbose_name_plural = "Shares Transactions"
