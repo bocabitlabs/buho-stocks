@@ -1,4 +1,4 @@
-name: Docker Build & Publish tag
+name: Docker Build & Publish Client tag
 on:
   release:
     types:
@@ -24,17 +24,6 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and Push backend Docker Image (tag)
-        uses: docker/build-push-action@v5
-        with:
-          context: . # Path to your Dockerfile and other build context files
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}:${{ github.head_ref || github.ref_name }}
-          labels: |
-            org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
 
       - name: Build and Push client Docker Image (tag)
         uses: docker/build-push-action@v5

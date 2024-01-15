@@ -1,12 +1,12 @@
-name: Docker Build & Publish latest
+name: Docker Build & Publish Backend tag
 on:
-  push:
-    branches:
-      - main
+  release:
+    types:
+      - created
 
 jobs:
   build-and-publish:
-    name: Build and Publish Docker Image (latest)
+    name: Build and Publish Docker Image (tag)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -25,25 +25,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and Push backend Docker Image
+      - name: Build and Push backend Docker Image (tag)
         uses: docker/build-push-action@v5
         with:
           context: . # Path to your Dockerfile and other build context files
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            ghcr.io/${{ github.repository }}:latest
-          labels: |
-            org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
-
-      - name: Build and Push client Docker Image
-        uses: docker/build-push-action@v5
-        with:
-          context: . # Path to your Dockerfile and other build context files
-          file: docker.client.Dockerfile
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository }}-client:latest
+            ghcr.io/${{ github.repository }}:${{ github.head_ref || github.ref_name }}
           labels: |
             org.opencontainers.image.source=https://github.com/bocabitlabs/${{ github.repository }}
