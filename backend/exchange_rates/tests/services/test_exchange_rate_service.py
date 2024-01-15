@@ -13,37 +13,40 @@ logger = logging.getLogger("buho_backend")
 
 
 class ExchangeRateFetcherTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self) -> None:
+        super().setUp()
+        self.faker_obj = Faker()
         instances = []
-        cls.years = [2018, 2020, 2021, 2022]
-        cls.exchange_dates = [
+        self.years = [2018, 2020, 2021, 2022]
+        self.exchange_dates = [
             "2018-01-01",
             "2020-01-01",
             "2021-01-01",
             "2022-01-01",
         ]
-        cls.not_found_date = f"{cls.years[3]}-08-04"
-        cls.exchange_rates = [Decimal(10), Decimal(20), Decimal(30), Decimal(40)]
-        cls.from_currency = "USD"
-        cls.to_currency = "EUR"
+        self.not_found_date = datetime.datetime.strptime(
+            f"{self.years[3]}-08-04", "%Y-%m-%d"
+        )
+        self.exchange_rates = [Decimal(10), Decimal(20), Decimal(30), Decimal(40)]
+        self.from_currency = "USD"
+        self.to_currency = "EUR"
         for index in range(0, 4):
-            first_datetime = cls.exchange_dates[index]
+            first_datetime = self.exchange_dates[index]
             instance = ExchangeRateFactory.create(
-                exchange_from=cls.from_currency,
-                exchange_to=cls.to_currency,
-                exchange_rate=cls.exchange_rates[index],
+                exchange_from=self.from_currency,
+                exchange_to=self.to_currency,
+                exchange_rate=self.exchange_rates[index],
                 exchange_date=first_datetime,
             )
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_exchange_rate_for_date(self):
         index = 3
         service = ExchangeRateFetcher()
-        rate = service.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.exchange_dates[index])
+        rate = service.get_exchange_rate_for_date(
+            self.from_currency, self.to_currency, self.exchange_dates[index]
+        )
         if not rate:
             self.fail("Rate not found")
         self.assertEqual(
@@ -75,7 +78,9 @@ class ExchangeRateFetcherTestCase(BaseApiTestCase):
             "exchange_rate": "1.000",
         }
         service = ExchangeRateFetcher()
-        value = service.get_exchange_rate_for_date(self.from_currency, self.from_currency, self.exchange_dates[index])
+        value = service.get_exchange_rate_for_date(
+            self.from_currency, self.from_currency, self.exchange_dates[index]
+        )
 
         if not value:
             self.fail("Rate not found")
@@ -90,7 +95,6 @@ class ExchangeRateFetcherTestCase(BaseApiTestCase):
             same_currency_exchange_rate["exchange_to"],
         )
 
-        # date = datetime.datetime.strptime(self.exchange_dates[index], "%Y-%m-%d").date()
         self.assertEqual(
             value.exchange_date,
             same_currency_exchange_rate["exchange_date"],
@@ -102,7 +106,9 @@ class ExchangeRateFetcherTestCase(BaseApiTestCase):
 
     def test_get_exchange_rate_not_found_in_db(self):
         service = ExchangeRateFetcher()
-        result = service.get_exchange_rate_for_date(self.from_currency, self.to_currency, self.not_found_date)
+        result = service.get_exchange_rate_for_date(
+            self.from_currency, self.to_currency, self.not_found_date
+        )
 
         if not result:
             self.fail("Rate not found")
@@ -114,5 +120,7 @@ class ExchangeRateFetcherTestCase(BaseApiTestCase):
     def test_get_exchange_rate_not_found_at_all(self):
         service = ExchangeRateFetcher()
         self.mock_download.return_value = create_empty_download_mock_df()
-        result = service.get_exchange_rate_for_date("ABCDE", self.to_currency, self.not_found_date)
+        result = service.get_exchange_rate_for_date(
+            "ABCDE", self.to_currency, self.not_found_date
+        )
         self.assertIsNone(result)

@@ -14,11 +14,10 @@ logger = logging.getLogger("buho_backend")
 
 
 class ExchangeRatesListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.url = reverse("exchangerate-list")
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("exchangerate-list")
+        self.faker_obj = Faker()
 
     def test_get_exchange_rates(self):
         response = self.client.get(self.url)
@@ -36,14 +35,13 @@ class ExchangeRatesListTestCase(BaseApiTestCase):
 
 
 class ExchangeRatesDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUp(self):
+        super().setUp()
         instances = []
         for _ in range(0, 4):
             instance = ExchangeRateFactory.create()
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     @responses.activate
     def test_get_exchange_rate(self):

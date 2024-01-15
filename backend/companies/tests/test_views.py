@@ -16,10 +16,9 @@ logger = logging.getLogger("buho_backend")
 
 
 class CompaniesListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.faker_obj = Faker()
 
     def test_get_companies(self):
         portfolio = PortfolioFactory.create()
@@ -38,19 +37,20 @@ class CompaniesListTestCase(BaseApiTestCase):
 
 
 class CompanisDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.portfolio = PortfolioFactory.create()
+    def setUp(self):
+        super().setUp()
+        self.portfolio = PortfolioFactory.create()
         instances = []
         for _ in range(0, 4):
-            instance = CompanyFactory.create(portfolio=cls.portfolio)
+            instance = CompanyFactory.create(portfolio=self.portfolio)
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_company(self):
         index = 0
-        url = reverse("company-detail", args=[self.portfolio.id, self.instances[index].id])
+        url = reverse(
+            "company-detail", args=[self.portfolio.id, self.instances[index].id]
+        )
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -67,7 +67,9 @@ class CompanisDetailTestCase(BaseApiTestCase):
             self.instances[index].ticker,
         )
         index = len(self.instances) - 1
-        url = reverse("company-detail", args=[self.portfolio.id, self.instances[index].id])
+        url = reverse(
+            "company-detail", args=[self.portfolio.id, self.instances[index].id]
+        )
         response = self.client.get(url)
         self.assertEqual(
             response.data["broker"],
@@ -87,7 +89,9 @@ class CompanisDetailTestCase(BaseApiTestCase):
         temp_data["sector"] = sector.id
         temp_data["market"] = market.id
 
-        url = reverse("company-detail", args=[self.portfolio.id, self.instances[index].id])
+        url = reverse(
+            "company-detail", args=[self.portfolio.id, self.instances[index].id]
+        )
         response = self.client.put(url, temp_data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)

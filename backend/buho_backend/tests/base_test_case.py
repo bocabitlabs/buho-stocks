@@ -2,7 +2,10 @@ from unittest.mock import patch
 
 from rest_framework.test import APITestCase
 
-from stock_prices.tests.mocks.mock_yfinance import create_download_mock_2, create_ticker_mock_2
+from stock_prices.tests.mocks.mock_yfinance import (
+    create_download_mock,
+    create_ticker_mock,
+)
 
 
 class BaseApiTestCase(APITestCase):
@@ -13,8 +16,8 @@ class BaseApiTestCase(APITestCase):
         self.mock_ticker = self.patch_ticker.start()
         self.mock_download = self.patch_download.start()
 
-        self.set_mock_ticker_result(create_ticker_mock_2())
-        self.set_mock_download_result(create_download_mock_2())
+        self.set_mock_ticker_result(create_ticker_mock())
+        self.set_mock_download_result(create_download_mock())
 
     def tearDown(self):
         self.patch_ticker.stop()

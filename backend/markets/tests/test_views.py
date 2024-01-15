@@ -7,11 +7,10 @@ from markets.tests.factory import MarketFactory
 
 
 class MarketsListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.url = reverse("markets-list")
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.url = reverse("markets-list")
+        self.faker_obj = Faker()
 
     def test_get_markets(self):
         response = self.client.get(self.url)
@@ -28,14 +27,13 @@ class MarketsListTestCase(BaseApiTestCase):
 
 
 class MarketsDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUp(self):
+        super().setUp()
         markets = []
         for _ in range(0, 4):
             market = MarketFactory.create()
             markets.append(market)
-        cls.instances = markets
+        self.instances = markets
 
     def test_get_markets(self):
         index = 0

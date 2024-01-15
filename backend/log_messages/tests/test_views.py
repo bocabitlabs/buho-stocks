@@ -13,10 +13,9 @@ logger = logging.getLogger("buho_backend")
 
 
 class LogMessagesListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.faker_obj = Faker()
 
     def test_get_companies(self):
         portfolio = PortfolioFactory.create()
@@ -35,18 +34,19 @@ class LogMessagesListTestCase(BaseApiTestCase):
 
 
 class CompanisDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.portfolio = PortfolioFactory.create()
+    def setUp(self):
+        super().setUp()
+        self.portfolio = PortfolioFactory.create()
         instances = []
         for _ in range(0, 4):
-            instance = LogMessageFactory.create(portfolio=cls.portfolio)
+            instance = LogMessageFactory.create(portfolio=self.portfolio)
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_delete_company(self):
-        url = reverse("log-message-detail", args=[self.portfolio.id, self.instances[0].id])
+        url = reverse(
+            "log-message-detail", args=[self.portfolio.id, self.instances[0].id]
+        )
         response = self.client.delete(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)

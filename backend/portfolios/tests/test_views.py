@@ -14,12 +14,11 @@ logger = logging.getLogger("buho_backend")
 
 
 class PortfoliosListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUp(self):
+        super().setUp()
         create_initial_currencies()
-        cls.url = reverse("portfolio-list")
-        cls.faker_obj = Faker()
+        self.url = reverse("portfolio-list")
+        self.faker_obj = Faker()
 
     def test_get_portfolios(self):
         response = self.client.get(self.url)
@@ -55,15 +54,14 @@ class PortfoliosListTestCase(BaseApiTestCase):
 
 
 class PortfoliosDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUp(self):
+        super().setUp()
         create_initial_currencies()
         instances = []
         for _ in range(0, 4):
             instance = PortfolioFactory.create()
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_portfolio(self):
         url = reverse("portfolio-detail", args=[self.instances[0].id])

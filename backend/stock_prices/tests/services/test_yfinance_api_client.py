@@ -7,9 +7,8 @@ logger = logging.getLogger("buho_backend")
 
 
 class CustomYServiceTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUp(self):
+        super().setUp()
 
     def test_fetch_currency(self):
         service = YFinanceApiClient(wait_time=0)
@@ -19,7 +18,9 @@ class CustomYServiceTestCase(BaseApiTestCase):
 
     def test_fetch_stock_prices(self):
         service = YFinanceApiClient(wait_time=0)
-        results, currency = service.get_company_data_between_dates("CSCO", "2022-01-16", "2022-01-31")
+        results, currency = service.get_company_data_between_dates(
+            "CSCO", "2022-01-16", "2022-01-31"
+        )
         logger.info(results)
         logger.info(currency)
         self.assertEqual(currency, "USD")

@@ -6,10 +6,9 @@ from initialize_data.initializers.currencies import create_initial_currencies
 
 
 class CurrenciesViewsTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.available_currencies_count = 13
+    def setUp(self):
+        super().setUp()
+        self.available_currencies_count = 13
         create_initial_currencies()
 
     def test_get_currencies(self):
