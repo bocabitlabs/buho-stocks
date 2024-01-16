@@ -1,6 +1,7 @@
 from datetime import date
 from decimal import Decimal
 
+from django.conf import settings
 from django.db.models.query import QuerySet
 
 from dividends_transactions.models import DividendsTransaction
@@ -57,6 +58,9 @@ class DividendsTransactionCalculator:
 
     def calculate_dividends_of_year(self, year: int) -> Decimal:
         total = Decimal(0)
+        if year == settings.YEAR_FOR_ALL:
+            total = self.get_accumulated_dividends_until_current_year()
+            return total
         query = self._get_multiple_transactions_query(year)
         total = self._calculate_multiple_transactions_amount(query)
         return total
