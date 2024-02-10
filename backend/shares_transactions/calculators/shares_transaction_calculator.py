@@ -105,11 +105,21 @@ class SharesTransactionCalculator:
             Decimal: The total invested amount.
         """
         total: Decimal = Decimal(0)
-        query = self._get_multiple_buy_transactions_query(year)
+        # BUY
+        buy_query = self._get_multiple_buy_transactions_query(year)
         transactions_calculator = TransactionCalculator()
-        total = transactions_calculator.calculate_transactions_amount(
-            query, use_portfolio_currency=self.use_portfolio_currency
+        buy_total = transactions_calculator.calculate_transactions_amount(
+            buy_query, use_portfolio_currency=self.use_portfolio_currency
         )
+        # SELL
+        sell_query = self._get_multiple_sell_transactions_query(year)
+        transactions_calculator = TransactionCalculator()
+        sell_total = transactions_calculator.calculate_transactions_amount(
+            sell_query, use_portfolio_currency=self.use_portfolio_currency
+        )
+
+        total = buy_total - sell_total
+
         return total
 
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
