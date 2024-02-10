@@ -28,9 +28,11 @@ class SharesTransactionCalculator:
 
         Args:
             year (int): Year to get the transactions.
-            use_accumulated (bool, optional): Whether or not to get the accumulated transactions
+            use_accumulated (bool, optional): Whether or not to get the accumulated
+            transactions
             until the given year. Defaults to False.
-            only_buy (bool, optional): Whether or not to get only the transactions of BUY type.
+            only_buy (bool, optional): Whether or not to get only the transactions of
+            BUY type.
             Defaults to False.
 
         Returns:
@@ -112,11 +114,21 @@ class SharesTransactionCalculator:
 
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
+        # BUY
         query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
         transactions_calculator = TransactionCalculator()
-        total = transactions_calculator.calculate_transactions_amount(
+        buy_total = transactions_calculator.calculate_transactions_amount(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
+        # SELL
+        query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
+        transactions_calculator = TransactionCalculator()
+        sell_total = transactions_calculator.calculate_transactions_amount(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+
+        total = buy_total - sell_total
+
         return total
 
     def get_accumulated_investment_until_current_year(self) -> Decimal:
