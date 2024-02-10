@@ -84,8 +84,8 @@ export default function SharesListTable({
       title: t("Gross price per share"),
       dataIndex: "grossPricePerShare",
       key: "grossPricePerShare",
-      render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
+      render: (text: number) =>
+        `${(+text).toFixed(2)} ${companyBaseCurrency.code}`,
     },
     {
       title: t("Total commission"),
@@ -99,7 +99,7 @@ export default function SharesListTable({
       dataIndex: "totalAmount",
       key: "totalAmount",
       render: (text: number, record: any) =>
-        `${(+text).toFixed(2)} ${record.grossPricePerShareCurrency}`,
+        `${(+text).toFixed(2)} ${record.totalAmountCurrency}`,
     },
     {
       title: t("Action"),

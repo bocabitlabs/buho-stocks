@@ -15,8 +15,8 @@ interface Props {
   companySectorName: string;
   companySuperSectorName?: string;
   marketName: string;
-  baseCurrency: string;
-  dividendsCurrency: string;
+  baseCurrencyCode: string;
+  dividendsCurrencyCode: string;
   companyUrl: string;
   isin: string;
   companyLogo?: string;
@@ -27,8 +27,8 @@ export default function CompanyInfo({
   companySectorName,
   companySuperSectorName,
   marketName,
-  baseCurrency,
-  dividendsCurrency,
+  baseCurrencyCode,
+  dividendsCurrencyCode,
   companyUrl,
   companyLogo,
   isin,
@@ -80,7 +80,7 @@ export default function CompanyInfo({
           <Badge count={<DollarCircleOutlined />} /> {t("Base currency")}
         </strong>
       ),
-      children: baseCurrency,
+      children: baseCurrencyCode,
     },
     {
       key: "5",
@@ -89,7 +89,7 @@ export default function CompanyInfo({
           <Badge count={<DollarCircleOutlined />} /> {t("Dividends currency")}
         </strong>
       ),
-      children: dividendsCurrency,
+      children: dividendsCurrencyCode,
     },
     {
       key: "6",

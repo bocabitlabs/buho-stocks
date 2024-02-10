@@ -11,6 +11,10 @@ class SharesTransactionSerializer(serializers.ModelSerializer[SharesTransaction]
         many=False,
         read_only=False,
     )
+
+    gross_price_per_share = MoneyField(max_digits=12, decimal_places=3)
+    gross_price_per_share_currency = serializers.CharField(max_length=50)
+
     total_amount = MoneyField(max_digits=12, decimal_places=3)
     total_amount_currency = serializers.CharField(max_length=50)
 
@@ -27,6 +31,8 @@ class SharesTransactionSerializer(serializers.ModelSerializer[SharesTransaction]
             "exchange_rate",
             "transaction_date",
             "type",
+            "gross_price_per_share",
+            "gross_price_per_share_currency",
             "total_amount",
             "total_amount_currency",
             "total_commission",

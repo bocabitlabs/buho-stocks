@@ -108,6 +108,9 @@ class CompanySerializerGet(serializers.ModelSerializer):
     portfolio = PortfolioSerializerLite(many=False, read_only=True)
     first_year = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
+    base_currency = serializers.SerializerMethodField()
+    dividends_currency = serializers.SerializerMethodField()
+
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
 
     def get_base_currency(self, obj):
