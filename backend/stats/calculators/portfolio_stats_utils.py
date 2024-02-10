@@ -62,9 +62,14 @@ class PortfolioStatsUtils:
         return_with_dividends_yield = (
             portfolio_calc.calculate_return_with_dividends_yield_on_year(self.year)
         )
-        dividends_yield = portfolio_calc.calculate_accummulated_dividends_yield(
-            self.year
-        )
+        if self.year == settings.YEAR_FOR_ALL:
+            dividends_yield = portfolio_calc.calculate_accummulated_dividends_yield(
+                self.year
+            )
+        else:
+            dividends_yield = portfolio_calc.calculate_dividends_yield_on_year(
+                self.year
+            )
 
         data = {
             "accumulated_dividends": accummulated_dividends,

@@ -130,3 +130,21 @@ class PortfolioDataCalculator:
             return total
         total = (accummulated_dividends / portfolio_value) * 100
         return total
+
+    def calculate_dividends_on_year(self, year: int) -> Decimal:
+        total = Decimal(0)
+        for company in self.portfolio.companies.all():
+            data_calculator = CompanyDataCalculator(
+                company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
+            total += data_calculator.calculate_dividends_of_year(year)
+        return total
+
+    def calculate_dividends_yield_on_year(self, year: int) -> Decimal:
+        total = Decimal(0)
+        dividends = self.calculate_dividends_on_year(year)
+        portfolio_value = self.calculate_portfolio_value_on_year(year)
+        if portfolio_value == 0:
+            return total
+        total = (dividends / portfolio_value) * 100
+        return total
