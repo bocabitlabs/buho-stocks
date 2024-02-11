@@ -19,8 +19,10 @@ import CompanyTickerSelect from "../../../../../CompanyTickerSelect/CompanyTicke
 import ExchangeRateFetchButton from "../../../../../ExchangeRateFetchButton/ExchangeRateFetchButton";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { useAddRightsTransaction } from "hooks/use-rights-transactions/use-rights-transactions";
+import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
 import { ICompany } from "types/company";
 import { IRightsTransactionFormFields } from "types/rights-transaction";
+import { ISharesTransactionFormFields } from "types/shares-transaction";
 
 interface Props {
   portfolioId: number | undefined;
@@ -44,6 +46,8 @@ export default function CorporateActionsImportForm({
   const { data: portfolio } = usePortfolio(portfolioId);
   const { mutate: createRightsTransaction, isLoading } =
     useAddRightsTransaction();
+  const { mutate: createTradesTransaction, isLoading: isLoadingTrades } =
+    useAddSharesTransaction();
 
   const onCompanyChange = useCallback(
     (value: any) => {
@@ -68,6 +72,63 @@ export default function CorporateActionsImportForm({
     ]);
   };
 
+  const makeRightsTransaction = (values: any) => {
+    const transaction: IRightsTransactionFormFields = {
+      count: values.count < 0 ? -values.count : +values.count,
+      totalAmount: values.amount,
+      totalAmountCurrency: corporateAction.currency,
+      totalCommission: values.commission,
+      grossPricePerShare: values.price,
+      grossPricePerShareCurrency: corporateAction.currency,
+      totalCommissionCurrency: corporateAction.currency,
+      exchangeRate: values.exchangeRate ? +values.exchangeRate : 1,
+      transactionDate: values.date,
+      notes: `Imported from IB CSV on ${moment(new Date()).format(
+        "YYYY-MM-DD HH:mm:ss.",
+      )}. ${values.description}`,
+      company: values.company,
+      type: values.type,
+    };
+    console.log(transaction);
+    createRightsTransaction({
+      newTransaction: transaction,
+      updatePortfolio: false,
+    });
+  };
+
+  const makeTradesTransaction = (values: any) => {
+    const transaction: ISharesTransactionFormFields = {
+      count: values.count < 0 ? -values.count : +values.count,
+      totalAmount: values.amount,
+      totalAmountCurrency: corporateAction.currency,
+      totalCommission: values.commission,
+      grossPricePerShare: values.price,
+      grossPricePerShareCurrency: corporateAction.currency,
+      totalCommissionCurrency: corporateAction.currency,
+      exchangeRate: values.exchangeRate ? +values.exchangeRate : 1,
+      transactionDate: values.date,
+      notes: `Imported from IB CSV on ${moment(new Date()).format(
+        "YYYY-MM-DD HH:mm:ss.",
+      )}. ${values.description}`,
+      company: values.company,
+      type: values.type,
+    };
+    console.log(transaction);
+    createTradesTransaction({
+      newTransaction: transaction,
+      updatePortfolio: false,
+    });
+  };
+
+  const options1 = [
+    { label: t("Buy"), value: "BUY" },
+    { label: t("Sell"), value: "SELL" },
+  ];
+  const optionsTradeRight = [
+    { label: t("Shares"), value: "SHARES" },
+    { label: t("Rights"), value: "RIGHTS" },
+  ];
+
   const onFormSubmit = (values: any) => {
     console.log("Success:", values);
     if (!selectedCompany) {
@@ -75,46 +136,18 @@ export default function CorporateActionsImportForm({
       return;
     }
 
-    const {
-      commission,
-      amount,
-      company,
-      date,
-      exchangeRate,
-      price,
-      description,
-      count,
-      type,
-    } = values;
+    const { transactionType } = values;
 
-    const transaction: IRightsTransactionFormFields = {
-      count: count < 0 ? -count : +count,
-      totalAmount: amount,
-      totalAmountCurrency: corporateAction.currency,
-      totalCommission: commission,
-      grossPricePerShare: price,
-      grossPricePerShareCurrency: corporateAction.currency,
-      totalCommissionCurrency: corporateAction.currency,
-      exchangeRate: exchangeRate ? +exchangeRate : 1,
-      transactionDate: date,
-      notes: `Imported from IB CSV on ${moment(new Date()).format(
-        "YYYY-MM-DD HH:mm:ss.",
-      )}. ${description}`,
-      company,
-      type,
-    };
-    console.log(transaction);
-    createRightsTransaction({
-      newTransaction: transaction,
-      updatePortfolio: false,
-    });
+    if (transactionType === "RIGHTS") {
+      makeRightsTransaction(values);
+    } else {
+      makeTradesTransaction(values);
+    }
+
     setFormSent(false);
     onImported();
   };
-  const options1 = [
-    { label: t("Buy"), value: "BUY" },
-    { label: t("Sell"), value: "SELL" },
-  ];
+
   return (
     <Row style={{ marginTop: 10, marginBottom: 10 }}>
       <Col>
@@ -178,6 +211,19 @@ export default function CorporateActionsImportForm({
               </Col>
               <Col span={12}>
                 <Form.Item
+                  label={t("Transaction's type")}
+                  name="transactionType"
+                  rules={[{ required: true }]}
+                >
+                  <Radio.Group
+                    options={optionsTradeRight}
+                    optionType="button"
+                    buttonStyle="solid"
+                  />
+                </Form.Item>
+              </Col>
+              <Col span={12}>
+                <Form.Item
                   label={t("Total")}
                   name="amount"
                   rules={[{ required: true }]}
@@ -191,7 +237,7 @@ export default function CorporateActionsImportForm({
               </Col>
               <Col span={12}>
                 <Form.Item
-                  label={t("Price per right")}
+                  label={t("Price")}
                   name="price"
                   rules={[{ required: true }]}
                 >
@@ -286,7 +332,7 @@ export default function CorporateActionsImportForm({
                     type="primary"
                     htmlType="submit"
                     icon={formSent ? <CheckOutlined /> : null}
-                    loading={isLoading}
+                    loading={isLoading || isLoadingTrades}
                     disabled={formSent || !selectedCompany || !portfolio}
                   >
                     {t("Add corporate actions")}
