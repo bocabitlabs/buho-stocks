@@ -11,7 +11,6 @@ import {
   Row,
   Typography,
 } from "antd";
-import TextArea from "antd/lib/input/TextArea";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import CompanyTickerSelect from "../../../../../CompanyTickerSelect/CompanyTickerSelect";
@@ -207,7 +206,7 @@ export default function DividendsImportForm({
               )}
               <Col span={24}>
                 <Form.Item label={t("Description")} name="description">
-                  <TextArea
+                  <Input.TextArea
                     placeholder="input placeholder"
                     name="description"
                   />
