@@ -31,7 +31,7 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
         run: |
-          mv .env.sample .env
+          mv .env.ci.sample .env
           poetry install
       - name: Run Tests
         run: |
