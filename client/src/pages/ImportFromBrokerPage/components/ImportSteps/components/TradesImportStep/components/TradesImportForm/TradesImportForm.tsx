@@ -12,7 +12,6 @@ import {
   Row,
   Typography,
 } from "antd";
-import TextArea from "antd/lib/input/TextArea";
 // eslint-disable-next-line import/no-extraneous-dependencies
 import moment from "moment";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
@@ -281,9 +280,10 @@ export default function TradesImportForm({
               )}
               <Col span={24}>
                 <Form.Item label={t("Description")} name="description">
-                  <TextArea
+                  <Input.TextArea
                     placeholder="input placeholder"
                     name="description"
+                    rows={4}
                   />
                 </Form.Item>
               </Col>
