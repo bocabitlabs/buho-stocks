@@ -1,8 +1,7 @@
 FROM node:20-alpine as builder
 WORKDIR /app
 COPY ./client/package*.json ./
-COPY ./client/yarn.lock ./
-RUN yarn install
+RUN npm install
 
 ENV VITE_ENV=production
 ENV VITE_PORT=
@@ -17,7 +16,7 @@ LABEL org.opencontainers.image.authors='renefernandez@duck.com' \
 
 RUN ls -la
 COPY ./client ./
-RUN yarn build
+RUN npm run build
 
 FROM nginx:stable-alpine
 WORKDIR /usr/share/nginx/html
