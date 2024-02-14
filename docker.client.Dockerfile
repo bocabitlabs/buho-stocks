@@ -1,7 +1,7 @@
 FROM node:20-alpine as builder
 WORKDIR /app
 COPY ./client/package*.json ./
-RUN npm install
+RUN npm ci
 
 ENV VITE_ENV=production
 ENV VITE_PORT=
