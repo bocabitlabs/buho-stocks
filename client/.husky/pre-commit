@@ -1,12 +1,14 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-source ./.venv/bin/activate
+. ./.venv/bin/activate
+
+cd client
+npm run prettier:fix
+npm run lint
 
 pre-commit run
 
-cd client/
-yarn lint-staged
 
 
 

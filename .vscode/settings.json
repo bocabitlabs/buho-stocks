@@ -48,7 +48,6 @@
     "**/.venv": true,
     "**/node_modules": true,
     "**/mypy_cache": true,
-    "**/yarn.lock": true,
     "**/package-lock.json": true,
     "**/poetry.lock": true,
   }
