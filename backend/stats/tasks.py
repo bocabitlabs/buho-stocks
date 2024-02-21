@@ -45,7 +45,7 @@ def update_portolfio_stats(
     logger.debug(
         f"Portfolio update info - Portfolio: {portfolio_id}, "
         f"Companies: {companies_ids}"
-        f"Year: {year}" + f"Update from API: {update_api_price}"
+        f"Year: {year} " + f"Update from API: {update_api_price}"
     )
 
     portfolio = Portfolio.objects.get(id=portfolio_id)
@@ -61,7 +61,7 @@ def update_portolfio_stats(
     else:
         total_companies = portfolio.companies.count() + 1
         # Get only companies that are not closed
-        companies = portfolio.companies.filter(is_closed=False)
+        companies = portfolio.companies.all()
 
     current = 0
     percent = 0
