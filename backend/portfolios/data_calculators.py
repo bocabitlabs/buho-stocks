@@ -1,6 +1,7 @@
 from decimal import Decimal
 
 from companies.data_calculators import CompanyDataCalculator
+from companies.data_calculators_closed import CompanyClosedDataCalculator
 from portfolios.models import Portfolio
 from shares_transactions.models import SharesTransaction
 
@@ -22,31 +23,43 @@ class PortfolioDataCalculator:
 
     def calculate_total_invested_on_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
-
+        for company in self.portfolio.companies.filter(is_closed=False):
             data_calculator = CompanyDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
             total += data_calculator.calculate_total_invested_on_year(year)
+
+        for company in self.portfolio.companies.filter(is_closed=True):
+            data_calculator = CompanyClosedDataCalculator(
+                company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
+            total += data_calculator.calculate_total_invested_on_year_for_portfolio(
+                year
+            )
+
         return total
 
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
-
+        for company in self.portfolio.companies.filter(is_closed=False):
             data_calculator = CompanyDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
             total += data_calculator.calculate_accumulated_investment_until_year(year)
+
+        for company in self.portfolio.companies.filter(is_closed=True):
+            data_calculator = CompanyClosedDataCalculator(
+                company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
+            total += data_calculator.calculate_accumulated_investment_until_year_for_portfolio(  # noqa
+                year
+            )
+
         return total
 
     def calculate_total_dividends_of_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        for company in self.portfolio.companies.all():
+        for company in self.portfolio.companies.filter(is_closed=False):
             data_calculator = CompanyDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
@@ -65,11 +78,14 @@ class PortfolioDataCalculator:
 
     def calculate_portfolio_value_on_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
-
+        for company in self.portfolio.companies.filter(is_closed=False):
             data_calculator = CompanyDataCalculator(
+                company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
+            total += data_calculator.calculate_company_value_on_year(year)
+
+        for company in self.portfolio.companies.filter(is_closed=True):
+            data_calculator = CompanyClosedDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
             total += data_calculator.calculate_company_value_on_year(year)
@@ -78,26 +94,34 @@ class PortfolioDataCalculator:
 
     def calculate_return_with_dividends_on_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
-
+        for company in self.portfolio.companies.filter(is_closed=False):
             data_calculator = CompanyDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
             total += data_calculator.calculate_return_with_dividends_on_year(year)
+
+        for company in self.portfolio.companies.filter(is_closed=True):
+            data_calculator = CompanyClosedDataCalculator(
+                company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
+            total += data_calculator.calculate_return_with_dividends_on_year(year)
+
         return total
 
     def calculate_return_on_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        for company in self.portfolio.companies.all():
-            if company.is_closed:
-                continue
-
+        for company in self.portfolio.companies.filter(is_closed=False):
             data_calculator = CompanyDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
             total += data_calculator.calculate_return_on_year(year)
+
+        for company in self.portfolio.companies.filter(is_closed=True):
+            data_calculator = CompanyClosedDataCalculator(
+                company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
+            total += data_calculator.calculate_return_on_year(year)
+
         return total
 
     def calculate_return_yield_on_year(self, year: int) -> Decimal:

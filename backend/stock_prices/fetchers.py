@@ -70,6 +70,12 @@ class CompanyStockPriceFetcher:
 
     def get_start_end_dates_for_year(self, year: int) -> tuple[str, str]:
         todays_date = datetime.date.today()
+
+        if self.company.is_closed:
+            from_date, to_date = self.get_start_end_dates_from_last_sell(year)
+            if from_date and to_date:
+                return from_date, to_date
+
         if todays_date.year == int(year):
             # Get today minus 15 days
             from_date = (todays_date - datetime.timedelta(days=15)).strftime("%Y-%m-%d")
@@ -78,3 +84,23 @@ class CompanyStockPriceFetcher:
             from_date = f"{year}-12-01"
             to_date = f"{year}-12-31"
         return from_date, to_date
+
+    def get_start_end_dates_from_last_sell(
+        self, year: int
+    ) -> tuple[str, str] | tuple[None, None]:
+        last_transaction = self.company.shares_transactions.filter(type="SELL").last()
+
+        if not last_transaction:
+            raise ValueError("Company has no sell transactions")
+
+        if int(year) >= last_transaction.transaction_date.year:
+            # Dates from the last transaction
+            from_date = last_transaction.transaction_date.strftime("%Y-%m-%d")
+            # to_date is the next day to the last transaction
+            to_date = (
+                last_transaction.transaction_date + datetime.timedelta(days=1)
+            ).strftime("%Y-%m-%d")
+
+            return from_date, to_date
+
+        return None, None

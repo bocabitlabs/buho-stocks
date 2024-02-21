@@ -4,6 +4,7 @@ import logging
 from django.conf import settings
 
 from companies.data_calculators import CompanyDataCalculator
+from companies.data_calculators_closed import CompanyClosedDataCalculator
 from companies.models import Company
 from stats.models.company_stats import CompanyStatsForYear
 from stock_prices.fetchers import CompanyStockPriceFetcher
@@ -27,6 +28,10 @@ class CompanyStatsCalculator:
         self.company_data_calculator = CompanyDataCalculator(
             self.company.id, use_portfolio_currency=self.use_portfolio_currency
         )
+        if self.company.is_closed:
+            self.company_data_calculator = CompanyClosedDataCalculator(
+                self.company.id, use_portfolio_currency=self.use_portfolio_currency
+            )
 
     def get_year_stats(self, year: int):
         result = None
@@ -35,6 +40,7 @@ class CompanyStatsCalculator:
         return result
 
     def calculate_stats_for_year(self, year: int):
+        logger.debug(f"Calculating stats for year {year}")
         accum_shares_count = (
             self.company_data_calculator.calculate_accumulated_shares_count_until_year(
                 year
@@ -117,16 +123,16 @@ class CompanyStatsCalculator:
 
     def update_year_stats(self):
         year_stats = self.get_year_stats(self.year)
-
+        logger.debug(f"Year: {self.year}")
         calculated_data = self.calculate_stats_for_year(self.year)
 
         if year_stats:
             for key in calculated_data:
                 setattr(year_stats, key, calculated_data[key])
-                logger.debug(
-                    f"Year: {self.year} Setting {key} to {calculated_data[key]}"
-                )
-            logger.debug(f"Year: {self.year} Saving year stats. {year_stats}")
+                # logger.debug(
+                #     f"Year: {self.year} Setting {key} to {calculated_data[key]}"
+                # )
+            # logger.debug(f"Year: {self.year} Saving year stats. {year_stats}")
             year_stats.save()
         else:
             # Create a new CompanyStatsForYear

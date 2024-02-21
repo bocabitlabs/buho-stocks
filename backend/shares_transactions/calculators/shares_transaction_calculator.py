@@ -122,6 +122,31 @@ class SharesTransactionCalculator:
 
         return total
 
+    def calculate_accumulated_investment_until_year_excluding_last_sale(
+        self, year: int
+    ) -> Decimal:
+        total: Decimal = Decimal(0)
+        # BUY
+        query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
+        transactions_calculator = TransactionCalculator()
+        buy_total = transactions_calculator.calculate_transactions_amount(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+        # SELL
+        query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
+        # Remove the last transaction from the sell query
+        last_transaction = query.last()
+        if last_transaction:
+            query = query.exclude(id=last_transaction.id)
+        transactions_calculator = TransactionCalculator()
+        sell_total = transactions_calculator.calculate_transactions_amount(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+
+        total = buy_total - sell_total
+
+        return total
+
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
         # BUY

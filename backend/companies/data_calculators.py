@@ -75,7 +75,6 @@ class CompanyDataCalculator:
 
     def calculate_company_value_on_year(self, year: int) -> Decimal:
         total = Decimal(0)
-        logger.debug(f"Calculating company value for {self.company.ticker} in {year}")
         shares_count = self.calculate_accumulated_shares_count_until_year(year)
         if shares_count > 0:
             current_year = year
