@@ -90,6 +90,17 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
 
         return total
 
+    def calculate_company_value_on_year_for_portfolio(self, year: int) -> Decimal:
+        total = Decimal(0)
+
+        # year < last_transaction
+        # normal
+        if int(year) < self.last_transaction.transaction_date.year:
+            logger.debug("Year is before last sell")
+            return super().calculate_company_value_on_year(year)
+
+        return total
+
     def calculate_company_value_on_year(self, year: int) -> Decimal:
         total = Decimal(0)
 

@@ -88,7 +88,7 @@ class PortfolioDataCalculator:
             data_calculator = CompanyClosedDataCalculator(
                 company.id, use_portfolio_currency=self.use_portfolio_currency
             )
-            total += data_calculator.calculate_company_value_on_year(year)
+            total += data_calculator.calculate_company_value_on_year_for_portfolio(year)
 
         return total
 
