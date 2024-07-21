@@ -24,7 +24,7 @@ function CurrencyAddEditForm({
   isModalVisible,
   onCreate,
   onCancel,
-  id,
+  id = undefined,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -121,9 +121,5 @@ function CurrencyAddEditForm({
     </Modal>
   );
 }
-
-CurrencyAddEditForm.defaultProps = {
-  id: undefined,
-};
 
 export default CurrencyAddEditForm;

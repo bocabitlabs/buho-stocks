@@ -37,7 +37,7 @@ interface IProps {
 }
 
 export default function DividendsTransactionAddEditForm({
-  transactionId,
+  transactionId = undefined,
   companyId,
   companyDividendsCurrency,
   portfolioBaseCurrency,
@@ -262,7 +262,3 @@ export default function DividendsTransactionAddEditForm({
     </Modal>
   );
 }
-
-DividendsTransactionAddEditForm.defaultProps = {
-  transactionId: undefined,
-};

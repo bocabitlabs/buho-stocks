@@ -32,6 +32,3 @@ export default function LoadingSpin({ text = "Loading..." }: Props) {
     </div>
   );
 }
-LoadingSpin.defaultProps = {
-  text: "Loading...",
-};
