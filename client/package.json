@@ -79,8 +79,8 @@
   },
   "lint-staged": {
     "src/*.{ts,tsx}": [
-      "npm prettier:fix",
-      "npm lint"
+      "prettier --write",
+      "eslint -c .eslintrc.js --fix"
     ]
   },
   "browserslist": {
@@ -112,7 +112,7 @@
     "happy-dom": "^8.9.0",
     "husky": "^8.0.1",
     "jsdom": "^21.0.0",
-    "lint-staged": "^13.0.0",
+    "lint-staged": "^15.2.0",
     "msw": "^1.1.0",
     "postcss": "^8.4.39",
     "postcss-preset-mantine": "^1.16.0",
