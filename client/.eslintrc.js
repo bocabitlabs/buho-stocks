@@ -41,6 +41,13 @@ module.exports = {
     "vite.config.ts",
   ],
   rules: {
+    "react/require-default-props": [
+      "error",
+      {
+        classes: "defaultProps",
+        functions: "defaultArguments",
+      },
+    ],
     "comma-dangle": "off",
     "import/order": [
       "error",
