@@ -3,9 +3,6 @@
 
 . ./.venv/bin/activate
 
-cd client
-npm run prettier:fix
-npm run lint
 
 pre-commit run
 
