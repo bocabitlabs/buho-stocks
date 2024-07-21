@@ -34,6 +34,11 @@ export default function PortfolioAllStats({ portfolioId }: Readonly<Props>) {
     maximumFractionDigits: 2,
   });
 
+  if (!stats) {
+    return (
+      <div>{t("No stats yet. Start adding companies and transactions.")}</div>
+    );
+  }
   return (
     <div>
       <Text size="2em" fw={600}>

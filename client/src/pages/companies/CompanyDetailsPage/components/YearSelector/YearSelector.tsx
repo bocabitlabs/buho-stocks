@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Form, Select } from "antd";
 import StatsContent from "../StatsContent/StatsContent";
@@ -10,10 +10,7 @@ interface Props {
   firstYear: number | null;
 }
 
-export default function YearSelector({
-  companyId,
-  firstYear,
-}: Props): ReactElement {
+export default function YearSelector({ companyId, firstYear }: Props) {
   const [selectedYear, setSelectedYear] = useState<any | null>("all");
   const [years, setYears] = useState<number[]>([]);
   const [stockPrice, setStockPrice] = useState<any | null>(null);
@@ -50,6 +47,12 @@ export default function YearSelector({
     }
     loadInitialYears();
   }, [firstYear]);
+
+  console.log(stats);
+
+  if (!stats) {
+    return <div>{t("No stats yet. Start adding transactions.")}</div>;
+  }
 
   return (
     <div>

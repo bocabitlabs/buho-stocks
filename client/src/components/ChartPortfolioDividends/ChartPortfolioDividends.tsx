@@ -52,7 +52,7 @@ export default function ChartPortfolioDividends(): ReactElement | null {
         ],
       };
     }
-    if (data) {
+    if (data && data.length > 0) {
       const tempChartData = getChartData();
 
       const newYears: any = [];

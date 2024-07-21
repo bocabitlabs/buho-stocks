@@ -41,6 +41,12 @@ export default function YearSelector({ id, firstYear }: Props): ReactElement {
     loadDropdownYears();
   }, [firstYear]);
 
+  if (!stats) {
+    return (
+      <div>{t("No stats yet. Start adding companies and transactions.")}</div>
+    );
+  }
+
   return (
     <div style={{ marginTop: 16 }}>
       <Form layout="inline">
