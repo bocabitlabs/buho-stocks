@@ -31,12 +31,7 @@ export default function MarketsListTable() {
     deleteMarket(recordId);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
+  const onCloseCallback = () => {
     setIsModalVisible(false);
     setSelectedMarketId(undefined);
   };
@@ -133,21 +128,18 @@ export default function MarketsListTable() {
   ];
 
   const getData = () => {
-    return (
-      markets &&
-      markets.map((market: IMarket, index: number) => ({
-        id: market.id,
-        count: index + 1,
-        key: market.id,
-        name: market.name,
-        description: market.description,
-        region: market.region,
-        openTime: market.openTime,
-        closeTime: market.closeTime,
-        color: market.color,
-        timezone: market.timezone,
-      }))
-    );
+    return markets?.map((market: IMarket, index: number) => ({
+      id: market.id,
+      count: index + 1,
+      key: market.id,
+      name: market.name,
+      description: market.description,
+      region: market.region,
+      openTime: market.openTime,
+      closeTime: market.closeTime,
+      color: market.color,
+      timezone: market.timezone,
+    }));
   };
 
   if (error) {
@@ -170,16 +162,12 @@ export default function MarketsListTable() {
         dataSource={getData()}
         loading={isFetching}
       />
-      <div>{selectedMarketId ? selectedMarketId.toString() : ""}</div>
       <MarketAddEditForm
-        title={t("Update market")}
-        okText={t("Update")}
         id={selectedMarketId}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={handleCancel}
+        isVisible={isModalVisible}
+        onCloseCallback={onCloseCallback}
+        isUpdate
       />
     </div>
   );
-  // return <>Hello world</>;
 }

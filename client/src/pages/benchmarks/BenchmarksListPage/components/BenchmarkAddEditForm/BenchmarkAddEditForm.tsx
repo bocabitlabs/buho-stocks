@@ -24,7 +24,7 @@ function BenchmarkAddEditForm({
   isModalVisible,
   onCreate,
   onCancel,
-  id,
+  id = undefined,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -111,9 +111,5 @@ function BenchmarkAddEditForm({
     </Modal>
   );
 }
-
-BenchmarkAddEditForm.defaultProps = {
-  id: undefined,
-};
 
 export default BenchmarkAddEditForm;

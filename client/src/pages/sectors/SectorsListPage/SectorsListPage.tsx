@@ -1,4 +1,3 @@
-import React from "react";
 import SectorsListTable from "./components/SectorsListTable/SectorsListTable";
 import SectorsPageHeader from "./components/SectorsPageHeader/SectorsPageHeader";
 

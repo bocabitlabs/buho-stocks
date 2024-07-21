@@ -25,6 +25,8 @@ function CompanyDetailsPageHeader({
 }: Props) {
   const { t } = useTranslation();
   const { id, companyId } = useParams();
+  const portfolioId = id ? parseInt(id, 10) : undefined;
+  const companyIdNumber = companyId ? parseInt(companyId, 10) : undefined;
   const [isModalVisible, setIsModalVisible] = useState(false);
   const { token } = useToken();
   const routes = [
@@ -47,12 +49,7 @@ function CompanyDetailsPageHeader({
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
-
-  const onCancel = () => {
+  const onCloseCallback = () => {
     setIsModalVisible(false);
   };
 
@@ -89,13 +86,11 @@ function CompanyDetailsPageHeader({
     >
       {children}
       <CompanyAddEditForm
-        title={t("Update company")}
-        okText={t("Update")}
-        portfolioId={+id!}
-        companyId={+companyId!}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={onCancel}
+        portfolioId={portfolioId}
+        companyId={companyIdNumber}
+        isVisible={isModalVisible}
+        isUpdate
+        onCloseCallback={onCloseCallback}
       />
     </PageHeader>
   );

@@ -45,17 +45,24 @@ export const fetchCompany = async (
   return data;
 };
 
-export const useAddCompany = () => {
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
+export const useAddCompany = (props?: MutateProps) => {
   const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, newCompany }: AddMutationProps) =>
       apiClient.post(`/portfolios/${portfolioId}/companies/`, newCompany),
     {
       onSuccess: (data, variables) => {
+        props?.onSuccess?.();
         toast.success(`${t("Company has been created")}`);
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
       onError: () => {
+        props?.onError?.();
         toast.error(t("Unable to create company"));
       },
     },
@@ -82,7 +89,7 @@ export const useDeleteCompany = () => {
   );
 };
 
-export const useUpdateCompany = () => {
+export const useUpdateCompany = (props?: MutateProps) => {
   const { t } = useTranslation();
   return useMutation(
     ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
@@ -92,10 +99,12 @@ export const useUpdateCompany = () => {
       ),
     {
       onSuccess: (data, variables) => {
+        props?.onSuccess?.();
         toast.success(t("Company has been updated"));
         queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
       },
       onError: () => {
+        props?.onError?.();
         toast.error(t("Unable to update company"));
       },
     },

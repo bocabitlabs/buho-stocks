@@ -26,11 +26,12 @@ function PortfolioDetailsPageHeader({
   portfolioName,
   portfolioDescription,
   portfolioCountryCode,
-  children,
+  children = null,
 }: Props) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams();
+  const portfolioId = id ? parseInt(id, 10) : undefined;
   const { mutate: deletePortfolio } = useDeletePortfolio();
   const { token } = useToken();
   const routes = [
@@ -45,12 +46,7 @@ function PortfolioDetailsPageHeader({
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
-
-  const onCancel = () => {
+  const handleClose = () => {
     setIsModalVisible(false);
   };
 
@@ -82,7 +78,7 @@ function PortfolioDetailsPageHeader({
           onClick={() => {
             navigate(`log`);
           }}
-          title={t("View portfolio logs")}
+          title={t<string>("View portfolio logs")}
         />,
         <Button
           key="company-view-charts"
@@ -90,7 +86,7 @@ function PortfolioDetailsPageHeader({
           onClick={() => {
             navigate(`charts`);
           }}
-          title={t("View portfolio charts")}
+          title={t<string>("View portfolio charts")}
         />,
         <Button
           type="primary"
@@ -116,17 +112,12 @@ function PortfolioDetailsPageHeader({
       <Typography.Paragraph>{portfolioDescription}</Typography.Paragraph>
       {children}
       <CompanyAddEditForm
-        title={t("Add new company")}
-        okText={t("Create")}
-        portfolioId={+id!}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={onCancel}
+        portfolioId={portfolioId}
+        isVisible={isModalVisible}
+        onCloseCallback={handleClose}
       />
     </PageHeader>
   );
 }
-PortfolioDetailsPageHeader.defaultProps = {
-  children: null,
-};
+
 export default PortfolioDetailsPageHeader;

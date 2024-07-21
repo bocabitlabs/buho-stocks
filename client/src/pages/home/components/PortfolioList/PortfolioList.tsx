@@ -1,15 +1,17 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Alert, List } from "antd";
+import { Alert } from "@mantine/core";
+import { IconAlertTriangle } from "@tabler/icons-react";
+import { List } from "antd";
 import PortfolioCard from "../PortfolioCard/PortfolioCard";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolios } from "hooks/use-portfolios/use-portfolios";
-import { IPortfolio } from "types/portfolio";
 
 export default function PortfolioList(): ReactElement {
   const { t } = useTranslation();
   const { isFetching, data: portfolios, error } = usePortfolios();
+  const icon = <IconAlertTriangle />;
 
   if (isFetching) {
     return <LoadingSpin />;
@@ -18,11 +20,13 @@ export default function PortfolioList(): ReactElement {
   if (error) {
     return (
       <Alert
-        showIcon
-        message={t("Unable to load portfolios")}
-        description={error.message}
-        type="error"
-      />
+        icon={icon}
+        title={t("Unable to load portfolios")}
+        variant="filled"
+        color="red"
+      >
+        {error.message}
+      </Alert>
     );
   }
 
@@ -39,9 +43,9 @@ export default function PortfolioList(): ReactElement {
       }}
       dataSource={portfolios}
       renderItem={(item) => (
-        <Link to={`/portfolios/${(item as IPortfolio).id}`}>
+        <Link to={`/portfolios/${item.id}`}>
           <List.Item>
-            <PortfolioCard portfolio={item as IPortfolio} />
+            <PortfolioCard portfolio={item} />
           </List.Item>
         </Link>
       )}

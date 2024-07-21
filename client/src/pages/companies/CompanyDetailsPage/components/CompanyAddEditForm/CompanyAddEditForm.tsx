@@ -1,17 +1,20 @@
-import { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PlusOutlined } from "@ant-design/icons";
 import {
-  Alert,
-  Avatar,
   Button,
-  Form,
-  Input,
+  Checkbox,
+  Group,
   Modal,
   Select,
-  Switch,
-  Upload,
-} from "antd";
+  SimpleGrid,
+  Textarea,
+  TextInput,
+  Image,
+  Text,
+} from "@mantine/core";
+import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
+import { useForm } from "@mantine/form";
+import { randomId } from "@mantine/hooks";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import {
@@ -22,51 +25,38 @@ import {
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
 import { useMarkets } from "hooks/use-markets/use-markets";
 import { useSectors } from "hooks/use-sectors/use-sectors";
-import { ICompanyFormFields } from "types/company";
 import { ICurrency } from "types/currency";
 import { IMarket } from "types/market";
 import { ISector } from "types/sector";
 
 interface AddEditFormProps {
-  portfolioId: number;
+  portfolioId: number | undefined;
   companyId?: number;
-  title: string;
-  okText: string;
-  isModalVisible: boolean;
-  onCreate: (values: any) => void;
-  onCancel: () => void;
+  isUpdate?: boolean;
+  isVisible: boolean;
+  onCloseCallback: () => void;
 }
 
 function CompanyAddEditForm({
-  title,
-  okText,
-  isModalVisible,
-  onCreate,
-  onCancel,
+  isVisible,
   portfolioId,
-  companyId,
+  companyId = undefined,
+  isUpdate = false,
+  onCloseCallback = () => {},
 }: AddEditFormProps): ReactElement {
-  const [form] = Form.useForm();
   const { t } = useTranslation();
 
   // React Query
-  const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
-  const { data: markets, isFetching: marketsLoading } = useMarkets();
-  const { data: sectors, isFetching: sectorsLoading } = useSectors();
-  const { mutate: createCompany } = useAddCompany();
-  const { mutate: updateCompany } = useUpdateCompany();
-  const {
-    data: company,
-    error: errorFetching,
-    isFetching,
-    isSuccess,
-  } = useCompany(portfolioId, companyId);
+  const { data: currencies } = useCurrencies();
+  const { data: markets } = useMarkets();
+  const { data: sectors } = useSectors();
+
+  const { data: company } = useCompany(portfolioId, companyId);
 
   // Local state
-  const [fileList, setFileList] = useState<any[]>([]);
-  const [base64File, setBas64File] = useState<any>(null);
-  const [fileName, setFileName] = useState<string | null>(null);
-  const [countryCode, setCountryCode] = useState(company?.countryCode || "");
+  // const [fileList, setFileList] = useState<any[]>([]);
+  // const [base64File, setBas64File] = useState<any>(null);
+  // const [fileName, setFileName] = useState<string | null>(null);
 
   const getBase64 = (img: any, callback: any) => {
     const reader = new FileReader();
@@ -74,259 +64,251 @@ function CompanyAddEditForm({
     reader.readAsDataURL(img);
   };
 
-  const handleSubmit = async (values: any) => {
-    const {
-      name,
-      description,
-      baseCurrency,
-      dividendsCurrency,
-      sector,
-      market,
-      ticker,
-      altTickers,
-      url,
-      broker,
-      isClosed,
-      isin,
-    } = values;
-    const newCompany: ICompanyFormFields = {
-      name,
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const previews = files.map((file) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <Image
+        key={randomId()}
+        src={imageUrl}
+        onLoad={() => URL.revokeObjectURL(imageUrl)}
+      />
+    );
+  });
+
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      name: company ? company.name : "",
+      description: company ? company.description : "",
+      ticker: company ? company.ticker : "",
+      altTickers: company ? company?.altTickers : "",
+      broker: company ? company?.broker : "",
+      logo: company ? company.logo : "",
+      url: company ? company.url : "",
+      sector: company ? company.sector.id.toString() : null,
+      portfolio: portfolioId,
+      baseCurrency: company ? company.baseCurrency : "",
+      dividendsCurrency: company ? company.dividendsCurrency : "",
+      market: company ? company.market.id.toString() : null,
+      isClosed: company ? company.isClosed : false,
+      isin: company ? company.isin : "",
+      countryCode: company ? company.countryCode : "",
       color: "#2196F3",
-      description,
-      baseCurrency,
-      dividendsCurrency,
-      sector,
-      market,
-      portfolio: +portfolioId,
-      ticker,
-      altTickers,
-      url,
-      broker,
-      countryCode,
-      isClosed,
-      isin,
-    };
+    },
+  });
 
-    if (base64File) {
-      newCompany.logo = base64File;
-    }
-
-    if (companyId) {
-      updateCompany({
-        portfolioId: +portfolioId,
-        companyId,
-        newCompany,
-      });
-    } else {
-      createCompany({ portfolioId: +portfolioId, newCompany });
-    }
+  const onSuccess = () => {
+    form.reset();
+    onCloseCallback();
   };
 
-  const handleCountryChange = (newValue: string) => {
-    setCountryCode(newValue);
-  };
+  const handleImagesUpload = (uploadedFiles: FileWithPath[]) => {
+    setFiles(uploadedFiles);
 
-  const handleUpload = ({ fileList: newFileList }: any) => {
-    setFileList(newFileList);
-    setFileName(newFileList[0].name);
-    getBase64(newFileList[0].originFileObj, (imageUrl: any) => {
-      setBas64File(imageUrl);
+    getBase64(uploadedFiles[0], (base64: any) => {
+      form.setFieldValue("logo", base64);
+      console.log(base64);
     });
   };
 
-  const handleFormSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      await handleSubmit(values);
-      form.resetFields();
-      onCreate(values);
-    } catch (error) {
-      console.log("Validate Failed:", error);
+  const { mutate: createCompany } = useAddCompany({
+    onSuccess,
+  });
+  const { mutate: updateCompany } = useUpdateCompany({
+    onSuccess,
+  });
+
+  const onSubmit = (values: any) => {
+    console.log(form.getValues());
+    // if (base64File) {
+    //   newValues.logo = base64File;
+    // }
+    if (isUpdate && companyId) {
+      updateCompany({ portfolioId, companyId, newCompany: values });
+    } else {
+      createCompany({ portfolioId, newCompany: values });
     }
   };
 
+  const hideModal = useCallback(() => {
+    form.reset();
+    onCloseCallback();
+  }, [onCloseCallback]);
+
+  const baseCurrenciesOptions = currencies?.map((currency: ICurrency) => ({
+    value: currency.code,
+    label: t(currency.name),
+  }));
+
+  const marketsOptions = markets?.map((market: IMarket) => ({
+    value: market.id.toString(),
+    label: market.name,
+  }));
+
+  const sectorsOptions = sectors?.map((sector: ISector) => ({
+    value: sector.id.toString(),
+    label: sector.name,
+  }));
+
   useEffect(() => {
     if (company) {
-      form.setFieldsValue({
+      form.setValues({
         name: company.name,
         description: company.description,
         ticker: company.ticker,
         altTickers: company.altTickers,
         broker: company.broker,
+        portfolio: portfolioId,
         url: company.url,
-        sector: company.sector.id,
+        logo: company.logo,
+        sector: company.sector.id.toString(),
         baseCurrency: company.baseCurrency.code,
         dividendsCurrency: company.dividendsCurrency.code,
-        market: company.market.id,
+        market: company.market.id.toString(),
         isClosed: company.isClosed,
         isin: company.isin,
+        countryCode: company.countryCode,
       });
-      setCountryCode(company.countryCode);
     }
-  }, [form, company]);
+  }, [company]);
+
+  if (!portfolioId) {
+    return <LoadingSpin />;
+  }
 
   return (
     <Modal
-      open={isModalVisible}
-      title={title}
-      okText={okText}
-      cancelText={t("Cancel")}
-      onCancel={onCancel}
-      onOk={handleFormSubmit}
-      forceRender={!!company}
+      opened={isVisible}
+      title={isUpdate ? t("Update market") : t("Add new company")}
+      onClose={onCloseCallback}
     >
-      {isFetching && <LoadingSpin />}
-      {errorFetching && (
-        <Alert
-          showIcon
-          message={t("Unable to load company")}
-          description={errorFetching.message}
-          type="error"
+      <form onSubmit={form.onSubmit(onSubmit)}>
+        {portfolioId}
+        <TextInput
+          withAsterisk
+          label={t("Name")}
+          key={form.key("name")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("name")}
         />
-      )}
-      {(isSuccess || !companyId) && (
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
-            name="name"
-            label={t("Name")}
-            rules={[
-              {
-                required: true,
-                message: t<string>("Please input the name of the company"),
-              },
-            ]}
-          >
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item name="ticker" label={t("Ticker")}>
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item name="altTickers" label={t("Alternative tickers")}>
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item name="isin" label={t("ISIN")}>
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item name="logo" label={t("Company logo")}>
-            <Upload
-              showUploadList={false}
-              name="logo"
-              fileList={fileList}
-              onChange={handleUpload}
-              beforeUpload={() => false} // return false so that antd doesn't upload the picture right away
-            >
-              {company?.logo && !fileName && (
-                <Avatar src={company.logo} style={{ marginRight: 10 }} />
-              )}
-              <Button icon={<PlusOutlined />}>{t("Upload")}</Button>{" "}
-              {fileName ? `${t("Selected")} ${fileName}` : ""}
-            </Upload>
-          </Form.Item>
-          <Form.Item name="baseCurrency" label={t("Currency")} required>
-            <Select
-              showSearch
-              placeholder={t("Select a currency")}
-              allowClear
-              loading={currenciesLoading}
-            >
-              {currencies &&
-                currencies.map((item: ICurrency) => (
-                  <Select.Option
-                    value={item.code}
-                    key={`currency-${item.code}-${item.code}`}
-                  >
-                    {item.name} ({item.code})
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            name="dividendsCurrency"
-            label={t("Dividends currency")}
-            required
-          >
-            <Select
-              showSearch
-              placeholder={t("Select a currency for the dividends")}
-              allowClear
-              loading={currenciesLoading}
-            >
-              {currencies &&
-                currencies.map((item: ICurrency) => (
-                  <Select.Option
-                    value={item.code}
-                    key={`currency-${item.code}-${item.code}`}
-                  >
-                    {item.name} ({item.code})
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-          <Form.Item name="market" label={t("Market")} required>
-            <Select
-              placeholder={t("Select a market")}
-              allowClear
-              loading={marketsLoading}
-            >
-              {markets &&
-                markets.map((sectorItem: IMarket) => (
-                  <Select.Option
-                    value={sectorItem.id}
-                    key={`currency-${sectorItem.id}-${sectorItem.id}`}
-                  >
-                    {sectorItem.name}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-          <Form.Item name="sector" label={t("Sector")} required>
-            <Select
-              placeholder={t("Select a sector")}
-              allowClear
-              loading={sectorsLoading}
-            >
-              {sectors &&
-                sectors.map((sectorItem: ISector) => (
-                  <Select.Option
-                    value={sectorItem.id}
-                    key={`sector-${sectorItem.id}-${sectorItem.id}`}
-                  >
-                    {sectorItem.name}
-                  </Select.Option>
-                ))}
-            </Select>
-          </Form.Item>
-          <Form.Item
-            label={t("Is closed")}
-            name="isClosed"
-            valuePropName="checked"
-          >
-            <Switch />
-          </Form.Item>
+        <TextInput
+          withAsterisk
+          label={t("Ticker")}
+          key={form.key("ticker")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("ticker")}
+        />
+        <TextInput
+          withAsterisk
+          label={t("altTickers")}
+          key={form.key("altTickers")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("altTickers")}
+        />
+        <TextInput
+          withAsterisk
+          label={t("ISIN")}
+          key={form.key("isin")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("isin")}
+        />
+        <Dropzone
+          maxFiles={1}
+          accept={IMAGE_MIME_TYPE}
+          onDrop={handleImagesUpload}
+        >
+          <Text ta="center">Drop images here</Text>
+        </Dropzone>
 
-          <Form.Item name="broker" label={t("Broker")}>
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item name="url" label={t("URL")}>
-            <Input type="text" />
-          </Form.Item>
-          <Form.Item name="countryCode" label={t("Country")} required>
-            <CountrySelector
-              handleChange={handleCountryChange}
-              initialValue={countryCode}
-            />
-          </Form.Item>
-          <Form.Item name="description" label={t("Description")}>
-            <Input.TextArea rows={4} />
-          </Form.Item>
-        </Form>
-      )}
+        <SimpleGrid
+          cols={{ base: 1, sm: 4 }}
+          mt={previews.length > 0 ? "xl" : 0}
+        >
+          {previews}
+        </SimpleGrid>
+        <Select
+          mt="md"
+          withAsterisk
+          searchable
+          label={t("Base currency")}
+          data={baseCurrenciesOptions}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("baseCurrency")}
+          required
+        />
+        <Select
+          mt="md"
+          withAsterisk
+          searchable
+          label={t("Dividends currency")}
+          data={baseCurrenciesOptions}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("dividendsCurrency")}
+          required
+        />
+        <Select
+          mt="md"
+          withAsterisk
+          searchable
+          label={t("Market")}
+          data={marketsOptions}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("market")}
+          required
+        />
+        <Select
+          mt="md"
+          withAsterisk
+          searchable
+          label={t("Sector")}
+          data={sectorsOptions}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("sector")}
+          required
+        />
+        <Checkbox
+          mt="md"
+          label={t("Is closed?")}
+          key={form.key("isClosed")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("isClosed", { type: "checkbox" })}
+        />
+
+        <TextInput
+          withAsterisk
+          label={t("Broker")}
+          key={form.key("broker")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("broker")}
+        />
+        <TextInput
+          label={t("URL")}
+          key={form.key("url")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("url")}
+        />
+        <CountrySelector form={form} />
+
+        <Textarea
+          mt="md"
+          label={t("Description")}
+          key={form.key("description")}
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...form.getInputProps("description")}
+        />
+        <Group justify="space-between" mt="md">
+          <Button type="button" color="gray" onClick={hideModal}>
+            {t("Cancel")}
+          </Button>
+          <Button type="submit" color="blue">
+            {company ? t("Update") : t("Create")}
+          </Button>
+        </Group>
+      </form>
     </Modal>
   );
 }
-
-CompanyAddEditForm.defaultProps = {
-  companyId: undefined,
-};
 
 export default CompanyAddEditForm;

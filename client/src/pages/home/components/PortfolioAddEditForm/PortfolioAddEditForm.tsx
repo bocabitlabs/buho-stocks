@@ -1,6 +1,17 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Form, Input, Modal, Select, Switch } from "antd";
+import {
+  Alert,
+  Button,
+  Checkbox,
+  Group,
+  Modal,
+  Select,
+  Textarea,
+  TextInput,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { IconPlus } from "@tabler/icons-react";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useCurrencies } from "hooks/use-currencies/use-currencies";
@@ -12,162 +23,138 @@ import {
 import { ICurrency } from "types/currency";
 
 interface AddEditFormProps {
-  title: string;
-  okText: string;
   portfolioId?: number;
-  isModalVisible: boolean;
-  onCreate: (values: any) => void;
-  onCancel: () => void;
+  isUpdate?: boolean;
 }
 
 function PortfolioAddEditForm({
-  title,
-  okText,
-  isModalVisible,
-  onCreate,
-  onCancel,
   portfolioId,
-}: AddEditFormProps): ReactElement | null {
-  const [form] = Form.useForm();
-  const [countryCode, setCountryCode] = useState("");
+  isUpdate = false,
+}: Readonly<AddEditFormProps>): ReactElement | null {
   const { t } = useTranslation();
-  const { mutate: createPortfolio } = useAddPortfolio();
-  const { mutate: updatePortfolio } = useUpdatePortfolio();
+  const { mutate: createPortfolio, isSuccess: isAddSuccess } =
+    useAddPortfolio();
+  const { mutate: updatePortfolio, isSuccess: isUpdateSuccess } =
+    useUpdatePortfolio();
   const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const {
     data: portfolio,
     error: errorFetchingPortfolio,
-    isFetching: isErrorFetching,
+    isLoading: isErrorLoading,
   } = usePortfolio(portfolioId);
 
-  useEffect(() => {
-    if (portfolio) {
-      setCountryCode(portfolio.countryCode);
-    }
-  }, [portfolio]);
-
-  const handleSubmit = async (values: any) => {
-    const { name, description, baseCurrencyId, hideClosedCompanies } = values;
-    const newPortfolio = {
-      name,
+  const form = useForm({
+    mode: "uncontrolled",
+    initialValues: {
+      name: portfolio ? portfolio.name : "",
+      description: portfolio ? portfolio.description : "",
+      hideClosedCompanies: portfolio ? portfolio.hideClosedCompanies : true,
+      baseCurrency: portfolio ? portfolio.baseCurrency : "",
+      countryCode: portfolio ? portfolio.countryCode : "",
       color: "#607d8b",
-      description,
-      baseCurrency: baseCurrencyId,
-      hideClosedCompanies: !!hideClosedCompanies,
-      countryCode,
-    };
+    },
+  });
 
-    if (portfolioId) {
-      updatePortfolio({ portfolioId, newPortfolio });
+  const onSubmit = (values: any) => {
+    if (isUpdate && portfolioId) {
+      updatePortfolio({ portfolioId, newPortfolio: values });
     } else {
-      createPortfolio(newPortfolio);
+      createPortfolio(values);
     }
   };
 
-  const handleCountryChange = (newValue: string) => {
-    setCountryCode(newValue);
-  };
+  const baseCurrenciesOptions = currencies?.map((currency: ICurrency) => ({
+    value: currency.code,
+    label: t(currency.name),
+  }));
 
-  const handleFormSubmit = async () => {
-    try {
-      const values = await form.validateFields();
-      await handleSubmit(values);
-      form.resetFields();
-      onCreate(values);
-    } catch (error) {
-      console.log("Validate Failed:", error);
+  useEffect(() => {
+    if (isAddSuccess || isUpdateSuccess) {
+      form.reset();
+      setIsModalVisible(false);
     }
-  };
+  }, [isAddSuccess, isUpdateSuccess, form]);
 
-  if (isErrorFetching) {
+  if (isErrorLoading) {
     return <LoadingSpin />;
   }
 
   if (errorFetchingPortfolio) {
     return (
-      <Alert
-        showIcon
-        message={t("Unable to load portfolio")}
-        description={errorFetchingPortfolio.message}
-        type="error"
-      />
+      <Alert title={t("Unable to load portfolio")} color="red">
+        {errorFetchingPortfolio.message}
+      </Alert>
     );
   }
 
   return (
-    <Modal
-      open={isModalVisible}
-      title={title}
-      okText={okText}
-      cancelText={t("Cancel")}
-      onCancel={onCancel}
-      onOk={handleFormSubmit}
-    >
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={handleSubmit}
-        initialValues={{
-          name: portfolio?.name,
-          description: portfolio?.description,
-          hideClosedCompanies: portfolio?.hideClosedCompanies,
-          baseCurrencyId: portfolio?.baseCurrency,
-          countryCode: portfolio?.countryCode,
-        }}
+    <>
+      <Modal
+        opened={isModalVisible}
+        title={t("Add new portfolio")}
+        onClose={() => setIsModalVisible(false)}
       >
-        <Form.Item
-          name="name"
-          label={t("Name")}
-          rules={[
-            {
-              required: true,
-              message: t("Please input the name of the portfolio"),
-            },
-          ]}
-        >
-          <Input type="text" />
-        </Form.Item>
-        <Form.Item name="baseCurrencyId" label={t("Base currency")}>
-          <Select
-            showSearch
-            placeholder={t("Select a base currency")}
-            allowClear
-            loading={currenciesLoading}
-          >
-            {currencies &&
-              currencies.map((item: ICurrency) => (
-                <Select.Option
-                  value={item.code}
-                  key={`currency-${item.code}-${item.code}`}
-                >
-                  {item.name} ({item.code})
-                </Select.Option>
-              ))}
-          </Select>
-        </Form.Item>
-        <Form.Item name="countryCode" label={t("Country")}>
-          <CountrySelector
-            handleChange={handleCountryChange}
-            initialValue={countryCode}
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <TextInput
+            withAsterisk
+            label={t("Name")}
+            key={form.key("name")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("name")}
           />
-        </Form.Item>
-        <Form.Item
-          label={t("Hide closed companies")}
-          name="hideClosedCompanies"
-          valuePropName="checked"
-        >
-          <Switch />
-        </Form.Item>
-        <Form.Item name="description" label={t("Description")}>
-          <Input type="text" />
-        </Form.Item>
-      </Form>
-    </Modal>
+          {currenciesLoading ? (
+            t("Loading currencies...")
+          ) : (
+            <Select
+              mt="md"
+              withAsterisk
+              searchable
+              label={t("Base currency")}
+              data={baseCurrenciesOptions}
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...form.getInputProps("baseCurrency")}
+              required
+            />
+          )}
+          <CountrySelector form={form} />
+          <Checkbox
+            mt="md"
+            label={t("Hide closed companies")}
+            key={form.key("hideClosedCompanies")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("hideClosedCompanies", { type: "checkbox" })}
+          />
+          <Textarea
+            mt="md"
+            label={t("Description")}
+            key={form.key("description")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("description")}
+          />
+
+          <Group justify="space-between" mt="md">
+            <Button
+              type="button"
+              color="gray"
+              onClick={() => setIsModalVisible(false)}
+            >
+              {t("Cancel")}
+            </Button>
+            <Button type="submit" color="blue">
+              {portfolio ? t("Update") : t("Create")}
+            </Button>
+          </Group>
+        </form>
+      </Modal>
+      <Button
+        onClick={() => setIsModalVisible(true)}
+        leftSection={<IconPlus />}
+      >
+        {t("Add portfolio")}
+      </Button>
+    </>
   );
 }
-
-PortfolioAddEditForm.defaultProps = {
-  portfolioId: undefined,
-};
 
 export default PortfolioAddEditForm;
