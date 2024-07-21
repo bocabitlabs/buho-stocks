@@ -9,6 +9,10 @@ interface Props {
 }
 
 export default function Charts({ stats, portfolioCurrency }: Props) {
+  if (stats.length === 0) {
+    return null;
+  }
+
   return (
     <Row style={{ marginTop: 16, marginBottom: 16 }}>
       <Col xs={{ span: 24 }} md={{ span: 12 }}>

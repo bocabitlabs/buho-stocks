@@ -43,10 +43,7 @@ class CompanyStatsAPIView(APIView):
             year = settings.YEAR_FOR_ALL
         instance = self.get_object(company_id, year)
         if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(None, status=status.HTTP_200_OK)
         serializer = CompanyStatsForYearSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
