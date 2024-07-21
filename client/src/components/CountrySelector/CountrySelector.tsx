@@ -1,58 +1,51 @@
 import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { Select } from "antd";
+import { Group, Select, SelectProps } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import countries from "utils/countries";
 
 interface Props {
-  handleChange: any;
-  initialValue?: string;
+  form: any;
+  fieldName?: string;
 }
 
 export default function CountrySelector({
-  handleChange,
-  initialValue,
-}: Props): ReactElement {
+  form,
+  fieldName = "countryCode",
+}: Readonly<Props>): ReactElement {
   const { t } = useTranslation();
 
-  const getLabel = (element: any) => (
-    <div className="demo-option-label-item">
-      <span
-        role="img"
-        aria-label={element.name}
-        style={{ paddingRight: "1em" }}
-      >
-        <CountryFlag code={element.code} width={15} />
-      </span>
-      {element.name}
-    </div>
+  const countriesOptions = countries?.map((country: any) => ({
+    value: country.code,
+    label: t(country.name),
+  }));
+
+  const renderSelectOption: SelectProps["renderOption"] = ({
+    option,
+    checked,
+  }) => (
+    <Group flex="1" gap="xs">
+      <CountryFlag code={option.value} width={15} />
+      {option.label}
+      {checked && (
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        <IconCheck style={{ marginInlineStart: "auto" }} />
+      )}
+    </Group>
   );
+
   return (
     <Select
-      placeholder={t("Select a country")}
-      style={{ width: "100%" }}
-      onChange={handleChange}
-      optionLabelProp="label"
-      value={initialValue}
-      defaultValue={initialValue}
-      data-testid="country-selector"
-    >
-      {Object.keys(countries).map((key: string) => {
-        const element = countries[key];
-        return (
-          <Select.Option
-            key={element.key}
-            value={element.code}
-            label={getLabel(element)}
-          >
-            {getLabel(element)}
-          </Select.Option>
-        );
-      })}
-    </Select>
+      mt="md"
+      withAsterisk
+      searchable
+      label={t("Country")}
+      data={countriesOptions}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...form.getInputProps(fieldName)}
+      required
+      renderOption={renderSelectOption}
+    />
   );
 }
-
-CountrySelector.defaultProps = {
-  initialValue: "",
-};

@@ -10,6 +10,7 @@ import reportWebVitals from "./reportWebVitals";
 import queryClient from "api/query-client";
 import Main from "MainRouter";
 import "@mantine/core/styles.css";
+import "@mantine/dropzone/styles.css";
 
 Chart.register(...registerables);
 

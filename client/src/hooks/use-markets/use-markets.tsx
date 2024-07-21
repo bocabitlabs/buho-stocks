@@ -38,19 +38,25 @@ export function useMarket(marketId: number | undefined, options?: any) {
   );
 }
 
-export const useAddMarket = () => {
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
+export const useAddMarket = (props?: MutateProps) => {
   const { t } = useTranslation();
 
   return useMutation(
     (newMarket: IMarketFormFields) => apiClient.post(`/markets/`, newMarket),
     {
       onSuccess: () => {
+        props?.onSuccess?.();
         toast.success<string>(t("Market created"));
         queryClient.invalidateQueries(["markets"]);
       },
       onError: () => {
+        props?.onError?.();
         toast.error<string>(t("Unable to create market"));
-        queryClient.invalidateQueries(["markets"]);
       },
     },
   );
@@ -71,7 +77,7 @@ export const useDeleteMarket = () => {
   });
 };
 
-export const useUpdateMarket = () => {
+export const useUpdateMarket = (props?: MutateProps) => {
   const { t } = useTranslation();
 
   return useMutation(
@@ -79,10 +85,12 @@ export const useUpdateMarket = () => {
       apiClient.put(`/markets/${id}/`, newMarket),
     {
       onSuccess: () => {
+        props?.onSuccess?.();
         toast.success<string>(t("Market has been updated"));
         queryClient.invalidateQueries(["markets"]);
       },
       onError: () => {
+        props?.onSuccess?.();
         toast.error<string>(t("Unable to update market"));
         queryClient.invalidateQueries(["markets"]);
       },
