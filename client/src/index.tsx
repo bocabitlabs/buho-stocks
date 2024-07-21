@@ -1,5 +1,6 @@
 import React from "react";
 import { QueryClientProvider } from "react-query";
+import { MantineProvider } from "@mantine/core";
 import { Chart, registerables } from "chart.js";
 import ReactDOM from "react-dom/client";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,6 +9,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 import reportWebVitals from "./reportWebVitals";
 import queryClient from "api/query-client";
 import Main from "MainRouter";
+import "@mantine/core/styles.css";
 
 Chart.register(...registerables);
 
@@ -17,10 +19,12 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Main />
-      <ReactQueryDevtools initialIsOpen={false} />
-    </QueryClientProvider>
+    <MantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <Main />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
+    </MantineProvider>
   </React.StrictMode>,
 );
 
