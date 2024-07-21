@@ -6,7 +6,10 @@ interface Props {
   width?: number;
 }
 
-export default function CountryFlag({ code, width }: Props) {
+export default function CountryFlag({
+  code,
+  width = undefined,
+}: Readonly<Props>) {
   let countryCode = code;
   if (code === "EUR") {
     countryCode = "EU";
@@ -20,7 +23,3 @@ export default function CountryFlag({ code, width }: Props) {
     />
   );
 }
-
-CountryFlag.defaultProps = {
-  width: undefined,
-};

@@ -20,7 +20,7 @@ interface AddEditFormProps {
 function SuperSectorAddEditForm({
   title,
   okText,
-  id,
+  id = undefined,
   isModalVisible,
   onCreate,
   onCancel,
@@ -123,9 +123,5 @@ function SuperSectorAddEditForm({
     </Modal>
   );
 }
-
-SuperSectorAddEditForm.defaultProps = {
-  id: undefined,
-};
 
 export default SuperSectorAddEditForm;

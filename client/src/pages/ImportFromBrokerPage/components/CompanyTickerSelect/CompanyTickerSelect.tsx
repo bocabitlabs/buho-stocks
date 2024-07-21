@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function CompanyTickerSelect({
-  initialValue,
+  initialValue = undefined,
   ticker,
   portfolioId,
   onSelect,
@@ -55,7 +55,3 @@ export default function CompanyTickerSelect({
     </Select>
   );
 }
-
-CompanyTickerSelect.defaultProps = {
-  initialValue: undefined,
-};

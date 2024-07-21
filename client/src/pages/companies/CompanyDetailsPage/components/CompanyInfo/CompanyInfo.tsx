@@ -25,12 +25,12 @@ interface Props {
 export default function CompanyInfo({
   companyTicker,
   companySectorName,
-  companySuperSectorName,
+  companySuperSectorName = "",
   marketName,
   baseCurrencyCode,
   dividendsCurrencyCode,
   companyUrl,
-  companyLogo,
+  companyLogo = undefined,
   isin,
 }: Props): ReactElement {
   const { t } = useTranslation();
@@ -117,8 +117,3 @@ export default function CompanyInfo({
     </Row>
   );
 }
-
-CompanyInfo.defaultProps = {
-  companySuperSectorName: "",
-  companyLogo: undefined,
-};

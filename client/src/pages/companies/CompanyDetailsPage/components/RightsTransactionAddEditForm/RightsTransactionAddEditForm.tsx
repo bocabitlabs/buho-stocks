@@ -38,7 +38,7 @@ interface IProps {
 }
 
 export default function RightsTransactionAddEditForm({
-  transactionId,
+  transactionId = undefined,
   companyId,
   companyBaseCurrency,
   portfolioBaseCurrency,
@@ -322,7 +322,3 @@ export default function RightsTransactionAddEditForm({
     </Modal>
   );
 }
-
-RightsTransactionAddEditForm.defaultProps = {
-  transactionId: undefined,
-};

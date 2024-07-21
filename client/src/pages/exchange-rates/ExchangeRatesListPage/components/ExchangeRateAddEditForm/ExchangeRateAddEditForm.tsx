@@ -26,7 +26,7 @@ function ExchangeRateAddEditForm({
   isModalVisible,
   onCreate,
   onCancel,
-  id,
+  id = undefined,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -163,9 +163,5 @@ function ExchangeRateAddEditForm({
     </Modal>
   );
 }
-
-ExchangeRateAddEditForm.defaultProps = {
-  id: undefined,
-};
 
 export default ExchangeRateAddEditForm;

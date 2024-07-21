@@ -26,7 +26,7 @@ function StockPriceAddEditForm({
   isModalVisible,
   onCreate,
   onCancel,
-  id,
+  id = undefined,
 }: AddEditFormProps): ReactElement | null {
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -156,9 +156,5 @@ function StockPriceAddEditForm({
     </Modal>
   );
 }
-
-StockPriceAddEditForm.defaultProps = {
-  id: undefined,
-};
 
 export default StockPriceAddEditForm;

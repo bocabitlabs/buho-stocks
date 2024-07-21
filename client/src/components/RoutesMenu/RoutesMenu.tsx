@@ -48,7 +48,7 @@ function RoutesMenu({
   routeLinks,
   selectedKey,
   changeSelectedKey,
-  extraCallback,
+  extraCallback = () => {},
 }: RoutesMenuProps) {
   const location = useLocation();
   const { t } = useTranslation();
@@ -109,7 +109,5 @@ function RoutesMenu({
     />
   );
 }
-RoutesMenu.defaultProps = {
-  extraCallback: () => {},
-};
+
 export default RoutesMenu;
