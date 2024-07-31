@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ICompany, ICompanyFormFields, ICompanyListItem } from "types/company";
@@ -52,73 +52,73 @@ interface MutateProps {
 
 export const useAddCompany = (props?: MutateProps) => {
   const { t } = useTranslation();
-  return useMutation(
-    ({ portfolioId, newCompany }: AddMutationProps) =>
+  return useMutation({
+    mutationFn: ({ portfolioId, newCompany }: AddMutationProps) =>
       apiClient.post(`/portfolios/${portfolioId}/companies/`, newCompany),
-    {
-      onSuccess: (data, variables) => {
-        props?.onSuccess?.();
-        toast.success(`${t("Company has been created")}`);
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
-      },
-      onError: () => {
-        props?.onError?.();
-        toast.error(t("Unable to create company"));
-      },
+    onSuccess: (data, variables) => {
+      props?.onSuccess?.();
+      toast.success(`${t("Company has been created")}`);
+      queryClient.invalidateQueries({
+        queryKey: ["portfolios", variables.portfolioId],
+      });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      toast.error(t("Unable to create company"));
+    },
+  });
 };
 
 export const useDeleteCompany = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  return useMutation(
-    ({ portfolioId, companyId }: DeleteMutationProps) =>
+  return useMutation({
+    mutationFn: ({ portfolioId, companyId }: DeleteMutationProps) =>
       apiClient.delete(`/portfolios/${portfolioId}/companies/${companyId}/`),
-    {
-      onSuccess: (data, variables) => {
-        toast.success(`${t("Company has been deleted")}`);
-        navigate(-1);
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
-      },
-      onError: () => {
-        toast.error(t("Unable to delete company"));
-      },
+    onSuccess: (data, variables) => {
+      toast.success(`${t("Company has been deleted")}`);
+      navigate(-1);
+      queryClient.invalidateQueries({
+        queryKey: ["portfolios", variables.portfolioId],
+      });
     },
-  );
+    onError: () => {
+      toast.error(t("Unable to delete company"));
+    },
+  });
 };
 
 export const useUpdateCompany = (props?: MutateProps) => {
   const { t } = useTranslation();
-  return useMutation(
-    ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
+  return useMutation({
+    mutationFn: ({ portfolioId, companyId, newCompany }: UpdateMutationProps) =>
       apiClient.patch(
         `/portfolios/${portfolioId}/companies/${companyId}/`,
         newCompany,
       ),
-    {
-      onSuccess: (data, variables) => {
-        props?.onSuccess?.();
-        toast.success(t("Company has been updated"));
-        queryClient.invalidateQueries(["portfolios", variables.portfolioId]);
-      },
-      onError: () => {
-        props?.onError?.();
-        toast.error(t("Unable to update company"));
-      },
+    onSuccess: (data, variables) => {
+      props?.onSuccess?.();
+      toast.success(t("Company has been updated"));
+      queryClient.invalidateQueries({
+        queryKey: ["portfolios", variables.portfolioId],
+      });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      toast.error(t("Unable to update company"));
+    },
+  });
 };
 
 export function useCompanies(
   portfolioId: number | undefined,
   closed: boolean = false,
 ) {
-  return useQuery<ICompanyListItem[], Error>(
-    ["portfolios", portfolioId, closed],
-    () => fetchCompanies(portfolioId, closed),
-  );
+  return useQuery<ICompanyListItem[], Error>({
+    queryKey: ["portfolios", portfolioId, closed],
+    queryFn: () => fetchCompanies(portfolioId, closed),
+  });
 }
 
 export function useCompany(
@@ -126,13 +126,10 @@ export function useCompany(
   companyId: number | undefined,
   options?: any,
 ) {
-  return useQuery<ICompany, Error>(
-    ["portfolios", portfolioId, companyId],
-    () => fetchCompany(portfolioId, companyId),
-    {
-      // The query will not execute until the userId exists
-      enabled: !!portfolioId && !!companyId,
-      ...options,
-    },
-  );
+  return useQuery<ICompany, Error>({
+    queryKey: ["portfolios", portfolioId, companyId],
+    queryFn: () => fetchCompany(portfolioId, companyId),
+    enabled: !!portfolioId && !!companyId,
+    ...options,
+  });
 }

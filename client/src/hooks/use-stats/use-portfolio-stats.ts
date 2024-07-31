@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IPortfolioYearStats } from "types/portfolio-year-stats";
@@ -39,28 +39,25 @@ export function usePortfolioYearStats(
   groupBy?: string | undefined,
   otherOptions?: any,
 ) {
-  return useQuery<IPortfolioYearStats, Error>(
-    ["portfolioYearStats", portfolioId, year, groupBy],
-    () => fetchYearStats(portfolioId, year, groupBy),
-    {
-      enabled: !!portfolioId && !!year,
-      ...otherOptions,
-    },
-  );
+  return useQuery<IPortfolioYearStats, Error>({
+    queryKey: ["portfolioYearStats", portfolioId, year, groupBy],
+    queryFn: () => fetchYearStats(portfolioId, year, groupBy),
+    enabled: !!portfolioId && !!year,
+    ...otherOptions,
+  });
 }
 
 export function usePortfolioAllYearStats(
   portfolioId: number | undefined,
   otherOptions?: any,
 ) {
-  return useQuery<IPortfolioYearStats[], Error>(
-    ["portfolioAllYearsStats", portfolioId],
-    () => fetchAllYearsStats(portfolioId),
-    {
-      enabled: !!portfolioId,
-      ...otherOptions,
-    },
-  );
+  return useQuery<IPortfolioYearStats[], Error>({
+    queryKey: ["portfolioAllYearsStats", portfolioId],
+    queryFn: () => fetchAllYearsStats(portfolioId),
+
+    enabled: !!portfolioId,
+    ...otherOptions,
+  });
 }
 
 interface IUpdateYearStatsMutationProps {
@@ -71,8 +68,8 @@ interface IUpdateYearStatsMutationProps {
 }
 
 export const useUpdatePortfolioYearStats = () => {
-  return useMutation(
-    ({
+  return useMutation({
+    mutationFn: ({
       portfolioId,
       year,
       updateApiPrice,
@@ -90,14 +87,10 @@ export const useUpdatePortfolioYearStats = () => {
         },
       );
     },
-    {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([
-          "portfolioYearStats",
-          variables.portfolioId,
-          variables.year,
-        ]);
-      },
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["portfolioYearStats", variables.portfolioId, variables.year],
+      });
     },
-  );
+  });
 };

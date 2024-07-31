@@ -1,12 +1,13 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
+import { CompanyYearStats } from "types/company-year-stats";
 
 export const fetchStats = async (
   companyId: number | undefined,
   year: string | undefined,
 ) => {
-  const { data } = await apiClient.get(
+  const { data } = await apiClient.get<CompanyYearStats>(
     `/stats/company/${companyId}/year/${year}/`,
   );
   return data;
@@ -17,14 +18,12 @@ export function useCompanyYearStats(
   year: string | undefined,
   otherOptions?: any,
 ) {
-  return useQuery(
-    ["companyYearStats", companyId, year],
-    () => fetchStats(companyId, year),
-    {
-      enabled: !!companyId && !!year,
-      ...otherOptions,
-    },
-  );
+  return useQuery<CompanyYearStats, Error>({
+    queryKey: ["companyYearStats", companyId, year],
+    queryFn: () => fetchStats(companyId, year),
+    enabled: !!companyId && !!year,
+    ...otherOptions,
+  });
 }
 
 interface IUpdateYearStatsMutationProps {
@@ -34,19 +33,20 @@ interface IUpdateYearStatsMutationProps {
 }
 
 export const useUpdateYearStats = () => {
-  return useMutation(
-    ({ companyId, year, updateApiPrice }: IUpdateYearStatsMutationProps) =>
+  return useMutation({
+    mutationFn: ({
+      companyId,
+      year,
+      updateApiPrice,
+    }: IUpdateYearStatsMutationProps) =>
       apiClient.put(`/stats/company/${companyId}/year/${year}/`, {
         updateApiPrice,
       }),
-    {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([
-          "companyYearStats",
-          variables.companyId,
-          variables.year,
-        ]);
-      },
+
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["companyYearStats", variables.companyId, variables.year],
+      });
     },
-  );
+  });
 };
