@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Tag } from "antd";
+import { Badge } from "@mantine/core";
 
 export type LabelType = "SELL" | "BUY";
 
@@ -12,12 +12,12 @@ export function BuySellLabel({ value }: Props) {
 
   let color = "green";
   if (value === "SELL") {
-    color = "volcano";
+    color = "red";
   }
   return (
-    <Tag color={color} key={value}>
+    <Badge color={color} key={value}>
       {t(value)}
-    </Tag>
+    </Badge>
   );
 }
 

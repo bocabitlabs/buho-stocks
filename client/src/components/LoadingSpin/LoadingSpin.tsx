@@ -1,6 +1,6 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, theme } from "antd";
+import { Loader } from "@mantine/core";
+import { theme } from "antd";
 
 interface Props {
   text?: string;
@@ -22,13 +22,15 @@ export default function LoadingSpin({ text = "Loading..." }: Props) {
         color: token.colorText,
       }}
     >
-      <Spin tip={t(text)}>
+      <Loader>
         <div
           style={{
             padding: 50,
           }}
-        />
-      </Spin>
+        >
+          {t(text)}
+        </div>
+      </Loader>
     </div>
   );
 }

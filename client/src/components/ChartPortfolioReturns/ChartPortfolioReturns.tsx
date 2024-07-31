@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import { Select, Spin } from "antd";
 import { AxiosError } from "axios";
 import {
-  useBenchmarks,
+  useAllBenchmarks,
   useBenchmarkValues,
 } from "hooks/use-benchmarks/use-benchmarks";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
@@ -21,7 +21,7 @@ export default function ChartPortfolioReturns(): ReactElement | null {
     error: errorFetchingStats,
   } = usePortfolioAllYearStats(+id!);
 
-  const { data: benchmarks, isFetching } = useBenchmarks();
+  const { data: benchmarks, isFetching } = useAllBenchmarks();
 
   const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(
     undefined,
