@@ -1,52 +1,70 @@
-import React, { ReactElement } from "react";
+import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Input, Select, Switch } from "antd";
+import { Button, Checkbox, Group, Select, TextInput } from "@mantine/core";
+import { useForm } from "@mantine/form";
 import { useTimezones } from "hooks/use-markets/use-markets";
 import {
   useSettings,
   useUpdateSettings,
 } from "hooks/use-settings/use-settings";
+import { ITimezone } from "types/market";
 import { ISettingsFormFields } from "types/settings";
 
-function SettingsForm(): ReactElement | null {
-  const [form] = Form.useForm();
-  const { isFetching, data, error } = useSettings();
-  const { mutate: updateSettings } = useUpdateSettings();
+function SettingsForm() {
+  const { data: settings, error, isLoading } = useSettings();
   const { t, i18n } = useTranslation();
-  const { data: timezones, isLoading: timezonesLoading } = useTimezones();
+  const { data: timezones } = useTimezones();
 
-  const handleUpdate = async (values: any) => {
-    const {
-      // companyDisplayMode,
-      // companySortBy,
-      language,
-      timezone,
-      sentryDsn,
-      sentryEnabled,
-      backendHostname,
-      // mainPortfolio,
-      // portfolioDisplayMode,
-      // portfolioSortBy
-    } = values;
-    const newSettings: ISettingsFormFields = {
-      language,
-      timezone,
-      sentryDsn,
-      sentryEnabled,
-      backendHostname,
-      companyDisplayMode: "TODO",
-      companySortBy: "TODO",
-      mainPortfolio: "TODO",
-      portfolioDisplayMode: "TODO",
-      portfolioSortBy: "TODO",
-    };
-    if (data) {
-      updateSettings({ newSettings });
-      i18n.changeLanguage(newSettings.language);
-    }
+  const form = useForm<ISettingsFormFields>({
+    mode: "uncontrolled",
+    initialValues: {
+      language: settings?.language ?? "en",
+      timezone: settings?.timezone ?? "UTC",
+      sentryDsn: settings?.sentryDsn ?? "",
+      sentryEnabled: settings?.sentryEnabled || false,
+      backendHostname: settings?.backendHostname ?? "",
+      companySortBy: settings?.companySortBy ?? "",
+      companyDisplayMode: settings?.companyDisplayMode ?? "",
+      mainPortfolio: settings?.mainPortfolio ?? "",
+      portfolioSortBy: settings?.portfolioSortBy ?? "",
+      portfolioDisplayMode: settings?.portfolioDisplayMode ?? "",
+    },
+  });
+
+  const onSuccess = () => {
+    form.reset();
+    i18n.changeLanguage(settings?.language);
   };
 
-  if (isFetching) {
+  const { mutate: updateSettings } = useUpdateSettings({
+    onSuccess,
+  });
+
+  const timezonesOptions = useMemo(() => {
+    const tzOptions = timezones?.map((timezone: ITimezone) => ({
+      value: timezone.name,
+      label: t(timezone.name),
+    }));
+    return tzOptions;
+  }, [timezones, t]);
+
+  const onSubmit = (values: any) => {
+    updateSettings({ newSettings: values });
+  };
+
+  useEffect(() => {
+    if (settings) {
+      form.setValues({
+        language: settings.language,
+        timezone: settings.timezone,
+        sentryDsn: settings.sentryDsn,
+        sentryEnabled: settings.sentryEnabled,
+        backendHostname: settings.backendHostname,
+      });
+    }
+  }, [settings]);
+
+  if (isLoading) {
     return <div>{t("Fetching settings...")}</div>;
   }
 
@@ -55,83 +73,63 @@ function SettingsForm(): ReactElement | null {
   }
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={handleUpdate}
-      initialValues={{
-        // companyDisplayMode: settings.companyDisplayMode,
-        // companySortBy: settings.companySortBy,
-        language: data?.language,
-        timezone: data?.timezone,
-        sentryDsn: data?.sentryDsn,
-        sentryEnabled: data?.sentryEnabled,
-        backendHostname: data?.backendHostname,
-        // mainPortfolio: settings.mainPortfolio,
-        // portfolioDisplayMode: settings.portfolioDisplayMode,
-        // portfolioSortBy: settings.portfolioSortBy
-      }}
-    >
-      <Form.Item name="language" label={t("Language")}>
-        <Select placeholder={t("Select a language")}>
-          <Select.Option value="en" key="en">
-            English
-          </Select.Option>
-          <Select.Option value="es" key="es">
-            Español
-          </Select.Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="timezone"
-        label={t("Account Timezone")}
-        rules={[{ required: true }]}
-      >
-        <Select
-          showSearch
-          loading={timezonesLoading}
-          style={{ width: 200 }}
-          placeholder={t("Search to Select")}
-          optionFilterProp="children"
-          filterOption={(input: any, option: any) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-        >
-          {timezones?.map((timezone: any) => (
-            <Select.Option value={timezone.name} key={timezone.name}>
-              {timezone.name}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="sentryEnabled"
+    <form onSubmit={form.onSubmit(onSubmit)}>
+      <Select
+        mt="md"
+        withAsterisk
+        searchable
+        label={t("Select a language")}
+        data={[
+          { value: "en", label: "English" },
+          { value: "es", label: "Español" },
+        ]}
+        value={form.getValues().language}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...form.getInputProps("language")}
+        required
+      />
+
+      <Select
+        mt="md"
+        withAsterisk
+        searchable
+        label={t("Timezone")}
+        data={timezonesOptions}
+        value={form.getValues().timezone}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...form.getInputProps("timezone")}
+        required
+      />
+
+      <Checkbox
+        mt="md"
         label={t("Sentry enabled")}
-        valuePropName="checked"
-        help={t(
-          "If enabled, errors will be sent to Sentry. You need to set the Sentry DSN below.",
-        )}
-      >
-        <Switch />
-      </Form.Item>
-      <Form.Item name="sentryDsn" label={t("Sentry DSN")}>
-        <Input type="text" />
-      </Form.Item>
-      <Form.Item
-        name="backendHostname"
+        key={form.key("sentryEnabled")}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...form.getInputProps("sentryEnabled", { type: "checkbox" })}
+      />
+
+      <TextInput
+        withAsterisk
+        label={t("Sentry DSN")}
+        key={form.key("sentryDsn")}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...form.getInputProps("sentryDsn")}
+      />
+
+      <TextInput
+        withAsterisk
         label={t("Backend hostname")}
-        help={t(
-          "It needs to be set in order to retrieve the status of the background tasks",
-        )}
-      >
-        <Input type="text" />
-      </Form.Item>
-      <Form.Item style={{ marginTop: "3em" }}>
-        <Button type="primary" htmlType="submit">
+        key={form.key("backendHostname")}
+        // eslint-disable-next-line react/jsx-props-no-spreading
+        {...form.getInputProps("backendHostname")}
+      />
+      <Group justify="space-between" mt="md">
+        <Button type="submit" color="blue">
           {t("Update settings")}
         </Button>
-      </Form.Item>
-    </Form>
+      </Group>
+    </form>
   );
 }
 
