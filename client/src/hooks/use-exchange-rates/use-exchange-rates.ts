@@ -1,17 +1,26 @@
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { MRT_PaginationState, MRT_SortingState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
-import {
-  IExchangeRate,
-  IExchangeRateFormFields,
-  IExchangeRateListResponse,
-} from "types/exchange-rate";
+import { IExchangeRate, IExchangeRateFormFields } from "types/exchange-rate";
 
 interface UpdateMutationProps {
   newExchangeRate: IExchangeRateFormFields;
   id: number | undefined;
+}
+
+type ExchangeRateApiResponse = {
+  results: Array<IExchangeRate>;
+  count: number;
+  next: number | null;
+  previous: number | null;
+};
+
+interface Params {
+  sorting: MRT_SortingState;
+  pagination: MRT_PaginationState;
 }
 
 export const fetchExchangeRate = async (
@@ -36,75 +45,57 @@ export function useExchangeRate(
   toCurrencyCode: string | undefined,
   transactionDate: string | undefined,
 ) {
-  return useQuery<IExchangeRate, Error>(
-    ["exchange-rates", fromCurrencyCode, toCurrencyCode, transactionDate],
-    () => fetchExchangeRate(fromCurrencyCode, toCurrencyCode, transactionDate),
-    {
-      enabled: false,
-      useErrorBoundary: false,
-    },
-  );
+  return useQuery<IExchangeRate, Error>({
+    queryKey: [
+      "exchange-rates",
+      fromCurrencyCode,
+      toCurrencyCode,
+      transactionDate,
+    ],
+    queryFn: () =>
+      fetchExchangeRate(fromCurrencyCode, toCurrencyCode, transactionDate),
+    enabled: false,
+  });
 }
 
 export const fetchExchangeRates = async (
-  page: number = 1,
-  pageSize: number = 100,
-  sortBy: string = "exchangeDate",
-  orderBy: string = "descend",
+  pagination: MRT_PaginationState,
+  sorting: MRT_SortingState,
 ) => {
-  const sortValidValues = [
-    "exchangeDate",
-    "exchangeRate",
-    "exchangeFrom",
-    "exchangeTo",
-  ];
-
-  const orderValidValues = ["ascend", "descend"];
-
-  if (!sortValidValues.includes(sortBy)) {
-    throw new Error("sortBy is invalid");
-  }
-
-  let newOrderBy = orderBy;
-  if (!orderBy) {
-    newOrderBy = "descend";
-  }
-  if (!orderValidValues.includes(newOrderBy)) {
-    throw new Error("orderBy is invalid");
-  }
-
-  const parsedSortByValues: any = {
-    exchangeDate: "exchange_date",
-    exchangeRate: "exchange_rate",
-    exchangeFrom: "exchange_from",
-    exchangeTo: "exchange_to",
-  };
-
-  const newSortBy = parsedSortByValues[sortBy];
-
-  const parsedOrderByValues: any = {
-    ascend: "asc",
-    descend: "desc",
-  };
-
-  newOrderBy = parsedOrderByValues[newOrderBy];
-
-  const { data } = await apiClient.get<IExchangeRateListResponse>(
-    `/exchange-rates/?page=${page}&page_size=${pageSize}&sort_by=${newSortBy}&order_by=${newOrderBy}`,
+  const fetchURL = new URL(
+    "/api/v1/exchange-rates/",
+    apiClient.defaults.baseURL,
   );
+  if (pagination) {
+    fetchURL.searchParams.set(
+      "offset",
+      `${pagination.pageIndex * pagination.pageSize}`,
+    );
+    fetchURL.searchParams.set("limit", `${pagination.pageSize}`);
+  }
+
+  if (sorting?.length === 0) {
+    fetchURL.searchParams.set("sort_by", "exchangeDate");
+    fetchURL.searchParams.set("order_by", "asc");
+  } else {
+    const newSortBy = sorting?.[0].id ?? "exchangeDate";
+    fetchURL.searchParams.set("sort_by", newSortBy);
+    const newOrderBy = sorting?.[0].desc ? "desc" : "asc";
+    fetchURL.searchParams.set("order_by", newOrderBy);
+  }
+
+  const { data } = await apiClient.get<ExchangeRateApiResponse>(fetchURL.href);
+
   return data;
 };
 
-export function useExchangeRates(
-  page: number,
-  pageSize: number,
-  sortBy: string,
-  orderBy: string,
-) {
-  return useQuery<IExchangeRateListResponse, Error>(
-    ["exchange-rates", page, pageSize, sortBy, orderBy],
-    () => fetchExchangeRates(page, pageSize, sortBy, orderBy),
-  );
+export function useExchangeRates({ sorting, pagination }: Params) {
+  return useQuery<ExchangeRateApiResponse, Error>({
+    queryKey: ["exchange-rates", pagination, sorting],
+    queryFn: () => fetchExchangeRates(pagination, sorting),
+    placeholderData: keepPreviousData, // useful for paginated queries by keeping data from previous pages on screen while fetching the next page
+    staleTime: 30_000, // don't refetch previously viewed pages until cache is more than 30 seconds old
+  });
 }
 
 export const fetchExchangeRateDetails = async (id: number | undefined) => {
@@ -116,67 +107,65 @@ export const fetchExchangeRateDetails = async (id: number | undefined) => {
 };
 
 export function useExchangeRateDetails(id: number | undefined) {
-  return useQuery<IExchangeRate, Error>(
-    ["exchange-rates", id],
-    () => fetchExchangeRateDetails(id),
-    {
-      enabled: !!id,
-    },
-  );
+  return useQuery<IExchangeRate, Error>({
+    queryKey: ["exchange-rates", id],
+    queryFn: () => fetchExchangeRateDetails(id),
+    enabled: !!id,
+  });
 }
 
-export const useAddExchangeRate = () => {
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
+export const useAddExchangeRate = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    (newExchangeRate: IExchangeRateFormFields) =>
+  return useMutation({
+    mutationFn: (newExchangeRate: IExchangeRateFormFields) =>
       apiClient.post(`/exchange-rates/`, newExchangeRate),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Exchange rate created"));
-        queryClient.invalidateQueries(["exchange-rates"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to create exchange rate"));
-        queryClient.invalidateQueries(["exchange-rates"]);
-      },
+    onSuccess: () => {
+      props?.onSuccess?.();
+      toast.success<string>(t("Exchange rate created"));
+      queryClient.invalidateQueries({ queryKey: ["exchange-rates"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      toast.error<string>(t("Unable to create exchange rate"));
+    },
+  });
 };
 
 export const useDeleteExchangeRate = () => {
   const { t } = useTranslation();
 
-  return useMutation(
-    (id: number) => apiClient.delete(`/exchange-rates/${id}/`),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Exchange rate deleted"));
-        queryClient.invalidateQueries(["exchange-rates"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to delete exchange rate"));
-        queryClient.invalidateQueries(["exchange-rates"]);
-      },
+  return useMutation({
+    mutationFn: (id: number) => apiClient.delete(`/exchange-rates/${id}/`),
+    onSuccess: () => {
+      toast.success<string>(t("Exchange rate deleted"));
+      queryClient.invalidateQueries({ queryKey: ["exchange-rates"] });
     },
-  );
+    onError: () => {
+      toast.error<string>(t("Unable to delete exchange rate"));
+    },
+  });
 };
 
-export const useUpdateExchangeRate = () => {
+export const useUpdateExchangeRate = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    ({ id, newExchangeRate }: UpdateMutationProps) =>
+  return useMutation({
+    mutationFn: ({ id, newExchangeRate }: UpdateMutationProps) =>
       apiClient.put(`/exchange-rates/${id}/`, newExchangeRate),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("ExchangeRate has been updated"));
-        queryClient.invalidateQueries(["exchange-rates"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to update exchange rate"));
-        queryClient.invalidateQueries(["exchange-rates"]);
-      },
+    onSuccess: () => {
+      props?.onSuccess?.();
+      toast.success<string>(t("ExchangeRate has been updated"));
+      queryClient.invalidateQueries({ queryKey: ["exchange-rates"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      toast.error<string>(t("Unable to update exchange rate"));
+    },
+  });
 };

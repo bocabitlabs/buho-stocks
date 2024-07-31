@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
 import { toast } from "react-toastify";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ISettings, ISettingsFormFields } from "types/settings";
@@ -14,25 +14,34 @@ export const fetchSettings = async () => {
   return data;
 };
 
-export const useUpdateSettings = () => {
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
+export const useUpdateSettings = (props?: MutateProps) => {
   const { t } = useTranslation();
-  return useMutation(
-    ({ newSettings }: UpdateSettingsMutationProps) =>
+  return useMutation({
+    mutationFn: ({ newSettings }: UpdateSettingsMutationProps) =>
       apiClient.put(`/settings/`, newSettings),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Settings updated succesfully"));
-        queryClient.invalidateQueries("settings");
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to update settings"));
-      },
+    onSuccess: () => {
+      props?.onSuccess?.();
+      toast.success<string>(t("Settings updated succesfully"));
+      queryClient.invalidateQueries({ queryKey: ["settings"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      toast.error<string>(t("Unable to update settings"));
+    },
+  });
 };
 
 export function useSettings(options = {}) {
-  return useQuery<ISettings, Error>("settings", fetchSettings, options);
+  return useQuery<ISettings, Error>({
+    queryKey: ["settings"],
+    queryFn: fetchSettings,
+    ...options,
+  });
 }
 
 export default useSettings;
