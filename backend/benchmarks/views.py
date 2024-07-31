@@ -4,6 +4,7 @@ from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, viewsets
 from rest_framework.decorators import action
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from benchmarks.models import Benchmark, BenchmarkYear
@@ -69,6 +70,7 @@ class BenchmarkViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = BenchmarkSerializer
+    pagination_class = LimitOffsetPagination
     queryset = Benchmark.objects.all()
 
     def get_serializer_class(self):

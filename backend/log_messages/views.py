@@ -1,40 +1,24 @@
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
+import logging
+
+from rest_framework import viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
 from log_messages.models import LogMessage
 from log_messages.serializers import LogMessageSerializer
 
+logger = logging.getLogger("buho_backend")
 
-class LogMessageListAPIView(APIView):
-    # 1. List all
-    @swagger_auto_schema(tags=["messages_log"])
-    def get(self, request, portfolio_id, *args, **kwargs):
-        items = LogMessage.objects.filter(portfolio=portfolio_id).order_by(
+
+class LogMessageViewSet(viewsets.ModelViewSet):
+
+    pagination_class = LimitOffsetPagination
+    serializer_class = LogMessageSerializer
+    queryset = LogMessage.objects.all()
+    lookup_field = "id"
+
+    def get_queryset(self):
+        portfolio_id = self.kwargs.get("portfolio_id")
+        recent_messages = LogMessage.objects.filter(portfolio=portfolio_id).order_by(
             "-date_created"
         )
-        serializer = LogMessageSerializer(
-            items, many=True, context={"request": request}
-        )
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class LogMessageDetailAPIView(APIView):
-    def get_object(self, portfolio_id, message_id):
-        try:
-            return LogMessage.objects.get(id=message_id, portfolio=portfolio_id)
-        except LogMessage.DoesNotExist:
-            return None
-
-    # 5. Delete
-    @swagger_auto_schema(tags=["messages_log"])
-    def delete(self, request, portfolio_id, message_id, *args, **kwargs):
-        instance = self.get_object(portfolio_id, message_id)
-        if not instance:
-            return Response(
-                {"res": "Message with id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        instance.delete()
-        return Response({"res": "Message deleted!"}, status=status.HTTP_200_OK)
+        return recent_messages

@@ -95,7 +95,10 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
-            message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
+            message_text=(
+                f"Company created: {serializer.data.get('name')} "
+                f"({serializer.data.get('ticker')})"
+            ),
             portfolio=Portfolio.objects.get(id=portfolio_id),
         )
 
