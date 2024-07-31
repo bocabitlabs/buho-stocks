@@ -14,7 +14,7 @@ import {
   IconDatabaseImport,
   IconPlus,
 } from "@tabler/icons-react";
-import MarketAddEditForm from "../MarketAddEditForm/MarketAddEditForm";
+import MarketFormProvider from "../MarketForm/MarketFormProvider";
 import { useInitializeMarkets } from "hooks/use-markets/use-markets";
 
 function MarketsPageHeader() {
@@ -90,7 +90,7 @@ function MarketsPageHeader() {
           </Menu.Dropdown>
         </Menu>
       </Group>
-      <MarketAddEditForm
+      <MarketFormProvider
         onCloseCallback={handleClose}
         isVisible={isModalVisible}
       />
