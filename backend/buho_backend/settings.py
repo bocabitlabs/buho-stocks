@@ -9,14 +9,13 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+
 import logging
 import os
 from os import path
 from pathlib import Path
 
 import sentry_sdk
-
-# from decouple import Config, RepositoryEnv
 from decouple import config
 from sentry_sdk.integrations.django import DjangoIntegration
 
@@ -121,6 +120,9 @@ REST_FRAMEWORK = {
     "JSON_UNDERSCOREIZE": {
         "no_underscore_before_number": True,
     },
+    "DATE_INPUT_FORMATS": ["iso-8601", "%Y-%m-%dT%H:%M:%S.%fZ"],
+    # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    # "PAGE_SIZE": config("PAGE_SIZE", default=20, cast=int),
 }
 
 SERIALIZATION_MODULES = {"json": "djmoney.serializers"}

@@ -1,12 +1,23 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
-from log_messages import views as log_views
+from log_messages import views
+
+router = DefaultRouter()
 
 urlpatterns = [
-    path("", log_views.LogMessageListAPIView.as_view(), name="log-message-list"),
     path(
-        "<int:message_id>/",
-        log_views.LogMessageDetailAPIView.as_view(),
-        name="log-message-detail",
+        "",
+        views.LogMessageViewSet.as_view({"get": "list"}),
+        name="message-list",
+    ),
+    path(
+        "<int:id>/",
+        views.LogMessageViewSet.as_view(
+            {
+                "delete": "destroy",
+            }
+        ),
+        name="message-detail",
     ),
 ]
