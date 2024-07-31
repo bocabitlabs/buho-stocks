@@ -1,16 +1,16 @@
-import { Col, Row } from "antd";
+import { Grid } from "@mantine/core";
 import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
 import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";
 
 export default function Charts() {
   return (
-    <Row style={{ marginTop: 16, marginBottom: 16 }}>
-      <Col xs={{ span: 24 }} md={{ span: 12 }}>
+    <Grid>
+      <Grid.Col span={6}>
         <ChartPortfolioReturns />
-      </Col>
-      <Col xs={{ span: 24 }} md={{ span: 12 }}>
+      </Grid.Col>
+      <Grid.Col span={6}>
         <ChartPortfolioDividends />
-      </Col>
-    </Row>
+      </Grid.Col>
+    </Grid>
   );
 }
