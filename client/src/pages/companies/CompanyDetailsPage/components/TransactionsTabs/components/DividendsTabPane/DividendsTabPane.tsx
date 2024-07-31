@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button } from "antd";
-import DividendsListTable from "../DividendsListTable/DividendsListTable";
-import DividendsTransactionAddEditForm from "../DividendsTransactionAddEditForm/DividendsTransactionAddEditForm";
+import { Button, Group, Stack } from "@mantine/core";
+import DividendsListTable from "./components/DividendsListTable/DividendsListTable";
+import DividendsTransactionFormProvider from "./components/DividendsTransactionForm/DividendsTransactionFormProvider";
 import { ICurrency } from "types/currency";
 
 interface Props {
@@ -23,30 +23,26 @@ export default function DividendsTabPane({
     setIsDividendsModalVisible(true);
   };
 
-  const onDividendsCreate = () => {
-    setIsDividendsModalVisible(false);
-  };
-
-  const onDividendsCancel = () => {
+  const onCloseCallback = () => {
     setIsDividendsModalVisible(false);
   };
   return (
-    <div>
-      <Button
-        key="add-dividends-button"
-        type="primary"
-        onClick={showDividendsModal}
-        style={{ marginBottom: 16 }}
-      >
-        {t("+ Dividends")}
-      </Button>
-      <DividendsTransactionAddEditForm
-        title={t("Add dividends transaction")}
-        okText={t("Create")}
+    <Stack>
+      <Group>
+        <Button
+          key="add-dividends-button"
+          variant="primary"
+          onClick={showDividendsModal}
+          mt={20}
+        >
+          {t("+ Dividends")}
+        </Button>
+      </Group>
+
+      <DividendsTransactionFormProvider
         companyId={+companyId!}
-        isModalVisible={isDividendsModalVisible}
-        onCreate={onDividendsCreate}
-        onCancel={onDividendsCancel}
+        isVisible={isDividendsModalVisible}
+        onCloseCallback={onCloseCallback}
         companyDividendsCurrency={companyDividendsCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
@@ -54,6 +50,6 @@ export default function DividendsTabPane({
         companyDividendsCurrency={companyDividendsCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
-    </div>
+    </Stack>
   );
 }
