@@ -9,7 +9,7 @@ export interface ISharesTransactionFormFields {
   totalCommission: number;
   totalCommissionCurrency: string;
   exchangeRate: number;
-  transactionDate: string;
+  transactionDate: Date;
   company: number;
   notes: string;
   type: TransactionType;

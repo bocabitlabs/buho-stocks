@@ -4,7 +4,7 @@ export interface ISectorBase {
 }
 
 export interface ISectorFormFields extends ISectorBase {
-  superSector?: number;
+  superSector?: number | string;
 }
 
 export interface ISector extends ISectorBase {

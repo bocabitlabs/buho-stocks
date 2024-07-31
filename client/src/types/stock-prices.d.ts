@@ -1,11 +1,8 @@
 export interface IStockPriceFormFields {
   ticker: string;
-  transactionDate: string;
+  transactionDate: Date;
   price: number;
   priceCurrency: string;
-  // exchangeRate: number;
-  // exchangeFrom: string;
-  // exchangeTo: string;
 }
 
 export interface IStockPrice extends IStockPriceFormFields {
