@@ -1,27 +1,24 @@
-import React, { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import ReactMarkdown from "react-markdown";
-import { Typography } from "antd";
+import { Paper, Text, Title } from "@mantine/core";
 
 interface Props {
   companyDescription: string;
 }
 
-export default function CompanyInfo({
-  companyDescription,
-}: Props): ReactElement {
+export default function CompanyInfo({ companyDescription }: Props) {
   const { t } = useTranslation();
   return (
-    <Typography.Paragraph style={{ paddingTop: 16 }}>
-      <Typography.Title level={5}>{t("About the company")}</Typography.Title>
-      <Typography.Paragraph>
+    <Paper p="lg" shadow="xs">
+      <Title order={3}>{t("About the company")}</Title>
+      <Text mt={20}>
         {companyDescription !== "undefined" &&
         companyDescription !== undefined ? (
           <ReactMarkdown>{companyDescription}</ReactMarkdown>
         ) : (
           ""
         )}
-      </Typography.Paragraph>
-    </Typography.Paragraph>
+      </Text>
+    </Paper>
   );
 }

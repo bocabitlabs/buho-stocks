@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button } from "antd";
-import SharesListTable from "../SharesListTable/SharesListTable";
-import SharesTransactionAddEditForm from "../SharesTransactionAddEditForm/SharesTransactionAddEditForm";
+import { Button, Group, Stack } from "@mantine/core";
+import SharesListTable from "./components/SharesListTable/SharesListTable";
+import SharesTransactionFormProvider from "./components/SharesTransactionForm/SharesTransactionFormProvider";
 import { ICurrency } from "types/currency";
 
 interface Props {
@@ -23,31 +23,26 @@ export default function SharesTabPane({
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
-
-  const onCancel = () => {
+  const onCloseCallback = () => {
     setIsModalVisible(false);
   };
   return (
-    <div>
-      <Button
-        key="add-shares-button"
-        type="primary"
-        onClick={showModal}
-        style={{ marginBottom: 16 }}
-      >
-        {t("+ Shares")}
-      </Button>
-      <SharesTransactionAddEditForm
-        title={t("Add shares transaction")}
-        okText={t("Create")}
+    <Stack>
+      <Group>
+        <Button
+          key="add-dividends-button"
+          variant="primary"
+          onClick={showModal}
+          mt={20}
+        >
+          {t("+ Shares")}
+        </Button>
+      </Group>
+
+      <SharesTransactionFormProvider
         companyId={+companyId!}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={onCancel}
+        isVisible={isModalVisible}
+        onCloseCallback={onCloseCallback}
         companyBaseCurrency={companyBaseCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
@@ -55,6 +50,6 @@ export default function SharesTabPane({
         companyBaseCurrency={companyBaseCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
-    </div>
+    </Stack>
   );
 }

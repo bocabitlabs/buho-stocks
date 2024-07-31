@@ -1,5 +1,4 @@
-import React from "react";
-import { Col, Row } from "antd";
+import { Grid, Paper } from "@mantine/core";
 import DividendsChart from "../DividendsChart/DividendsChart";
 import ReturnsChart from "../ReturnsChart/ReturnsChart";
 
@@ -14,13 +13,17 @@ export default function Charts({ stats, portfolioCurrency }: Props) {
   }
 
   return (
-    <Row style={{ marginTop: 16, marginBottom: 16 }}>
-      <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <ReturnsChart stats={stats} />
-      </Col>
-      <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <DividendsChart stats={stats} portfolioCurrency={portfolioCurrency} />
-      </Col>
-    </Row>
+    <Grid>
+      <Grid.Col span={6}>
+        <Paper p="lg" shadow="xs">
+          <ReturnsChart stats={stats} />
+        </Paper>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <Paper p="lg" shadow="xs">
+          <DividendsChart stats={stats} portfolioCurrency={portfolioCurrency} />
+        </Paper>
+      </Grid.Col>
+    </Grid>
   );
 }

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button } from "antd";
-import RightsListTable from "../RightsListTable/RightsListTable";
-import RightsTransactionAddEditForm from "../RightsTransactionAddEditForm/RightsTransactionAddEditForm";
+import { Button, Group, Stack } from "@mantine/core";
+import RightsListTable from "./components/RightsListTable/RightsListTable";
+import RightsTransactionFormProvider from "./components/RightsTransactionForm/RightsTransactionFormProvider";
 import { ICurrency } from "types/currency";
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   companyBaseCurrency: ICurrency;
 }
 
-export default function RightsTabPane({
+export default function SharesTabPane({
   companyBaseCurrency,
   portfolioBaseCurrency,
 }: Props) {
@@ -23,30 +23,26 @@ export default function RightsTabPane({
     setIsModalVisible(true);
   };
 
-  const onCreate = () => {
-    setIsModalVisible(false);
-  };
-
-  const onCancel = () => {
+  const onCloseCallback = () => {
     setIsModalVisible(false);
   };
   return (
-    <div>
-      <Button
-        key="add-rights-button"
-        type="primary"
-        onClick={showModal}
-        style={{ marginBottom: 16 }}
-      >
-        {t("+ Rights")}
-      </Button>
-      <RightsTransactionAddEditForm
-        title={t("Add rights transaction")}
-        okText={t("Create")}
+    <Stack>
+      <Group>
+        <Button
+          key="add-dividends-button"
+          variant="primary"
+          onClick={showModal}
+          mt={20}
+        >
+          {t("+ Rights")}
+        </Button>
+      </Group>
+
+      <RightsTransactionFormProvider
         companyId={+companyId!}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={onCancel}
+        isVisible={isModalVisible}
+        onCloseCallback={onCloseCallback}
         companyBaseCurrency={companyBaseCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
@@ -54,6 +50,6 @@ export default function RightsTabPane({
         companyBaseCurrency={companyBaseCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
-    </div>
+    </Stack>
   );
 }
