@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { SyncOutlined } from "@ant-design/icons";
 import { Button, Checkbox, Group, Modal, Text } from "@mantine/core";
 import { useForm } from "@mantine/form";
+import { IconRefresh } from "@tabler/icons-react";
 import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 
 interface Props {
@@ -31,11 +31,6 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
       year: selectedYear,
       updateApiPrice: values.updateStockPrice,
     });
-    // const message = `${t("Updating company stats for year")} ${t(
-    //   selectedYear,
-    // )}`;
-    // setVisible(false);
-    // toast.success<string>(message);
 
     return { result: true, message: "" };
   };
@@ -58,7 +53,7 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
       <Button
         mt="20"
         onClick={showModal}
-        leftSection={<SyncOutlined />}
+        leftSection={<IconRefresh />}
         variant="subtle"
       />
       <Modal
@@ -85,14 +80,6 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
               {t("Update stats")}
             </Button>
           </Group>
-          {/* <Form.Item style={{ marginBottom: 0 }}>
-            <Checkbox
-              onChange={onStockPriceChange}
-              checked={updateStockPriceSwitch}
-            >
-              {t("Update the stock price from API")}
-            </Checkbox>
-          </Form.Item> */}
         </form>
       </Modal>
     </>

@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
 import { Grid, NumberFormatter, Stack, Text } from "@mantine/core";
+import { IconArrowDown, IconArrowUp } from "@tabler/icons-react";
 import { CompanyYearStats } from "types/company-year-stats";
 
 interface Props {
@@ -28,15 +28,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             {stats?.sharesCount} {t("shares")}
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Invested")}
-          value={stats?.invested}
-          precision={2}
-          suffix={stats?.portfolioCurrency}
-        />
-        <Text type="secondary">
-          {stats?.sharesCount} {t("shares")}
-        </Text> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -50,12 +41,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             />
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Accum. investment")}
-          value={stats?.accumulatedInvestment}
-          precision={2}
-          suffix={stats?.portfolioCurrency}
-        /> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -73,15 +58,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             {stats?.portfolioCurrency}
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Dividends")}
-          value={stats?.dividends}
-          precision={2}
-          suffix={stats?.portfolioCurrency}
-        />
-        <Text type="secondary">
-          {t("Accum.")} {stats?.accumulatedDividends} {stats?.portfolioCurrency}
-        </Text> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -95,12 +71,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             />
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Dividends yield")}
-          value={stats?.dividendsYield ? stats.dividendsYield : 0}
-          precision={2}
-          suffix="%"
-        /> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -121,18 +91,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             />
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Portfolio value")}
-          value={stats?.portfolioValue}
-          valueStyle={{
-            color:
-              stats?.portfolioValue < stats?.accumulatedInvestment
-                ? "#cf1322"
-                : "",
-          }}
-          precision={2}
-          suffix={stats?.portfolioCurrency}
-        /> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -146,11 +104,7 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             />
           </Text>
           <Text c={+stats.returnPercent < 0 ? "red" : "green"}>
-            {+stats.returnValue < 0 ? (
-              <ArrowDownOutlined />
-            ) : (
-              <ArrowUpOutlined />
-            )}
+            {+stats.returnValue < 0 ? <IconArrowDown /> : <IconArrowUp />}
             <NumberFormatter
               suffix={` %`}
               value={stats.returnPercent}
@@ -159,19 +113,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             />
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Return")}
-          value={stats?.returnValue}
-          precision={2}
-          valueStyle={{
-            color: stats?.returnValue < 0 ? "#cf1322" : "",
-          }}
-          suffix={stats?.portfolioCurrency}
-        />
-        <Text type={stats?.returnPercent < 0 ? "danger" : "success"}>
-          {stats?.returnValue < 0 ? <ArrowDownOutlined /> : <ArrowUpOutlined />}
-          {stats?.returnPercent ? Number(stats.returnPercent).toFixed(2) : ""}%
-        </Text> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -186,9 +127,9 @@ export default function StatsContent({ stats, stockPrice }: Props) {
           </Text>
           <Text c={+stats.returnWithDividendsPercent < 0 ? "red" : "green"}>
             {+stats.returnWithDividends < 0 ? (
-              <ArrowDownOutlined />
+              <IconArrowDown />
             ) : (
-              <ArrowUpOutlined />
+              <IconArrowUp />
             )}
             <NumberFormatter
               suffix={` %`}
@@ -198,28 +139,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
             />
           </Text>
         </Stack>
-        {/* <Statistic
-          title={t("Return + dividends")}
-          value={stats?.returnWithDividends}
-          precision={2}
-          valueStyle={{
-            color: stats?.returnWithDividends < 0 ? "#cf1322" : "",
-          }}
-          suffix={stats?.portfolioCurrency}
-        />
-        <Text
-          type={stats?.returnWithDividendsPercent < 0 ? "danger" : "success"}
-        >
-          {stats?.returnWithDividends < 0 ? (
-            <ArrowDownOutlined />
-          ) : (
-            <ArrowUpOutlined />
-          )}
-          {stats?.returnWithDividendsPercent
-            ? Number(stats.returnWithDividendsPercent).toFixed(2)
-            : ""}
-          %
-        </Text> */}
       </Grid.Col>
       <Grid.Col span={3}>
         <Stack gap="xs">
@@ -234,13 +153,6 @@ export default function StatsContent({ stats, stockPrice }: Props) {
           </Text>
           <Text c="dimmed">{stockPrice.transactionDate}</Text>
         </Stack>
-        {/* <Statistic
-          title={t("Last stock price")}
-          value={stockPrice?.price}
-          precision={2}
-          suffix={stockPrice?.priceCurrency}
-        />
-        <Text type="secondary">{stockPrice?.transactionDate}</Text> */}
       </Grid.Col>
     </Grid>
   );

@@ -80,15 +80,5 @@ export default function TransactionsTabs({
         />
       </Tabs.Panel>
     </Tabs>
-    // <Tabs
-    //   items={items}
-    //   defaultActiveKey={query.get("tab") || "dividends"}
-    //   onChange={(activeKey: string) => {
-    //     navigate({
-    //       pathname: window.location.pathname,
-    //       search: `?tab=${activeKey}`,
-    //     });
-    //   }}
-    // />
   );
 }

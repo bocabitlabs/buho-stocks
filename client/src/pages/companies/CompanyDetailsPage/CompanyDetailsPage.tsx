@@ -72,33 +72,5 @@ export default function CompanyDetailsPage(): ReactElement {
         />
       </Grid.Col>
     </Grid>
-    // <CompanyDetailsPageHeader
-    //   companyName={company.name}
-    //   portfolioName={company.portfolio.name}
-    //   companyCountryCode={company.countryCode}
-    // >
-    //   <CompanyInfo
-    //     companyTicker={company.ticker}
-    //     companyLogo={company.logo}
-    //     companyUrl={company.url}
-    //     companySectorName={company.sector.name}
-    //     companySuperSectorName={company.sector.superSector?.name}
-    //     marketName={company.market.name}
-    //     baseCurrencyCode={company.baseCurrency.code}
-    //     dividendsCurrencyCode={company.dividendsCurrency.code}
-    //     isin={company.isin}
-    //   />
-    //   <YearSelector companyId={companyId} firstYear={company.firstYear} />
-    //   <Charts
-    //     stats={company.stats}
-    //     portfolioCurrency={company.portfolio.baseCurrency}
-    //   />
-    //   <TransactionsTabs
-    //     companyBaseCurrency={company.baseCurrency}
-    //     companyDividendsCurrency={company.dividendsCurrency}
-    //     portfolioBaseCurrency={company.portfolio.baseCurrency}
-    //   />
-    //   <CompanyExtraInfo companyDescription={company.description} />
-    // </CompanyDetailsPageHeader>
   );
 }

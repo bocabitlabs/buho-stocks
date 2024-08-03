@@ -58,8 +58,8 @@ export default function DividendsTransactionForm({
     dayjs(currentTransactionDate).format(dateFormat),
   );
 
-  form.watch("transactionDate", ({ previousValue, value, touched, dirty }) => {
-    console.log({ previousValue, value, touched, dirty });
+  form.watch("transactionDate", ({ value }) => {
+    console.log({ value });
     setCurrentTransactionDate(value);
   });
 
