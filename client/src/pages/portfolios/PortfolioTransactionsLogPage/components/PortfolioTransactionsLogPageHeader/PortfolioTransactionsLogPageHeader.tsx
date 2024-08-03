@@ -13,7 +13,7 @@ interface Props {
   portfolioName: string;
 }
 
-function PortfolioDetailsPageHeader({ portfolioName }: Props) {
+function PortfolioDetailsPageHeader({ portfolioName }: Readonly<Props>) {
   const { id } = useParams();
   const { t } = useTranslation();
   const routes = [
@@ -28,7 +28,7 @@ function PortfolioDetailsPageHeader({ portfolioName }: Props) {
       id: "portfolio",
     },
     {
-      href: `/portfolios/${id}/log`,
+      href: `/portfolios/${id}/logs`,
       title: t("Log"),
       id: "log",
     },

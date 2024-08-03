@@ -14,7 +14,7 @@ import { useForm } from "@mantine/form";
 import { IconPlus } from "@tabler/icons-react";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import { useCurrencies } from "hooks/use-currencies/use-currencies";
+import { useAllCurrencies } from "hooks/use-currencies/use-currencies";
 import {
   useAddPortfolio,
   usePortfolio,
@@ -36,7 +36,8 @@ function PortfolioAddEditForm({
     useAddPortfolio();
   const { mutate: updatePortfolio, isSuccess: isUpdateSuccess } =
     useUpdatePortfolio();
-  const { data: currencies, isFetching: currenciesLoading } = useCurrencies();
+  const { data: currencies, isFetching: currenciesLoading } =
+    useAllCurrencies();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const {
     data: portfolio,

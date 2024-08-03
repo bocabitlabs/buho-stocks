@@ -1,7 +1,18 @@
-import React, { ReactElement, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Affix, Card, Col, Form, Row, Select, Space } from "antd";
+import {
+  Affix,
+  Button,
+  Grid,
+  Paper,
+  rem,
+  Select,
+  Stack,
+  Transition,
+} from "@mantine/core";
+import { useWindowScroll } from "@mantine/hooks";
+import { IconArrowUp } from "@tabler/icons-react";
 import ChartBrokerByCompany from "./components/ChartBrokerByCompany/ChartBrokerByCompany";
 import ChartCurrenciesByCompany from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompany";
 import ChartDividendsByCompany from "./components/ChartDividendsByCompany/ChartDividendsByCompany";
@@ -13,25 +24,19 @@ import ChartSectorsByCompany from "./components/ChartSectorsByCompany/ChartSecto
 import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany/ChartSuperSectorsByCompany";
 import ChartValueByCompany from "./components/ChartValueByCompany/ChartValueByCompany";
 import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
-import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";
+import ChartPortfolioReturnsProvider from "components/ChartPortfolioReturns/ChartPortfolioReturnsProvider";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 
-export default function ChartsList(): ReactElement {
+export default function ChartsList() {
   const { id } = useParams();
   const { t } = useTranslation();
-  const [years, setYears] = React.useState<any[]>([]);
-  const [selectedYear, setSelectedYear] = React.useState<any | null>(
-    new Date().getFullYear(),
+  const [years, setYears] = useState<string[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string | null>(
+    new Date().getFullYear().toString(),
   );
-  // States
-  const rowStyle = {
-    marginTop: 20,
-  };
-  const { data: portfolio } = usePortfolio(+id!);
+  const [scroll, scrollTo] = useWindowScroll();
 
-  const handleYearChange = (value: string) => {
-    setSelectedYear(value);
-  };
+  const { data: portfolio } = usePortfolio(+id!);
 
   useEffect(() => {
     async function loadFirstYear() {
@@ -43,7 +48,7 @@ export default function ChartsList(): ReactElement {
           index >= +portfolio.firstYear;
           index -= 1
         ) {
-          newYears.push(index);
+          newYears.push(index.toString());
         }
         setYears(newYears);
       }
@@ -52,92 +57,111 @@ export default function ChartsList(): ReactElement {
   }, [portfolio]);
 
   return (
-    <>
-      <Row>
-        <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-          <ChartPortfolioReturns />
-        </Col>
-        <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
+    <Grid>
+      <Grid.Col span={6}>
+        <Paper p="xl" shadow="xs">
+          <ChartPortfolioReturnsProvider />
+        </Paper>
+      </Grid.Col>
+      <Grid.Col span={6}>
+        <Paper p="xl" shadow="xs">
           <ChartPortfolioDividends />
-        </Col>
-      </Row>
+        </Paper>
+      </Grid.Col>
 
-      <Row style={rowStyle}>
-        <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
+      <Grid.Col span={12}>
+        <Paper p="xl" shadow="xs">
           <ChartPortfolioDividendsPerMonth />
-        </Col>
-      </Row>
+        </Paper>
+      </Grid.Col>
 
-      <Space direction="vertical" style={{ width: "100%", marginTop: 20 }}>
-        <Affix offsetTop={0} onChange={(affixed) => console.log(affixed)}>
-          <Card style={{ width: "100%", padding: 5, height: 90 }}>
-            <Form.Item label={t("Select a year")}>
-              <Select
-                placeholder="Select a year"
-                defaultValue={selectedYear}
-                style={{ width: 120 }}
-                onChange={handleYearChange}
-              >
-                {years.map((yearItem: any) => (
-                  <Select.Option key={yearItem} value={yearItem}>
-                    {yearItem}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
-          </Card>
-        </Affix>
+      <Affix position={{ bottom: 20, right: 20 }}>
+        <Paper p="md" shadow="xs">
+          <Stack>
+            <Select
+              label={t("Select a year")}
+              style={{ width: 120 }}
+              onChange={setSelectedYear}
+              data={years}
+              value={selectedYear ?? new Date().getFullYear().toString()}
+            />
+            <Transition transition="slide-up" mounted={scroll.y > 0}>
+              {(transitionStyles) => (
+                <Button
+                  leftSection={
+                    <IconArrowUp style={{ width: rem(16), height: rem(16) }} />
+                  }
+                  style={transitionStyles}
+                  onClick={() => scrollTo({ y: 0 })}
+                >
+                  Scroll to top
+                </Button>
+              )}
+            </Transition>
+          </Stack>
+        </Paper>
+      </Affix>
 
-        <Row style={rowStyle}>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
-            <ChartInvestedByCompany
-              selectedYear={selectedYear}
-              currency={portfolio?.baseCurrency.code}
-            />
-          </Col>
-        </Row>
+      {selectedYear && (
+        <>
+          <Grid.Col span={12}>
+            <Paper p="xl" shadow="xs">
+              <ChartInvestedByCompany
+                selectedYear={selectedYear}
+                currency={portfolio?.baseCurrency.code}
+              />
+            </Paper>
+          </Grid.Col>
 
-        <Row style={rowStyle}>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
-            <ChartInvestedByCompanyYearly
-              selectedYear={selectedYear}
-              currency={portfolio?.baseCurrency.code}
-            />
-          </Col>
-        </Row>
-        <Row style={rowStyle}>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 24, offset: 0 }}>
-            <ChartValueByCompany
-              selectedYear={selectedYear}
-              currency={portfolio?.baseCurrency.code}
-            />
-          </Col>
-        </Row>
-        <Row style={rowStyle}>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 16, offset: 4 }}>
-            <ChartDividendsByCompany selectedYear={selectedYear} />
-          </Col>
-        </Row>
-        <Row style={rowStyle}>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-            <ChartSectorsByCompany selectedYear={selectedYear} />
-          </Col>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 12, offset: 0 }}>
-            <ChartSuperSectorsByCompany selectedYear={selectedYear} />
-          </Col>
-        </Row>
-        <Row style={rowStyle}>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-            <ChartCurrenciesByCompany selectedYear={selectedYear} />
-          </Col>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-            <ChartBrokerByCompany selectedYear={selectedYear} />
-          </Col>
-          <Col xs={{ span: 22, offset: 1 }} md={{ span: 6, offset: 1 }}>
-            <ChartMarketByCompany selectedYear={selectedYear} />
-          </Col>
-        </Row>
-      </Space>
-    </>
+          <Grid.Col span={12}>
+            <Paper p="xl" shadow="xs">
+              <ChartInvestedByCompanyYearly
+                selectedYear={selectedYear}
+                currency={portfolio?.baseCurrency.code}
+              />
+            </Paper>
+          </Grid.Col>
+
+          <Grid.Col span={12}>
+            <Paper p="xl" shadow="xs">
+              <ChartValueByCompany
+                selectedYear={selectedYear}
+                currency={portfolio?.baseCurrency.code}
+              />
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <Paper p="xl" shadow="xs">
+              <ChartDividendsByCompany selectedYear={selectedYear} />
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <Paper p="xl" shadow="xs">
+              <ChartSectorsByCompany selectedYear={selectedYear} />
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={6}>
+            <Paper p="xl" shadow="xs">
+              <ChartSuperSectorsByCompany selectedYear={selectedYear} />
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Paper p="xl" shadow="xs">
+              <ChartCurrenciesByCompany selectedYear={selectedYear} />
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Paper p="xl" shadow="xs">
+              <ChartBrokerByCompany selectedYear={selectedYear} />
+            </Paper>
+          </Grid.Col>
+          <Grid.Col span={4}>
+            <Paper p="xl" shadow="xs">
+              <ChartMarketByCompany selectedYear={selectedYear} />
+            </Paper>
+          </Grid.Col>
+        </>
+      )}
+    </Grid>
   );
 }

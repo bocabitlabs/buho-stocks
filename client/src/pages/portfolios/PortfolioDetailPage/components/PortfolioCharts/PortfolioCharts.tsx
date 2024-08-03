@@ -1,15 +1,19 @@
-import { Grid } from "@mantine/core";
+import { Grid, Paper } from "@mantine/core";
 import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
-import ChartPortfolioReturns from "components/ChartPortfolioReturns/ChartPortfolioReturns";
+import ChartPortfolioReturnsProvider from "components/ChartPortfolioReturns/ChartPortfolioReturnsProvider";
 
 export default function Charts() {
   return (
     <Grid>
       <Grid.Col span={6}>
-        <ChartPortfolioReturns />
+        <Paper p="lg" shadow="xs">
+          <ChartPortfolioReturnsProvider />
+        </Paper>
       </Grid.Col>
       <Grid.Col span={6}>
-        <ChartPortfolioDividends />
+        <Paper p="lg" shadow="xs">
+          <ChartPortfolioDividends />
+        </Paper>
       </Grid.Col>
     </Grid>
   );
