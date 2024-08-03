@@ -1,3 +1,4 @@
+import { CompanyYearStats } from "./company-year-stats";
 import { ICurrency } from "./currency";
 import { IDividendsTransaction } from "./dividends-transaction";
 import { IMarket } from "./market";
@@ -48,6 +49,8 @@ export interface ICompanyItemBase extends ICompanyBase {
 export interface ICompany extends ICompanyItemBase {
   baseCurrency: ICurrency;
   dividendsCurrency: ICurrency;
+  allStats: CompanyYearStats;
+  sharesCount: number;
 }
 
 export interface ICompanyListItem extends ICompanyItemBase {

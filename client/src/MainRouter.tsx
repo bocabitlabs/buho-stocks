@@ -1,83 +1,57 @@
-import React, { ReactElement } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import App from "App";
 import ScrollToTop from "components/ScrollToTop/ScrollToTop";
-import getRoute, { HOME_ROUTE } from "routes";
+import BenchmarksListPage from "pages/benchmarks/BenchmarksListPage/BenchmarksListPage";
+import CompanyDetailsPage from "pages/companies/CompanyDetailsPage/CompanyDetailsPage";
+import CurrenciesListPage from "pages/currencies/CurrenciesListPage/CurrenciesListPage";
+import HomePage from "pages/home/HomePage";
+import ImportFromBrokerPage from "pages/import/ImportFromBrokerPage";
+import MarketsListPage from "pages/markets/MarketsListPage/MarketsListPage";
+import PortfolioChartsPage from "pages/portfolios/PorfolioChartsPage/PortfolioChartsPage";
+import PortfolioDetailsPage from "pages/portfolios/PortfolioDetailPage/PortfolioDetailsPage";
+import PortfolioTransactionsLogPage from "pages/portfolios/PortfolioTransactionsLogPage/PortfolioTransactionsLogPage";
+import SectorsListPage from "pages/sectors/SectorsListPage/SectorsListPage";
+import SettingsPage from "pages/settings/SettingsPage/SettingsPage";
+import routes from "routes";
 
-const BenchmarksListPage = React.lazy(
-  () => import("pages/benchmarks/BenchmarksListPage/BenchmarksListPage"),
-);
-
-const CompanyDetailsPage = React.lazy(
-  () => import("pages/companies/CompanyDetailsPage/CompanyDetailsPage"),
-);
-const CurrenciesListPage = React.lazy(
-  () => import("pages/currencies/CurrenciesListPage/CurrenciesListPage"),
-);
-const ExchangeRatesListPage = React.lazy(
-  () =>
-    import("pages/exchange-rates/ExchangeRatesListPage/ExchangeRatesListPage"),
-);
-const ImportFromBrokerPage = React.lazy(
-  () => import("pages/ImportFromBrokerPage/ImportFromBrokerPage"),
-);
-const MarketsListPage = React.lazy(
-  () => import("pages/markets/MarketsListPage/MarketsListPage"),
-);
-const PortfolioDetailsPage = React.lazy(
-  () => import("pages/portfolios/PortfolioDetailPage/PortfolioDetailsPage"),
-);
-const PortfolioChartsPage = React.lazy(
-  () => import("pages/portfolios/PorfolioChartsPage/PortfolioChartsPage"),
-);
-const HomePage = React.lazy(() => import("pages/home/HomePage"));
-const PortfolioTransactionsLogPage = React.lazy(
-  () =>
-    import(
-      "pages/portfolios/PortfolioTransactionsLogPage/PortfolioTransactionsLogPage"
-    ),
-);
-const SectorsListPage = React.lazy(
-  () => import("pages/sectors/SectorsListPage/SectorsListPage"),
-);
-const SettingsPage = React.lazy(
-  () => import("pages/settings/SettingsPage/SettingsPage"),
-);
-
-const StockPricesListPage = React.lazy(
-  () => import("pages/stock-prices/StockPricesListPage/StockPricesListPage"),
-);
-
-export default function Main(): ReactElement {
+export default function Main() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<App />}>
-          <Route path="" element={<Navigate to={getRoute(HOME_ROUTE)} />} />
-          <Route path="home" element={<HomePage />} />
-          <Route path="benchmarks" element={<BenchmarksListPage />} />
-          <Route path="exchange-rates" element={<ExchangeRatesListPage />} />
-          <Route path="import" element={<ImportFromBrokerPage />} />
-          <Route path="import/:brokerId" element={<ImportFromBrokerPage />} />
-          <Route path="portfolios/:id" element={<PortfolioDetailsPage />} />
+          <Route path={routes.homeRoute} element={<HomePage />} />
           <Route
-            path="portfolios/:id/log/*"
+            path={routes.benchmarksRoute}
+            element={<BenchmarksListPage />}
+          />
+          <Route
+            path={routes.importCsvRoute}
+            element={<ImportFromBrokerPage />}
+          />
+          <Route
+            path={routes.portfoliosDetailsRoute}
+            element={<PortfolioDetailsPage />}
+          />
+          <Route
+            path={routes.portfoliosLogsRoute}
             element={<PortfolioTransactionsLogPage />}
           />
           <Route
-            path="portfolios/:id/charts/*"
+            path={routes.portfoliosChartsRoute}
             element={<PortfolioChartsPage />}
           />
           <Route
-            path="portfolios/:id/companies/:companyId"
+            path={routes.companiesDetailsRoute}
             element={<CompanyDetailsPage />}
           />
-          <Route path="currencies" element={<CurrenciesListPage />} />
-          <Route path="settings" element={<SettingsPage />} />
-          <Route path="sectors" element={<SectorsListPage />} />
-          <Route path="markets" element={<MarketsListPage />} />
-          <Route path="stock-prices" element={<StockPricesListPage />} />
+          <Route
+            path={routes.currenciesRoute}
+            element={<CurrenciesListPage />}
+          />
+          <Route path={routes.settingsRoute} element={<SettingsPage />} />
+          <Route path={routes.sectorsRoute} element={<SectorsListPage />} />
+          <Route path={routes.marketsRoute} element={<MarketsListPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

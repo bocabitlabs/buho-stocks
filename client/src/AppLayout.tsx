@@ -1,58 +1,68 @@
-import React, { useCallback, useState } from "react";
+import { useEffect } from "react";
 import "./index.css";
 import "./App.css";
-import { Outlet } from "react-router-dom";
-import { Layout, theme } from "antd";
-import { navLinks } from "components/AppSidebar/AppSidebar";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
+import { Outlet, useLocation } from "react-router-dom";
+import {
+  AppShell,
+  Burger,
+  Group,
+  ScrollArea,
+  useMantineColorScheme,
+  useMantineTheme,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import Logo from "components/Logo/Logo";
+import NavigationLinks from "components/NavigationLinks/NavigationLinks";
 import PageFooter from "components/PageFooter/PageFooter";
-import RoutesMenu from "components/RoutesMenu/RoutesMenu";
-import TopNavBar from "components/TopNavBar/TopNavBar";
+import TasksModal from "components/TasksModal/TasksModal";
+import ToggleThemeButton from "components/ToggleThemeButton/ToggleThemeButton";
 
-const { useToken } = theme;
+function AppLayout() {
+  const [opened, { toggle, close }] = useDisclosure();
+  const theme = useMantineTheme();
+  const { colorScheme } = useMantineColorScheme();
 
-function AppLayout({ changeTheme }: { changeTheme: () => void }) {
-  const { token } = useToken();
-
-  const [selectedKey, setSelectedKey] = useState<string>("0");
-  const changeSelectedKey = useCallback((event: any) => {
-    const { key } = event;
-    setSelectedKey(key);
-  }, []);
-
-  const Menu = (
-    <RoutesMenu
-      routeLinks={navLinks}
-      selectedKey={selectedKey}
-      changeSelectedKey={changeSelectedKey}
-    />
-  );
+  const location = useLocation();
+  useEffect(() => {
+    close();
+  }, [close, location]);
 
   return (
-    <React.Suspense fallback={<LoadingSpin />}>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Layout.Sider
-          width={250}
-          className="sidebar"
-          breakpoint="lg"
-          theme="light"
-          collapsedWidth={0}
-          trigger={null}
-          style={{ borderRight: `1px solid ${token.colorBorder}` }}
-        >
-          <div style={{ flex: 1 }}>
-            <div style={{ flex: 1, position: "sticky", top: 0, left: 0 }}>
-              {Menu}
-            </div>
-          </div>
-        </Layout.Sider>
-        <Layout.Content>
-          <TopNavBar menu={Menu} changeTheme={changeTheme} />
-          <Outlet />
-          <PageFooter />
-        </Layout.Content>
-      </Layout>
-    </React.Suspense>
+    <AppShell
+      header={{ height: 60 }}
+      navbar={{
+        width: 300,
+        breakpoint: "sm",
+        collapsed: { mobile: !opened },
+      }}
+      padding="md"
+    >
+      <AppShell.Header>
+        <Group h="100%" px="md" justify="space-between">
+          <Group>
+            <Burger onClick={toggle} hiddenFrom="sm" size="sm" />
+            <Logo />
+          </Group>
+          <Group>
+            <ToggleThemeButton />
+            <TasksModal />
+          </Group>
+        </Group>
+      </AppShell.Header>
+      <AppShell.Navbar hidden={!opened} p="md">
+        <AppShell.Section my="md" component={ScrollArea}>
+          <NavigationLinks />
+        </AppShell.Section>
+      </AppShell.Navbar>
+      <AppShell.Main
+        style={{
+          backgroundColor: colorScheme === "dark" ? "" : theme.colors.gray[0],
+        }}
+      >
+        <Outlet />
+        <PageFooter />
+      </AppShell.Main>
+    </AppShell>
   );
 }
 
