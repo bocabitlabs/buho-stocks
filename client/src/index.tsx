@@ -29,7 +29,7 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <MantineProvider>
+    <MantineProvider defaultColorScheme="light">
       <QueryClientProvider client={queryClient}>
         <Main />
         <ReactQueryDevtools initialIsOpen={false} />

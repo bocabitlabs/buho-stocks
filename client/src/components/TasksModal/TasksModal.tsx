@@ -2,11 +2,16 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import {
-  ApiOutlined,
-  LoadingOutlined,
-  RightSquareOutlined,
-} from "@ant-design/icons";
-import { Button, Modal, Progress, Space, Typography } from "antd";
+  ActionIcon,
+  Button,
+  Loader,
+  Modal,
+  Progress,
+  Stack,
+  Text,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconPlugConnected, IconPlugConnectedX } from "@tabler/icons-react";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { ITaskDetails, ITaskResult } from "types/task-result";
 
@@ -14,7 +19,7 @@ function TasksModal() {
   // List of tasks and their statuses
   const [tasks, setTasks] = useState<ITaskResult[]>([]);
   const { t } = useTranslation();
-  const [isTasksModalOpen, setIsTasksModalOpen] = useState(false);
+  const [opened, { open, close }] = useDisclosure(false);
   const { data: settings } = useSettings();
   const getWebsocketUrl = () => {
     if (settings) {
@@ -33,14 +38,6 @@ function TasksModal() {
     share: false,
     shouldReconnect: () => true,
   });
-
-  const showTasksModal = () => {
-    setIsTasksModalOpen(true);
-  };
-
-  const handleTasksOk = () => {
-    setIsTasksModalOpen(false);
-  };
 
   const clearCompletedTasksList = () => {
     setTasks((prevTasks: ITaskResult[]) => {
@@ -103,63 +100,51 @@ function TasksModal() {
   if (readyState === ReadyState.OPEN) {
     return (
       <>
-        <Button
-          style={{ marginLeft: 10 }}
-          type="default"
-          icon={
-            tasks.filter(
-              (task: ITaskResult) =>
-                task.status !== "COMPLETED" && task.status !== "FAILED",
-            ).length > 0 ? (
-              <LoadingOutlined />
-            ) : (
-              <RightSquareOutlined />
-            )
-          }
-          onClick={showTasksModal}
-        />
-        <Modal
-          title={t("Tasks")}
-          open={isTasksModalOpen}
-          onCancel={handleTasksOk}
-          footer={[
-            <Button key="clear" onClick={clearCompletedTasksList}>
-              {t("Clear completed tasks")}
-            </Button>,
-            <Button key="submit" type="primary" onClick={handleTasksOk}>
-              {t("Close")}
-            </Button>,
-          ]}
-        >
-          <Space direction="vertical" style={{ display: "flex" }}>
-            {tasks.length === 0 && (
-              <Typography.Text>{t("No tasks")}</Typography.Text>
-            )}
+        <ActionIcon style={{ marginLeft: 10 }} variant="default" onClick={open}>
+          {tasks.filter(
+            (task: ITaskResult) =>
+              task.status !== "COMPLETED" && task.status !== "FAILED",
+          ).length > 0 ? (
+            <Loader />
+          ) : (
+            <IconPlugConnected style={{ width: "70%", height: "70%" }} />
+          )}
+        </ActionIcon>
+        <Modal title={t("Tasks")} opened={opened} onClose={close}>
+          <Stack>
+            {tasks.length === 0 && <Text>{t("No tasks")}</Text>}
             {tasks.length > 0 &&
               tasks.map((task: ITaskResult) => (
                 <div key={task.task_id}>
-                  <Typography.Text>
+                  <Text>
                     {t(task.task_name)} ({task.details.year}):
-                  </Typography.Text>
-                  <Progress
-                    percent={task.progress}
-                    status={getProgressStatus(task.status)}
-                  />
-                  <Typography.Text type="secondary">
+                  </Text>
+                  <Progress value={task.progress} />
+                  <Text>
+                    {t("Status")}: {t(getProgressStatus(task.status))}
+                  </Text>
+                  <Text variant="secondary">
                     {t(task.details.task_description)} {task.details.company}
-                  </Typography.Text>
+                  </Text>
                 </div>
               ))}
-          </Space>
+            <Button key="clear" onClick={clearCompletedTasksList}>
+              {t("Clear completed tasks")}
+            </Button>
+          </Stack>
         </Modal>
       </>
     );
   }
 
   return (
-    <Button title={t<string>("Websocket disconnected")}>
-      <ApiOutlined />
-    </Button>
+    <ActionIcon
+      variant="default"
+      aria-label={t<string>("Websocket disconnected")}
+      style={{ marginLeft: 10 }}
+    >
+      <IconPlugConnectedX style={{ width: "70%", height: "70%" }} />
+    </ActionIcon>
   );
 }
 

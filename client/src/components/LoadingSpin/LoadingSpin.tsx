@@ -1,25 +1,20 @@
 import { useTranslation } from "react-i18next";
-import { Loader } from "@mantine/core";
-import { theme } from "antd";
+import { Box, Loader } from "@mantine/core";
 
 interface Props {
   text?: string;
 }
 
-const { useToken } = theme;
 export default function LoadingSpin({ text = "Loading..." }: Props) {
   const { t } = useTranslation();
-  const { token } = useToken();
 
   return (
-    <div
+    <Box
       style={{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         height: "100vh",
-        background: token.colorBgContainer,
-        color: token.colorText,
       }}
     >
       <Loader>
@@ -31,6 +26,6 @@ export default function LoadingSpin({ text = "Loading..." }: Props) {
           {t(text)}
         </div>
       </Loader>
-    </div>
+    </Box>
   );
 }
