@@ -51,6 +51,8 @@ class PortfolioStatsAPIView(APIView):
             portfolio_id, year=year, update_api_price=update_api_price
         )
         stats = portfolio_stats.get_year_stats()
+        serializer = PortfolioStatsForYearSerializer(stats)
+        stats = serializer.data
         logger.debug(stats)
         return stats
 
@@ -93,13 +95,10 @@ class PortfolioStatsAPIView(APIView):
 
         stats = self.get_object(portfolio_id, year, group_by=group_by)
         if not stats:
-            return Response(None, status=status.HTTP_200_OK)
-
-        many = False
-        if group_by == "company":
-            many = True
-        serializer = PortfolioStatsForYearSerializer(stats, many=many)
-        stats = serializer.data
+            return Response(
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         return Response(stats, status=status.HTTP_200_OK)
 
@@ -154,6 +153,9 @@ class PortfolioStatsAllYearsAPIView(APIView):
         """
         stats = self.get_object(portfolio_id)
         if not stats:
-            return Response({}, status=status.HTTP_200_OK)
+            return Response(
+                {"res": "Stats with id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         return Response(stats, status=status.HTTP_200_OK)

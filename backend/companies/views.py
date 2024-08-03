@@ -3,6 +3,7 @@ import logging
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
 from companies.models import Company
 from companies.serializers import CompanySerializer, CompanySerializerGet
@@ -71,6 +72,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = CompanySerializer
+    pagination_class = LimitOffsetPagination
     lookup_url_kwarg = "company_id"
     lookup_field = "id"
 
@@ -79,13 +81,29 @@ class CompanyViewSet(viewsets.ModelViewSet):
         portfolio_id = self.kwargs.get("portfolio_id")
         closed = self.request.query_params.get("closed")
 
+        # sort_by = self.request.query_params.get("sort_by", "ticker")
+        # order_by = self.request.query_params.get("order_by", "asc")
+
+        # sort_by_fields = {
+        #     "ticker": "ticker",
+        #     "name": "name",
+        #     "sharesCount": "stats__shares_count",
+        # }
+
         if closed == "true":
             closed = True
         else:
             closed = False
 
+        # if order_by == "desc":
+        #     order_by = "-"
+        # else:
+        #     order_by = ""
+
         if self.action == "list" or self.action == "create":
-            return Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+            results = Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+
+            return results
 
         return Company.objects.filter(id=company_id, portfolio=portfolio_id)
 
