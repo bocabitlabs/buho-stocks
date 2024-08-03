@@ -1,36 +1,20 @@
-import React, { ReactElement, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { Select, Spin } from "antd";
-import { AxiosError } from "axios";
-import {
-  useAllBenchmarks,
-  useBenchmarkValues,
-} from "hooks/use-benchmarks/use-benchmarks";
-import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { IBenchmark } from "types/benchmark";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 import { hexToRgb, manyColors } from "utils/colors";
 
-export default function ChartPortfolioReturns(): ReactElement | null {
+interface Props {
+  data: IPortfolioYearStats[];
+  indexData: IBenchmark;
+  // benchmarks: any;
+  // selectedIndex: number;
+}
+
+export default function ChartPortfolioReturns({ data, indexData }: Props) {
   const { t } = useTranslation();
-  const { id } = useParams();
-  const [chartData, setChartData] = React.useState<any>();
-  const {
-    data,
-    isFetching: areStatsFetching,
-    error: errorFetchingStats,
-  } = usePortfolioAllYearStats(+id!);
-
-  const { data: benchmarks, isFetching } = useAllBenchmarks();
-
-  const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(
-    undefined,
-  );
-  const { data: indexData, isFetching: indexIsFetching } = useBenchmarkValues(
-    selectedIndex !== undefined && benchmarks && benchmarks?.length > 0
-      ? benchmarks[selectedIndex].id
-      : undefined,
-  );
+  const [chartData, setChartData] = useState<any>();
 
   const options = {
     responsive: true,
@@ -60,10 +44,6 @@ export default function ChartPortfolioReturns(): ReactElement | null {
         position: "left" as const,
       },
     },
-  };
-
-  const onChange = (value: number) => {
-    setSelectedIndex(value);
   };
 
   useEffect(() => {
@@ -131,14 +111,10 @@ export default function ChartPortfolioReturns(): ReactElement | null {
       tempChartData.datasets[0].data = returnsPercent;
       tempChartData.datasets[1].data = returnsWithDividendsPercent;
 
-      if (
-        indexData &&
-        selectedIndex !== undefined &&
-        benchmarks &&
-        benchmarks.length > 0
-      ) {
+      if (indexData) {
         tempChartData.datasets[2] = {
-          label: benchmarks[selectedIndex].name,
+          // label: benchmarks[selectedIndex].name,
+          label: "Index",
           data: [],
           borderColor: hexToRgb(manyColors[17], 1),
           backgroundColor: hexToRgb(manyColors[17], 1),
@@ -149,40 +125,10 @@ export default function ChartPortfolioReturns(): ReactElement | null {
 
       setChartData(tempChartData);
     }
-  }, [data, indexData, benchmarks, selectedIndex, t]);
-
-  if (errorFetchingStats) {
-    if ((errorFetchingStats as AxiosError)?.response?.status === 404) {
-      return <div>No stats yet</div>;
-    }
-    return <div>Something went wrong</div>;
-  }
-
-  if (areStatsFetching) {
-    return <Spin data-testid="loader" />;
-  }
+  }, [data, indexData, t]);
 
   if (chartData) {
-    return (
-      <div>
-        {!indexIsFetching && <Line options={options} data={chartData} />}
-        {benchmarks && benchmarks.length > 0 && (
-          <Select
-            showSearch
-            placeholder="Select a index"
-            onChange={onChange}
-            loading={isFetching}
-            style={{ marginTop: 20, minWidth: 200 }}
-          >
-            {benchmarks.map((element: any, index: number) => (
-              <Select.Option key={element.id} value={index}>
-                {element.name}
-              </Select.Option>
-            ))}
-          </Select>
-        )}
-      </div>
-    );
+    return <Line options={options} data={chartData} />;
   }
   return null;
 }
