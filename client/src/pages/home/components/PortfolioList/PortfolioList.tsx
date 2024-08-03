@@ -1,9 +1,7 @@
 import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { Alert } from "@mantine/core";
+import { Alert, Grid } from "@mantine/core";
 import { IconAlertTriangle } from "@tabler/icons-react";
-import { List } from "antd";
 import PortfolioCard from "../PortfolioCard/PortfolioCard";
 import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { usePortfolios } from "hooks/use-portfolios/use-portfolios";
@@ -31,24 +29,12 @@ export default function PortfolioList(): ReactElement {
   }
 
   return (
-    <List
-      grid={{
-        gutter: 16,
-        xs: 1,
-        sm: 2,
-        md: 3,
-        lg: 3,
-        xl: 3,
-        xxl: 4,
-      }}
-      dataSource={portfolios}
-      renderItem={(item) => (
-        <Link to={`/portfolios/${item.id}`}>
-          <List.Item>
-            <PortfolioCard portfolio={item} />
-          </List.Item>
-        </Link>
-      )}
-    />
+    <Grid>
+      {portfolios?.map((portfolio) => (
+        <Grid.Col span={4} key={portfolio.id}>
+          <PortfolioCard key={portfolio.id} portfolio={portfolio} />
+        </Grid.Col>
+      ))}
+    </Grid>
   );
 }
