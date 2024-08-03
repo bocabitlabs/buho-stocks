@@ -61,15 +61,15 @@ export function useAllBenchmarks() {
 }
 
 export const fetchBenchmarkValues = async (id: number | undefined) => {
-  const { data } = await apiClient.get(`/benchmarks/${id}/`);
+  const { data } = await apiClient.get<IBenchmark[]>(`/benchmarks/${id}/`);
   return data;
 };
 
 export function useBenchmarkValues(id: number | undefined, otherOptions?: any) {
-  return useQuery({
+  return useQuery<IBenchmark>({
     queryKey: ["benchmarks", id],
     queryFn: () => fetchBenchmarkValues(id),
-    enabled: id !== undefined,
+    enabled: !!id,
     ...otherOptions,
   });
 }
