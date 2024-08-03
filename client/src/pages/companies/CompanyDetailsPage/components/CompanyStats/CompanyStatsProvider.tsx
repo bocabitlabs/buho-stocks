@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Group, Loader, Paper, Stack } from "@mantine/core";
-import StatsContent from "../StatsContent/StatsContent";
-import StatsRefreshModal from "../StatsRefreshModal/StatsRefreshModal";
-import YearSelector from "./YearSelector";
+import StatsContent from "./components/StatsContent/StatsContent";
+import StatsRefreshModal from "./components/StatsRefreshModal/StatsRefreshModal";
+import YearSelector from "./components/YearSelector/YearSelector";
 import { useCompanyYearStats } from "hooks/use-stats/use-company-stats";
 
 interface Props {
@@ -54,7 +54,11 @@ export default function YearSelectorProvider({ companyId, firstYear }: Props) {
       <Paper p="lg" shadow="xs">
         <Stack>
           <Group>
-            <YearSelector years={years} onYearChange={onYearChange} />
+            <YearSelector
+              years={years}
+              onYearChange={onYearChange}
+              selectedYear={selectedYear}
+            />
             {selectedYear !== "all" && (
               <StatsRefreshModal
                 companyId={companyId}

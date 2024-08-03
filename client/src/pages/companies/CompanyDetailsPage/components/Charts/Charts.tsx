@@ -1,6 +1,6 @@
 import { Grid, Paper } from "@mantine/core";
-import DividendsChart from "../DividendsChart/DividendsChart";
-import ReturnsChart from "../ReturnsChart/ReturnsChart";
+import DividendsChart from "./components/DividendsChart/DividendsChart";
+import ReturnsChart from "./components/ReturnsChart/ReturnsChart";
 
 interface Props {
   stats: any[];

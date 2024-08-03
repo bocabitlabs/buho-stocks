@@ -4,9 +4,14 @@ import { Select } from "@mantine/core";
 interface Props {
   onYearChange: (year: any) => void;
   years: number[];
+  selectedYear: string;
 }
 
-export default function YearSelector({ years, onYearChange }: Props) {
+export default function YearSelector({
+  years,
+  selectedYear,
+  onYearChange,
+}: Props) {
   const { t } = useTranslation();
 
   const yearsOptions = years?.map((yearItem: any) => ({
@@ -23,6 +28,7 @@ export default function YearSelector({ years, onYearChange }: Props) {
       onChange={onYearChange}
       data={yearsOptions}
       defaultValue="all"
+      value={selectedYear}
     />
   );
 }
