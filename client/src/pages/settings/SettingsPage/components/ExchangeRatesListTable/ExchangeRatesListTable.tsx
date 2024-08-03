@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal } from "@mantine/core";
+import { Button, Group, Menu, Modal, Stack, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   MRT_ColumnDef,
@@ -18,6 +19,16 @@ import { IExchangeRate } from "types/exchange-rate";
 
 export default function ExchangeRatesListTable() {
   const { t } = useTranslation();
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+
+  const showAddModal = () => {
+    setIsAddModalVisible(true);
+  };
+
+  const onCloseAdd = () => {
+    setIsAddModalVisible(false);
+  };
+
   const [sorting, setSorting] = useState<MRT_SortingState>([
     {
       desc: true,
@@ -129,7 +140,17 @@ export default function ExchangeRatesListTable() {
   });
 
   return (
-    <div>
+    <Stack mt={20}>
+      <Title order={4}>{t("Exchange Rates")}</Title>
+      <Group>
+        <Button leftSection={<IconPlus />} onClick={showAddModal}>
+          {t("Add exchange rate")}
+        </Button>
+      </Group>
+      <ExchangeRateFormProvider
+        isVisible={isAddModalVisible}
+        onCloseCallback={onCloseAdd}
+      />
       <MantineReactTable table={table} />
       <ExchangeRateFormProvider
         id={selectedExchangeRateId}
@@ -153,6 +174,6 @@ export default function ExchangeRatesListTable() {
           <Button onClick={onDeleteCloseCallback}>{t("No")}</Button>
         </Group>
       </Modal>
-    </div>
+    </Stack>
   );
 }

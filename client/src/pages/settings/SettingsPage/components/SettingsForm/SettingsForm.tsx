@@ -1,6 +1,15 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Checkbox, Group, Select, TextInput } from "@mantine/core";
+import {
+  Button,
+  Checkbox,
+  Group,
+  Paper,
+  Select,
+  Stack,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTimezones } from "hooks/use-markets/use-markets";
 import {
@@ -62,6 +71,8 @@ function SettingsForm() {
         backendHostname: settings.backendHostname,
       });
     }
+    // We don't want form to be here
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settings]);
 
   if (isLoading) {
@@ -73,63 +84,68 @@ function SettingsForm() {
   }
 
   return (
-    <form onSubmit={form.onSubmit(onSubmit)}>
-      <Select
-        mt="md"
-        withAsterisk
-        searchable
-        label={t("Select a language")}
-        data={[
-          { value: "en", label: "English" },
-          { value: "es", label: "Español" },
-        ]}
-        value={form.getValues().language}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...form.getInputProps("language")}
-        required
-      />
+    <Stack mt={20}>
+      <Title order={2}>{t("Application Settings")}</Title>
+      <Paper p="lg" shadow="xs">
+        <form onSubmit={form.onSubmit(onSubmit)}>
+          <Select
+            mt="md"
+            withAsterisk
+            searchable
+            label={t("Select a language")}
+            data={[
+              { value: "en", label: "English" },
+              { value: "es", label: "Español" },
+            ]}
+            value={form.getValues().language}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("language")}
+            required
+          />
 
-      <Select
-        mt="md"
-        withAsterisk
-        searchable
-        label={t("Timezone")}
-        data={timezonesOptions}
-        value={form.getValues().timezone}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...form.getInputProps("timezone")}
-        required
-      />
+          <Select
+            mt="md"
+            withAsterisk
+            searchable
+            label={t("Timezone")}
+            data={timezonesOptions}
+            value={form.getValues().timezone}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("timezone")}
+            required
+          />
 
-      <Checkbox
-        mt="md"
-        label={t("Sentry enabled")}
-        key={form.key("sentryEnabled")}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...form.getInputProps("sentryEnabled", { type: "checkbox" })}
-      />
+          <Checkbox
+            mt="md"
+            label={t("Sentry enabled")}
+            key={form.key("sentryEnabled")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("sentryEnabled", { type: "checkbox" })}
+          />
 
-      <TextInput
-        withAsterisk
-        label={t("Sentry DSN")}
-        key={form.key("sentryDsn")}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...form.getInputProps("sentryDsn")}
-      />
+          <TextInput
+            withAsterisk
+            label={t("Sentry DSN")}
+            key={form.key("sentryDsn")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("sentryDsn")}
+          />
 
-      <TextInput
-        withAsterisk
-        label={t("Backend hostname")}
-        key={form.key("backendHostname")}
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        {...form.getInputProps("backendHostname")}
-      />
-      <Group justify="space-between" mt="md">
-        <Button type="submit" color="blue">
-          {t("Update settings")}
-        </Button>
-      </Group>
-    </form>
+          <TextInput
+            withAsterisk
+            label={t("Backend hostname")}
+            key={form.key("backendHostname")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("backendHostname")}
+          />
+          <Group justify="space-between" mt="md">
+            <Button type="submit" color="blue">
+              {t("Update settings")}
+            </Button>
+          </Group>
+        </form>
+      </Paper>
+    </Stack>
   );
 }
 
