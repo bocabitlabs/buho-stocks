@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal } from "@mantine/core";
+import { Button, Group, Menu, Modal, Stack, Title } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   MRT_ColumnDef,
@@ -27,6 +28,15 @@ function PriceCell({ row }: Readonly<{ row: MRT_Row<IStockPrice> }>) {
 
 export default function StockPricesListTable() {
   const { t } = useTranslation();
+  const [isAddModalVisible, setIsAddModalVisible] = useState(false);
+
+  const showAddModal = () => {
+    setIsAddModalVisible(true);
+  };
+
+  const onCloseAdd = () => {
+    setIsAddModalVisible(false);
+  };
   const [sorting, setSorting] = useState<MRT_SortingState>([
     {
       desc: true,
@@ -134,7 +144,18 @@ export default function StockPricesListTable() {
   });
 
   return (
-    <div>
+    <Stack mt={20}>
+      <Title order={4}>{t("Stock Prices")}</Title>
+
+      <Group>
+        <Button leftSection={<IconPlus />} onClick={showAddModal}>
+          {t("Add stock price")}
+        </Button>
+      </Group>
+      <StockPriceFormProvider
+        onCloseCallback={onCloseAdd}
+        isVisible={isAddModalVisible}
+      />
       <MantineReactTable table={table} />
       <StockPriceFormProvider
         id={selectedStockPriceId}
@@ -158,6 +179,6 @@ export default function StockPricesListTable() {
           <Button onClick={onDeleteCloseCallback}>{t("No")}</Button>
         </Group>
       </Modal>
-    </div>
+    </Stack>
   );
 }
