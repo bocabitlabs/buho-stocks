@@ -193,25 +193,25 @@ export default function CompaniesList({ portfolioId }: IProps) {
         maxSize: 50,
       },
       {
-        accessorKey: "allStats.accumulatedInvestment",
+        accessorKey: "accumulatedInvestment",
         header: t("Invested"),
         Cell: PriceCell,
         maxSize: 50,
       },
       {
-        accessorKey: "allStats.portfolioValue",
+        accessorKey: "portfolioValue",
         header: t("Portfolio Value"),
         Cell: PortfolioValueCell,
         maxSize: 50,
       },
       {
-        accessorKey: "allStats.returnWithDividends",
+        accessorKey: "returnWithDividends",
         header: t("Return + Dividends"),
         Cell: ReturnPercentCell,
         maxSize: 50,
       },
       {
-        accessorKey: "allStats.dividendsYield",
+        accessorKey: "dividendsYield",
         header: t("Dividends Yield"),
         Cell: DividendsYieldCell,
       },
@@ -237,7 +237,7 @@ export default function CompaniesList({ portfolioId }: IProps) {
     positionActionsColumn: "last",
     rowCount: totalRowCount,
     manualPagination: true,
-    // manualSorting: true,
+    manualSorting: true,
     mantineToolbarAlertBannerProps: isError
       ? {
           color: "red",
