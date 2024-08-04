@@ -51,6 +51,10 @@ export interface ICompany extends ICompanyItemBase {
   dividendsCurrency: ICurrency;
   allStats: CompanyYearStats;
   sharesCount: number;
+  portfolioValue: number;
+  accumulatedInvestment: number;
+  accumulatedDividends: number;
+  dividendsYield: number;
 }
 
 export interface ICompanyListItem extends ICompanyItemBase {
