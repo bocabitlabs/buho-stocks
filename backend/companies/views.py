@@ -1,5 +1,6 @@
 import logging
 
+from django.db.models import OuterRef, Subquery
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets
@@ -9,6 +10,7 @@ from companies.models import Company
 from companies.serializers import CompanySerializer, CompanySerializerGet
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
+from stats.models.company_stats import CompanyStatsForYear
 
 logger = logging.getLogger("buho_backend")
 
@@ -81,27 +83,63 @@ class CompanyViewSet(viewsets.ModelViewSet):
         portfolio_id = self.kwargs.get("portfolio_id")
         closed = self.request.query_params.get("closed")
 
-        # sort_by = self.request.query_params.get("sort_by", "ticker")
-        # order_by = self.request.query_params.get("order_by", "asc")
+        sort_by = self.request.query_params.get("sort_by", "ticker")
+        order_by = self.request.query_params.get("order_by", "asc")
 
-        # sort_by_fields = {
-        #     "ticker": "ticker",
-        #     "name": "name",
-        #     "sharesCount": "stats__shares_count",
-        # }
+        sort_by_fields = {
+            "ticker": "ticker",
+            "name": "name",
+            "sharesCount": "shares_count",
+            "accumulatedInvestment": "accumulated_investment",
+            "portfolioValue": "portfolio_value",
+            "returnWithDividends": "return_with_dividends",
+            "dividendsYield": "dividends_yield",
+        }
 
         if closed == "true":
             closed = True
         else:
             closed = False
 
-        # if order_by == "desc":
-        #     order_by = "-"
-        # else:
-        #     order_by = ""
+        if order_by == "desc":
+            order_by = "-"
+        else:
+            order_by = ""
+
+        global_stats_subquery = (
+            CompanyStatsForYear.objects.filter(company=OuterRef("id"), year=9999)
+            # .order_by()
+            .values(
+                "accumulated_investment",
+                "shares_count",
+                "portfolio_value",
+                "return_with_dividends",
+                "dividends_yield",
+            )
+        )
 
         if self.action == "list" or self.action == "create":
-            results = Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+            results = (
+                Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+                .annotate(
+                    accumulated_investment=Subquery(
+                        global_stats_subquery.values("accumulated_investment")[:1]
+                    ),
+                    shares_count=Subquery(
+                        global_stats_subquery.values("shares_count")[:1]
+                    ),
+                    portfolio_value=Subquery(
+                        global_stats_subquery.values("portfolio_value")[:1]
+                    ),
+                    return_with_dividends=Subquery(
+                        global_stats_subquery.values("return_with_dividends")[:1]
+                    ),
+                    dividends_yield=Subquery(
+                        global_stats_subquery.values("dividends_yield")[:1]
+                    ),
+                )
+                .order_by(f"{order_by}{sort_by_fields.get(sort_by, 'ticker')}")
+            )
 
             return results
 
