@@ -259,11 +259,11 @@ LOGGING = {
     "disable_existing_loggers": False,
     "formatters": {
         "file": {
-            "format": "{levelname} | {asctime} | {pathname}:{lineno} | {message} | {module} | {funcName}",  # noqa
+            "format": "{levelname} | {asctime} | {message} | {pathname}:{lineno} | {module} | {funcName}",  # noqa
             "style": "{",
         },
         "console": {
-            "format": "{levelname} | {asctime} | {pathname}:{lineno} | {message} | {module} | {funcName}",  # noqa
+            "format": "{levelname} | {asctime} | {message} | {pathname}:{lineno} | {module} | {funcName}",  # noqa
             "style": "{",
         },
     },
