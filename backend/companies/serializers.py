@@ -124,6 +124,9 @@ class CompanySerializerGet(serializers.ModelSerializer):
 
     accumulated_investment = serializers.DecimalField(max_digits=12, decimal_places=3)
     shares_count = serializers.IntegerField()
+    portfolio_value = serializers.DecimalField(max_digits=12, decimal_places=3)
+    return_with_dividends = serializers.DecimalField(max_digits=12, decimal_places=3)
+    dividends_yield = serializers.DecimalField(max_digits=12, decimal_places=3)
 
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
 
@@ -193,4 +196,7 @@ class CompanySerializerGet(serializers.ModelSerializer):
             "last_transaction_month",
             "accumulated_investment",
             "shares_count",
+            "portfolio_value",
+            "return_with_dividends",
+            "dividends_yield",
         ]
