@@ -1,94 +1,75 @@
-import React, { ReactElement, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
-import { mapColorsToLabels } from "utils/colors";
+import { BarChart } from "@mantine/charts";
+import { Center, Loader, Stack, Title } from "@mantine/core";
+import i18next from "i18next";
 
 interface Props {
   stats: any;
   portfolioCurrency: string;
 }
 
-export default function DividendsChart({
-  stats,
-  portfolioCurrency,
-}: Props): ReactElement {
+export default function DividendsChart({ stats, portfolioCurrency }: Props) {
   const { t } = useTranslation();
 
-  const [data, setData] = React.useState<any>(null);
-  const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: t("Dividends"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )} ${portfolioCurrency}`;
-            return percentage;
-          },
-        },
-      },
-    },
-  };
+  const { resolvedLanguage } = i18next;
+
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const [data, setData] = useState<any>(null);
+
   useEffect(() => {
     if (stats) {
-      const tempData = {
-        labels: [],
-        datasets: [
-          {
-            label: t("Dividends"),
-            data: [],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-          },
-        ],
-      };
       const newYears: any = [];
-      const dividends: any = [];
-
-      stats.sort((a: any, b: any) => {
-        if (a.year > b.year) {
-          return 1;
-        }
-        if (a.year < b.year) {
-          return -1;
-        }
-        return 0;
-      });
+      //     const dividends: any = [];
+      const dividendsPerYear: any = [];
       stats.forEach((year: any) => {
         if (
           !newYears.includes(year.year) &&
-          year.sharesCount > 0 &&
           year.year !== "all" &&
           year.year !== 9999
         ) {
           newYears.push(year.year);
-          dividends.push(Number(year.dividends));
+          // dividends.push(Number(year.dividends));
+          dividendsPerYear.push({
+            year: year.year,
+            value: Number(year.dividends),
+          });
         }
       });
-      tempData.labels = newYears;
-      tempData.datasets[0].data = dividends;
-
-      const { chartColors } = mapColorsToLabels(newYears);
-
-      tempData.datasets[0].backgroundColor = chartColors;
-
-      setData(tempData);
-      setIsDataSet(true);
+      console.log(dividendsPerYear);
+      setData(dividendsPerYear);
     }
   }, [stats, t]);
 
-  if (!isDataSet || !data) {
-    return <LoadingSpin />;
+  if (!data) {
+    return <Loader />;
   }
-  return <Bar options={options} data={data} />;
+
+  if (stats && portfolioCurrency && data) {
+    console.log(portfolioCurrency);
+    return (
+      <Stack>
+        <Center>
+          <Title order={5}>{t("Dividends")}</Title>
+        </Center>
+        <Center>
+          <BarChart
+            h={400}
+            data={data}
+            dataKey="year"
+            series={[{ name: "value", color: "red" }]}
+            valueFormatter={(value: number) =>
+              `${numberFormatter.format(value)} ${portfolioCurrency}`
+            }
+          />
+        </Center>
+      </Stack>
+    );
+  }
+  return <div>HELLO</div>;
 }

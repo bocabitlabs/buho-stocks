@@ -11,7 +11,6 @@ export default function Charts({ stats, portfolioCurrency }: Props) {
   if (stats.length === 0) {
     return null;
   }
-
   return (
     <Grid>
       <Grid.Col span={6}>

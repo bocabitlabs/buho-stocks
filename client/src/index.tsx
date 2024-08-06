@@ -2,7 +2,6 @@ import React from "react";
 import { MantineProvider } from "@mantine/core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Chart, registerables } from "chart.js";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc"; // ES 2015
@@ -16,12 +15,10 @@ import "@mantine/core/styles.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/dates/styles.css";
 import "mantine-react-table/styles.css";
-
+import "@mantine/charts/styles.css";
 // dependent on utc plugin
 dayjs.extend(utc);
 dayjs.extend(timezone);
-
-Chart.register(...registerables);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,

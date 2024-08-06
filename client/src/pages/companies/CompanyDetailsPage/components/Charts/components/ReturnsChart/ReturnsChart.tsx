@@ -1,61 +1,37 @@
-import React, { ReactElement, useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
+import { LineChart } from "@mantine/charts";
+import { Center, Stack, Title } from "@mantine/core";
 
 interface Props {
   stats: any;
 }
 
-export default function ReturnsChart({ stats }: Props): ReactElement {
+export default function ChartPortfolioReturns({ stats }: Props) {
   const { t } = useTranslation();
-  const [data, setData] = React.useState<any>(null);
-  const [isDataSet, setIsDataSet] = React.useState<boolean>(false);
+  const [data, setData] = useState<any>(null);
+  const [isDataSet, setIsDataSet] = useState<boolean>(false);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
+  const getSeries = () => {
+    const baseSeries = [
+      {
+        name: "returnsPercent",
+        label: t<string>("Return"),
+        color: "indigo.6",
       },
-      title: {
-        display: true,
-        text: t("Returns"),
+      {
+        name: "returnWithDividendsPercent",
+        label: t<string>("Return + dividends"),
+        color: "teal.6",
       },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )}%`;
-            return percentage;
-          },
-        },
-      },
-    },
+    ];
+    return baseSeries;
   };
+
   useEffect(() => {
     if (stats) {
-      const tempData = {
-        labels: [],
-        datasets: [
-          {
-            label: t("Return Percent"),
-            data: [],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-          },
-          {
-            label: t("Return + dividends"),
-            data: [],
-            borderColor: "rgb(53, 162, 235)",
-            backgroundColor: "rgba(53, 162, 235, 0.5)",
-          },
-        ],
-      };
       const newYears: any = [];
       const returnsPercent: any = [];
-      const returnsWithDividendsPercent: any = [];
 
       stats.sort((a: any, b: any) => {
         if (a.year > b.year) {
@@ -69,28 +45,38 @@ export default function ReturnsChart({ stats }: Props): ReactElement {
       stats.forEach((year: any) => {
         if (
           !newYears.includes(year.year) &&
-          year.sharesCount > 0 &&
           year.year !== "all" &&
           year.year !== 9999
         ) {
-          newYears.push(year.year);
-          returnsPercent.push(Number(year.returnPercent));
-          returnsWithDividendsPercent.push(
-            Number(year.returnWithDividendsPercent),
-          );
+          returnsPercent.push({
+            year: year.year,
+            returnsPercent: Number(year.returnPercent),
+            returnWithDividendsPercent: Number(year.returnWithDividendsPercent),
+          });
         }
       });
-      tempData.labels = newYears;
-      tempData.datasets[0].data = returnsPercent;
-      tempData.datasets[1].data = returnsWithDividendsPercent;
 
-      setData(tempData);
+      setData(returnsPercent);
       setIsDataSet(true);
     }
   }, [stats, t]);
 
-  if (!isDataSet || !data) {
-    return <LoadingSpin />;
+  if (isDataSet && data) {
+    return (
+      <Stack>
+        <Center>
+          <Title order={5}>{t("Return per year")}</Title>
+        </Center>
+        <Center />
+        <LineChart
+          h={300}
+          data={data}
+          dataKey="year"
+          withLegend
+          series={getSeries()}
+        />
+      </Stack>
+    );
   }
-  return <Line options={options} data={data} />;
+  return null;
 }

@@ -284,6 +284,43 @@ export const manyColors = [
   "#77ecca",
 ];
 
+export const mapColorsToLabelsInDict = (valuesDict: any[]) => {
+  const labelColors: any = {}; // colors used for each label
+  const labels = valuesDict.map((label) => label.name);
+
+  const usedKeys = intersection(Object.keys(labelColors), labels);
+  let firstAvailColor = usedKeys.length; // sensible place to start looking for new colors
+
+  const chartColors: any = [];
+  const chartBorders: any = [];
+  const usedColors: any = {};
+
+  // get previously used colors for all labels in current report
+  usedKeys.forEach((label: any) => {
+    usedColors[labelColors[label]] = true;
+  });
+
+  labels.forEach((label) => {
+    // if we've never seen this label before
+    if (!labelColors[label]) {
+      while (usedColors[manyColors[firstAvailColor]]) {
+        // if we are already using this color, get the next color
+        firstAvailColor += 1;
+      }
+      // if we are not already using this color, save it
+      labelColors[label] = manyColors[firstAvailColor];
+      firstAvailColor += 1;
+    }
+
+    // add color for new label to array that we will push to Chart.js
+    chartColors.push(hexToRgb(labelColors[label], 1));
+    chartBorders.push(hexToRgb(labelColors[label], 0.8));
+  });
+
+  // return 1D array of colors assigned to current labels
+  return { chartColors, chartBorders };
+};
+
 export const mapColorsToLabels = (labels: any[]) => {
   const labelColors: any = {}; // colors used for each label
 
@@ -320,4 +357,51 @@ export const mapColorsToLabels = (labels: any[]) => {
   return { chartColors, chartBorders };
 };
 
-export default { manyColors, mapColorsToLabels };
+// Array of color names
+const colorNames = [
+  "dark",
+  "gray",
+  "red",
+  "pink",
+  "grape",
+  "violet",
+  "indigo",
+  "blue",
+  "cyan",
+  "teal",
+  "green",
+  "lime",
+  "yellow",
+  "orange",
+];
+
+// Array of shade numbers
+const shades = [4, 5, 6, 7, 8, 9];
+
+// Function to hash a string into a number
+function hashString(str: string) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i += 1) {
+    // eslint-disable-next-line no-bitwise
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  return hash;
+}
+
+// Function to get a deterministic color-shade combination based on name
+export function getColorShade(name: string) {
+  const hash = hashString(name);
+
+  // Determine the index for the color name and shade
+  const colorIndex = Math.abs(hash) % colorNames.length;
+  const shadeIndex = Math.abs(hash) % shades.length;
+
+  return `${colorNames[colorIndex]}.${shades[shadeIndex]}`;
+}
+
+export default {
+  manyColors,
+  mapColorsToLabels,
+  mapColorsToLabelsInDict,
+  getColorShade,
+};
