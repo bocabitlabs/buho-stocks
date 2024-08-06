@@ -16,6 +16,13 @@ export default function PortfolioAllStats({ portfolioId }: Readonly<Props>) {
   } = usePortfolioYearStats(portfolioId, "all");
   const { t } = useTranslation();
   const { resolvedLanguage } = i18next;
+
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   if (isLoading) {
     return <div>{t("Loading...")}</div>;
   }
@@ -27,12 +34,6 @@ export default function PortfolioAllStats({ portfolioId }: Readonly<Props>) {
       </div>
     );
   }
-
-  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
-    style: "decimal",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
 
   if (!stats) {
     return (

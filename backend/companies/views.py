@@ -119,31 +119,27 @@ class CompanyViewSet(viewsets.ModelViewSet):
         )
 
         if self.action == "list" or self.action == "create":
-            results = (
-                Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
-                .annotate(
-                    accumulated_investment=Subquery(
-                        global_stats_subquery.values("accumulated_investment")[:1]
-                    ),
-                    shares_count=Subquery(
-                        global_stats_subquery.values("shares_count")[:1]
-                    ),
-                    portfolio_value=Subquery(
-                        global_stats_subquery.values("portfolio_value")[:1]
-                    ),
-                    return_with_dividends=Subquery(
-                        global_stats_subquery.values("return_with_dividends")[:1]
-                    ),
-                    dividends_yield=Subquery(
-                        global_stats_subquery.values("dividends_yield")[:1]
-                    ),
-                )
-                .order_by(f"{order_by}{sort_by_fields.get(sort_by, 'ticker')}")
-            )
+            results = Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+        else:
+            results = Company.objects.filter(id=company_id, portfolio=portfolio_id)
 
-            return results
+        results.annotate(
+            accumulated_investment=Subquery(
+                global_stats_subquery.values("accumulated_investment")[:1]
+            ),
+            shares_count=Subquery(global_stats_subquery.values("shares_count")[:1]),
+            portfolio_value=Subquery(
+                global_stats_subquery.values("portfolio_value")[:1]
+            ),
+            return_with_dividends=Subquery(
+                global_stats_subquery.values("return_with_dividends")[:1]
+            ),
+            dividends_yield=Subquery(
+                global_stats_subquery.values("dividends_yield")[:1]
+            ),
+        ).order_by(f"{order_by}{sort_by_fields.get(sort_by, 'ticker')}")
 
-        return Company.objects.filter(id=company_id, portfolio=portfolio_id)
+        return results
 
     def perform_create(self, serializer):
         portfolio_id = self.kwargs.get("portfolio_id")
