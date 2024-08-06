@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
-import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { BarChart } from "@mantine/charts";
+import { Center, Stack, Title } from "@mantine/core";
+import i18next from "i18next";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
 
 interface ChartProps {
   selectedYear: string;
@@ -16,6 +17,15 @@ export default function ChartValueByCompany({
 }: ChartProps): React.ReactElement | null {
   const { id } = useParams();
   const { t } = useTranslation();
+
+  const { resolvedLanguage } = i18next;
+
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
   const [data, setData] = React.useState<any>(null);
   const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
   const { data: statsData } = usePortfolioYearStats(
@@ -23,38 +33,6 @@ export default function ChartValueByCompany({
     selectedYear,
     "company",
   );
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: t("Portfolio value by company (accumulated)"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )} ${currency}`;
-            return percentage;
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          autoSkip: false,
-          maxRotation: 90,
-          minRotation: 0,
-        },
-      },
-    },
-  };
 
   useEffect(() => {
     if (statsData) {
@@ -69,47 +47,52 @@ export default function ChartValueByCompany({
   useEffect(() => {
     function loadInitialStats() {
       if (filteredChartData) {
-        const tempData = {
-          labels: [],
-          datasets: [
-            {
-              label: t("Portfolio value"),
-              data: [],
-              borderColor: "rgb(53, 162, 235)",
-              backgroundColor: "rgba(53, 162, 235, 0.5)",
-            },
-          ],
-        };
         const companies: any = [];
-        const portfolioValue: any = [];
 
-        filteredChartData.sort((a: any, b: any) => {
-          if (Number(a.portfolioValue) < Number(b.portfolioValue)) {
-            return 1;
-          }
-          if (Number(a.portfolioValue) > Number(b.portfolioValue)) {
-            return -1;
-          }
-          return 0;
-        });
         filteredChartData.forEach((stat: any) => {
-          companies.push(stat.company.name);
-          portfolioValue.push(Number(stat.portfolioValue));
+          companies.push({
+            company: stat.company.ticker,
+            value: Number(stat.portfolioValue),
+          });
         });
-        tempData.labels = companies;
-        const { chartColors } = mapColorsToLabels(companies);
 
-        tempData.datasets[0].data = portfolioValue;
-        tempData.datasets[0].backgroundColor = chartColors;
+        companies.sort((a, b) => b.value - a.value);
 
-        setData(tempData);
+        setData(companies);
       }
     }
     loadInitialStats();
   }, [filteredChartData, statsData, t]);
-
   if (data) {
-    return <Bar options={options} data={data} />;
+    return (
+      <Stack>
+        <Center>
+          <Title order={5}>
+            {t("Portfolio value by company (accumulated)")}
+          </Title>
+        </Center>
+        <Center />
+        <BarChart
+          h={400}
+          data={data}
+          dataKey="company"
+          series={[{ name: "value", color: "red" }]}
+          valueFormatter={(value: number) =>
+            `${numberFormatter.format(value)} ${currency}`
+          }
+          xAxisProps={{
+            angle: -45,
+            interval: 0,
+            textAnchor: "end",
+            height: 50, // Increase height to avoid clipping the labels
+            tick: {
+              style: { fontSize: 10 },
+              transform: "translate(-10, 0)", // Adjust label position
+            },
+          }}
+        />
+      </Stack>
+    );
   }
   return null;
 }

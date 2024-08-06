@@ -1,9 +1,11 @@
 import React, { useEffect } from "react";
-import { Pie } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
+import { PieChart } from "@mantine/charts";
+import { Center, Stack, Title } from "@mantine/core";
+import { useElementSize } from "@mantine/hooks";
 import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
+import { getColorShade } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
 interface ChartProps {
@@ -22,28 +24,7 @@ export default function ChartSuperSectorsByCompany({
     selectedYear,
     "company",
   );
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: "bottom" as const,
-      },
-      title: {
-        display: true,
-        text: t("Super sectors"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const count = `${context.label}: ${context.raw} ${t("companies")}`;
-            return count;
-          },
-        },
-      },
-    },
-  };
+  const { ref, width } = useElementSize();
 
   useEffect(() => {
     if (statsData) {
@@ -58,42 +39,45 @@ export default function ChartSuperSectorsByCompany({
   useEffect(() => {
     async function loadInitialStats() {
       if (filteredChartData) {
-        const tempData = {
-          labels: [],
-          datasets: [
-            {
-              label: t("Super sectors"),
-              data: [],
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
-            },
-          ],
-        };
         const sectors: any = [];
-        const sectorsCount: any = [];
 
         const res = groupByName(filteredChartData, "superSectorName");
 
         Object.entries(res).forEach(([k, v]) => {
-          sectors.push(k);
-          sectorsCount.push((v as any[]).length);
+          sectors.push({
+            name: k,
+            value: (v as any[]).length,
+            color: getColorShade(k),
+          });
         });
+        // Sort the sectors by value
+        sectors.sort((a, b) => b.value - a.value);
 
-        tempData.labels = sectors;
-        const { chartColors, chartBorders } = mapColorsToLabels(sectors);
-
-        tempData.datasets[0].data = sectorsCount;
-        tempData.datasets[0].backgroundColor = chartColors;
-        tempData.datasets[0].borderColor = chartBorders;
-
-        setData(tempData);
+        setData(sectors);
       }
     }
     loadInitialStats();
   }, [filteredChartData, t]);
-
   if (data) {
-    return <Pie options={options} data={data} />;
+    return (
+      <Stack>
+        <Center>
+          <Title order={5}>{t("Super Sectors")}</Title>
+        </Center>
+        <Center ref={ref}>
+          <PieChart
+            withLabelsLine
+            labelsPosition="outside"
+            labelsType="value"
+            withLabels
+            data={data}
+            withTooltip
+            size={width}
+            valueFormatter={(value: number) => `${value} ${t("companies")}`}
+          />
+        </Center>
+      </Stack>
+    );
   }
   return null;
 }

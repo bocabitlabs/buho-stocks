@@ -1,12 +1,12 @@
 import React, { ReactElement, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Loader } from "@mantine/core";
+import { BarChart } from "@mantine/charts";
+import { Center, Loader, Stack, Title } from "@mantine/core";
 import { AxiosError } from "axios";
+import i18next from "i18next";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
 
 export default function ChartPortfolioDividends(): ReactElement | null {
   const { t } = useTranslation();
@@ -15,48 +15,19 @@ export default function ChartPortfolioDividends(): ReactElement | null {
   const { data, isFetching, error } = usePortfolioAllYearStats(+id!);
   const { data: portfolio } = usePortfolio(+id!);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: t("Portfolio Dividends"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )} ${portfolio?.baseCurrency.code}`;
-            return percentage;
-          },
-        },
-      },
-    },
-  };
+  const { resolvedLanguage } = i18next;
+
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
   useEffect(() => {
-    function getChartData() {
-      return {
-        labels: [],
-        datasets: [
-          {
-            label: t("Dividends"),
-            data: [],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-          },
-        ],
-      };
-    }
     if (data && data.length > 0) {
-      const tempChartData = getChartData();
-
       const newYears: any = [];
       const dividends: any = [];
+      const dividendsPerYear: any = [];
 
       data.sort((a: any, b: any) => {
         if (a.year > b.year) {
@@ -75,15 +46,17 @@ export default function ChartPortfolioDividends(): ReactElement | null {
         ) {
           newYears.push(year.year);
           dividends.push(Number(year.dividends));
+          dividendsPerYear.push({
+            year: year.year,
+            value: Number(year.dividends),
+          });
         }
       });
-      tempChartData.labels = newYears;
-      const { chartColors } = mapColorsToLabels(newYears);
 
-      tempChartData.datasets[0].data = dividends;
-      tempChartData.datasets[0].backgroundColor = chartColors;
+      // Sort the sectors by value
+      dividendsPerYear.sort((a, b) => a.year - b.year);
 
-      setChartData(tempChartData);
+      setChartData(dividendsPerYear);
     }
   }, [data, t]);
 
@@ -98,14 +71,33 @@ export default function ChartPortfolioDividends(): ReactElement | null {
     return <Loader data-testid="loader" />;
   }
 
-  if (chartData) {
+  if (chartData && portfolio) {
     return (
-      <Bar
-        id="portfolio-dividends"
-        data-testid="canvas"
-        options={options}
-        data={chartData}
-      />
+      <Stack>
+        <Center>
+          <Title order={5}>{t("Portfolio Dividends")}</Title>
+        </Center>
+        <Center>
+          <BarChart
+            h={400}
+            data={chartData}
+            dataKey="year"
+            series={[{ name: "value", color: "red" }]}
+            valueFormatter={(value: number) =>
+              `${numberFormatter.format(value)} ${portfolio.baseCurrency.code}`
+            }
+            xAxisProps={{
+              interval: 0,
+              textAnchor: "end",
+              height: 50, // Increase height to avoid clipping the labels
+              tick: {
+                style: { fontSize: 10 },
+                transform: "translate(-10, 0)", // Adjust label position
+              },
+            }}
+          />
+        </Center>
+      </Stack>
     );
   }
   return <Loader data-testid="loader" />;

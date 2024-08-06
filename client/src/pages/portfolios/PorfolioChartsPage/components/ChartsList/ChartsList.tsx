@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import {
   Affix,
   Button,
+  Container,
   Grid,
   Paper,
   rem,
@@ -131,9 +132,14 @@ export default function ChartsList() {
             </Paper>
           </Grid.Col>
           <Grid.Col span={12}>
-            <Paper p="xl" shadow="xs">
-              <ChartDividendsByCompany selectedYear={selectedYear} />
-            </Paper>
+            <Container size="xs">
+              <Paper p="xl" shadow="xs">
+                <ChartDividendsByCompany
+                  selectedYear={selectedYear}
+                  currency={portfolio?.baseCurrency.code}
+                />
+              </Paper>
+            </Container>
           </Grid.Col>
           <Grid.Col span={6}>
             <Paper p="xl" shadow="xs">

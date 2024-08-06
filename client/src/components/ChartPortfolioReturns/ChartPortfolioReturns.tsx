@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
 import { useTranslation } from "react-i18next";
+import { LineChart } from "@mantine/charts";
+import { Center, Stack, Title } from "@mantine/core";
 import { IBenchmark } from "types/benchmark";
 import { IPortfolioYearStats } from "types/portfolio-year-stats";
-import { hexToRgb, manyColors } from "utils/colors";
 
 interface Props {
   data: IPortfolioYearStats[];
@@ -16,65 +16,33 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
   const { t } = useTranslation();
   const [chartData, setChartData] = useState<any>();
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
+  const getSeries = () => {
+    const baseSeries = [
+      {
+        name: "returnsPercent",
+        label: t<string>("Return"),
+        color: "indigo.6",
       },
-      title: {
-        display: true,
-        text: t("Portfolio Returns"),
+      {
+        name: "returnWithDividendsPercent",
+        label: t<string>("Return + dividends"),
+        color: "teal.6",
       },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )}%`;
-            return percentage;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        type: "linear" as const,
-        display: true,
-        position: "left" as const,
-      },
-    },
+    ];
+    if (indexData) {
+      baseSeries.push({
+        name: "indexData",
+        label: indexData.name,
+        color: "red.6",
+      });
+    }
+    return baseSeries;
   };
 
   useEffect(() => {
-    function getChartData() {
-      return {
-        labels: [],
-        datasets: [
-          {
-            label: t("Return Percent"),
-            data: [],
-            borderColor: hexToRgb(manyColors[10], 1),
-            backgroundColor: hexToRgb(manyColors[10], 1),
-            // yAxisID: "y",
-          },
-          {
-            label: t("Return + dividends"),
-            data: [],
-            borderColor: hexToRgb(manyColors[16], 1),
-            backgroundColor: hexToRgb(manyColors[16], 1),
-            // yAxisID: "y",
-          },
-        ],
-      };
-    }
     if (data && data.length > 0) {
-      const tempChartData = getChartData();
-
       const newYears: any = [];
       const returnsPercent: any = [];
-      const returnsWithDividendsPercent: any = [];
-      const indexPercents: any = [];
 
       data.sort((a: any, b: any) => {
         if (a.year > b.year) {
@@ -91,44 +59,68 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
           year.year !== "all" &&
           year.year !== 9999
         ) {
-          newYears.push(year.year);
-          returnsPercent.push(Number(year.returnPercent));
-          returnsWithDividendsPercent.push(
-            Number(year.returnWithDividendsPercent),
-          );
-          let indexValue = null;
-          if (indexData) {
-            indexValue = indexData.years.find(
-              (indexItem: any) => indexItem.year === year.year,
-            );
-            indexPercents.push(
-              indexValue ? Number(indexValue.returnPercentage) : 0,
-            );
-          }
+          returnsPercent.push({
+            year: year.year,
+            returnsPercent: Number(year.returnPercent),
+            returnWithDividendsPercent: Number(year.returnWithDividendsPercent),
+            indexData: indexData
+              ? indexData.years.find(
+                  (indexItem: any) => indexItem.year === year.year,
+                )?.returnPercentage
+              : null,
+          });
+          // returnsWithDividendsPercent.push({
+          //   year: year.year,
+          //   value: Number(year.returnWithDividendsPercent),
+          // });
+          //   newYears.push(year.year);
+          //   returnsPercent.push(Number(year.returnPercent));
+          //   returnsWithDividendsPercent.push(
+          //     Number(year.returnWithDividendsPercent),
+          //   );
+          //   let indexValue = null;
+          //   if (indexData) {
+          //     indexValue = indexData.years.find(
+          //       (indexItem: any) => indexItem.year === year.year,
+          //     );
+          //     indexPercents.push(
+          //       indexValue ? Number(indexValue.returnPercentage) : 0,
+          //     );
+          //   }
         }
       });
-      tempChartData.labels = newYears;
-      tempChartData.datasets[0].data = returnsPercent;
-      tempChartData.datasets[1].data = returnsWithDividendsPercent;
+      // if (indexData) {
+      //   tempChartData.datasets[2] = {
+      //     // label: benchmarks[selectedIndex].name,
+      //     label: "Index",
+      //     data: [],
+      //     borderColor: hexToRgb(manyColors[17], 1),
+      //     backgroundColor: hexToRgb(manyColors[17], 1),
+      //     // yAxisID: "y",
+      //   };
+      //   tempChartData.datasets[2].data = indexPercents;
+      // }
 
-      if (indexData) {
-        tempChartData.datasets[2] = {
-          // label: benchmarks[selectedIndex].name,
-          label: "Index",
-          data: [],
-          borderColor: hexToRgb(manyColors[17], 1),
-          backgroundColor: hexToRgb(manyColors[17], 1),
-          // yAxisID: "y",
-        };
-        tempChartData.datasets[2].data = indexPercents;
-      }
-
-      setChartData(tempChartData);
+      setChartData(returnsPercent);
     }
   }, [data, indexData, t]);
 
   if (chartData) {
-    return <Line options={options} data={chartData} />;
+    return (
+      <Stack>
+        <Center>
+          <Title order={5}>{t("Return per year")}</Title>
+        </Center>
+        <Center />
+        <LineChart
+          h={300}
+          data={chartData}
+          dataKey="year"
+          withLegend
+          series={getSeries()}
+        />
+      </Stack>
+    );
   }
   return null;
 }
