@@ -8,8 +8,6 @@ import { IPortfolioYearStats } from "types/portfolio-year-stats";
 interface Props {
   data: IPortfolioYearStats[];
   indexData: IBenchmark;
-  // benchmarks: any;
-  // selectedIndex: number;
 }
 
 export default function ChartPortfolioReturns({ data, indexData }: Props) {
@@ -69,37 +67,8 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
                 )?.returnPercentage
               : null,
           });
-          // returnsWithDividendsPercent.push({
-          //   year: year.year,
-          //   value: Number(year.returnWithDividendsPercent),
-          // });
-          //   newYears.push(year.year);
-          //   returnsPercent.push(Number(year.returnPercent));
-          //   returnsWithDividendsPercent.push(
-          //     Number(year.returnWithDividendsPercent),
-          //   );
-          //   let indexValue = null;
-          //   if (indexData) {
-          //     indexValue = indexData.years.find(
-          //       (indexItem: any) => indexItem.year === year.year,
-          //     );
-          //     indexPercents.push(
-          //       indexValue ? Number(indexValue.returnPercentage) : 0,
-          //     );
-          //   }
         }
       });
-      // if (indexData) {
-      //   tempChartData.datasets[2] = {
-      //     // label: benchmarks[selectedIndex].name,
-      //     label: "Index",
-      //     data: [],
-      //     borderColor: hexToRgb(manyColors[17], 1),
-      //     backgroundColor: hexToRgb(manyColors[17], 1),
-      //     // yAxisID: "y",
-      //   };
-      //   tempChartData.datasets[2].data = indexPercents;
-      // }
 
       setChartData(returnsPercent);
     }
@@ -118,6 +87,7 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
           dataKey="year"
           withLegend
           series={getSeries()}
+          valueFormatter={(value) => `${value} %`}
         />
       </Stack>
     );

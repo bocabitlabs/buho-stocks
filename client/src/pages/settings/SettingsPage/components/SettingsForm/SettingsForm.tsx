@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -11,42 +11,36 @@ import {
   Title,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
-import { useTimezones } from "hooks/use-markets/use-markets";
-import {
-  useSettings,
-  useUpdateSettings,
-} from "hooks/use-settings/use-settings";
 import { ITimezone } from "types/market";
 import { ISettingsFormFields } from "types/settings";
 
-function SettingsForm() {
-  const { data: settings, error, isLoading } = useSettings();
-  const { t, i18n } = useTranslation();
-  const { data: timezones } = useTimezones();
+interface Props {
+  settings: ISettingsFormFields;
+  timezones: ITimezone[];
+  onSubmitCallback: (values: ISettingsFormFields) => void;
+}
+
+function SettingsForm({
+  settings,
+  timezones,
+  onSubmitCallback,
+}: Readonly<Props>) {
+  const { t } = useTranslation();
 
   const form = useForm<ISettingsFormFields>({
     mode: "uncontrolled",
     initialValues: {
-      language: settings?.language ?? "en",
-      timezone: settings?.timezone ?? "UTC",
-      sentryDsn: settings?.sentryDsn ?? "",
-      sentryEnabled: settings?.sentryEnabled || false,
-      backendHostname: settings?.backendHostname ?? "",
-      companySortBy: settings?.companySortBy ?? "",
-      companyDisplayMode: settings?.companyDisplayMode ?? "",
-      mainPortfolio: settings?.mainPortfolio ?? "",
-      portfolioSortBy: settings?.portfolioSortBy ?? "",
-      portfolioDisplayMode: settings?.portfolioDisplayMode ?? "",
+      language: settings.language ?? "en",
+      timezone: settings.timezone ?? "UTC",
+      sentryDsn: settings.sentryDsn ?? "",
+      sentryEnabled: settings.sentryEnabled || false,
+      backendHostname: settings.backendHostname ?? "",
+      companySortBy: settings.companySortBy ?? "",
+      companyDisplayMode: settings.companyDisplayMode ?? "",
+      mainPortfolio: settings.mainPortfolio ?? "",
+      portfolioSortBy: settings.portfolioSortBy ?? "",
+      portfolioDisplayMode: settings.portfolioDisplayMode ?? "",
     },
-  });
-
-  const onSuccess = () => {
-    form.reset();
-    i18n.changeLanguage(settings?.language);
-  };
-
-  const { mutate: updateSettings } = useUpdateSettings({
-    onSuccess,
   });
 
   const timezonesOptions = useMemo(() => {
@@ -57,37 +51,11 @@ function SettingsForm() {
     return tzOptions;
   }, [timezones, t]);
 
-  const onSubmit = (values: any) => {
-    updateSettings({ newSettings: values });
-  };
-
-  useEffect(() => {
-    if (settings) {
-      form.setValues({
-        language: settings.language,
-        timezone: settings.timezone,
-        sentryDsn: settings.sentryDsn,
-        sentryEnabled: settings.sentryEnabled,
-        backendHostname: settings.backendHostname,
-      });
-    }
-    // We don't want form to be here
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [settings]);
-
-  if (isLoading) {
-    return <div>{t("Fetching settings...")}</div>;
-  }
-
-  if (error) {
-    return <div>{t("Unable to fetch settings.")}</div>;
-  }
-
   return (
     <Stack mt={20}>
       <Title order={2}>{t("Application Settings")}</Title>
       <Paper p="lg" shadow="xs">
-        <form onSubmit={form.onSubmit(onSubmit)}>
+        <form onSubmit={form.onSubmit(onSubmitCallback)}>
           <Select
             mt="md"
             withAsterisk
@@ -97,7 +65,7 @@ function SettingsForm() {
               { value: "en", label: "English" },
               { value: "es", label: "Español" },
             ]}
-            value={form.getValues().language}
+            key={form.key("language")}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...form.getInputProps("language")}
             required
@@ -109,7 +77,7 @@ function SettingsForm() {
             searchable
             label={t("Timezone")}
             data={timezonesOptions}
-            value={form.getValues().timezone}
+            key={form.key("timezone")}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...form.getInputProps("timezone")}
             required
@@ -124,6 +92,7 @@ function SettingsForm() {
           />
 
           <TextInput
+            mt="md"
             withAsterisk
             label={t("Sentry DSN")}
             key={form.key("sentryDsn")}
@@ -132,6 +101,7 @@ function SettingsForm() {
           />
 
           <TextInput
+            mt="md"
             withAsterisk
             label={t("Backend hostname")}
             key={form.key("backendHostname")}

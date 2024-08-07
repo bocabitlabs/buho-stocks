@@ -83,7 +83,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         portfolio_id = self.kwargs.get("portfolio_id")
         closed = self.request.query_params.get("closed")
 
-        sort_by = self.request.query_params.get("sort_by", "ticker")
+        sort_by = self.request.query_params.get("sort_by", "name")
         order_by = self.request.query_params.get("order_by", "asc")
 
         sort_by_fields = {
@@ -123,7 +123,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         else:
             results = Company.objects.filter(id=company_id, portfolio=portfolio_id)
 
-        results.annotate(
+        results = results.annotate(
             accumulated_investment=Subquery(
                 global_stats_subquery.values("accumulated_investment")[:1]
             ),
@@ -137,7 +137,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
             dividends_yield=Subquery(
                 global_stats_subquery.values("dividends_yield")[:1]
             ),
-        ).order_by(f"{order_by}{sort_by_fields.get(sort_by, 'ticker')}")
+        ).order_by(f"{order_by}{sort_by_fields.get(sort_by, 'name')}")
 
         return results
 

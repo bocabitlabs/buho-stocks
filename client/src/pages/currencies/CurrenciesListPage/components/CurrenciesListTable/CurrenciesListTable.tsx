@@ -1,10 +1,11 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal } from "@mantine/core";
+import { Button, Group, Menu, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   useMantineReactTable,
 } from "mantine-react-table";
@@ -15,7 +16,20 @@ import {
 } from "hooks/use-currencies/use-currencies";
 import { ICurrency } from "types/currency";
 
-export default function CurrenciesListTable() {
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
+function NameCell({ row }: Readonly<{ row: any }>) {
+  const { t } = useTranslation();
+  return (
+    <Text fw={700} size="sm">
+      {t(row.original.name)}
+    </Text>
+  );
+}
+
+export default function CurrenciesListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -62,18 +76,19 @@ export default function CurrenciesListTable() {
     () => [
       {
         accessorKey: "name",
-        header: "Name",
+        header: t("Name"),
+        Cell: NameCell,
       },
       {
         accessorKey: "code",
-        header: "Code",
+        header: t("Code"),
       },
       {
         accessorKey: "symbol",
-        header: "Symbol",
+        header: t("Symbol"),
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedCurrencies = data?.results ?? [];
@@ -86,7 +101,9 @@ export default function CurrenciesListTable() {
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -97,7 +114,7 @@ export default function CurrenciesListTable() {
     mantineToolbarAlertBannerProps: isError
       ? {
           color: "red",
-          children: "Error loading data",
+          children: t("Error loading data"),
         }
       : undefined,
     onPaginationChange: setPagination,
@@ -107,6 +124,7 @@ export default function CurrenciesListTable() {
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   return (
@@ -120,10 +138,10 @@ export default function CurrenciesListTable() {
       <Modal
         opened={deleteModalOpen}
         onClose={closeDeleteModal}
-        title={t("Delete market")}
+        title={t("Delete currency")}
       >
-        {t("Are you sure you want to delete this currency?")}
-        <Group>
+        <Text>{t("Are you sure you want to delete this currency?")}</Text>
+        <Group mt="md">
           <Button
             disabled={!selectedCurrencyId}
             onClick={() => confirmDelete(selectedCurrencyId)}

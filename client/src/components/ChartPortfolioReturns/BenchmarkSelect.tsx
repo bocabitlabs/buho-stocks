@@ -27,7 +27,7 @@ export default function BenchmarkSelect({
   return (
     <Select
       searchable
-      placeholder={t<string>("Select a index")}
+      placeholder={t<string>("Select an index")}
       onChange={onChange}
       style={{ marginTop: 20, minWidth: 200 }}
       data={selectOptions}

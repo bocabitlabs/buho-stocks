@@ -15,6 +15,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   useMantineReactTable,
@@ -30,6 +31,7 @@ import { IDividendsTransaction } from "types/dividends-transaction";
 interface IProps {
   companyDividendsCurrency: ICurrency;
   portfolioBaseCurrency: string;
+  mrtLocalization: MRT_Localization;
 }
 
 function TotalPriceCell({
@@ -78,6 +80,7 @@ function CommissionCell({
 export default function DividendsListTable({
   companyDividendsCurrency,
   portfolioBaseCurrency,
+  mrtLocalization,
 }: IProps) {
   const { t } = useTranslation();
   const { companyId } = useParams();
@@ -139,7 +142,7 @@ export default function DividendsListTable({
         Cell: CommissionCell,
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedTransactions = data?.results ?? [];
@@ -154,7 +157,9 @@ export default function DividendsListTable({
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -175,6 +180,7 @@ export default function DividendsListTable({
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   if (isLoading) {

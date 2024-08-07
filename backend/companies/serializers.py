@@ -43,11 +43,19 @@ class CompanySerializer(serializers.ModelSerializer):
     last_dividend_month = serializers.SerializerMethodField()
     sector_name = serializers.CharField(source="sector.name", read_only=True)
 
-    accumulated_investment = serializers.DecimalField(max_digits=12, decimal_places=3)
-    shares_count = serializers.IntegerField()
-    portfolio_value = serializers.DecimalField(max_digits=12, decimal_places=3)
-    return_with_dividends = serializers.DecimalField(max_digits=12, decimal_places=3)
-    dividends_yield = serializers.DecimalField(max_digits=12, decimal_places=3)
+    accumulated_investment = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    shares_count = serializers.IntegerField(read_only=True)
+    portfolio_value = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    dividends_yield = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
 
     class Meta:
         model = Company
@@ -122,11 +130,19 @@ class CompanySerializerGet(serializers.ModelSerializer):
     base_currency = serializers.SerializerMethodField()
     dividends_currency = serializers.SerializerMethodField()
 
-    accumulated_investment = serializers.DecimalField(max_digits=12, decimal_places=3)
-    shares_count = serializers.IntegerField()
-    portfolio_value = serializers.DecimalField(max_digits=12, decimal_places=3)
-    return_with_dividends = serializers.DecimalField(max_digits=12, decimal_places=3)
-    dividends_yield = serializers.DecimalField(max_digits=12, decimal_places=3)
+    accumulated_investment = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    shares_count = serializers.IntegerField(read_only=True)
+    portfolio_value = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    dividends_yield = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
 
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
 

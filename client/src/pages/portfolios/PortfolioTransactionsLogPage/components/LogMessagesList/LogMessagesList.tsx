@@ -7,6 +7,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   useMantineReactTable,
@@ -81,7 +82,9 @@ function MessageTypeCell({ row }: Readonly<{ row: MRT_Row<ILogMessage> }>) {
   );
 }
 
-export default function LogMessagesList() {
+export default function LogMessagesList({
+  mrtLocalization,
+}: Readonly<{ mrtLocalization: MRT_Localization }>) {
   const { t } = useTranslation();
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -180,14 +183,14 @@ export default function LogMessagesList() {
       },
       {
         accessorKey: "dateCreated",
-        header: "Date",
+        header: t("Date"),
       },
       {
         accessorKey: "messageText",
-        header: "Message",
+        header: t("Message"),
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedSectors = data?.results ?? [];
@@ -218,6 +221,7 @@ export default function LogMessagesList() {
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   return (

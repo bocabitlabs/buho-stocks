@@ -1,14 +1,35 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button, Group, Stack } from "@mantine/core";
+import { Button, Group, Loader, Stack } from "@mantine/core";
 import SharesListTable from "./components/SharesListTable/SharesListTable";
 import SharesTransactionFormProvider from "./components/SharesTransactionForm/SharesTransactionFormProvider";
+import {
+  LanguageContext,
+  LanguageProvider,
+} from "components/ListLanguageProvider/ListLanguageProvider";
 import { ICurrency } from "types/currency";
 
 interface Props {
   portfolioBaseCurrency: string;
   companyBaseCurrency: ICurrency;
+}
+
+function SharesListContent({
+  companyBaseCurrency,
+  portfolioBaseCurrency,
+}: Props) {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <SharesListTable
+      companyBaseCurrency={companyBaseCurrency}
+      portfolioBaseCurrency={portfolioBaseCurrency}
+      mrtLocalization={mrtLocalization}
+    />
+  ) : (
+    <Loader />
+  );
 }
 
 export default function SharesTabPane({
@@ -46,10 +67,12 @@ export default function SharesTabPane({
         companyBaseCurrency={companyBaseCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
-      <SharesListTable
-        companyBaseCurrency={companyBaseCurrency}
-        portfolioBaseCurrency={portfolioBaseCurrency}
-      />
+      <LanguageProvider>
+        <SharesListContent
+          companyBaseCurrency={companyBaseCurrency}
+          portfolioBaseCurrency={portfolioBaseCurrency}
+        />
+      </LanguageProvider>
     </Stack>
   );
 }

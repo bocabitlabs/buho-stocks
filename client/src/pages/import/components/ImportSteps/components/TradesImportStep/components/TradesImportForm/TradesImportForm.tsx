@@ -131,7 +131,7 @@ export default function TradesImportForm({
                   withAsterisk
                   label={t("Date")}
                   key={form.key("transactionDate")}
-                  description={`${t("Received: ")} ${trade.date}`}
+                  description={`${t("Received")}: ${trade.date}`}
                   valueFormat={dateFormat}
                   defaultValue={new Date()}
                   // eslint-disable-next-line react/jsx-props-no-spreading
@@ -144,7 +144,7 @@ export default function TradesImportForm({
                   withAsterisk
                   label={t("Shares Count")}
                   key={form.key("count")}
-                  description={`${t("Received: ")} ${trade.count}`}
+                  description={`${t("Received")}: ${trade.count}`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("count")}
                 />
@@ -154,7 +154,7 @@ export default function TradesImportForm({
                   withAsterisk
                   label={t("Type")}
                   key={form.key("type")}
-                  description={`${t("Received: ")} ${
+                  description={`${t("Received")}: ${
                     trade.count < 0 ? t("Sell") : t("Buy")
                   }`}
                   data={options1}
@@ -167,9 +167,7 @@ export default function TradesImportForm({
                   withAsterisk
                   label={t("Total Amount")}
                   key={form.key("totalAmount")}
-                  description={`${t("Received: ")} ${
-                    trade.totalWithCommission
-                  }`}
+                  description={`${t("Received")}: ${trade.totalWithCommission}`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("totalAmount")}
                   suffix={` ${trade.currency}`}
@@ -181,7 +179,7 @@ export default function TradesImportForm({
                   withAsterisk
                   label={t("Gross price per share")}
                   key={form.key("grossPricePerShare")}
-                  description={`${t("Received: ")} ${trade.price}`}
+                  description={`${t("Received")}: ${trade.price}`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("grossPricePerShare")}
                   suffix={` ${trade.currency}`}
@@ -193,7 +191,7 @@ export default function TradesImportForm({
                   withAsterisk
                   label={t("Commission")}
                   key={form.key("totalCommission")}
-                  description={`${t("Received: ")} ${trade.commission}`}
+                  description={`${t("Received")}: ${trade.commission}`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("totalCommission")}
                   suffix={` ${trade.currency}`}
@@ -207,7 +205,7 @@ export default function TradesImportForm({
                   portfolioId={portfolio.id}
                   form={form}
                   withAsterisk
-                  description={`${t("Received: ")} ${trade.ticker}`}
+                  description={`${t("Received")}: ${trade.ticker}`}
                 />
               </Grid.Col>
               <Grid.Col span={6} />

@@ -1,6 +1,21 @@
-import { Grid } from "@mantine/core";
+import { useContext } from "react";
+import { Grid, Loader } from "@mantine/core";
 import MarketsListTable from "./components/MarketsListTable/MarketsListTable";
 import MarketsPageHeader from "./components/MarketsPageHeader/MarketsPageHeader";
+import {
+  LanguageContext,
+  LanguageProvider,
+} from "components/ListLanguageProvider/ListLanguageProvider";
+
+function MarketsListContent() {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <MarketsListTable mrtLocalization={mrtLocalization} />
+  ) : (
+    <Loader />
+  );
+}
 
 export default function MarketsListPage() {
   return (
@@ -9,7 +24,9 @@ export default function MarketsListPage() {
         <MarketsPageHeader />
       </Grid.Col>
       <Grid.Col span={12}>
-        <MarketsListTable />
+        <LanguageProvider>
+          <MarketsListContent />
+        </LanguageProvider>
       </Grid.Col>
     </Grid>
   );

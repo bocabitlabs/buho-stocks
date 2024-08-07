@@ -107,6 +107,7 @@ export default function DividendsTransactionForm({
         />
 
         <NumberInput
+          mt="md"
           withAsterisk
           label={t("Total Commission")}
           key={form.key("totalCommission")}
@@ -117,6 +118,7 @@ export default function DividendsTransactionForm({
         />
 
         <DateInput
+          mt="md"
           withAsterisk
           label={t("Date")}
           key={form.key("transactionDate")}
@@ -127,7 +129,7 @@ export default function DividendsTransactionForm({
         />
 
         {companyDividendsCurrency !== portfolioBaseCurrency && (
-          <Group>
+          <Group mt="md">
             <NumberInput
               withAsterisk
               label={t("Exchange Rate")}

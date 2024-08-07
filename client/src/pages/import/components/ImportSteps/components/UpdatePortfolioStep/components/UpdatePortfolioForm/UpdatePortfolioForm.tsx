@@ -46,10 +46,11 @@ export default function TradesImportForm({
         <Text>{t("Do you want to update the portfolio?")}</Text>
 
         <Button
+          mt="md"
           variant="filled"
           leftSection={formSent ? <IconCheck /> : null}
           loading={isPending}
-          disabled={!portfolio}
+          disabled={!portfolio || formSent}
           onClick={updatePortfolioAction}
         >
           {t("Update portfolio")}

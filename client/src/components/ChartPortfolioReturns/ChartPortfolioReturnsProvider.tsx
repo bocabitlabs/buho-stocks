@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Loader, Stack } from "@mantine/core";
+import { Loader, Stack, Text } from "@mantine/core";
 import BenchmarkSelect from "./BenchmarkSelect";
 import ChartPortfolioReturns from "./ChartPortfolioReturns";
 import {
@@ -10,6 +11,7 @@ import {
 import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
 
 export default function ChartPortfolioReturnsProvider() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [selectedIndex, setSelectedIndex] = useState<number | undefined>(
     undefined,
@@ -29,17 +31,18 @@ export default function ChartPortfolioReturnsProvider() {
     return <Loader />;
   }
 
-  return (
-    <Stack>
-      {portfolioData && (
+  if (portfolioData) {
+    return (
+      <Stack>
         <ChartPortfolioReturns data={portfolioData} indexData={indexData} />
-      )}
-      {benchmarks && benchmarks.length > 0 && (
-        <BenchmarkSelect
-          benchmarks={benchmarks}
-          onChangeCallback={onChangeCallback}
-        />
-      )}
-    </Stack>
-  );
+        {benchmarks && benchmarks.length > 0 && (
+          <BenchmarkSelect
+            benchmarks={benchmarks}
+            onChangeCallback={onChangeCallback}
+          />
+        )}
+      </Stack>
+    );
+  }
+  return <Text>{t("Not enough portfolio data yet to generate charts.")}</Text>;
 }

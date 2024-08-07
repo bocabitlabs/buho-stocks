@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import {
   Affix,
   Button,
@@ -14,6 +15,7 @@ import ImportSteps from "./components/ImportSteps/ImportSteps";
 
 export default function ImportFromBrokerPage() {
   const [scroll, scrollTo] = useWindowScroll();
+  const { t } = useTranslation();
   return (
     <Grid p={20}>
       <Grid.Col span={12}>
@@ -35,7 +37,7 @@ export default function ImportFromBrokerPage() {
                     style={transitionStyles}
                     onClick={() => scrollTo({ y: 0 })}
                   >
-                    Scroll to top
+                    {t("Scroll to top")}
                   </Button>
                 )}
               </Transition>

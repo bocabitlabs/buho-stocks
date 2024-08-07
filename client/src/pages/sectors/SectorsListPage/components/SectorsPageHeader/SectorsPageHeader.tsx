@@ -22,7 +22,7 @@ function SectorsPageHeader() {
   const theme = useMantineTheme();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isCreatingSuperSector, setIsCreatingSuperSector] = useState(false);
-  const { mutate: initializeSectors, isLoading: isInitializingSectors } =
+  const { mutate: initializeSectors, isPending: isInitializingSectors } =
     useInitializeSectors();
 
   const showModal = (isSuperSector: boolean) => {

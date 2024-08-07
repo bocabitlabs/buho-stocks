@@ -41,7 +41,7 @@ function CurrencyForm({
   return (
     <Modal
       opened={isVisible}
-      title={isUpdate ? t("Update market") : t("Add new market")}
+      title={isUpdate ? t("Update currency") : t("Add new currency")}
       onClose={onCloseCallback}
     >
       <form onSubmit={form.onSubmit(onSubmit)}>

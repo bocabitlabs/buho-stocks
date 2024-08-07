@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal, Stack, Title } from "@mantine/core";
+import { Button, Group, Menu, Modal, Stack, Title, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_SortingState,
   useMantineReactTable,
@@ -17,7 +18,11 @@ import {
 } from "hooks/use-exchange-rates/use-exchange-rates";
 import { IExchangeRate } from "types/exchange-rate";
 
-export default function ExchangeRatesListTable() {
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
+export default function ExchangeRatesListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
@@ -83,23 +88,23 @@ export default function ExchangeRatesListTable() {
   const columns = useMemo<MRT_ColumnDef<IExchangeRate>[]>(
     () => [
       {
+        accessorKey: "exchangeDate",
+        header: t("Date"),
+      },
+      {
         accessorKey: "exchangeFrom",
-        header: "From",
+        header: t("From"),
       },
       {
         accessorKey: "exchangeTo",
-        header: "To",
+        header: t("To"),
       },
       {
         accessorKey: "exchangeRate",
-        header: "Value",
-      },
-      {
-        accessorKey: "exchangeDate",
-        header: "Date",
+        header: t("Value"),
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedRates = data?.results ?? [];
@@ -112,7 +117,9 @@ export default function ExchangeRatesListTable() {
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -125,7 +132,7 @@ export default function ExchangeRatesListTable() {
     mantineToolbarAlertBannerProps: isError
       ? {
           color: "red",
-          children: "Error loading data",
+          children: t("Error loading data"),
         }
       : undefined,
     onPaginationChange: setPagination,
@@ -137,6 +144,7 @@ export default function ExchangeRatesListTable() {
       pagination,
       sorting,
     },
+    localization: mrtLocalization,
   });
 
   return (
@@ -161,10 +169,10 @@ export default function ExchangeRatesListTable() {
       <Modal
         opened={deleteModalOpen}
         onClose={closeDeleteModal}
-        title={t("Delete sector")}
+        title={t("Delete exchange rate")}
       >
-        {t("Are you sure you want to delete this exchange rate?")}
-        <Group>
+        <Text>{t("Are you sure you want to delete this exchange rate?")}</Text>
+        <Group mt="md">
           <Button
             disabled={!selectedExchangeRateId}
             onClick={() => confirmDelete(selectedExchangeRateId)}

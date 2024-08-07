@@ -97,13 +97,16 @@ function CompanyDetailsPageHeader({ company }: Props) {
                 <Text c="dimmed" size="sm">
                   {t("Sector")}
                 </Text>
-                <Text size="sm">{company.sector.name}</Text>
+                <Text size="sm">{t(company.sector.name)}</Text>
               </Stack>
               <Stack gap="xs" justify="center">
                 <Text c="dimmed" size="sm">
                   {t("Super Sector")}
                 </Text>
-                <Text size="sm">{company.sector.superSector?.name}</Text>
+                <Text size="sm">
+                  {company.sector.superSector &&
+                    t(company.sector.superSector.name)}
+                </Text>
               </Stack>
               <Stack gap="xs" justify="center">
                 <Text c="dimmed" size="sm">

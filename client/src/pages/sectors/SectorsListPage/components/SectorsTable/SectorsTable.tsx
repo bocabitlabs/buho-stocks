@@ -1,18 +1,33 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal } from "@mantine/core";
+import { Button, Group, Menu, Modal, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
+  MRT_Row,
   useMantineReactTable,
 } from "mantine-react-table";
 import SectorFormProvider from "../SectorForm/SectorFormProvider";
 import { useDeleteSector, useSectors } from "hooks/use-sectors/use-sectors";
 import { ISector } from "types/sector";
 
-export default function SectorsTable() {
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
+function NameCell({ row }: Readonly<{ row: MRT_Row<ISector> }>) {
+  const { t } = useTranslation();
+  return (
+    <Text size="sm" fw={700}>
+      {t(row.original.name)}
+    </Text>
+  );
+}
+
+export default function SectorsTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -63,15 +78,16 @@ export default function SectorsTable() {
   const columns = useMemo<MRT_ColumnDef<ISector>[]>(
     () => [
       {
-        accessorKey: "name", // access nested data with dot notation
-        header: "Name",
+        accessorKey: "name",
+        header: t("Name"),
+        Cell: NameCell,
       },
       {
         accessorKey: "superSector.name",
-        header: "Super Sector",
+        header: t("Super Sector"),
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedSectors = sectorsData?.results ?? [];
@@ -84,7 +100,9 @@ export default function SectorsTable() {
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -105,6 +123,7 @@ export default function SectorsTable() {
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   return (
@@ -121,8 +140,8 @@ export default function SectorsTable() {
         onClose={closeDeleteModal}
         title={t("Delete sector")}
       >
-        {t("Are you sure you want to delete this sector?")}
-        <Group>
+        <Text>{t("Are you sure you want to delete this sector?")}</Text>
+        <Group mt="md">
           <Button
             disabled={!selectedSectorId}
             onClick={() => confirmDelete(selectedSectorId)}
