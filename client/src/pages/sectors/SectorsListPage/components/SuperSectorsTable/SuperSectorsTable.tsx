@@ -5,6 +5,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   useMantineReactTable,
 } from "mantine-react-table";
@@ -15,7 +16,11 @@ import {
 } from "hooks/use-sectors/use-super-sectors";
 import { ISector } from "types/sector";
 
-export default function SuperSectorsTable() {
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
+export default function SuperSectorsTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -66,15 +71,11 @@ export default function SuperSectorsTable() {
   const columns = useMemo<MRT_ColumnDef<ISector>[]>(
     () => [
       {
-        accessorKey: "name", // access nested data with dot notation
-        header: "Name",
+        accessorKey: "name",
+        header: t("Name"),
       },
-      // {
-      //   accessorKey: "superSector.name",
-      //   header: "Super Sector",
-      // },
     ],
-    [],
+    [t],
   );
 
   const fetchedSectors = sectorsData?.results ?? [];
@@ -87,7 +88,9 @@ export default function SuperSectorsTable() {
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -98,7 +101,7 @@ export default function SuperSectorsTable() {
     mantineToolbarAlertBannerProps: isError
       ? {
           color: "red",
-          children: "Error loading data",
+          children: t("Error loading data"),
         }
       : undefined,
     onPaginationChange: setPagination,
@@ -108,6 +111,7 @@ export default function SuperSectorsTable() {
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   return (

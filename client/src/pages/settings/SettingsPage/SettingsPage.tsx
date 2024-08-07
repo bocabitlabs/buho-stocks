@@ -1,15 +1,39 @@
-import React, { ReactElement } from "react";
+import React, { ReactElement, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { Grid, rem, Tabs } from "@mantine/core";
+import { Grid, Loader, rem, Tabs } from "@mantine/core";
 import {
   IconCashBanknote,
   IconCurrencyDollar,
   IconSettings,
 } from "@tabler/icons-react";
-import SettingsForm from "./components/SettingsForm/SettingsForm";
+import SettingsFormProvider from "./components/SettingsForm/SettingsFormProvider";
 import SettingsPageHeader from "./components/SettingsHeader/SettingsHeader";
 import StockPricesListTable from "./components/StockPricesListTable/StockPricesListTable";
+import {
+  LanguageContext,
+  LanguageProvider,
+} from "components/ListLanguageProvider/ListLanguageProvider";
 import ExchangeRatesListTable from "pages/settings/SettingsPage/components/ExchangeRatesListTable/ExchangeRatesListTable";
+
+function ExchangeRatesListTableContent() {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <ExchangeRatesListTable mrtLocalization={mrtLocalization} />
+  ) : (
+    <Loader />
+  );
+}
+
+function StockPricesListTableContent() {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <StockPricesListTable mrtLocalization={mrtLocalization} />
+  ) : (
+    <Loader />
+  );
+}
 
 export default function SettingsPage(): ReactElement {
   const { t } = useTranslation();
@@ -43,15 +67,19 @@ export default function SettingsPage(): ReactElement {
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="settings">
-            <SettingsForm />
+            <SettingsFormProvider />
           </Tabs.Panel>
 
           <Tabs.Panel value="exchange-rates">
-            <ExchangeRatesListTable />
+            <LanguageProvider>
+              <ExchangeRatesListTableContent />
+            </LanguageProvider>
           </Tabs.Panel>
 
           <Tabs.Panel value="stock-prices">
-            <StockPricesListTable />
+            <LanguageProvider>
+              <StockPricesListTableContent />
+            </LanguageProvider>
           </Tabs.Panel>
         </Tabs>
       </Grid.Col>

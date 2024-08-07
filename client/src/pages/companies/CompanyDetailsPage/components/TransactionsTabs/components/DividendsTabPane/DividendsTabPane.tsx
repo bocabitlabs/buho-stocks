@@ -1,14 +1,35 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button, Group, Stack } from "@mantine/core";
+import { Button, Group, Loader, Stack } from "@mantine/core";
 import DividendsListTable from "./components/DividendsListTable/DividendsListTable";
 import DividendsTransactionFormProvider from "./components/DividendsTransactionForm/DividendsTransactionFormProvider";
+import {
+  LanguageContext,
+  LanguageProvider,
+} from "components/ListLanguageProvider/ListLanguageProvider";
 import { ICurrency } from "types/currency";
 
 interface Props {
   portfolioBaseCurrency: string;
   companyDividendsCurrency: ICurrency;
+}
+
+function DividendsListContent({
+  companyDividendsCurrency,
+  portfolioBaseCurrency,
+}: Props) {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <DividendsListTable
+      companyDividendsCurrency={companyDividendsCurrency}
+      portfolioBaseCurrency={portfolioBaseCurrency}
+      mrtLocalization={mrtLocalization}
+    />
+  ) : (
+    <Loader />
+  );
 }
 
 export default function DividendsTabPane({
@@ -46,10 +67,12 @@ export default function DividendsTabPane({
         companyDividendsCurrency={companyDividendsCurrency}
         portfolioBaseCurrency={portfolioBaseCurrency}
       />
-      <DividendsListTable
-        companyDividendsCurrency={companyDividendsCurrency}
-        portfolioBaseCurrency={portfolioBaseCurrency}
-      />
+      <LanguageProvider>
+        <DividendsListContent
+          companyDividendsCurrency={companyDividendsCurrency}
+          portfolioBaseCurrency={portfolioBaseCurrency}
+        />
+      </LanguageProvider>
     </Stack>
   );
 }

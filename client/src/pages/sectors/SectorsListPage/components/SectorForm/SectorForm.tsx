@@ -53,10 +53,14 @@ function SectorForm({
 
   const getTitle = () => {
     let title = "";
-    if (isUpdate) {
-      title = t(`Update ${isSuperSector ? "super" : ""} sector`);
+    if (isUpdate && isSuperSector) {
+      title = t(`Update super sector`);
+    } else if (isUpdate && !isSuperSector) {
+      title = t(`Update sector`);
+    } else if (!isUpdate && isSuperSector) {
+      title = t(`Add new super sector`);
     } else {
-      title = t(`Add new ${isSuperSector ? "super" : ""} sector`);
+      title = t(`Add new sector`);
     }
     return title;
   };

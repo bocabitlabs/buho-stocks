@@ -7,16 +7,17 @@ import {
   Modal,
   Select,
   SimpleGrid,
-  Textarea,
   TextInput,
   Image,
   Text,
+  Input,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { randomId } from "@mantine/hooks";
+import { NotesField } from "./components/NotesField/NotesField";
 import CountrySelector from "components/CountrySelector/CountrySelector";
-import { ICompany } from "types/company";
+import { ICompany, ICompanyFormFields } from "types/company";
 import { ICurrency } from "types/currency";
 import { IMarket } from "types/market";
 import { ISector } from "types/sector";
@@ -65,7 +66,7 @@ function CompanyForm({
     );
   });
 
-  const form = useForm({
+  const form = useForm<ICompanyFormFields>({
     mode: "uncontrolled",
     initialValues: {
       name: company ? company.name : "",
@@ -75,11 +76,11 @@ function CompanyForm({
       broker: company ? company?.broker : "",
       logo: company ? company.logo : "",
       url: company ? company.url : "",
-      sector: company ? company.sector.id.toString() : null,
+      sector: company ? company.sector.id.toString() : undefined,
       portfolio: portfolioId,
       baseCurrency: company ? company.baseCurrency.code : "",
       dividendsCurrency: company ? company.dividendsCurrency.code : "",
-      market: company ? company.market.id.toString() : null,
+      market: company ? company.market.id.toString() : undefined,
       isClosed: company ? company.isClosed : false,
       isin: company ? company.isin : "",
       countryCode: company ? company.countryCode : "",
@@ -123,7 +124,7 @@ function CompanyForm({
   return (
     <Modal
       opened={isVisible}
-      title={isUpdate ? t("Update market") : t("Add new company")}
+      title={isUpdate ? t("Update company") : t("Add new company")}
       onClose={onCloseCallback}
       size="lg"
     >
@@ -136,6 +137,7 @@ function CompanyForm({
           {...form.getInputProps("name")}
         />
         <TextInput
+          mt="md"
           withAsterisk
           label={t("Ticker")}
           key={form.key("ticker")}
@@ -143,33 +145,38 @@ function CompanyForm({
           {...form.getInputProps("ticker")}
         />
         <TextInput
+          mt="md"
           withAsterisk
-          label={t("altTickers")}
+          label={t("Alternative tickers")}
           key={form.key("altTickers")}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("altTickers")}
         />
         <TextInput
+          mt="md"
           withAsterisk
           label={t("ISIN")}
           key={form.key("isin")}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("isin")}
         />
-        <Dropzone
-          maxFiles={1}
-          accept={IMAGE_MIME_TYPE}
-          onDrop={handleImagesUpload}
-        >
-          <Text ta="center">Drop images here</Text>
-        </Dropzone>
+        <Input.Wrapper mt="md" label={t("Logo")}>
+          <Dropzone
+            mt="md"
+            maxFiles={1}
+            accept={IMAGE_MIME_TYPE}
+            onDrop={handleImagesUpload}
+          >
+            <Text ta="center">{t("Drop an image or click here")}</Text>
+          </Dropzone>
 
-        <SimpleGrid
-          cols={{ base: 1, sm: 4 }}
-          mt={previews.length > 0 ? "xl" : 0}
-        >
-          {previews}
-        </SimpleGrid>
+          <SimpleGrid
+            cols={{ base: 1, sm: 4 }}
+            mt={previews.length > 0 ? "xl" : 0}
+          >
+            {previews}
+          </SimpleGrid>
+        </Input.Wrapper>
         <Select
           mt="md"
           withAsterisk
@@ -219,6 +226,7 @@ function CompanyForm({
         />
 
         <TextInput
+          mt="md"
           withAsterisk
           label={t("Broker")}
           key={form.key("broker")}
@@ -226,6 +234,7 @@ function CompanyForm({
           {...form.getInputProps("broker")}
         />
         <TextInput
+          mt="md"
           label={t("URL")}
           key={form.key("url")}
           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -233,13 +242,10 @@ function CompanyForm({
         />
         <CountrySelector form={form} />
 
-        <Textarea
-          mt="md"
-          label={t("Description")}
-          key={form.key("description")}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...form.getInputProps("description")}
-        />
+        <Input.Wrapper mt="md" label={t("Description")}>
+          <NotesField content={company?.description} form={form} />
+        </Input.Wrapper>
+
         <Group justify="space-between" mt="md">
           <Button type="button" color="gray" onClick={hideModal}>
             {t("Cancel")}

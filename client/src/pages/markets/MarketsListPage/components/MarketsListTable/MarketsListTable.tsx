@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal } from "@mantine/core";
+import { Button, Group, Loader, Menu, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import dayjs from "dayjs";
 import {
   MantineReactTable,
   MRT_Cell,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   useMantineReactTable,
@@ -16,6 +17,11 @@ import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { IMarket } from "types/market";
+import convertToTimezone from "utils/dates";
+
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
 
 function RegionCell({ row }: Readonly<{ row: MRT_Row<IMarket> }>) {
   return (
@@ -42,10 +48,10 @@ function TimeCell({
   cell,
   row,
 }: Readonly<{ cell: MRT_Cell<IMarket>; row: MRT_Row<IMarket> }>) {
-  const { data: settings, isFetching } = useSettings();
+  const { data: settings, isLoading } = useSettings();
 
-  if (isFetching) {
-    return <span>Loading...</span>;
+  if (isLoading) {
+    return <Loader type="dots" />;
   }
 
   const marketTimezone = row.original.timezone;
@@ -53,13 +59,19 @@ function TimeCell({
 
   // Convert the openTime to the timezone of the settings using dayjs
   const cellValue = cell.getValue() as string;
-  const openTime = dayjs(cellValue, "HH:mm").tz(marketTimezone);
-  const utcTime = openTime.clone().tz(toTimezone);
 
-  return <span>{utcTime.format("HH:mm")}</span>;
+  const newDate = convertToTimezone(
+    cellValue,
+    "HH:mm:ss",
+    marketTimezone,
+    toTimezone,
+  );
+  const openTime = dayjs(newDate);
+
+  return <span>{openTime.format("HH:mm")}</span>;
 }
 
-export default function MarketsListTable() {
+export default function MarketsListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
@@ -112,34 +124,34 @@ export default function MarketsListTable() {
     () => [
       {
         accessorKey: "region",
-        header: "Region",
+        header: t("Region"),
         Cell: RegionCell,
       },
       {
-        accessorKey: "name", // access nested data with dot notation
-        header: "Name",
+        accessorKey: "name",
+        header: t("Name"),
       },
       {
         accessorKey: "description",
-        header: "Description",
+        header: t("Description"),
       },
       {
         accessorKey: "timezone",
-        header: "Timezone",
+        header: t("Timezone"),
         Cell: TimezoneCell,
       },
       {
         accessorKey: "openTime",
-        header: "Opening time",
+        header: t("Opening time"),
         Cell: TimeCell,
       },
       {
         accessorKey: "closeTime",
-        header: "Closing time",
+        header: t("Closing time"),
         Cell: TimeCell,
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedMarkets = marketsData?.results ?? [];
@@ -173,6 +185,7 @@ export default function MarketsListTable() {
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   return (

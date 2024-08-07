@@ -95,7 +95,7 @@ export default function ChartsList() {
                   style={transitionStyles}
                   onClick={() => scrollTo({ y: 0 })}
                 >
-                  Scroll to top
+                  {t("Scroll to top")}
                 </Button>
               )}
             </Transition>

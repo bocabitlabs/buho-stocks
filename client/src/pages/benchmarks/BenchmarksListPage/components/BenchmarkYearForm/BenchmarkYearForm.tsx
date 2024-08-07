@@ -37,6 +37,7 @@ function BenchmarkYearForm({ benchmarkId, onSubmitCallback }: AddFormProps) {
           {...form.getInputProps("year")}
         />
         <TextInput
+          mt="md"
           withAsterisk
           label={t("Value")}
           key={form.key("value")}
@@ -44,15 +45,17 @@ function BenchmarkYearForm({ benchmarkId, onSubmitCallback }: AddFormProps) {
           {...form.getInputProps("value")}
         />
         <TextInput
+          mt="md"
           withAsterisk
-          label={t("Value currency")}
+          label={t("Value in currency")}
           key={form.key("valueCurrency")}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("valueCurrency")}
         />
         <TextInput
+          mt="md"
           withAsterisk
-          label={t("Return Percentage")}
+          label={t("Yield")}
           key={form.key("returnPercentage")}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("returnPercentage")}

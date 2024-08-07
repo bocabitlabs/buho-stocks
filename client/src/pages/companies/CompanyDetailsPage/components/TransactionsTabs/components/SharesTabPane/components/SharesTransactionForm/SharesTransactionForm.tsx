@@ -111,6 +111,7 @@ export default function SharesTransactionForm({
         />
 
         <NumberInput
+          mt="md"
           withAsterisk
           label={t("Shares count")}
           key={form.key("count")}
@@ -119,6 +120,7 @@ export default function SharesTransactionForm({
         />
 
         <NumberInput
+          mt="md"
           withAsterisk
           label={t("Gross price per share")}
           key={form.key("grossPricePerShare")}
@@ -129,6 +131,7 @@ export default function SharesTransactionForm({
         />
 
         <NumberInput
+          mt="md"
           withAsterisk
           label={t("Total Commission")}
           key={form.key("totalCommission")}
@@ -139,6 +142,7 @@ export default function SharesTransactionForm({
         />
 
         <DateInput
+          mt="md"
           withAsterisk
           label={t("Date")}
           key={form.key("transactionDate")}
@@ -149,7 +153,7 @@ export default function SharesTransactionForm({
         />
 
         {companyBaseCurrency !== portfolioBaseCurrency && (
-          <Group>
+          <Group mt="md">
             <NumberInput
               withAsterisk
               label={t("Exchange Rate")}

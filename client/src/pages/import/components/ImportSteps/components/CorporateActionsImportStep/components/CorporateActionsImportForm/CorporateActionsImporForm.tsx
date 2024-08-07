@@ -150,7 +150,7 @@ export default function CorporateActionsImportForm({
                   withAsterisk
                   label={t("Date")}
                   key={form.key("transactionDate")}
-                  description={`${t("Received: ")} ${corporateAction.date}`}
+                  description={`${t("Received")}: ${corporateAction.date}`}
                   valueFormat={dateFormat}
                   defaultValue={new Date()}
                   // eslint-disable-next-line react/jsx-props-no-spreading
@@ -163,7 +163,7 @@ export default function CorporateActionsImportForm({
                   withAsterisk
                   label={t("Shares Count")}
                   key={form.key("count")}
-                  description={`${t("Received: ")} ${corporateAction.count}`}
+                  description={`${t("Received")}: ${corporateAction.count}`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("count")}
                 />
@@ -208,7 +208,7 @@ export default function CorporateActionsImportForm({
                   withAsterisk
                   label={t("Total Amount")}
                   key={form.key("totalAmount")}
-                  description={`${t("Received: ")} ${
+                  description={`${t("Received")}: ${
                     corporateAction.totalWithCommission
                   }`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
@@ -222,7 +222,7 @@ export default function CorporateActionsImportForm({
                   withAsterisk
                   label={t("Gross price per share")}
                   key={form.key("grossPricePerShare")}
-                  description={`${t("Received: ")} ${corporateAction.price}`}
+                  description={`${t("Received")}: ${corporateAction.price}`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("grossPricePerShare")}
                   suffix={` ${corporateAction.currency}`}
@@ -234,7 +234,7 @@ export default function CorporateActionsImportForm({
                   withAsterisk
                   label={t("Commission")}
                   key={form.key("totalCommission")}
-                  description={`${t("Received: ")} ${
+                  description={`${t("Received")}: ${
                     corporateAction.commission
                   }`}
                   // eslint-disable-next-line react/jsx-props-no-spreading
@@ -250,7 +250,7 @@ export default function CorporateActionsImportForm({
                   portfolioId={portfolio.id}
                   form={form}
                   withAsterisk
-                  description={`${t("Received: ")} ${corporateAction.ticker}`}
+                  description={`${t("Received")}: ${corporateAction.ticker}`}
                 />
               </Grid.Col>
               <Grid.Col span={6} />

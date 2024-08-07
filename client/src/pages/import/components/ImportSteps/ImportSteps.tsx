@@ -154,9 +154,9 @@ export default function ImportSteps() {
 
       <Group justify="center" mt="xl">
         <Button variant="default" onClick={prevStep}>
-          Back
+          {t("Back")}
         </Button>
-        <Button onClick={nextStep}>Next step</Button>
+        <Button onClick={nextStep}>{t("Next step")}</Button>
       </Group>
     </>
   );

@@ -1,6 +1,21 @@
-import { Grid } from "@mantine/core";
+import { useContext } from "react";
+import { Grid, Loader } from "@mantine/core";
 import BenchmarksListPageHeader from "./components/BenchmarksListPageHeader/BenchmarksListPageHeader";
 import BenchmarksListTable from "./components/BenchmarksListTable/BenchmarksListTable";
+import {
+  LanguageContext,
+  LanguageProvider,
+} from "components/ListLanguageProvider/ListLanguageProvider";
+
+function BenchmarksListContent() {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <BenchmarksListTable mrtLocalization={mrtLocalization} />
+  ) : (
+    <Loader />
+  );
+}
 
 export default function BenchmarksListPage() {
   return (
@@ -9,7 +24,9 @@ export default function BenchmarksListPage() {
         <BenchmarksListPageHeader />
       </Grid.Col>
       <Grid.Col span={12}>
-        <BenchmarksListTable />
+        <LanguageProvider>
+          <BenchmarksListContent />
+        </LanguageProvider>
       </Grid.Col>
     </Grid>
   );

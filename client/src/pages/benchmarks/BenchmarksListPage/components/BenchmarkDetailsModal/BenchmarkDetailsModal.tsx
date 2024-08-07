@@ -1,11 +1,20 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Accordion, Button, Group, Loader, Menu, Modal } from "@mantine/core";
+import {
+  Accordion,
+  Button,
+  Group,
+  Loader,
+  Menu,
+  Modal,
+  Text,
+} from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_Row,
   useMantineReactTable,
 } from "mantine-react-table";
@@ -18,6 +27,7 @@ interface BenchmarkModalProps {
   id: number;
   isModalVisible: boolean;
   onCancel: () => void;
+  mrtLocalization: MRT_Localization;
 }
 
 function ValueCell({ row }: Readonly<{ row: MRT_Row<IBenchmarkYear> }>) {
@@ -36,6 +46,7 @@ function BenchmarkDetailsModal({
   isModalVisible,
   onCancel,
   id,
+  mrtLocalization,
 }: BenchmarkModalProps) {
   const { t } = useTranslation();
   const { mutate: deleteBenchmarkYear } = useDeleteBenchmarkYear();
@@ -65,20 +76,20 @@ function BenchmarkDetailsModal({
     () => [
       {
         accessorKey: "year",
-        header: "Year",
+        header: t("Year"),
       },
       {
-        accessorKey: "returnPercentage", // access nested data with dot notation
-        header: "Return",
+        accessorKey: "returnPercentage",
+        header: t("Return"),
         Cell: ReturnCell,
       },
       {
         accessorKey: "value",
-        header: "Value",
+        header: t("Value"),
         Cell: ValueCell,
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedYears = benchmark?.years ?? [];
@@ -99,7 +110,7 @@ function BenchmarkDetailsModal({
     mantineToolbarAlertBannerProps: isError
       ? {
           color: "red",
-          children: "Error loading data",
+          children: t("Error loading data"),
         }
       : undefined,
     state: {
@@ -107,6 +118,7 @@ function BenchmarkDetailsModal({
       showAlertBanner: isError,
       showProgressBars: isFetching,
     },
+    localization: mrtLocalization,
   });
 
   if (isLoading) {
@@ -136,8 +148,8 @@ function BenchmarkDetailsModal({
         onClose={closeDeleteModal}
         title={t("Delete year")}
       >
-        {t("Are you sure you want to delete this year?")}
-        <Group>
+        <Text>{t("Are you sure you want to delete this year?")}</Text>
+        <Group mt="md">
           <Button
             disabled={!selectedYearId}
             onClick={() => confirmDelete(selectedYearId)}

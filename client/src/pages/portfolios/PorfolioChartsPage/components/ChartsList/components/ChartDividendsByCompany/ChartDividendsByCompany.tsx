@@ -68,7 +68,7 @@ export default function ChartDividendsByCompany({
         </Center>
         <Center ref={ref}>
           <PieChart
-            // withLabelsLine
+            withLabelsLine
             labelsPosition="inside"
             labelsType="percent"
             valueFormatter={(value: number) => `${value} ${currency}`}
@@ -78,7 +78,7 @@ export default function ChartDividendsByCompany({
                 return item.label;
               },
             }}
-            // withLabels
+            withLabels
             data={data}
             withTooltip
             tooltipDataSource="segment"

@@ -98,7 +98,7 @@ function SectorFormProvider({
       <SectorAddEditForm
         id={sectorId}
         data={data}
-        isUpdate
+        isUpdate={isUpdate}
         isVisible={isVisible}
         isSuperSector={isSuperSector}
         onCloseCallback={onCloseCallback}

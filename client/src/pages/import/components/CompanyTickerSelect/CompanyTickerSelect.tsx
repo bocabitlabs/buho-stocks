@@ -88,18 +88,5 @@ export default function CompanyTickerSelect({
         <Combobox.Options>{options}</Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
-    // <Combobox
-    //   store={combobox}
-    //   label={t<string>("Company")}
-    //   placeholder={t<string>("Company")}
-    //   onChange={handleChange}
-    //   defaultValue={initialValue}
-    //   data={selectOptions}
-    //   required={withAsterisk}
-    //   data-testid="company-selector"
-    //   key={form.key("company")}
-    //   // eslint-disable-next-line react/jsx-props-no-spreading
-    //   {...form.getInputProps("company")}
-    // />
   );
 }

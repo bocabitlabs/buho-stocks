@@ -3,6 +3,7 @@ import { MantineProvider } from "@mantine/core";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc"; // ES 2015
 import ReactDOM from "react-dom/client";
@@ -16,9 +17,12 @@ import "@mantine/dropzone/styles.css";
 import "@mantine/dates/styles.css";
 import "mantine-react-table/styles.css";
 import "@mantine/charts/styles.css";
+import "@mantine/tiptap/styles.css";
+
 // dependent on utc plugin
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(customParseFormat);
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement,

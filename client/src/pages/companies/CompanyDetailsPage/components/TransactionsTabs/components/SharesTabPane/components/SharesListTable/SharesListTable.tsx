@@ -16,6 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   useMantineReactTable,
@@ -31,6 +32,7 @@ import { ISharesTransaction } from "types/shares-transaction";
 interface IProps {
   companyBaseCurrency: ICurrency;
   portfolioBaseCurrency: string;
+  mrtLocalization: MRT_Localization;
 }
 
 function TotalPriceCell({
@@ -81,9 +83,10 @@ function TypeCell({
 }: Readonly<{
   row: MRT_Row<ISharesTransaction>;
 }>) {
+  const { t } = useTranslation();
   return (
     <Badge color={row.original.type === "BUY" ? "green" : "red"}>
-      {row.original.type}
+      {t(row.original.type)}
     </Badge>
   );
 }
@@ -107,6 +110,7 @@ function PricePerShareCell({
 export default function DividendsListTable({
   companyBaseCurrency,
   portfolioBaseCurrency,
+  mrtLocalization,
 }: IProps) {
   const { t } = useTranslation();
   const { companyId } = useParams();
@@ -164,7 +168,7 @@ export default function DividendsListTable({
       },
       {
         accessorKey: "grossPricePerShare",
-        header: t("grossPricePerShare"),
+        header: t("Gross price per share"),
         Cell: PricePerShareCell,
       },
       {
@@ -182,7 +186,7 @@ export default function DividendsListTable({
         Cell: CommissionCell,
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedTransactions = data?.results ?? [];
@@ -197,7 +201,9 @@ export default function DividendsListTable({
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -218,6 +224,7 @@ export default function DividendsListTable({
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   if (isLoading) {

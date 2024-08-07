@@ -108,7 +108,7 @@ export default function DividendsImportForm({
                 <DateInput
                   withAsterisk
                   label={t("Date")}
-                  description={`${t("Received: ")} ${dividend.date}`}
+                  description={`${t("Received")}: ${dividend.date}`}
                   key={form.key("transactionDate")}
                   valueFormat={dateFormat}
                   defaultValue={new Date()}
@@ -120,7 +120,7 @@ export default function DividendsImportForm({
                 <TextInput
                   withAsterisk
                   label={t("Amount")}
-                  description={`${t("Received: ")} ${dividend.amount}`}
+                  description={`${t("Received")}: ${dividend.amount}`}
                   key={form.key("totalAmount")}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("totalAmount")}
@@ -130,7 +130,7 @@ export default function DividendsImportForm({
                 <TextInput
                   withAsterisk
                   label={t("Commission")}
-                  description={`${t("Received: ")} ${dividend.commissions}`}
+                  description={`${t("Received")}: ${dividend.commissions}`}
                   key={form.key("totalCommission")}
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("totalCommission")}
@@ -143,7 +143,7 @@ export default function DividendsImportForm({
                   portfolioId={portfolio.id}
                   form={form}
                   withAsterisk
-                  description={`${t("Received: ")} ${dividend.ticker}`}
+                  description={`${t<string>("Received")}: ${dividend.ticker}`}
                 />
               </Grid.Col>
               {dividend.currency !== portfolio?.baseCurrency.code && (

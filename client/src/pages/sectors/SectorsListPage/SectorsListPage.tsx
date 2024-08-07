@@ -1,6 +1,21 @@
-import { Grid } from "@mantine/core";
+import { useContext } from "react";
+import { Grid, Loader } from "@mantine/core";
 import SectorsListTable from "./components/SectorsListTable/SectorsListTable";
 import SectorsPageHeader from "./components/SectorsPageHeader/SectorsPageHeader";
+import {
+  LanguageContext,
+  LanguageProvider,
+} from "components/ListLanguageProvider/ListLanguageProvider";
+
+function SectorsListTableContent() {
+  const mrtLocalization = useContext(LanguageContext);
+
+  return mrtLocalization ? (
+    <SectorsListTable mrtLocalization={mrtLocalization} />
+  ) : (
+    <Loader />
+  );
+}
 
 export default function SectorsListPage() {
   return (
@@ -9,7 +24,9 @@ export default function SectorsListPage() {
         <SectorsPageHeader />
       </Grid.Col>
       <Grid.Col span={12}>
-        <SectorsListTable />
+        <LanguageProvider>
+          <SectorsListTableContent />
+        </LanguageProvider>
       </Grid.Col>
     </Grid>
   );

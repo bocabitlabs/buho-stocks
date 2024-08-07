@@ -45,7 +45,7 @@ export default function ChartSectorsByCompany({
 
         Object.entries(res).forEach(([k, v]) => {
           sectors.push({
-            name: k,
+            name: t(k),
             value: (v as any[]).length,
             color: getColorShade(k),
           });

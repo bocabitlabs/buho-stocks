@@ -159,67 +159,6 @@ function PortfolioDetailsPageHeader({
         {portfolioDescription}
       </Paper>
     </Stack>
-    // <PageHeader
-    //   className="site-page-header"
-    //   style={{
-    //     background: token.colorBgContainer,
-    //   }}
-    //   title={<Typography.Title level={2}>{portfolioName}</Typography.Title>}
-    //   tags={[
-    //     <CountryFlag
-    //       code={portfolioCountryCode}
-    //       key={portfolioCountryCode}
-    //       width={20}
-    //     />,
-    //   ]}
-    //   extra={[
-    //     <Button
-    //       key="company-view-logs"
-    //       icon={<UnorderedListOutlined />}
-    //       onClick={() => {
-    //         navigate(`log`);
-    //       }}
-    //       title={t<string>("View portfolio logs")}
-    //     />,
-    //     <Button
-    //       key="company-view-charts"
-    //       icon={<LineChartOutlined />}
-    //       onClick={() => {
-    //         navigate(`charts`);
-    //       }}
-    //       title={t<string>("View portfolio charts")}
-    //     />,
-    //     <Button
-    //       type="primary"
-    //       key="company-add-header"
-    //       icon={<PlusOutlined />}
-    //       onClick={showModal}
-    //     >
-    //       {t("Company")}
-    //     </Button>,
-    //     <Popconfirm
-    //       key="portfolio-delete-header"
-    //       title="Delete this portfolio?"
-    //       onConfirm={() => confirmDelete()}
-    //       okText={t("Yes")}
-    //       cancelText={t("No")}
-    //     >
-    //       <Button icon={<DeleteOutlined />} danger>
-    //         {t("Delete")}
-    //       </Button>
-    //     </Popconfirm>,
-    //   ]}
-    // >
-    //   <Typography.Paragraph>{portfolioDescription}</Typography.Paragraph>
-    //   {children}
-    //   {portfolioId && (
-    //     <CompanyFormProvider
-    //       portfolioId={portfolioId}
-    //       isVisible={isModalVisible}
-    //       onCloseCallback={handleClose}
-    //     />
-    //   )}
-    // </PageHeader>
   );
 }
 

@@ -1,19 +1,21 @@
-import React, { ReactElement, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
 import { BarChart } from "@mantine/charts";
 import { Center, Loader, Stack, Title } from "@mantine/core";
-import { AxiosError } from "axios";
 import i18next from "i18next";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
-import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
-export default function ChartPortfolioDividends(): ReactElement | null {
+interface Props {
+  data: IPortfolioYearStats[];
+  baseCurrencyCode: string;
+}
+
+export default function ChartPortfolioDividends({
+  data,
+  baseCurrencyCode,
+}: Props) {
   const { t } = useTranslation();
-  const { id } = useParams();
-  const [chartData, setChartData] = React.useState<any>(null);
-  const { data, isFetching, error } = usePortfolioAllYearStats(+id!);
-  const { data: portfolio } = usePortfolio(+id!);
+  const [chartData, setChartData] = useState<any>(null);
 
   const { resolvedLanguage } = i18next;
 
@@ -60,18 +62,7 @@ export default function ChartPortfolioDividends(): ReactElement | null {
     }
   }, [data, t]);
 
-  if (error) {
-    if ((error as AxiosError)?.response?.status === 404) {
-      return <div>No stats yet</div>;
-    }
-    return <div>Something went wrong</div>;
-  }
-
-  if (isFetching) {
-    return <Loader data-testid="loader" />;
-  }
-
-  if (chartData && portfolio) {
+  if (chartData && baseCurrencyCode) {
     return (
       <Stack>
         <Center>
@@ -84,7 +75,7 @@ export default function ChartPortfolioDividends(): ReactElement | null {
             dataKey="year"
             series={[{ name: "value", color: "red" }]}
             valueFormatter={(value: number) =>
-              `${numberFormatter.format(value)} ${portfolio.baseCurrency.code}`
+              `${numberFormatter.format(value)} ${baseCurrencyCode}`
             }
             xAxisProps={{
               interval: 0,

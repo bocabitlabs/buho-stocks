@@ -41,7 +41,6 @@ export default function DividendsChart({ stats, portfolioCurrency }: Props) {
           });
         }
       });
-      console.log(dividendsPerYear);
       setData(dividendsPerYear);
     }
   }, [stats, t]);
@@ -51,7 +50,6 @@ export default function DividendsChart({ stats, portfolioCurrency }: Props) {
   }
 
   if (stats && portfolioCurrency && data) {
-    console.log(portfolioCurrency);
     return (
       <Stack>
         <Center>
@@ -71,5 +69,5 @@ export default function DividendsChart({ stats, portfolioCurrency }: Props) {
       </Stack>
     );
   }
-  return <div>HELLO</div>;
+  return null;
 }

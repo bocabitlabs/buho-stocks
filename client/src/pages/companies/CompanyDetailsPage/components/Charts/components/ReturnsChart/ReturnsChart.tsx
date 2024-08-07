@@ -74,6 +74,7 @@ export default function ChartPortfolioReturns({ stats }: Props) {
           dataKey="year"
           withLegend
           series={getSeries()}
+          valueFormatter={(value) => `${value} %`}
         />
       </Stack>
     );

@@ -1,11 +1,12 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Menu, Modal, Stack, Title } from "@mantine/core";
+import { Button, Group, Menu, Modal, Stack, Title, Text } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconPlus } from "@tabler/icons-react";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   MRT_SortingState,
@@ -18,6 +19,10 @@ import {
 } from "hooks/use-stock-prices/use-stock-prices";
 import { IStockPrice } from "types/stock-prices";
 
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
 function PriceCell({ row }: Readonly<{ row: MRT_Row<IStockPrice> }>) {
   return (
     <span>
@@ -26,7 +31,7 @@ function PriceCell({ row }: Readonly<{ row: MRT_Row<IStockPrice> }>) {
   );
 }
 
-export default function StockPricesListTable() {
+export default function StockPricesListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
 
@@ -90,20 +95,21 @@ export default function StockPricesListTable() {
   const columns = useMemo<MRT_ColumnDef<IStockPrice>[]>(
     () => [
       {
+        accessorKey: "transactionDate",
+        header: t("Date"),
+      },
+
+      {
         accessorKey: "price",
-        header: "Price",
+        header: t("Price"),
         Cell: PriceCell,
       },
       {
-        accessorKey: "transactionDate",
-        header: "Date",
-      },
-      {
         accessorKey: "ticker",
-        header: "Ticker",
+        header: t("Ticker"),
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedStockPrices = data?.results ?? [];
@@ -116,7 +122,9 @@ export default function StockPricesListTable() {
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -129,7 +137,7 @@ export default function StockPricesListTable() {
     mantineToolbarAlertBannerProps: isError
       ? {
           color: "red",
-          children: "Error loading data",
+          children: t("Error loading data"),
         }
       : undefined,
     onPaginationChange: setPagination,
@@ -141,6 +149,7 @@ export default function StockPricesListTable() {
       pagination,
       sorting,
     },
+    localization: mrtLocalization,
   });
 
   return (
@@ -166,10 +175,10 @@ export default function StockPricesListTable() {
       <Modal
         opened={deleteModalOpen}
         onClose={closeDeleteModal}
-        title={t("Delete sector")}
+        title={t("Delete stock price")}
       >
-        {t("Are you sure you want to delete this stock price?")}
-        <Group>
+        <Text>{t("Are you sure you want to delete this stock price?")}</Text>
+        <Group mt="md">
           <Button
             disabled={!selectedStockPriceId}
             onClick={() => confirmDelete(selectedStockPriceId)}

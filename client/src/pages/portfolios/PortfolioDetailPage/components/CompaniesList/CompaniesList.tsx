@@ -13,6 +13,7 @@ import {
   MantineReactTable,
   MRT_Cell,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   MRT_SortingState,
@@ -23,6 +24,7 @@ import { ICompany } from "types/company";
 
 interface IProps {
   portfolioId: string;
+  mrtLocalization: MRT_Localization;
 }
 
 function PriceCell({
@@ -46,7 +48,7 @@ function ReturnPercentCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
     <Stack>
       <Text>
         <NumberFormatter
-          value={row.original.allStats.returnWithDividends}
+          value={row.original.allStats?.returnWithDividends}
           suffix={` ${row.original.allStats?.portfolioCurrency}`}
           decimalScale={2}
           thousandSeparator
@@ -54,13 +56,13 @@ function ReturnPercentCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
       </Text>
       <Text
         c={
-          Number(row.original.allStats.returnWithDividendsPercent) <= 0
+          Number(row.original.allStats?.returnWithDividendsPercent) <= 0
             ? "red"
             : "green"
         }
       >
         <NumberFormatter
-          value={row.original.allStats.returnWithDividendsPercent}
+          value={row.original.allStats?.returnWithDividendsPercent}
           suffix={` %`}
           decimalScale={2}
           thousandSeparator
@@ -74,10 +76,10 @@ function DividendsYieldCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
   return (
     <Stack>
       <Text
-        c={Number(row.original.allStats.dividendsYield) <= 0 ? "red" : "green"}
+        c={Number(row.original.allStats?.dividendsYield) <= 0 ? "red" : "green"}
       >
         <NumberFormatter
-          value={row.original.allStats.dividendsYield}
+          value={row.original.allStats?.dividendsYield}
           suffix={` %`}
           decimalScale={2}
           thousandSeparator
@@ -92,7 +94,7 @@ function PortfolioValueCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
     <Stack>
       <Text>
         <NumberFormatter
-          value={row.original.allStats.portfolioValue}
+          value={row.original.allStats?.portfolioValue}
           decimalScale={2}
           thousandSeparator
         />
@@ -128,7 +130,7 @@ function CompanyNameCell({
         {row.original.name}
       </Anchor>
       <Text c="dimmed" size="sm">
-        {row.original.allStats.sectorName}
+        {row.original.allStats && row.original.allStats.sectorName}
       </Text>
     </Stack>
   );
@@ -142,18 +144,23 @@ function TickerCell({
   return (
     <Stack>
       <Text fw={700}>{row.original.ticker}</Text>
-      <Text c="dimmed">{row.original.allStats.marketName}</Text>
+      <Text c="dimmed">
+        {row.original.allStats && row.original.allStats.marketName}
+      </Text>
     </Stack>
   );
 }
 
-export default function CompaniesList({ portfolioId }: IProps) {
+export default function CompaniesList({
+  portfolioId,
+  mrtLocalization,
+}: IProps) {
   const { t } = useTranslation();
   const [showClosed, setShowClosed] = useState<boolean>(false);
   const [sorting, setSorting] = useState<MRT_SortingState>([
     {
       desc: false,
-      id: "ticker",
+      id: "name",
     },
   ]);
   const [pagination, setPagination] = useState<MRT_PaginationState>({
@@ -224,8 +231,7 @@ export default function CompaniesList({ portfolioId }: IProps) {
         header: t("Last dividend"),
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
+    [t],
   );
 
   const fetchedCompanies = data?.results ?? [];
@@ -253,6 +259,7 @@ export default function CompaniesList({ portfolioId }: IProps) {
       pagination,
       sorting,
     },
+    localization: mrtLocalization,
   });
 
   return (
@@ -260,7 +267,7 @@ export default function CompaniesList({ portfolioId }: IProps) {
       <Stack>
         <Switch
           defaultChecked
-          label={t("Displaying open companies")}
+          label={t("Display closed companies")}
           onChange={(event) => setShowClosed(event.currentTarget.checked)}
           checked={showClosed}
         />

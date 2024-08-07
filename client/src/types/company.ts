@@ -23,9 +23,9 @@ interface ICompanyBase {
 
 export interface ICompanyFormFields extends ICompanyBase {
   baseCurrency: string;
-  dividendsCurrency: number;
-  sector: number;
-  market: number;
+  dividendsCurrency: string | undefined;
+  sector: string | undefined;
+  market: string | undefined;
   portfolio: number;
 }
 

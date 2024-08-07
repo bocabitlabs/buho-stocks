@@ -1,10 +1,15 @@
 import { useTranslation } from "react-i18next";
 import { rem, Tabs } from "@mantine/core";
 import { IconHierarchy, IconHierarchy3 } from "@tabler/icons-react";
+import { MRT_Localization } from "mantine-react-table";
 import SectorsTable from "../SectorsTable/SectorsTable";
 import SuperSectorsTable from "../SuperSectorsTable/SuperSectorsTable";
 
-export default function SectorsListTable() {
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
+export default function SectorsListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const iconStyle = { width: rem(12), height: rem(12) };
 
@@ -25,11 +30,11 @@ export default function SectorsListTable() {
         </Tabs.Tab>
       </Tabs.List>
       <Tabs.Panel value="sectors">
-        <SectorsTable />
+        <SectorsTable mrtLocalization={mrtLocalization} />
       </Tabs.Panel>
 
       <Tabs.Panel value="super-sectors">
-        <SuperSectorsTable />
+        <SuperSectorsTable mrtLocalization={mrtLocalization} />
       </Tabs.Panel>
     </Tabs>
   );

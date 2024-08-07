@@ -16,6 +16,7 @@ import { useDisclosure } from "@mantine/hooks";
 import {
   MantineReactTable,
   MRT_ColumnDef,
+  MRT_Localization,
   MRT_PaginationState,
   MRT_Row,
   useMantineReactTable,
@@ -31,6 +32,7 @@ import { IRightsTransaction } from "types/rights-transaction";
 interface IProps {
   companyBaseCurrency: ICurrency;
   portfolioBaseCurrency: string;
+  mrtLocalization: MRT_Localization;
 }
 
 function TotalPriceCell({
@@ -81,9 +83,10 @@ function TypeCell({
 }: Readonly<{
   row: MRT_Row<IRightsTransaction>;
 }>) {
+  const { t } = useTranslation();
   return (
     <Badge color={row.original.type === "BUY" ? "green" : "red"}>
-      {row.original.type}
+      {t(row.original.type)}
     </Badge>
   );
 }
@@ -107,6 +110,7 @@ function PricePerShareCell({
 export default function RightsListTable({
   companyBaseCurrency,
   portfolioBaseCurrency,
+  mrtLocalization,
 }: IProps) {
   const { t } = useTranslation();
   const { companyId } = useParams();
@@ -182,7 +186,7 @@ export default function RightsListTable({
         Cell: CommissionCell,
       },
     ],
-    [],
+    [t],
   );
 
   const fetchedTransactions = data?.results ?? [];
@@ -197,7 +201,9 @@ export default function RightsListTable({
     positionActionsColumn: "last",
     renderRowActionMenuItems: ({ row }) => (
       <>
-        <Menu.Item onClick={() => showModal(row.original.id)}>Edit</Menu.Item>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
         <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
           {t("Delete")}
         </Menu.Item>
@@ -218,6 +224,7 @@ export default function RightsListTable({
       showProgressBars: isFetching,
       pagination,
     },
+    localization: mrtLocalization,
   });
 
   if (isLoading) {
