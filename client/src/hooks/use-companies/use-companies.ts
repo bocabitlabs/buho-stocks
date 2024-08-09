@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState, MRT_SortingState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -129,14 +129,20 @@ export const useAddCompany = (props?: MutateProps) => {
       apiClient.post(`/portfolios/${portfolioId}/companies/`, newCompany),
     onSuccess: (data, variables) => {
       props?.onSuccess?.();
-      toast.success(`${t("Company has been created")}`);
+      notifications.show({
+        color: "green",
+        message: t("Company has been created"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["portfolios", variables.portfolioId],
       });
     },
     onError: () => {
       props?.onError?.();
-      toast.error(t("Unable to create company"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create company"),
+      });
     },
   });
 };
@@ -149,14 +155,20 @@ export const useDeleteCompany = () => {
     mutationFn: ({ portfolioId, companyId }: DeleteMutationProps) =>
       apiClient.delete(`/portfolios/${portfolioId}/companies/${companyId}/`),
     onSuccess: (data, variables) => {
-      toast.success(`${t("Company has been deleted")}`);
+      notifications.show({
+        color: "green",
+        message: t("Company has been deleted"),
+      });
       navigate(-1);
       queryClient.invalidateQueries({
         queryKey: ["portfolios", variables.portfolioId],
       });
     },
     onError: () => {
-      toast.error(t("Unable to delete company"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete company"),
+      });
     },
   });
 };
@@ -171,14 +183,20 @@ export const useUpdateCompany = (props?: MutateProps) => {
       ),
     onSuccess: (data, variables) => {
       props?.onSuccess?.();
-      toast.success(t("Company has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("Company has been updated"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["portfolios", variables.portfolioId],
       });
     },
     onError: () => {
       props?.onError?.();
-      toast.error(t("Unable to update company"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update company"),
+      });
     },
   });
 };

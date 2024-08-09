@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -23,11 +23,17 @@ export const useStartTask = () => {
   return useMutation({
     mutationFn: () => apiClient.post(`/start-task/`),
     onSuccess: () => {
-      toast.success<string>(t("Task created"));
+      notifications.show({
+        color: "green",
+        message: t("Task created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["tasks-results"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to create task"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create task"),
+      });
     },
   });
 };

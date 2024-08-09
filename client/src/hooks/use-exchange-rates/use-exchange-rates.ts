@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState, MRT_SortingState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -127,12 +127,18 @@ export const useAddExchangeRate = (props?: MutateProps) => {
       apiClient.post(`/exchange-rates/`, newExchangeRate),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Exchange rate created"));
+      notifications.show({
+        color: "green",
+        message: t("Exchange rate created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["exchange-rates"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to create exchange rate"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create exchange rate"),
+      });
     },
   });
 };
@@ -143,11 +149,17 @@ export const useDeleteExchangeRate = () => {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/exchange-rates/${id}/`),
     onSuccess: () => {
-      toast.success<string>(t("Exchange rate deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Exchange rate deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["exchange-rates"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete exchange rate"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete exchange rate"),
+      });
     },
   });
 };
@@ -160,12 +172,18 @@ export const useUpdateExchangeRate = (props?: MutateProps) => {
       apiClient.put(`/exchange-rates/${id}/`, newExchangeRate),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("ExchangeRate has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("ExchangeRate has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["exchange-rates"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to update exchange rate"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update exchange rate"),
+      });
     },
   });
 };

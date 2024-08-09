@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BarChart } from "@mantine/charts";
 import { Center, Loader, Stack, Title } from "@mantine/core";
@@ -15,7 +15,6 @@ export default function ChartPortfolioDividends({
   baseCurrencyCode,
 }: Props) {
   const { t } = useTranslation();
-  const [chartData, setChartData] = useState<any>(null);
 
   const { resolvedLanguage } = i18next;
 
@@ -25,11 +24,14 @@ export default function ChartPortfolioDividends({
     maximumFractionDigits: 2,
   });
 
-  useEffect(() => {
+  const chartData = useMemo(() => {
     if (data && data.length > 0) {
       const newYears: any = [];
       const dividends: any = [];
-      const dividendsPerYear: any = [];
+      const dividendsPerYear: {
+        year: number;
+        value: number;
+      }[] = [];
 
       data.sort((a: any, b: any) => {
         if (a.year > b.year) {
@@ -58,9 +60,9 @@ export default function ChartPortfolioDividends({
       // Sort the sectors by value
       dividendsPerYear.sort((a, b) => a.year - b.year);
 
-      setChartData(dividendsPerYear);
+      return dividendsPerYear;
     }
-  }, [data, t]);
+  }, [data]);
 
   if (chartData && baseCurrencyCode) {
     return (

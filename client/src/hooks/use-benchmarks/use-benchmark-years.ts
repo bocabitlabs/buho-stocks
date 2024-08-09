@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { useMutation } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -16,13 +16,19 @@ export const useDeleteBenchmarkYear = () => {
     mutationFn: ({ id }: IDeleteMutationProps) =>
       apiClient.delete(`/benchmarks-years/${id}/`),
     onSuccess: (data, variables) => {
-      toast.success(t("Year deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Year deleted"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["benchmarks", variables.id],
       });
     },
     onError: () => {
-      toast.error(t("Unable to delete year"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete year"),
+      });
     },
   });
 };
@@ -34,13 +40,19 @@ export const useAddBenchmarkYear = () => {
     mutationFn: (newBenchmark: IBenchmarkYearFormFields) =>
       apiClient.post(`/benchmarks-years/`, newBenchmark),
     onSuccess: (data, variables) => {
-      toast.success(t("Benchmark year added"));
+      notifications.show({
+        color: "green",
+        message: t("Benchmark year added"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["benchmarks", variables.benchmark],
       });
     },
     onError: (data, variables) => {
-      toast.error(t("Unable to add year"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to add year"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["benchmarks", variables.benchmark],
       });

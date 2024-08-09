@@ -1,4 +1,5 @@
-import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -41,6 +42,7 @@ export const fetchRightsTransaction = async (
 };
 
 export const useAddRightsTransaction = (props?: MutateProps) => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({
       newTransaction,
@@ -55,17 +57,24 @@ export const useAddRightsTransaction = (props?: MutateProps) => {
 
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success(`Rights added successfully`);
+      notifications.show({
+        color: "green",
+        message: t("Rights added successfully"),
+      });
       queryClient.invalidateQueries({ queryKey: ["rightsTransactions"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error(`Unable to add rights`);
+      notifications.show({
+        color: "red",
+        message: t("Unable to add rights"),
+      });
     },
   });
 };
 
 export const useUpdateRightsTransaction = (props?: MutateProps) => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({
       transactionId,
@@ -85,27 +94,40 @@ export const useUpdateRightsTransaction = (props?: MutateProps) => {
 
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success(`Rights updated successfully`);
+      notifications.show({
+        color: "green",
+        message: t("Rights updated successfully"),
+      });
       queryClient.invalidateQueries({ queryKey: ["rightsTransactions"] });
     },
     onError: () => {
       props?.onError?.();
 
-      toast.error(`Unable to update transaction`);
+      notifications.show({
+        color: "red",
+        message: t("Unable to update transaction"),
+      });
     },
   });
 };
 
 export const useDeleteRightsTransaction = () => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({ transactionId }: IDeleteTransactionMutationProps) =>
       apiClient.delete(`/rights/${transactionId}/`),
     onSuccess: () => {
-      toast.success(`Rights deleted successfully`);
+      notifications.show({
+        color: "green",
+        message: t("Rights deleted successfully"),
+      });
       queryClient.invalidateQueries({ queryKey: ["rightsTransactions"] });
     },
     onError: () => {
-      toast.error("Unable to delete transaction");
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete transaction"),
+      });
     },
   });
 };

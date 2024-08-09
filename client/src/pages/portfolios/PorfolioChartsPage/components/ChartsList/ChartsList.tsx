@@ -14,17 +14,17 @@ import {
 } from "@mantine/core";
 import { useWindowScroll } from "@mantine/hooks";
 import { IconArrowUp } from "@tabler/icons-react";
-import ChartBrokerByCompany from "./components/ChartBrokerByCompany/ChartBrokerByCompany";
-import ChartCurrenciesByCompany from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompany";
-import ChartDividendsByCompany from "./components/ChartDividendsByCompany/ChartDividendsByCompany";
-import ChartInvestedByCompany from "./components/ChartInvestedByCompany/ChartInvestedByCompany";
-import ChartInvestedByCompanyYearly from "./components/ChartInvestedByCompanyYearly/ChartInvestedByCompanyYearly";
-import ChartMarketByCompany from "./components/ChartMarketByCompany/ChartMarketByCompany";
-import ChartPortfolioDividendsPerMonth from "./components/ChartPortfolioDividendsPerMonth/ChartPortfolioDividendsPerMonth";
-import ChartSectorsByCompany from "./components/ChartSectorsByCompany/ChartSectorsByCompany";
-import ChartSuperSectorsByCompany from "./components/ChartSuperSectorsByCompany/ChartSuperSectorsByCompany";
-import ChartValueByCompany from "./components/ChartValueByCompany/ChartValueByCompany";
-import ChartPortfolioDividends from "components/ChartPortfolioDividends/ChartPortfolioDividends";
+import ChartBrokerByCompanyProvider from "./components/ChartBrokerByCompany/ChartBrokerByCompanyProvider";
+import ChartCurrenciesByCompanyProvider from "./components/ChartCurrenciesByCompany/ChartCurrenciesByCompanyProvider";
+import ChartDividendsByCompanyProvider from "./components/ChartDividendsByCompany/ChartDividendsByCompanyProvider";
+import ChartInvestedByCompanyProvider from "./components/ChartInvestedByCompany/ChartInvestedByCompanyProvider";
+import ChartInvestedByCompanyYearlyProvider from "./components/ChartInvestedByCompanyYearly/ChartInvestedByCompanyYearlyProvider";
+import ChartMarketsByCompanyProvider from "./components/ChartMarketByCompany/ChartMarketsByCompanyProvider";
+import ChartPortfolioDividendsPerMonthProvider from "./components/ChartPortfolioDividendsPerMonth/ChartPortfolioDividendsPerMonthProvider";
+import ChartSectorsByCompanyProvider from "./components/ChartSectorsByCompany/ChartSectorsByCompanyProvider";
+import ChartSuperSectorsByCompanyProvider from "./components/ChartSuperSectorsByCompany/ChartSuperSectorsByCompanyProvider";
+import ChartValueByCompanyProvider from "./components/ChartValueByCompany/ChartValueByCompanyProvider";
+import ChartPortfolioDividendsProvider from "components/ChartPortfolioDividends/ChartPortfolioDividendsProvider";
 import ChartPortfolioReturnsProvider from "components/ChartPortfolioReturns/ChartPortfolioReturnsProvider";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 
@@ -66,13 +66,13 @@ export default function ChartsList() {
       </Grid.Col>
       <Grid.Col span={6}>
         <Paper p="xl" shadow="xs">
-          <ChartPortfolioDividends />
+          <ChartPortfolioDividendsProvider />
         </Paper>
       </Grid.Col>
 
       <Grid.Col span={12}>
         <Paper p="xl" shadow="xs">
-          <ChartPortfolioDividendsPerMonth />
+          <ChartPortfolioDividendsPerMonthProvider />
         </Paper>
       </Grid.Col>
 
@@ -107,7 +107,7 @@ export default function ChartsList() {
         <>
           <Grid.Col span={12}>
             <Paper p="xl" shadow="xs">
-              <ChartInvestedByCompany
+              <ChartInvestedByCompanyProvider
                 selectedYear={selectedYear}
                 currency={portfolio?.baseCurrency.code}
               />
@@ -116,7 +116,7 @@ export default function ChartsList() {
 
           <Grid.Col span={12}>
             <Paper p="xl" shadow="xs">
-              <ChartInvestedByCompanyYearly
+              <ChartInvestedByCompanyYearlyProvider
                 selectedYear={selectedYear}
                 currency={portfolio?.baseCurrency.code}
               />
@@ -125,7 +125,7 @@ export default function ChartsList() {
 
           <Grid.Col span={12}>
             <Paper p="xl" shadow="xs">
-              <ChartValueByCompany
+              <ChartValueByCompanyProvider
                 selectedYear={selectedYear}
                 currency={portfolio?.baseCurrency.code}
               />
@@ -134,7 +134,7 @@ export default function ChartsList() {
           <Grid.Col span={12}>
             <Container size="xs">
               <Paper p="xl" shadow="xs">
-                <ChartDividendsByCompany
+                <ChartDividendsByCompanyProvider
                   selectedYear={selectedYear}
                   currency={portfolio?.baseCurrency.code}
                 />
@@ -143,27 +143,27 @@ export default function ChartsList() {
           </Grid.Col>
           <Grid.Col span={6}>
             <Paper p="xl" shadow="xs">
-              <ChartSectorsByCompany selectedYear={selectedYear} />
+              <ChartSectorsByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
           <Grid.Col span={6}>
             <Paper p="xl" shadow="xs">
-              <ChartSuperSectorsByCompany selectedYear={selectedYear} />
+              <ChartSuperSectorsByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
           <Grid.Col span={4}>
             <Paper p="xl" shadow="xs">
-              <ChartCurrenciesByCompany selectedYear={selectedYear} />
+              <ChartCurrenciesByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
           <Grid.Col span={4}>
             <Paper p="xl" shadow="xs">
-              <ChartBrokerByCompany selectedYear={selectedYear} />
+              <ChartBrokerByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
           <Grid.Col span={4}>
             <Paper p="xl" shadow="xs">
-              <ChartMarketByCompany selectedYear={selectedYear} />
+              <ChartMarketsByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
         </>

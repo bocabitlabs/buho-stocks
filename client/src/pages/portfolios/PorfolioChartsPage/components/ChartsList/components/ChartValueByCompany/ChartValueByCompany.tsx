@@ -1,23 +1,14 @@
-import React, { useEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useMemo } from "react";
 import { BarChart } from "@mantine/charts";
-import { Center, Stack, Title } from "@mantine/core";
 import i18next from "i18next";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
 interface ChartProps {
-  selectedYear: string;
+  data: IPortfolioYearStats[];
   currency: string | undefined;
 }
 
-export default function ChartValueByCompany({
-  selectedYear,
-  currency,
-}: ChartProps): React.ReactElement | null {
-  const { id } = useParams();
-  const { t } = useTranslation();
-
+export default function ChartValueByCompany({ data, currency }: ChartProps) {
   const { resolvedLanguage } = i18next;
 
   const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
@@ -26,73 +17,49 @@ export default function ChartValueByCompany({
     maximumFractionDigits: 2,
   });
 
-  const [data, setData] = React.useState<any>(null);
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { data: statsData } = usePortfolioYearStats(
-    +id!,
-    selectedYear,
-    "company",
-  );
-
-  useEffect(() => {
-    if (statsData) {
-      const tempData: any = statsData.filter((item: any) => {
+  const filteredData = useMemo(
+    function createChartData() {
+      const filteredCompanies: any = data.filter((item: any) => {
         return item.sharesCount > 0;
       });
 
-      setFilteredChartData(tempData);
-    }
-  }, [statsData]);
+      const companies: {
+        company: string;
+        value: number;
+      }[] = [];
 
-  useEffect(() => {
-    function loadInitialStats() {
-      if (filteredChartData) {
-        const companies: any = [];
-
-        filteredChartData.forEach((stat: any) => {
-          companies.push({
-            company: stat.company.ticker,
-            value: Number(stat.portfolioValue),
-          });
+      filteredCompanies.forEach((stat: any) => {
+        companies.push({
+          company: stat.company.ticker,
+          value: Number(stat.portfolioValue),
         });
+      });
 
-        companies.sort((a, b) => b.value - a.value);
+      companies.sort((a, b) => b.value - a.value);
+      return companies;
+    },
+    [data],
+  );
 
-        setData(companies);
+  return (
+    <BarChart
+      h={400}
+      data={filteredData}
+      dataKey="company"
+      series={[{ name: "value", color: "red" }]}
+      valueFormatter={(value: number) =>
+        `${numberFormatter.format(value)} ${currency}`
       }
-    }
-    loadInitialStats();
-  }, [filteredChartData, statsData, t]);
-  if (data) {
-    return (
-      <Stack>
-        <Center>
-          <Title order={5}>
-            {t("Portfolio value by company (accumulated)")}
-          </Title>
-        </Center>
-        <Center />
-        <BarChart
-          h={400}
-          data={data}
-          dataKey="company"
-          series={[{ name: "value", color: "red" }]}
-          valueFormatter={(value: number) =>
-            `${numberFormatter.format(value)} ${currency}`
-          }
-          xAxisProps={{
-            angle: -45,
-            interval: 0,
-            textAnchor: "end",
-            height: 50, // Increase height to avoid clipping the labels
-            tick: {
-              style: { fontSize: 10 },
-              transform: "translate(-10, 0)", // Adjust label position
-            },
-          }}
-        />
-      </Stack>
-    );
-  }
-  return null;
+      xAxisProps={{
+        angle: -45,
+        interval: 0,
+        textAnchor: "end",
+        height: 50, // Increase height to avoid clipping the labels
+        tick: {
+          style: { fontSize: 10 },
+          transform: "translate(-10, 0)", // Adjust label position
+        },
+      }}
+    />
+  );
 }

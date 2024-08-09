@@ -37,7 +37,7 @@ def debug_task(self):
 
 
 @app.task(bind=True, ignore_result=False)
-def update_portolfio_stats(
+def update_portfolio_stats(
     self, portfolio_id, companies_ids, year, update_api_price=False
 ):
     logger.info(f"Updating portfolio stats for portfolio {portfolio_id}")
@@ -128,7 +128,7 @@ def update_portolfio_stats(
         )
 
         if year != settings.YEAR_FOR_ALL:
-            update_portolfio_stats.delay(
+            update_portfolio_stats.delay(
                 portfolio_id, companies_ids, settings.YEAR_FOR_ALL, update_api_price
             )
 

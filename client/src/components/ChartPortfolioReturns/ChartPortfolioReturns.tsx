@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { LineChart } from "@mantine/charts";
 import { Center, Stack, Title } from "@mantine/core";
@@ -12,9 +12,8 @@ interface Props {
 
 export default function ChartPortfolioReturns({ data, indexData }: Props) {
   const { t } = useTranslation();
-  const [chartData, setChartData] = useState<any>();
 
-  const getSeries = () => {
+  const series = useMemo(() => {
     const baseSeries = [
       {
         name: "returnsPercent",
@@ -35,9 +34,9 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
       });
     }
     return baseSeries;
-  };
+  }, [indexData, t]);
 
-  useEffect(() => {
+  const chartData = useMemo(() => {
     if (data && data.length > 0) {
       const newYears: any = [];
       const returnsPercent: any = [];
@@ -69,10 +68,9 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
           });
         }
       });
-
-      setChartData(returnsPercent);
+      return returnsPercent;
     }
-  }, [data, indexData, t]);
+  }, [data, indexData]);
 
   if (chartData) {
     return (
@@ -86,7 +84,7 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
           data={chartData}
           dataKey="year"
           withLegend
-          series={getSeries()}
+          series={series}
           valueFormatter={(value) => `${value} %`}
         />
       </Stack>

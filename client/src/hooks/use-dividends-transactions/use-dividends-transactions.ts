@@ -1,4 +1,5 @@
-import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
+import { notifications } from "@mantine/notifications";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -37,6 +38,7 @@ export const fetchTransaction = async (transactionId: number | undefined) => {
 };
 
 export const useAddDividendsTransaction = (props?: MutateProps) => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({
       newTransaction,
@@ -53,30 +55,44 @@ export const useAddDividendsTransaction = (props?: MutateProps) => {
     },
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success("Transaction created successfully");
+      notifications.show({
+        color: "green",
+        message: t("Transaction created successfully"),
+      });
       queryClient.invalidateQueries({ queryKey: ["dividendsTransactions"] });
     },
     onError: () => {
-      toast.error("Unable to create transaction");
+      notifications.show({
+        color: "red",
+        message: t("Unable to create transaction"),
+      });
     },
   });
 };
 
 export const useDeleteDividendsTransaction = () => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({ transactionId }: DeleteTransactionMutationProps) =>
       apiClient.delete(`/dividends/${transactionId}/`),
     onSuccess: () => {
-      toast.success("Transaction deleted");
+      notifications.show({
+        color: "green",
+        message: t("Transaction deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["dividendsTransactions"] });
     },
     onError: () => {
-      toast.error("Unable to delete dividends transaction");
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete dividends transaction"),
+      });
     },
   });
 };
 
 export const useUpdateDividendsTransaction = (props?: MutateProps) => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({
       transactionId,
@@ -96,12 +112,18 @@ export const useUpdateDividendsTransaction = (props?: MutateProps) => {
 
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success("Transaction updated");
+      notifications.show({
+        color: "green",
+        message: t("Transaction updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["dividendsTransactions"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error("Unable to update dividends transaction");
+      notifications.show({
+        color: "red",
+        message: t("Unable to update dividends transaction"),
+      });
     },
   });
 };

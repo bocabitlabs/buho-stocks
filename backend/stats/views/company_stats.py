@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from companies.models import Company
 from stats.calculators.company_stats_utils import CompanyStatsCalculator
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
-from stats.tasks import update_portolfio_stats
+from stats.tasks import update_portfolio_stats
 
 logger = logging.getLogger("buho_backend")
 
@@ -28,7 +28,7 @@ class CompanyStatsAPIView(APIView):
     def update_object(self, company_id, year, update_api_price=False):
         logger.debug("Updating company stats")
         company = Company.objects.get(id=company_id)
-        update_portolfio_stats.delay(
+        update_portfolio_stats.delay(
             company.portfolio_id, [company_id], year, update_api_price
         )
         return True

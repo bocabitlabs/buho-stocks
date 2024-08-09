@@ -35,7 +35,6 @@ export default function PortfolioStatsProvider({
   const { data, isLoading, isError, error } = usePortfolioYearStats(
     +portfolioId!,
     selectedYear,
-    undefined,
   );
 
   const onYearChange = (year: any) => {

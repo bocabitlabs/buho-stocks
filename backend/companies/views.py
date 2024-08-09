@@ -3,14 +3,21 @@ import logging
 from django.db.models import OuterRef, Subquery
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import viewsets
+from rest_framework import status, viewsets
 from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from companies.models import Company
-from companies.serializers import CompanySerializer, CompanySerializerGet
+from companies.serializers import (
+    CompanySearchSerializer,
+    CompanySerializer,
+    CompanySerializerGet,
+)
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
 from stats.models.company_stats import CompanyStatsForYear
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 logger = logging.getLogger("buho_backend")
 
@@ -160,3 +167,31 @@ class CompanyViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             return CompanySerializerGet
         return super().get_serializer_class()
+
+
+class CompanySearchAPIView(APIView):
+
+    # 3. Retrieve
+    @swagger_auto_schema(tags=["company_search"])
+    def get(self, request, ticker, *args, **kwargs):
+        """
+        Retrieve the company item with given company_id
+        """
+        if not ticker:
+            return Response(
+                {"res": "Ticker is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        api_client = YFinanceApiClient()
+        searched_company = api_client.get_company_info_by_ticker(ticker)
+
+        logger.debug(f"Company searched: {searched_company}")
+
+        if not searched_company or searched_company.get("quoteType") == "NONE":
+            return Response(None, status=status.HTTP_200_OK)
+
+        logger.debug(f"Company searched: {searched_company}")
+
+        serializer = CompanySearchSerializer(searched_company)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BarChart } from "@mantine/charts";
 import { Center, Loader, Stack, Title } from "@mantine/core";
@@ -9,7 +9,10 @@ interface Props {
   portfolioCurrency: string;
 }
 
-export default function DividendsChart({ stats, portfolioCurrency }: Props) {
+export default function ChartCompanyDividends({
+  stats,
+  portfolioCurrency,
+}: Props) {
   const { t } = useTranslation();
 
   const { resolvedLanguage } = i18next;
@@ -20,9 +23,7 @@ export default function DividendsChart({ stats, portfolioCurrency }: Props) {
     maximumFractionDigits: 2,
   });
 
-  const [data, setData] = useState<any>(null);
-
-  useEffect(() => {
+  const chartStats = useMemo(() => {
     if (stats) {
       const newYears: any = [];
       //     const dividends: any = [];
@@ -41,15 +42,15 @@ export default function DividendsChart({ stats, portfolioCurrency }: Props) {
           });
         }
       });
-      setData(dividendsPerYear);
+      return dividendsPerYear;
     }
-  }, [stats, t]);
+  }, [stats]);
 
-  if (!data) {
+  if (!chartStats) {
     return <Loader />;
   }
 
-  if (stats && portfolioCurrency && data) {
+  if (stats && portfolioCurrency && chartStats) {
     return (
       <Stack>
         <Center>
@@ -58,7 +59,7 @@ export default function DividendsChart({ stats, portfolioCurrency }: Props) {
         <Center>
           <BarChart
             h={400}
-            data={data}
+            data={chartStats}
             dataKey="year"
             series={[{ name: "value", color: "red" }]}
             valueFormatter={(value: number) =>

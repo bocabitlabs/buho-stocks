@@ -1,105 +1,56 @@
-import React, { useEffect } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
 import { PieChart } from "@mantine/charts";
-import { Center, Stack, Title } from "@mantine/core";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 import { getColorShade } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
 interface ChartProps {
-  selectedYear: string;
+  data: IPortfolioYearStats[];
 }
 
-export default function ChartBrokerByCompany({
-  selectedYear,
-}: ChartProps): React.ReactElement | null {
+export default function ChartBrokerByCompany({ data }: ChartProps) {
   const { t } = useTranslation();
-  const [data, setData] = React.useState<any>(null);
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { id } = useParams();
-  const { data: statsData } = usePortfolioYearStats(
-    +id!,
-    selectedYear,
-    "company",
-  );
 
-  // const options = {
-  //   responsive: true,
-  //   plugins: {
-  //     legend: {
-  //       display: false,
-  //       position: "bottom" as const,
-  //     },
-  //     title: {
-  //       display: true,
-  //       text: t("Brokers"),
-  //     },
-  //     tooltip: {
-  //       callbacks: {
-  //         label(context: any) {
-  //           const amount = `${context.label}: ${context.raw} ${t("companies")}`;
-  //           return amount;
-  //         },
-  //       },
-  //     },
-  //   },
-  // };
-
-  useEffect(() => {
-    if (statsData) {
-      const tempData: any = statsData.filter((item: any) => {
+  const filteredData = useMemo(
+    function createChartData() {
+      const filteredCompanies: any = data.filter((item: any) => {
         return item.sharesCount > 0;
       });
 
-      setFilteredChartData(tempData);
-    }
-  }, [statsData]);
+      const brokers: {
+        name: string;
+        value: number;
+        color: string;
+      }[] = [];
 
-  useEffect(() => {
-    async function loadInitialStats() {
-      if (filteredChartData) {
-        console.log(
-          `Loading brokers data for ${filteredChartData.length} companies`,
-        );
+      const res = groupByName(filteredCompanies, "broker");
 
-        const brokers: any[] = [];
-
-        const res = groupByName(filteredChartData, "broker");
-
-        Object.entries(res).forEach(([k, v]) => {
-          brokers.push({
-            name: k,
-            value: (v as any[]).length,
-            color: getColorShade(k),
-          });
+      Object.entries(res).forEach(([k, v]) => {
+        brokers.push({
+          name: k,
+          value: (v as any[]).length,
+          color: getColorShade(k),
         });
+      });
+      brokers.sort((a, b) => b.value - a.value);
 
-        setData(brokers);
-      }
-    }
-    loadInitialStats();
-  }, [filteredChartData, t]);
+      return brokers;
+    },
+    [data],
+  );
 
-  if (data) {
-    return (
-      <Stack>
-        <Center>
-          <Title order={5}>{t("Brokers")}</Title>
-        </Center>
-        <Center>
-          <PieChart
-            withLabelsLine
-            labelsPosition="outside"
-            labelsType="value"
-            withLabels
-            withTooltip
-            data={data}
-            valueFormatter={(value: number) => `${value} ${t("companies")}`}
-          />
-        </Center>
-      </Stack>
-    );
-  }
-  return null;
+  return (
+    <PieChart
+      withLabelsLine
+      labelsPosition="outside"
+      labelsType="value"
+      withLabels
+      withTooltip
+      startAngle={90}
+      endAngle={-270}
+      data={filteredData}
+      valueFormatter={(value: number) => `${value} ${t("companies")}`}
+    />
+  );
 }

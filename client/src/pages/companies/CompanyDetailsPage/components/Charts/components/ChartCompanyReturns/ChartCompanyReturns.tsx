@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { LineChart } from "@mantine/charts";
 import { Center, Stack, Title } from "@mantine/core";
@@ -7,28 +7,23 @@ interface Props {
   stats: any;
 }
 
-export default function ChartPortfolioReturns({ stats }: Props) {
+export default function ChartCompanyReturns({ stats }: Props) {
   const { t } = useTranslation();
-  const [data, setData] = useState<any>(null);
-  const [isDataSet, setIsDataSet] = useState<boolean>(false);
 
-  const getSeries = () => {
-    const baseSeries = [
-      {
-        name: "returnsPercent",
-        label: t<string>("Return"),
-        color: "indigo.6",
-      },
-      {
-        name: "returnWithDividendsPercent",
-        label: t<string>("Return + dividends"),
-        color: "teal.6",
-      },
-    ];
-    return baseSeries;
-  };
+  const series = [
+    {
+      name: "returnsPercent",
+      label: t<string>("Return"),
+      color: "indigo.6",
+    },
+    {
+      name: "returnWithDividendsPercent",
+      label: t<string>("Return + dividends"),
+      color: "teal.6",
+    },
+  ];
 
-  useEffect(() => {
+  const chartData = useMemo(() => {
     if (stats) {
       const newYears: any = [];
       const returnsPercent: any = [];
@@ -56,12 +51,11 @@ export default function ChartPortfolioReturns({ stats }: Props) {
         }
       });
 
-      setData(returnsPercent);
-      setIsDataSet(true);
+      return returnsPercent;
     }
-  }, [stats, t]);
+  }, [stats]);
 
-  if (isDataSet && data) {
+  if (chartData) {
     return (
       <Stack>
         <Center>
@@ -70,10 +64,10 @@ export default function ChartPortfolioReturns({ stats }: Props) {
         <Center />
         <LineChart
           h={300}
-          data={data}
+          data={chartData}
           dataKey="year"
           withLegend
-          series={getSeries()}
+          series={series}
           valueFormatter={(value) => `${value} %`}
         />
       </Stack>

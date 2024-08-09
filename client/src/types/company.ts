@@ -71,3 +71,16 @@ export interface ICompanyRouteParams {
     };
   };
 }
+
+export interface ICompanySearchResult {
+  symbol: string;
+  country: string;
+  financialCurrency: string;
+  industry: string;
+  irWebsite: string;
+  isin: string;
+  longBusinessSummary: string;
+  shortName: string;
+  sectorDisp: string;
+  exchange: string;
+}

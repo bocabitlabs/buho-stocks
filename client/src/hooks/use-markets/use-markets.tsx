@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -91,12 +91,18 @@ export const useAddMarket = (props?: MutateProps) => {
       apiClient.post(`/markets/`, newMarket),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Market created"));
+      notifications.show({
+        color: "green",
+        message: t("Market created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["markets"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to create market"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create market"),
+      });
     },
   });
 };
@@ -107,11 +113,17 @@ export const useDeleteMarket = () => {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/markets/${id}/`),
     onSuccess: () => {
-      toast.success<string>(t("Market deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Market deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["markets"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete market"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete market"),
+      });
     },
   });
 };
@@ -124,12 +136,18 @@ export const useUpdateMarket = (props?: MutateProps) => {
       apiClient.put(`/markets/${id}/`, newMarket),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Market has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("Market has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["markets"] });
     },
     onError: () => {
       props?.onSuccess?.();
-      toast.error<string>(t("Unable to update market"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update market"),
+      });
     },
   });
 };
@@ -141,11 +159,17 @@ export const useInitializeMarkets = () => {
     mutationFn: () => apiClient.post<IMarket[]>(`/initialize-data/markets/`),
 
     onSuccess: () => {
-      toast.success<string>(t("Markets created"));
+      notifications.show({
+        color: "green",
+        message: t("Markets created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["markets"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to create markets"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create markets"),
+      });
     },
   });
 };

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState, MRT_SortingState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -109,12 +109,18 @@ export const useAddStockPrice = (props?: MutateProps) => {
     onSuccess: () => {
       props?.onSuccess?.();
 
-      toast.success<string>(t("Stock price created"));
+      notifications.show({
+        color: "green",
+        message: t("Stock price created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["stock-prices"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to create stock price"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create stock price"),
+      });
     },
   });
 };
@@ -125,11 +131,17 @@ export const useDeleteStockPrice = () => {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/stock-prices/${id}/`),
     onSuccess: () => {
-      toast.success<string>(t("Stock price deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Stock price deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["stock-prices"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete stock price"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete stock price"),
+      });
     },
   });
 };
@@ -143,12 +155,18 @@ export const useUpdateStockPrice = (props?: MutateProps) => {
 
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Stock price has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("Stock price has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["stock-prices"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to update stock price"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update stock price"),
+      });
     },
   });
 };

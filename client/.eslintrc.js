@@ -6,14 +6,12 @@ module.exports = {
   extends: [
     "plugin:vitest/recommended",
     "plugin:testing-library/react",
-    "airbnb",
-    "airbnb-typescript",
     "plugin:import/recommended",
     "plugin:jsx-a11y/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:import/typescript",
     "plugin:react/recommended",
     "plugin:prettier/recommended",
+    "plugin:import/typescript",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -41,13 +39,6 @@ module.exports = {
     "vite.config.ts",
   ],
   rules: {
-    "react/require-default-props": [
-      "error",
-      {
-        classes: "defaultProps",
-        functions: "defaultArguments",
-      },
-    ],
     "comma-dangle": "off",
     "import/order": [
       "error",
@@ -83,6 +74,9 @@ module.exports = {
       },
     ],
     "no-console": "off",
+    'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+    // disallow use of variables before they are defined
+    'no-use-before-define': ['error', { functions: true, classes: true, variables: true }],
     "prettier/prettier": [
       "error",
       {
@@ -94,8 +88,19 @@ module.exports = {
     // "no-console": ["warn", { "allow": ["warn", "error"] }],
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { extensions: [".js", ".ts", ".tsx"] }],
+    "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
+    "react/require-default-props": [
+      "error",
+      {
+        classes: "defaultProps",
+        functions: "defaultArguments",
+      },
+    ],
   },
   settings: {
+    "react": {
+      "version": "detect"
+    },
     "import/resolver": {
       node: {
         moduleDirectory: ["src", "node_modules"],
