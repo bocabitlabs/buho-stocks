@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -104,12 +104,18 @@ export const useAddBenchmark = (props?: MutateProps) => {
       apiClient.post(`/benchmarks/`, newBenchmark),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success(t("Benchmark created"));
+      notifications.show({
+        color: "green",
+        message: t("Benchmark created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error(t("Unable to create benchmark"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create benchmark"),
+      });
     },
   });
 };
@@ -120,11 +126,17 @@ export const useDeleteBenchmark = () => {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/benchmarks/${id}/`),
     onSuccess: () => {
-      toast.success(t("Benchmark deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Benchmark deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
     onError: () => {
-      toast.error(t("Unable to delete benchmark"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete benchmark"),
+      });
     },
   });
 };
@@ -137,12 +149,18 @@ export const useUpdateBenchmark = (props?: MutateProps) => {
       apiClient.put(`/benchmarks/${id}/`, newBenchmark),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success(t("Benchmark has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("Benchmark has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error(t("Unable to update benchmark"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update benchmark"),
+      });
     },
   });
 };
@@ -155,11 +173,17 @@ export const useInitializeBenchmarks = () => {
       apiClient.post<IBenchmark[]>(`/initialize-data/benchmarks/`),
 
     onSuccess: () => {
-      toast.success(t("Benchmarks created"));
+      notifications.show({
+        color: "green",
+        message: t("Benchmarks created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
     onError: () => {
-      toast.error(t("Unable to create benchmarks"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create benchmarks"),
+      });
     },
   });
 };

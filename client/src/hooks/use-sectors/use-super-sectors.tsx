@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -83,11 +83,17 @@ export const useAddSuperSector = (props?: MutateProps) => {
       apiClient.post(`/super-sectors/`, newSector),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Super Sector created"));
+      notifications.show({
+        color: "green",
+        message: t("Super Sector created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["super-sectors"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to create super sector"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create super sector"),
+      });
     },
   });
 };
@@ -98,11 +104,17 @@ export const useDeleteSuperSector = () => {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/super-sectors/${id}/`),
     onSuccess: () => {
-      toast.success<string>(t("Super Sector deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Super Sector deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["super-sectors"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete super sector"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete super sector"),
+      });
     },
   });
 };
@@ -115,11 +127,17 @@ export const useUpdateSuperSector = (props?: MutateProps) => {
       apiClient.put(`/super-sectors/${id}/`, newSector),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Super Sector has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("Super Sector has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["super-sectors"] });
     },
     onError: () => {
-      toast.error<string>(t("Super Unable to update super sector"));
+      notifications.show({
+        color: "red",
+        message: t("Super Unable to update super sector"),
+      });
     },
   });
 };

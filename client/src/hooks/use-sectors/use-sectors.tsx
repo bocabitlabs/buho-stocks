@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
@@ -93,12 +93,18 @@ export const useAddSector = (props?: MutateProps) => {
       apiClient.post(`/sectors/`, newSector),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Sector created"));
+      notifications.show({
+        color: "green",
+        message: t("Sector created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["sectors"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to create sector"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create sector"),
+      });
     },
   });
 };
@@ -109,14 +115,20 @@ export const useDeleteSector = () => {
   return useMutation({
     mutationFn: (id: number) => apiClient.delete(`/sectors/${id}/`),
     onSuccess: (data, variables) => {
-      toast.success<string>(t("Sector deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Sector deleted"),
+      });
       console.log("variables", variables);
       console.log("data", data);
       queryClient.removeQueries({ queryKey: ["sectors", variables] });
       queryClient.invalidateQueries({ queryKey: ["sectors"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete sector"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete sector"),
+      });
     },
   });
 };
@@ -129,12 +141,18 @@ export const useUpdateSector = (props?: MutateProps) => {
       apiClient.put(`/sectors/${id}/`, newSector),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Sector has been updated"));
+      notifications.show({
+        color: "green",
+        message: t("Sector has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["sectors"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to update sector"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update sector"),
+      });
       queryClient.invalidateQueries({ queryKey: ["sectors"] });
     },
   });
@@ -147,11 +165,17 @@ export const useInitializeSectors = () => {
     mutationFn: () => apiClient.post<ISector[]>(`/initialize-data/sectors/`),
 
     onSuccess: () => {
-      toast.success<string>(t("Sectors created"));
+      notifications.show({
+        color: "green",
+        message: t("Sectors created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["sectors"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to create sectors"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to create sectors"),
+      });
     },
   });
 };

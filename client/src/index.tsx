@@ -7,17 +7,17 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc"; // ES 2015
 import ReactDOM from "react-dom/client";
-import "react-toastify/dist/ReactToastify.css";
 import "./i18n";
 import reportWebVitals from "./reportWebVitals";
 import queryClient from "api/query-client";
-import Main from "MainRouter";
 import "@mantine/core/styles.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/dates/styles.css";
 import "mantine-react-table/styles.css";
 import "@mantine/charts/styles.css";
 import "@mantine/tiptap/styles.css";
+import "@mantine/notifications/styles.css";
+import App from "App";
 
 // dependent on utc plugin
 dayjs.extend(utc);
@@ -32,7 +32,7 @@ root.render(
   <React.StrictMode>
     <MantineProvider defaultColorScheme="light">
       <QueryClientProvider client={queryClient}>
-        <Main />
+        <App />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>
     </MantineProvider>

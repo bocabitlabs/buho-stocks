@@ -6,14 +6,29 @@ import { IPortfolioYearStats } from "types/portfolio-year-stats";
 export const fetchYearStats = async (
   portfolioId: number | undefined,
   year: string | undefined,
-  groupBy?: string | undefined,
 ) => {
-  let grouping = "";
-  if (groupBy) {
-    grouping = `?groupBy=${groupBy}`;
-  }
   const { data } = await apiClient.get<IPortfolioYearStats>(
-    `/stats/portfolio/${portfolioId}/year/${year}/${grouping}`,
+    `/stats/portfolio/${portfolioId}/year/${year}/`,
+  );
+  return data;
+};
+
+export const fetchYearStatsByMonth = async (
+  portfolioId: number | undefined,
+  year: string | undefined,
+) => {
+  const { data } = await apiClient.get<IPortfolioYearStats[]>(
+    `/stats/portfolio/${portfolioId}/year/${year}/grouped-by-month/`,
+  );
+  return data;
+};
+
+export const fetchYearStatsByCompany = async (
+  portfolioId: number | undefined,
+  year: string | undefined,
+) => {
+  const { data } = await apiClient.get<IPortfolioYearStats[]>(
+    `/stats/portfolio/${portfolioId}/year/${year}/grouped-by-company/`,
   );
   return data;
 };
@@ -29,19 +44,57 @@ export const fetchAllYearsStats = async (portfolioId: number | undefined) => {
  * Get the portfolio stats for a given year
  * @param portfolioId Portfolio ID
  * @param year Year of the stats: 2020, 2021, etc. or 'all'
- * @param groupBy month, company, undefined
  * @param otherOptions
  * @returns A IPortfolioYearStats object
  */
 export function usePortfolioYearStats(
   portfolioId: number | undefined,
   year: string | undefined,
-  groupBy?: string | undefined,
   otherOptions?: any,
 ) {
   return useQuery<IPortfolioYearStats, Error>({
-    queryKey: ["portfolioYearStats", portfolioId, year, groupBy],
-    queryFn: () => fetchYearStats(portfolioId, year, groupBy),
+    queryKey: ["portfolioYearStats", portfolioId, year],
+    queryFn: () => fetchYearStats(portfolioId, year),
+    enabled: !!portfolioId && !!year,
+    ...otherOptions,
+  });
+}
+
+/**
+ * Get the portfolio stats for a given year
+ * @param portfolioId Portfolio ID
+ * @param year Year of the stats: 2020, 2021, etc. or 'all'
+ * @param otherOptions
+ * @returns A IPortfolioYearStats object
+ */
+export function usePortfolioYearStatsByMonth(
+  portfolioId: number | undefined,
+  year: string | undefined,
+  otherOptions?: any,
+) {
+  return useQuery<IPortfolioYearStats[], Error>({
+    queryKey: ["portfolioYearStats", portfolioId, year, "grouped-by-month"],
+    queryFn: () => fetchYearStatsByMonth(portfolioId, year),
+    enabled: !!portfolioId && !!year,
+    ...otherOptions,
+  });
+}
+
+/**
+ * Get the portfolio stats for a given year
+ * @param portfolioId Portfolio ID
+ * @param year Year of the stats: 2020, 2021, etc. or 'all'
+ * @param otherOptions
+ * @returns A IPortfolioYearStats object
+ */
+export function usePortfolioYearStatsByCompany(
+  portfolioId: number | undefined,
+  year: string | undefined,
+  otherOptions?: any,
+) {
+  return useQuery<IPortfolioYearStats[], Error>({
+    queryKey: ["portfolioYearStats", portfolioId, year, "grouped-by-company"],
+    queryFn: () => fetchYearStatsByCompany(portfolioId, year),
     enabled: !!portfolioId && !!year,
     ...otherOptions,
   });

@@ -10,7 +10,7 @@ from companies.models import Company
 from log_messages.models import LogMessage
 from shares_transactions.models import SharesTransaction
 from shares_transactions.serializers import SharesTransactionSerializer
-from stats.tasks import update_portolfio_stats
+from stats.tasks import update_portfolio_stats
 
 logger = logging.getLogger("buho_backend")
 
@@ -56,7 +56,7 @@ class SharesViewSet(viewsets.ModelViewSet):
 
         update_portfolio = self.request.data.get("updatePortfolio", False)
         if update_portfolio:
-            update_portolfio_stats.delay(
+            update_portfolio_stats.delay(
                 company.portfolio_id, [company.id], transaction_date.year
             )
 

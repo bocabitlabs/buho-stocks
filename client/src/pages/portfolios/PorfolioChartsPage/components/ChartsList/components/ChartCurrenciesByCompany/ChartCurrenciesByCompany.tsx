@@ -1,91 +1,49 @@
-import React, { useEffect } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
 import { PieChart } from "@mantine/charts";
-import { Center, Stack, Title } from "@mantine/core";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 import { getColorShade } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
 interface ChartProps {
-  selectedYear: string;
+  data: IPortfolioYearStats[];
 }
 
-export default function ChartCurrenciesByCompany({
-  selectedYear,
-}: ChartProps): React.ReactElement | null {
+export default function ChartCurrenciesByCompany({ data }: ChartProps) {
   const { t } = useTranslation();
-  const [data, setData] = React.useState<any>(null);
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { id } = useParams();
-  const { data: statsData } = usePortfolioYearStats(
-    +id!,
-    selectedYear,
-    "company",
-  );
 
-  // const renderLabel = (entry: any) => {
-  //   console.log("entry", entry);
-  //   return entry.name;
-  // };
-
-  useEffect(() => {
-    if (statsData) {
-      const tempData: any = statsData.filter((item: any) => {
+  const filteredData = useMemo(
+    function createChartData() {
+      const filteredCompanies: any = data.filter((item: any) => {
         return item.sharesCount > 0;
       });
+      const currencies: { name: string; value: number; color: string }[] = [];
+      const res = groupByName(filteredCompanies, "currencyCode");
 
-      setFilteredChartData(tempData);
-    }
-  }, [statsData]);
-
-  useEffect(() => {
-    async function loadInitialStats() {
-      if (filteredChartData) {
-        console.log(
-          `Loading currencies data for ${filteredChartData.length} companies`,
-        );
-
-        const currencies: any[] = [];
-
-        const res = groupByName(filteredChartData, "currencyCode");
-
-        Object.entries(res).forEach(([k, v]) => {
-          currencies.push({
-            name: k,
-            value: (v as any[]).length,
-            color: getColorShade(k),
-          });
+      Object.entries(res).forEach(([k, v]) => {
+        currencies.push({
+          name: k,
+          value: (v as any[]).length,
+          color: getColorShade(k),
         });
-        setData(currencies);
-      }
-    }
-    loadInitialStats();
-  }, [filteredChartData, t]);
+      });
+      currencies.sort((a, b) => b.value - a.value);
+      return currencies;
+    },
+    [data],
+  );
 
-  if (data) {
-    return (
-      <Stack>
-        <Center>
-          <Title order={5}>{t("Currencies")}</Title>
-        </Center>
-        <Center>
-          <PieChart
-            withLabelsLine
-            labelsPosition="outside"
-            labelsType="value"
-            withLabels
-            data={data}
-            withTooltip
-            valueFormatter={(value: number) => `${value} ${t("companies")}`}
-            // pieProps={{
-            //   label: renderLabel,
-            //   dataKey: "value",
-            // }}
-          />
-        </Center>
-      </Stack>
-    );
-  }
-  return null;
+  return (
+    <PieChart
+      withLabelsLine
+      labelsPosition="outside"
+      labelsType="value"
+      withLabels
+      data={filteredData}
+      withTooltip
+      startAngle={90}
+      endAngle={-270}
+      valueFormatter={(value: number) => `${value} ${t("companies")}`}
+    />
+  );
 }

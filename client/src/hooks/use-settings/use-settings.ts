@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -26,12 +26,18 @@ export const useUpdateSettings = (props?: MutateProps) => {
       apiClient.put(`/settings/`, newSettings),
     onSuccess: () => {
       props?.onSuccess?.();
-      toast.success<string>(t("Settings updated succesfully"));
+      notifications.show({
+        color: "green",
+        message: t("Settings updated succesfully"),
+      });
       queryClient.invalidateQueries({ queryKey: ["settings"] });
     },
     onError: () => {
       props?.onError?.();
-      toast.error<string>(t("Unable to update settings"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to update settings"),
+      });
     },
   });
 };

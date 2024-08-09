@@ -1,4 +1,3 @@
-import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Group, Select, SelectProps } from "@mantine/core";
 import { IconCheck } from "@tabler/icons-react";
@@ -13,7 +12,7 @@ interface Props {
 export default function CountrySelector({
   form,
   fieldName = "countryCode",
-}: Readonly<Props>): ReactElement {
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
   const countriesOptions = countries?.map((country: any) => ({

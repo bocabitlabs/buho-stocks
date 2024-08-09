@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -29,18 +29,32 @@ export const fetchPortfolio = async (portfolioId: number | undefined) => {
   return data;
 };
 
-export const useAddPortfolio = () => {
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
+export const useAddPortfolio = (props?: MutateProps) => {
   const { t } = useTranslation();
 
   return useMutation({
     mutationFn: (newPortfolio: IPortfolioFormFields) =>
       apiClient.post(`/portfolios/`, newPortfolio),
     onSuccess: () => {
-      toast.success<string>(t("Portfolio created"));
+      props?.onSuccess?.();
+      notifications.show({
+        color: "green",
+        message: t("Portfolio created"),
+      });
       queryClient.invalidateQueries({ queryKey: ["portfolios"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to create portfolio"));
+      props?.onError?.();
+
+      notifications.show({
+        color: "red",
+        message: t("Unable to create portfolio"),
+      });
     },
   });
 };
@@ -52,27 +66,43 @@ export const useDeletePortfolio = () => {
     mutationFn: ({ portfolioId }: DeleteMutationProps) =>
       apiClient.delete(`/portfolios/${portfolioId}/`),
     onSuccess: () => {
-      toast.success<string>(t("Portfolio deleted"));
+      notifications.show({
+        color: "green",
+        message: t("Portfolio deleted"),
+      });
       queryClient.invalidateQueries({ queryKey: ["portfolios"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete portfolio"));
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete portfolio"),
+      });
     },
   });
 };
 
-export const useUpdatePortfolio = () => {
+export const useUpdatePortfolio = (props?: MutateProps) => {
   const { t } = useTranslation();
 
   return useMutation({
     mutationFn: ({ portfolioId, newPortfolio }: UpdateMutationProps) =>
       apiClient.put(`/portfolios/${portfolioId}/`, newPortfolio),
     onSuccess: () => {
-      toast.success<string>(t("Portfolio has been updated"));
+      props?.onSuccess?.();
+
+      notifications.show({
+        color: "green",
+        message: t("Portfolio has been updated"),
+      });
       queryClient.invalidateQueries({ queryKey: ["portfolios"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to update portfolio"));
+      props?.onError?.();
+
+      notifications.show({
+        color: "red",
+        message: t("Unable to update portfolio"),
+      });
     },
   });
 };

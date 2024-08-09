@@ -11,11 +11,13 @@ import {
   Image,
   Text,
   Input,
+  Grid,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
 import { randomId } from "@mantine/hooks";
 import { NotesField } from "./components/NotesField/NotesField";
+import SearchButton from "./components/SearchButton/SearchButton";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import { ICompany, ICompanyFormFields } from "types/company";
 import { ICurrency } from "types/currency";
@@ -31,7 +33,7 @@ interface Props {
   sectors: ISector[];
   markets: IMarket[];
   onCloseCallback: () => void;
-  onSubmitCallback: (values: any) => void;
+  onSubmitCallback: Function;
 }
 
 function CompanyForm({
@@ -129,20 +131,27 @@ function CompanyForm({
       size="lg"
     >
       <form onSubmit={form.onSubmit(onSubmit)}>
+        <Grid>
+          <Grid.Col span={12}>
+            <Group align="flex-end">
+              <TextInput
+                withAsterisk
+                label={t("Ticker")}
+                key={form.key("ticker")}
+                // eslint-disable-next-line react/jsx-props-no-spreading
+                {...form.getInputProps("ticker")}
+              />
+              <SearchButton form={form} />
+            </Group>
+          </Grid.Col>
+        </Grid>
         <TextInput
+          mt="md"
           withAsterisk
           label={t("Name")}
           key={form.key("name")}
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("name")}
-        />
-        <TextInput
-          mt="md"
-          withAsterisk
-          label={t("Ticker")}
-          key={form.key("ticker")}
-          // eslint-disable-next-line react/jsx-props-no-spreading
-          {...form.getInputProps("ticker")}
         />
         <TextInput
           mt="md"

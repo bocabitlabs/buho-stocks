@@ -1,12 +1,14 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
 import { BarChart } from "@mantine/charts";
-import { Center, Stack, Title } from "@mantine/core";
 import i18next from "i18next";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 import { getColorShade } from "utils/colors";
+
+interface Props {
+  data: IPortfolioYearStats[];
+  currency: string;
+}
 
 function MonthLabel({ payload, x, y }: any) {
   const { t } = useTranslation();
@@ -26,14 +28,10 @@ function MonthLabel({ payload, x, y }: any) {
   );
 }
 
-export default function ChartPortfolioDividendsPerMonth() {
-  const { t } = useTranslation();
-  const { id } = useParams();
-  const { data: portfolio } = usePortfolio(+id!);
-
-  const [chartData, setChartData] = useState<any>(null);
-  const { data } = usePortfolioYearStats(+id!, "all", "month");
-
+export default function ChartPortfolioDividendsPerMonth({
+  data,
+  currency,
+}: Props) {
   const { resolvedLanguage } = i18next;
 
   const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
@@ -42,9 +40,9 @@ export default function ChartPortfolioDividendsPerMonth() {
     maximumFractionDigits: 2,
   });
 
-  useEffect(() => {
-    function getChartMonths() {
-      return [
+  const filteredData = useMemo(
+    function createChartData() {
+      const months = [
         "January",
         "February",
         "March",
@@ -58,17 +56,15 @@ export default function ChartPortfolioDividendsPerMonth() {
         "November",
         "December",
       ];
-    }
-    if (data) {
-      const filteredChartData: any = [];
-      const months = getChartMonths();
+
+      const results: any = [];
 
       // Create an object with the format above for each month
       months.forEach((month) => {
-        filteredChartData.push({ month });
+        results.push({ month });
         Object.entries(data).forEach(([k, v]) => {
           const monthIndex = months.indexOf(month);
-          filteredChartData[monthIndex][k] = v[month as keyof typeof v];
+          results[monthIndex][k] = v[month as keyof typeof v];
         });
       });
 
@@ -80,54 +76,46 @@ export default function ChartPortfolioDividendsPerMonth() {
 
       const tempChartData = {
         series,
-        data: filteredChartData,
+        data: results,
       };
 
-      setChartData(tempChartData);
-    }
-  }, [data, t]);
+      return tempChartData;
+    },
+    [data],
+  );
 
-  if (chartData) {
-    return (
-      <Stack>
-        <Center>
-          <Title order={5}>{t("Portfolio Dividends per month")}</Title>
-        </Center>
-        <Center />
-        <BarChart
-          h={400}
-          data={chartData.data}
-          dataKey="month"
-          series={chartData.series}
-          tooltipProps={{
-            itemSorter: (item: any) => {
-              console.log("Item", item);
-              return item.name;
-            },
-          }}
-          valueFormatter={(value: number) =>
-            `${numberFormatter.format(value)} ${portfolio.baseCurrency.code}`
-          }
-          xAxisProps={{
-            angle: -45,
-            tick: <MonthLabel />,
-            // label: {
-            //   formatter: (value: string) => {
-            //     // console.log("Value", value);
-            //     return t(value);
-            //   },
-            // },
-            // interval: 0,
-            // textAnchor: "end",
-            // height: 50, // Increase height to avoid clipping the labels
-            // tick: {
-            //   style: { fontSize: 10 },
-            //   transform: "translate(-10, 0)", // Adjust label position
-            // },
-          }}
-        />
-      </Stack>
-    );
-  }
-  return null;
+  return (
+    <BarChart
+      h={400}
+      data={filteredData.data}
+      dataKey="month"
+      series={filteredData.series}
+      tooltipProps={{
+        itemSorter: (item: any) => {
+          console.log("Item", item);
+          return item.name;
+        },
+      }}
+      valueFormatter={(value: number) =>
+        `${numberFormatter.format(value)} ${currency}`
+      }
+      xAxisProps={{
+        angle: -45,
+        tick: <MonthLabel />,
+        // label: {
+        //   formatter: (value: string) => {
+        //     // console.log("Value", value);
+        //     return t(value);
+        //   },
+        // },
+        // interval: 0,
+        // textAnchor: "end",
+        // height: 50, // Increase height to avoid clipping the labels
+        // tick: {
+        //   style: { fontSize: 10 },
+        //   transform: "translate(-10, 0)", // Adjust label position
+        // },
+      }}
+    />
+  );
 }
