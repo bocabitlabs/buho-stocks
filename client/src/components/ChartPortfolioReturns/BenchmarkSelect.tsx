@@ -5,6 +5,7 @@ import { IBenchmark } from "types/benchmark";
 
 interface Props {
   benchmarks: IBenchmark[];
+  // eslint-disable-next-line no-unused-vars
   onChangeCallback: (value: string) => void;
 }
 

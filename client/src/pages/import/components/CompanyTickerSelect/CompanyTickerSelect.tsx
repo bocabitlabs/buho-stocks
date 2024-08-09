@@ -6,6 +6,7 @@ import { ICompany } from "types/company";
 interface Props {
   companies: ICompany[];
   initialValue: ICompany | undefined;
+  // eslint-disable-next-line no-unused-vars
   onSelect: (company: any) => void;
   withAsterisk?: boolean;
   description?: string;
