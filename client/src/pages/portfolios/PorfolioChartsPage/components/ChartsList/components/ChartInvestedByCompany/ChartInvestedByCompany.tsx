@@ -10,7 +10,6 @@ interface ChartProps {
 
 export default function ChartInvestedByCompany({ data, currency }: ChartProps) {
   const {
-    t,
     i18n: { resolvedLanguage },
   } = useTranslation();
 

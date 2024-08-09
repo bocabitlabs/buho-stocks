@@ -18,6 +18,7 @@ interface IProps {
   portfolioBaseCurrency: string;
   isVisible: boolean;
   onCloseCallback: () => void;
+  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: ISharesTransactionFormFields) => void;
 }
 

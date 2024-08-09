@@ -5,6 +5,7 @@ import { IBenchmarkYearFormFields } from "types/benchmark";
 
 interface AddFormProps {
   benchmarkId: number;
+  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: IBenchmarkYearFormFields) => void;
 }
 

@@ -9,6 +9,7 @@ interface AddEditFormProps {
   isUpdate?: boolean;
   exchangeRate?: IExchangeRate;
   onCloseCallback: () => void;
+  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: IExchangeRateFormFields) => void;
 }
 

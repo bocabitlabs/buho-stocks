@@ -17,7 +17,7 @@ import CountryFlag from "components/CountryFlag/CountryFlag";
 import { useDeleteMarket, useMarkets } from "hooks/use-markets/use-markets";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { IMarket } from "types/market";
-import convertToTimezone from "utils/dates";
+import { convertToTimezone } from "utils/dates";
 
 interface Props {
   mrtLocalization: MRT_Localization;

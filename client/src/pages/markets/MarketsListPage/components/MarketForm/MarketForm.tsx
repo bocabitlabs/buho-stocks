@@ -22,6 +22,7 @@ interface AddEditFormProps {
   data?: IMarket;
   isUpdate?: boolean;
   onCloseCallback?: () => void;
+  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: IMarketFormFields) => void;
 }
 

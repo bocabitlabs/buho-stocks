@@ -7,6 +7,7 @@ import { ICompany } from "types/company";
 interface Props {
   portfolioId: number | undefined;
   ticker: string;
+  // eslint-disable-next-line no-unused-vars
   onSelect: (company: any) => void;
   withAsterisk?: boolean;
   form: any;

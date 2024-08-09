@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Select } from "@mantine/core";
 
 interface Props {
+  // eslint-disable-next-line no-unused-vars
   onYearChange: (year: any) => void;
   years: number[];
   selectedYear: string;
