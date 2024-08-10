@@ -36,7 +36,7 @@ export const getAxiosHeadersWithAuth = () => ({
 const url = import.meta.env.VITE_API_URL || window.location.origin;
 
 const apiClient = axios.create({
-  baseURL: url,
+  baseURL: `${url}/api/v1/`,
 });
 
 export { apiClient, getAxiosOptionsWithAuth };
