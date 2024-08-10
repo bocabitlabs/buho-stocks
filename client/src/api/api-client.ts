@@ -31,8 +31,12 @@ const getAxiosOptionsWithAuth = () => ({
 export const getAxiosHeadersWithAuth = () => ({
   Accept: "application/json",
 });
+
+// URL must be set in .env file or if it is empty, get the current URL base
+const url = import.meta.env.VITE_API_URL || window.location.origin;
+
 const apiClient = axios.create({
-  baseURL: `${import.meta.env.VITE_API_URL}/api/v1/`,
+  baseURL: url,
 });
 
 export { apiClient, getAxiosOptionsWithAuth };
