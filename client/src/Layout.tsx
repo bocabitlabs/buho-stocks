@@ -1,16 +1,16 @@
 import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import {
   AppShell,
   Burger,
   Group,
+  Loader,
   ScrollArea,
   useMantineColorScheme,
   useMantineTheme,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { notifications, Notifications } from "@mantine/notifications";
+import { Notifications } from "@mantine/notifications";
 import * as Sentry from "@sentry/react";
 import Logo from "components/Logo/Logo";
 import NavigationLinks from "components/NavigationLinks/NavigationLinks";
@@ -32,16 +32,7 @@ function Layout() {
     close();
   }, [location]);
 
-  const { t } = useTranslation();
-
-  const { data, error: errorSettings } = useSettings({
-    onError: () => {
-      notifications.show({
-        color: "red",
-        message: t("Unable to load settings"),
-      });
-    },
-  });
+  const { data, isLoading, error, isError } = useSettings();
 
   useEffect(() => {
     if (data) {
@@ -60,8 +51,12 @@ function Layout() {
     }
   }, [data]);
 
-  if (errorSettings) {
-    return <div>Unable to fetch application&apos;s settings.</div>;
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  if (isError) {
+    return <div>{error?.message}</div>;
   }
 
   return (
