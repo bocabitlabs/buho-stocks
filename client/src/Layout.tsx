@@ -59,56 +59,64 @@ function Layout() {
     return <div>{error?.message}</div>;
   }
 
-  return (
-    <AppShell
-      header={{ height: 60 }}
-      navbar={{
-        width: 300,
-        breakpoint: "sm",
-        collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
-      }}
-      padding="md"
-    >
-      <AppShell.Header>
-        <Group h="100%" px="md" justify="space-between">
-          <Group>
-            <Burger
-              opened={mobileOpened}
-              onClick={toggleMobile}
-              hiddenFrom="sm"
-              size="sm"
-            />
-            <Burger
-              opened={desktopOpened}
-              onClick={toggleDesktop}
-              visibleFrom="sm"
-              size="sm"
-            />
-            <Logo />
-          </Group>
-          <Group>
-            <ToggleThemeButton />
-            <TasksModal />
-          </Group>
-        </Group>
-      </AppShell.Header>
-      <AppShell.Navbar p="md">
-        <AppShell.Section my="md" component={ScrollArea}>
-          <NavigationLinks />
-        </AppShell.Section>
-      </AppShell.Navbar>
-      <AppShell.Main
-        style={{
-          backgroundColor: colorScheme === "dark" ? "" : theme.colors.gray[0],
+  if (data) {
+    return (
+      <AppShell
+        header={{ height: 60 }}
+        navbar={{
+          width: 300,
+          breakpoint: "sm",
+          collapsed: { mobile: !mobileOpened, desktop: !desktopOpened },
         }}
+        padding="md"
       >
-        <Outlet />
-        <PageFooter />
-      </AppShell.Main>
-      <ScrollRestoration />
-      <Notifications />
-    </AppShell>
-  );
+        <AppShell.Header>
+          <Group h="100%" px="md" justify="space-between">
+            <Group>
+              <Burger
+                opened={mobileOpened}
+                onClick={toggleMobile}
+                hiddenFrom="sm"
+                size="sm"
+              />
+              <Burger
+                opened={desktopOpened}
+                onClick={toggleDesktop}
+                visibleFrom="sm"
+                size="sm"
+              />
+              <Logo />
+            </Group>
+            <Group visibleFrom="sm">
+              <ToggleThemeButton />
+              <TasksModal />
+            </Group>
+          </Group>
+        </AppShell.Header>
+        <AppShell.Navbar p="md">
+          <AppShell.Section hiddenFrom="sm">
+            <Group>
+              <ToggleThemeButton />
+              <TasksModal />
+            </Group>
+          </AppShell.Section>
+          <AppShell.Section my="md" component={ScrollArea}>
+            <NavigationLinks />
+          </AppShell.Section>
+        </AppShell.Navbar>
+        <AppShell.Main
+          style={{
+            backgroundColor: colorScheme === "dark" ? "" : theme.colors.gray[0],
+          }}
+        >
+          <Outlet />
+          <PageFooter />
+        </AppShell.Main>
+        <ScrollRestoration />
+        <Notifications />
+      </AppShell>
+    );
+  }
 }
 
 export default Layout;

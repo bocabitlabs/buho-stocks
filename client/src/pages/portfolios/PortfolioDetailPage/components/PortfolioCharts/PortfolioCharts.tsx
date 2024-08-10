@@ -5,12 +5,12 @@ import ChartPortfolioReturnsProvider from "components/ChartPortfolioReturns/Char
 export default function Charts() {
   return (
     <Grid>
-      <Grid.Col span={6}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
         <Paper p="lg" shadow="xs">
           <ChartPortfolioReturnsProvider />
         </Paper>
       </Grid.Col>
-      <Grid.Col span={6}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
         <Paper p="lg" shadow="xs">
           <ChartPortfolioDividendsProvider />
         </Paper>

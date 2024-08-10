@@ -22,7 +22,7 @@ export default function ChartInvestedByCompanyYearly({
   const filteredData = useMemo(
     function createChartData() {
       const filteredCompanies: any = data.filter((item: any) => {
-        return item.sharesCount > 0;
+        return item.sharesCount > 0 && item.invested > 0;
       });
 
       const companies: {
@@ -63,10 +63,8 @@ export default function ChartInvestedByCompanyYearly({
         interval: 0,
         textAnchor: "end",
         height: 50, // Increase height to avoid clipping the labels
-        tick: {
-          style: { fontSize: 10 },
-          transform: "translate(-10, 0)", // Adjust label position
-        },
+        tickSize: 10,
+        transform: "translate(-10, 0)",
       }}
     />
   );

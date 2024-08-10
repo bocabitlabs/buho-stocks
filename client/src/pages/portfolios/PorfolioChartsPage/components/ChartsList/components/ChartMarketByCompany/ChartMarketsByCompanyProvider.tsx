@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Center, Loader, Stack, Title } from "@mantine/core";
+import { useElementSize } from "@mantine/hooks";
 import ChartMarketByCompany from "./ChartMarketByCompany";
 import { usePortfolioYearStatsByCompany } from "hooks/use-stats/use-portfolio-stats";
 
@@ -17,7 +18,7 @@ export default function ChartMarketsByCompanyProvider({ selectedYear }: Props) {
     isError,
     error,
   } = usePortfolioYearStatsByCompany(+id!, selectedYear);
-
+  const { ref, width } = useElementSize();
   if (isLoading) {
     return <Loader />;
   }
@@ -31,8 +32,8 @@ export default function ChartMarketsByCompanyProvider({ selectedYear }: Props) {
         <Center>
           <Title order={5}>{t("Markets")}</Title>
         </Center>
-        <Center>
-          <ChartMarketByCompany data={statsData} />
+        <Center ref={ref}>
+          <ChartMarketByCompany data={statsData} width={width} />
         </Center>
       </Stack>
     );

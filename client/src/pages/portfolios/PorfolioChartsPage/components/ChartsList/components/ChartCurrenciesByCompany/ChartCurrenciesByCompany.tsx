@@ -7,6 +7,7 @@ import { groupByName } from "utils/grouping";
 
 interface ChartProps {
   data: IPortfolioYearStats[];
+  width: number;
 }
 
 export default function ChartCurrenciesByCompany({ data }: ChartProps) {

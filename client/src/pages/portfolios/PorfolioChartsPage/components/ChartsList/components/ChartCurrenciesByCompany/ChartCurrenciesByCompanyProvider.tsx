@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Center, Loader, Stack, Title } from "@mantine/core";
+import { useElementSize } from "@mantine/hooks";
 import ChartCurrenciesByCompany from "./ChartCurrenciesByCompany";
 import { usePortfolioYearStatsByCompany } from "hooks/use-stats/use-portfolio-stats";
 
@@ -18,7 +19,7 @@ const ChartCurrenciesByCompanyProvider = ({ selectedYear }: Props) => {
     isError,
     error,
   } = usePortfolioYearStatsByCompany(+id!, selectedYear);
-
+  const { ref, width } = useElementSize();
   if (isLoading) {
     return <Loader />;
   }
@@ -32,8 +33,8 @@ const ChartCurrenciesByCompanyProvider = ({ selectedYear }: Props) => {
         <Center>
           <Title order={5}>{t("Currencies")}</Title>
         </Center>
-        <Center>
-          <ChartCurrenciesByCompany data={statsData} />
+        <Center ref={ref}>
+          <ChartCurrenciesByCompany data={statsData} width={width} />
         </Center>
       </Stack>
     );

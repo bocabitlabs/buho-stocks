@@ -58,10 +58,8 @@ export default function ChartInvestedByCompany({ data, currency }: ChartProps) {
         interval: 0,
         textAnchor: "end",
         height: 50, // Increase height to avoid clipping the labels
-        tick: {
-          style: { fontSize: 10 },
-          transform: "translate(-10, 0)", // Adjust label position
-        },
+        tickSize: 10,
+        transform: "translate(-10, 0)",
       }}
     />
   );

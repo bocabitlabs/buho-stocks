@@ -59,12 +59,12 @@ export default function ChartsList() {
 
   return (
     <Grid>
-      <Grid.Col span={6}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
         <Paper p="xl" shadow="xs">
           <ChartPortfolioReturnsProvider />
         </Paper>
       </Grid.Col>
-      <Grid.Col span={6}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
         <Paper p="xl" shadow="xs">
           <ChartPortfolioDividendsProvider />
         </Paper>
@@ -141,27 +141,27 @@ export default function ChartsList() {
               </Paper>
             </Container>
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
             <Paper p="xl" shadow="xs">
               <ChartSectorsByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
-          <Grid.Col span={6}>
+          <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
             <Paper p="xl" shadow="xs">
               <ChartSuperSectorsByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={{ base: 12, md: 4, lg: 4 }}>
             <Paper p="xl" shadow="xs">
               <ChartCurrenciesByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={{ base: 12, md: 4, lg: 4 }}>
             <Paper p="xl" shadow="xs">
               <ChartBrokerByCompanyProvider selectedYear={selectedYear} />
             </Paper>
           </Grid.Col>
-          <Grid.Col span={4}>
+          <Grid.Col span={{ base: 12, md: 4, lg: 4 }}>
             <Paper p="xl" shadow="xs">
               <ChartMarketsByCompanyProvider selectedYear={selectedYear} />
             </Paper>

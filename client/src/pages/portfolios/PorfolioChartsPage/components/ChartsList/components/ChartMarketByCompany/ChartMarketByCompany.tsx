@@ -7,9 +7,10 @@ import { groupByName } from "utils/grouping";
 
 interface ChartProps {
   data: IPortfolioYearStats[];
+  width: number;
 }
 
-export default function ChartMarketByCompany({ data }: ChartProps) {
+export default function ChartMarketByCompany({ data, width }: ChartProps) {
   const { t } = useTranslation();
 
   const filteredData = useMemo(
@@ -45,6 +46,7 @@ export default function ChartMarketByCompany({ data }: ChartProps) {
       withTooltip
       startAngle={90}
       endAngle={-270}
+      size={width}
       valueFormatter={(value: number) => `${value} ${t("companies")}`}
     />
   );

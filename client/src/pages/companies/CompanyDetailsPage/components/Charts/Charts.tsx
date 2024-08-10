@@ -13,12 +13,12 @@ export default function Charts({ stats, portfolioCurrency }: Props) {
   }
   return (
     <Grid>
-      <Grid.Col span={6}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
         <Paper p="lg" shadow="xs">
           <ChartCompanyReturns stats={stats} />
         </Paper>
       </Grid.Col>
-      <Grid.Col span={6}>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
         <Paper p="lg" shadow="xs">
           <ChartCompanyDividends
             stats={stats}
