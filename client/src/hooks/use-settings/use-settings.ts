@@ -10,7 +10,8 @@ interface UpdateSettingsMutationProps {
 }
 
 export const fetchSettings = async () => {
-  const { data } = await apiClient.get<ISettings>("/settings/");
+  const fetchURL = new URL("settings/", apiClient.defaults.baseURL);
+  const { data } = await apiClient.get<ISettings>(fetchURL.href);
   return data;
 };
 
@@ -22,8 +23,11 @@ interface MutateProps {
 export const useUpdateSettings = (props?: MutateProps) => {
   const { t } = useTranslation();
   return useMutation({
-    mutationFn: ({ newSettings }: UpdateSettingsMutationProps) =>
-      apiClient.put(`/settings/`, newSettings),
+    mutationFn: ({ newSettings }: UpdateSettingsMutationProps) => {
+      const fetchURL = new URL("settings/", apiClient.defaults.baseURL);
+
+      return apiClient.put(fetchURL.href, newSettings);
+    },
     onSuccess: () => {
       props?.onSuccess?.();
       notifications.show({

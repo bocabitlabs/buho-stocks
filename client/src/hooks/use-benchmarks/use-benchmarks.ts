@@ -24,7 +24,7 @@ interface Params {
 }
 
 export const fetchBenchmarks = async (pagination: MRT_PaginationState) => {
-  const fetchURL = new URL("/api/v1/benchmarks/", apiClient.defaults.baseURL);
+  const fetchURL = new URL("benchmarks/", apiClient.defaults.baseURL);
 
   fetchURL.searchParams.set(
     "offset",
@@ -47,7 +47,7 @@ export function useBenchmarks({
 }
 
 export const fetchAllBenchmarks = async () => {
-  const fetchURL = new URL("/api/v1/benchmarks/", apiClient.defaults.baseURL);
+  const fetchURL = new URL("benchmarks/", apiClient.defaults.baseURL);
 
   const { data } = await apiClient.get<IBenchmark[]>(fetchURL.href);
   return data;
@@ -61,7 +61,9 @@ export function useAllBenchmarks() {
 }
 
 export const fetchBenchmarkValues = async (id: number | undefined) => {
-  const { data } = await apiClient.get<IBenchmark[]>(`/benchmarks/${id}/`);
+  const fetchURL = new URL(`benchmarks/${id}/`, apiClient.defaults.baseURL);
+
+  const { data } = await apiClient.get<IBenchmark[]>(fetchURL.href);
   return data;
 };
 
@@ -78,7 +80,9 @@ export const fetchBenchmark = async (id: number | undefined) => {
   if (!id) {
     throw new Error("Id is required");
   }
-  const { data } = await apiClient.get<IBenchmark>(`/benchmarks/${id}/`);
+  const fetchURL = new URL(`benchmarks/${id}/`, apiClient.defaults.baseURL);
+
+  const { data } = await apiClient.get<IBenchmark>(fetchURL.href);
   return data;
 };
 
@@ -100,8 +104,10 @@ export const useAddBenchmark = (props?: MutateProps) => {
   const { t } = useTranslation();
 
   return useMutation({
-    mutationFn: (newBenchmark: IBenchmarkFormFields) =>
-      apiClient.post(`/benchmarks/`, newBenchmark),
+    mutationFn: (newBenchmark: IBenchmarkFormFields) => {
+      const fetchURL = new URL(`benchmarks/`, apiClient.defaults.baseURL);
+      return apiClient.post(fetchURL.href, newBenchmark);
+    },
     onSuccess: () => {
       props?.onSuccess?.();
       notifications.show({

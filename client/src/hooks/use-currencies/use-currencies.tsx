@@ -25,7 +25,7 @@ interface Params {
 export const fetchCurrencies = async (
   pagination: MRT_PaginationState | undefined,
 ) => {
-  const fetchURL = new URL("/api/v1/currencies/", apiClient.defaults.baseURL);
+  const fetchURL = new URL("currencies/", apiClient.defaults.baseURL);
   if (pagination) {
     fetchURL.searchParams.set(
       "offset",

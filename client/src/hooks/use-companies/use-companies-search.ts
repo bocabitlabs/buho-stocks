@@ -4,7 +4,7 @@ import { ICompanySearchResult } from "types/company";
 
 export const fetchCompanySearch = async (ticker: string | undefined) => {
   const fetchURL = new URL(
-    `/api/v1/companies/search/${ticker}/`,
+    `companies/search/${ticker}/`,
     apiClient.defaults.baseURL,
   );
 

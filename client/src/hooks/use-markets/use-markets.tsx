@@ -25,7 +25,7 @@ interface Params {
 export const fetchMarkets = async (
   pagination: MRT_PaginationState | undefined,
 ) => {
-  const fetchURL = new URL("/api/v1/markets/", apiClient.defaults.baseURL);
+  const fetchURL = new URL("markets/", apiClient.defaults.baseURL);
   if (pagination) {
     fetchURL.searchParams.set(
       "offset",
@@ -65,7 +65,9 @@ export const fetchMarket = async (marketId: number | undefined) => {
   if (!marketId) {
     throw new Error("marketId is required");
   }
-  const { data } = await apiClient.get<IMarket>(`/markets/${marketId}/`);
+  const fetchURL = new URL(`markets/${marketId}/`, apiClient.defaults.baseURL);
+
+  const { data } = await apiClient.get<IMarket>(fetchURL.href);
   return data;
 };
 
