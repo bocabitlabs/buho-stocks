@@ -31,15 +31,16 @@ function SettingsForm({
   const form = useForm<ISettingsFormFields>({
     mode: "uncontrolled",
     initialValues: {
-      language: settings.language ?? "en",
-      timezone: settings.timezone ?? "UTC",
-      sentryDsn: settings.sentryDsn ?? "",
-      sentryEnabled: settings.sentryEnabled || false,
-      companySortBy: settings.companySortBy ?? "",
-      companyDisplayMode: settings.companyDisplayMode ?? "",
-      mainPortfolio: settings.mainPortfolio ?? "",
-      portfolioSortBy: settings.portfolioSortBy ?? "",
-      portfolioDisplayMode: settings.portfolioDisplayMode ?? "",
+      companySortBy: settings.companySortBy,
+      companyDisplayMode: settings.companyDisplayMode,
+      language: settings.language,
+      mainPortfolio: settings.mainPortfolio,
+      portfolioSortBy: settings.portfolioSortBy,
+      portfolioDisplayMode: settings.portfolioDisplayMode,
+      sentryDsn: settings.sentryDsn,
+      sentryEnabled: settings.sentryEnabled,
+      displayWelcome: settings.displayWelcome,
+      timezone: settings.timezone,
     },
   });
 
@@ -93,14 +94,21 @@ function SettingsForm({
 
           <TextInput
             mt="md"
-            withAsterisk
             label={t("Sentry DSN")}
             key={form.key("sentryDsn")}
             // eslint-disable-next-line react/jsx-props-no-spreading
             {...form.getInputProps("sentryDsn")}
           />
 
-          <Group justify="space-between" mt="md">
+          <Checkbox
+            mt="md"
+            label={t("Show welcome screen")}
+            key={form.key("displayWelcome")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("displayWelcome", { type: "checkbox" })}
+          />
+
+          <Group justify="space-between" mt="xl">
             <Button type="submit" color="blue">
               {t("Update settings")}
             </Button>

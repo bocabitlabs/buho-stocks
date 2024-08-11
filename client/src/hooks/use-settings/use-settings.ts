@@ -11,7 +11,6 @@ interface UpdateSettingsMutationProps {
 
 export const fetchSettings = async () => {
   const fetchURL = new URL("settings/", apiClient.defaults.baseURL);
-  console.log(`Settings fetchURL: ${fetchURL.href}`);
   const { data } = await apiClient.get<ISettings>(fetchURL.href);
   return data;
 };
