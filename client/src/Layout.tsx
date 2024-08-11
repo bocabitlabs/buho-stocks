@@ -17,6 +17,7 @@ import NavigationLinks from "components/NavigationLinks/NavigationLinks";
 import PageFooter from "components/PageFooter/PageFooter";
 import TasksModal from "components/TasksModal/TasksModal";
 import ToggleThemeButton from "components/ToggleThemeButton/ToggleThemeButton";
+import WelcomeScreen from "components/WelcomeScreen/WelcomeScreen";
 import config from "config";
 import { useSettings } from "hooks/use-settings/use-settings";
 import i18n from "i18n";
@@ -111,6 +112,7 @@ function Layout() {
         >
           <Outlet />
           <PageFooter />
+          <WelcomeScreen />
         </AppShell.Main>
         <ScrollRestoration />
         <Notifications />

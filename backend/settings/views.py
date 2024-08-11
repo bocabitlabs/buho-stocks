@@ -12,11 +12,9 @@ logger = logging.getLogger("buho_backend")
 
 
 class UserSettingsDetailAPIView(APIView):
-    # add permission to check if user is authenticated
-
     def get_object(self) -> UserSettings | None:
         """
-        Helper method to get the object with given todo_id
+        Helper method to get the application settings object
         """
         try:
             result: tuple[UserSettings, bool] = UserSettings.objects.get_or_create(pk=1)
@@ -24,7 +22,6 @@ class UserSettingsDetailAPIView(APIView):
         except UserSettings.DoesNotExist:
             return None
 
-    # 3. Retrieve
     @swagger_auto_schema(tags=["settings"])
     def get(self, request, *args, **kwargs) -> Response:
         """
@@ -40,7 +37,6 @@ class UserSettingsDetailAPIView(APIView):
         serializer = UserSettingsSerializer(settings_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    # 4. Update
     @swagger_auto_schema(tags=["settings"], request_body=UserSettingsSerializer)
     def put(self, request, *args, **kwargs) -> Response:
         """

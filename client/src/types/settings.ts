@@ -1,13 +1,14 @@
 export interface ISettingsFormFields {
-  language: string;
-  companySortBy: string;
-  companyDisplayMode: string;
-  mainPortfolio: string;
-  portfolioSortBy: string;
-  portfolioDisplayMode: string;
-  timezone: string;
-  sentryDsn: string;
-  sentryEnabled: boolean;
+  companySortBy?: string;
+  companyDisplayMode?: string;
+  displayWelcome?: boolean;
+  language?: string;
+  mainPortfolio?: string;
+  portfolioSortBy?: string;
+  portfolioDisplayMode?: string;
+  sentryDsn?: string;
+  sentryEnabled?: boolean;
+  timezone?: string;
 }
 
 export interface ISettings extends ISettingsFormFields {

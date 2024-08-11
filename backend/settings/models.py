@@ -14,6 +14,7 @@ class UserSettings(models.Model):
     timezone = models.CharField(max_length=200, choices=TIMEZONES, default="UTC")
     sentry_dsn = models.CharField(max_length=200, blank=True, default="")
     sentry_enabled = models.BooleanField(default=False)
+    display_welcome = models.BooleanField(default=True)
 
     allow_fetch = models.BooleanField(default=False)
 
