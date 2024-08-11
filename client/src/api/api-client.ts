@@ -33,6 +33,7 @@ export const getAxiosHeadersWithAuth = () => ({
 });
 
 // URL must be set in .env file or if it is empty, get the current URL base
+// Env variables are injected at build time
 const url = import.meta.env.VITE_API_URL || window.location.origin;
 
 const apiClient = axios.create({

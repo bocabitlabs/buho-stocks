@@ -18,5 +18,4 @@ class UserSettingsSerializer(serializers.ModelSerializer):
             "timezone",
             "sentry_dsn",
             "sentry_enabled",
-            "backend_hostname",
         ]

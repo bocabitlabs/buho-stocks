@@ -35,7 +35,6 @@ function SettingsForm({
       timezone: settings.timezone ?? "UTC",
       sentryDsn: settings.sentryDsn ?? "",
       sentryEnabled: settings.sentryEnabled || false,
-      backendHostname: settings.backendHostname ?? "",
       companySortBy: settings.companySortBy ?? "",
       companyDisplayMode: settings.companyDisplayMode ?? "",
       mainPortfolio: settings.mainPortfolio ?? "",
@@ -101,14 +100,6 @@ function SettingsForm({
             {...form.getInputProps("sentryDsn")}
           />
 
-          <TextInput
-            mt="md"
-            withAsterisk
-            label={t("Backend hostname")}
-            key={form.key("backendHostname")}
-            // eslint-disable-next-line react/jsx-props-no-spreading
-            {...form.getInputProps("backendHostname")}
-          />
           <Group justify="space-between" mt="md">
             <Button type="submit" color="blue">
               {t("Update settings")}
