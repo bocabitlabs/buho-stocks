@@ -12,6 +12,7 @@ import {
   useMantineReactTable,
 } from "mantine-react-table";
 import ExchangeRateFormProvider from "../ExchangeRateForm/ExchangeRateFormProvider";
+import InfoMessageAddManually from "../InfoMessageAddManually/InfoMessageAddManually";
 import {
   useDeleteExchangeRate,
   useExchangeRates,
@@ -150,6 +151,7 @@ export default function ExchangeRatesListTable({ mrtLocalization }: Props) {
   return (
     <Stack mt={20}>
       <Title order={4}>{t("Exchange Rates")}</Title>
+      <InfoMessageAddManually />
       <Group>
         <Button leftSection={<IconPlus />} onClick={showAddModal}>
           {t("Add exchange rate")}
