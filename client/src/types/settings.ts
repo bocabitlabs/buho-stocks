@@ -8,7 +8,6 @@ export interface ISettingsFormFields {
   timezone: string;
   sentryDsn: string;
   sentryEnabled: boolean;
-  backendHostname: string;
 }
 
 export interface ISettings extends ISettingsFormFields {

@@ -11,7 +11,6 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconClockHour3, IconWifi, IconWifiOff } from "@tabler/icons-react";
-import { useSettings } from "hooks/use-settings/use-settings";
 import { ITaskDetails, ITaskResult } from "types/task-result";
 
 function TasksModal() {
@@ -19,21 +18,13 @@ function TasksModal() {
   const [tasks, setTasks] = useState<ITaskResult[]>([]);
   const { t } = useTranslation();
   const [opened, { open, close }] = useDisclosure(false);
-  const { data: settings } = useSettings();
-  const getWebsocketUrl = () => {
-    if (settings) {
-      // If using https, replace ws with wss
-      const wsUrl = `ws://${settings.backendHostname}/ws/tasks/`;
-      // Replace ws with wss for https
-      if (document.location.protocol === "https:") {
-        wsUrl.replace("ws://", "wss://");
-      }
-      return wsUrl;
-    }
-    return null;
-  };
 
-  const { lastJsonMessage, readyState } = useWebSocket(getWebsocketUrl(), {
+  // URL must be set in .env file or if it is empty, get the current URL base
+  // Env variables are injected at build time
+  const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
+  const websocketUrl = `${baseUrl}/ws/tasks/`;
+
+  const { lastJsonMessage, readyState } = useWebSocket(websocketUrl, {
     share: false,
     shouldReconnect: () => true,
   });

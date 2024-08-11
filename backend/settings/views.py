@@ -52,20 +52,9 @@ class UserSettingsDetailAPIView(APIView):
                 {"res": "Object with settings id does not exists"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        data = {
-            "companyDisplayMode": request.data.get("companyDisplayMode"),
-            "companySortBy": request.data.get("companySortBy"),
-            "language": request.data.get("language"),
-            "timezone": request.data.get("timezone"),
-            "mainPortfolio": request.data.get("mainPortfolio"),
-            "portfolioSortBy": request.data.get("portfolioSortBy"),
-            "portfolioDisplayMode": request.data.get("portfolioDisplayMode"),
-            "sentry_dsn": request.data.get("sentry_dsn"),
-            "sentry_enabled": request.data.get("sentry_enabled"),
-            "backend_hostname": request.data.get("backend_hostname"),
-        }
+
         serializer = UserSettingsSerializer(
-            instance=todo_instance, data=data, partial=True
+            instance=todo_instance, data=request.data, partial=True
         )
         if serializer.is_valid():
             serializer.save()
