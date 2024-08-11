@@ -12,6 +12,7 @@ import {
   MRT_SortingState,
   useMantineReactTable,
 } from "mantine-react-table";
+import InfoMessageAddManually from "../InfoMessageAddManually/InfoMessageAddManually";
 import StockPriceFormProvider from "../StockPriceAddEditForm/StockPriceFormProvider";
 import {
   useDeleteStockPrice,
@@ -155,6 +156,7 @@ export default function StockPricesListTable({ mrtLocalization }: Props) {
   return (
     <Stack mt={20}>
       <Title order={4}>{t("Stock Prices")}</Title>
+      <InfoMessageAddManually />
 
       <Group>
         <Button leftSection={<IconPlus />} onClick={showAddModal}>
