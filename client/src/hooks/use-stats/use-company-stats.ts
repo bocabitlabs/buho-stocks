@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -32,7 +34,13 @@ interface IUpdateYearStatsMutationProps {
   updateApiPrice: boolean | undefined;
 }
 
-export const useUpdateYearStats = () => {
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
+export const useUpdateYearStats = (props?: MutateProps) => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({
       companyId,
@@ -44,8 +52,20 @@ export const useUpdateYearStats = () => {
       }),
 
     onSuccess: (data, variables) => {
+      props?.onSuccess?.();
+      notifications.show({
+        color: "red",
+        message: t("Company stats update requested"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["companyYearStats", variables.companyId, variables.year],
+      });
+    },
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Company stats update failed"),
       });
     },
   });

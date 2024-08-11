@@ -19,7 +19,11 @@ export default function TradesImportForm({
   const { data: portfolio } = usePortfolio(portfolioId);
   const [formSent, setFormSent] = useState(false);
   const { mutate: updatePortfolioStats, isPending } =
-    useUpdatePortfolioYearStats();
+    useUpdatePortfolioYearStats({
+      onSuccess: () => {
+        setFormSent(false);
+      },
+    });
 
   const updatePortfolioAction = () => {
     setFormSent(true);

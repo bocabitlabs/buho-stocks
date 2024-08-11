@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+import { notifications } from "@mantine/notifications";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -113,6 +115,11 @@ export function usePortfolioAllYearStats(
   });
 }
 
+interface MutateProps {
+  onSuccess?: Function;
+  onError?: Function;
+}
+
 interface IUpdateYearStatsMutationProps {
   portfolioId: number | undefined;
   year: string | undefined;
@@ -120,7 +127,8 @@ interface IUpdateYearStatsMutationProps {
   companiesIds?: number[];
 }
 
-export const useUpdatePortfolioYearStats = () => {
+export const useUpdatePortfolioYearStats = (props?: MutateProps) => {
+  const { t } = useTranslation();
   return useMutation({
     mutationFn: ({
       portfolioId,
@@ -141,8 +149,20 @@ export const useUpdatePortfolioYearStats = () => {
       );
     },
     onSuccess: (data, variables) => {
+      props?.onSuccess?.();
+      notifications.show({
+        color: "red",
+        message: t("Portfolio stats update requested"),
+      });
       queryClient.invalidateQueries({
         queryKey: ["portfolioYearStats", variables.portfolioId, variables.year],
+      });
+    },
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Portfolio stats update failed"),
       });
     },
   });

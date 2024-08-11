@@ -21,8 +21,6 @@ export default function StatsRefreshModal({
   const { t } = useTranslation();
   const [visible, setVisible] = useState(false);
 
-  const { mutate: updatePortfolioStats } = useUpdatePortfolioYearStats();
-
   const showModal = () => {
     setVisible(true);
   };
@@ -35,6 +33,14 @@ export default function StatsRefreshModal({
       companiesIds: [],
     },
   });
+
+  const { mutate: updatePortfolioStats, isPending } =
+    useUpdatePortfolioYearStats({
+      onSuccess: () => {
+        setVisible(false);
+        form.reset();
+      },
+    });
 
   const handleFormSubmit = (values: FormValues) => {
     updatePortfolioStats({
@@ -81,7 +87,12 @@ export default function StatsRefreshModal({
             <Button type="button" color="gray" onClick={handleCancel}>
               {t("Cancel")}
             </Button>
-            <Button type="submit" color="blue">
+            <Button
+              type="submit"
+              color="blue"
+              loading={isPending}
+              disabled={isPending}
+            >
               {t("Update stats")}
             </Button>
           </Group>

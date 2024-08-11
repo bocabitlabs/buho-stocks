@@ -19,20 +19,8 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
 
   const [visible, setVisible] = useState(false);
 
-  const { mutate: updateStats } = useUpdateYearStats();
-
   const showModal = () => {
     setVisible(true);
-  };
-
-  const handleFormSubmit = (values: FormValues) => {
-    updateStats({
-      companyId: +companyId!,
-      year: selectedYear,
-      updateApiPrice: values.updateStockPrice,
-    });
-
-    return { result: true, message: "" };
   };
 
   const form = useForm({
@@ -42,6 +30,21 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
       updateStockPrice: false,
     },
   });
+
+  const { mutate: updateStats, isPending } = useUpdateYearStats({
+    onSuccess: () => {
+      setVisible(false);
+      form.reset();
+    },
+  });
+
+  const handleFormSubmit = (values: FormValues) => {
+    updateStats({
+      companyId: +companyId!,
+      year: selectedYear,
+      updateApiPrice: values.updateStockPrice,
+    });
+  };
 
   const handleCancel = () => {
     form.reset();
@@ -76,7 +79,12 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
             <Button type="button" color="gray" onClick={handleCancel}>
               {t("Cancel")}
             </Button>
-            <Button type="submit" color="blue">
+            <Button
+              type="submit"
+              color="blue"
+              loading={isPending}
+              disabled={isPending}
+            >
               {t("Update stats")}
             </Button>
           </Group>

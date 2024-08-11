@@ -4,14 +4,13 @@ import useWebSocket, { ReadyState } from "react-use-websocket";
 import {
   ActionIcon,
   Button,
-  Loader,
   Modal,
   Progress,
   Stack,
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconPlugConnected, IconPlugConnectedX } from "@tabler/icons-react";
+import { IconWifi, IconWifiOff } from "@tabler/icons-react";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { ITaskDetails, ITaskResult } from "types/task-result";
 
@@ -76,12 +75,12 @@ function TasksModal() {
 
   const getProgressStatus = (status: string) => {
     if (status === "FAILED") {
-      return "exception";
+      return t("Error");
     }
     if (status === "COMPLETED") {
-      return "success";
+      return t("Completed");
     }
-    return "active";
+    return t("Active");
   };
 
   useEffect(() => {
@@ -105,9 +104,9 @@ function TasksModal() {
             (task: ITaskResult) =>
               task.status !== "COMPLETED" && task.status !== "FAILED",
           ).length > 0 ? (
-            <Loader />
+            <ActionIcon loading loaderProps={{ type: "dots" }} />
           ) : (
-            <IconPlugConnected style={{ width: "70%", height: "70%" }} />
+            <IconWifi style={{ width: "70%", height: "70%" }} />
           )}
         </ActionIcon>
         <Modal title={t("Tasks")} opened={opened} onClose={close}>
@@ -120,10 +119,10 @@ function TasksModal() {
                     {t(task.task_name)} ({task.details.year}):
                   </Text>
                   <Progress value={task.progress} />
-                  <Text>
+                  <Text size="xs" variant="secondary">
                     {t("Status")}: {t(getProgressStatus(task.status))}
                   </Text>
-                  <Text variant="secondary">
+                  <Text variant="secondary" size="xs">
                     {t(task.details.task_description)} {task.details.company}
                   </Text>
                 </div>
@@ -143,7 +142,7 @@ function TasksModal() {
       aria-label={t<string>("Websocket disconnected")}
       style={{ marginLeft: 10 }}
     >
-      <IconPlugConnectedX style={{ width: "70%", height: "70%" }} />
+      <IconWifiOff style={{ width: "70%", height: "70%" }} />
     </ActionIcon>
   );
 }
