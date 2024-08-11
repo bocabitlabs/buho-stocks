@@ -10,7 +10,7 @@ import {
   Text,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { IconWifi, IconWifiOff } from "@tabler/icons-react";
+import { IconClockHour3, IconWifi, IconWifiOff } from "@tabler/icons-react";
 import { useSettings } from "hooks/use-settings/use-settings";
 import { ITaskDetails, ITaskResult } from "types/task-result";
 
@@ -104,7 +104,7 @@ function TasksModal() {
             (task: ITaskResult) =>
               task.status !== "COMPLETED" && task.status !== "FAILED",
           ).length > 0 ? (
-            <ActionIcon loading loaderProps={{ type: "dots" }} />
+            <IconClockHour3 style={{ width: "70%", height: "70%" }} />
           ) : (
             <IconWifi style={{ width: "70%", height: "70%" }} />
           )}

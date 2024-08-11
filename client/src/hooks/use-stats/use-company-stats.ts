@@ -54,7 +54,7 @@ export const useUpdateYearStats = (props?: MutateProps) => {
     onSuccess: (data, variables) => {
       props?.onSuccess?.();
       notifications.show({
-        color: "red",
+        color: "green",
         message: t("Company stats update requested"),
       });
       queryClient.invalidateQueries({

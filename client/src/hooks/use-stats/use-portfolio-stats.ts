@@ -151,7 +151,7 @@ export const useUpdatePortfolioYearStats = (props?: MutateProps) => {
     onSuccess: (data, variables) => {
       props?.onSuccess?.();
       notifications.show({
-        color: "red",
+        color: "green",
         message: t("Portfolio stats update requested"),
       });
       queryClient.invalidateQueries({
