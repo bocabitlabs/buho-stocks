@@ -4,14 +4,16 @@ module.exports = {
     es2021: true,
   },
   extends: [
+    "eslint:recommended", // Must be first
+    "plugin:import/recommended", // After eslint:recommended
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
     "plugin:vitest/recommended",
     "plugin:testing-library/react",
-    "plugin:import/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:react-hooks/recommended",
     "plugin:react/recommended",
-    "plugin:prettier/recommended",
-    "plugin:import/typescript",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:prettier/recommended", // Must be last
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -39,6 +41,8 @@ module.exports = {
     "vite.config.ts",
   ],
   rules: {
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unsafe-function-type": "warn",
     "comma-dangle": "off",
     "import/order": [
       "error",
@@ -74,7 +78,7 @@ module.exports = {
       },
     ],
     "no-console": "off",
-    'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+    // 'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
     // disallow use of variables before they are defined
     'no-use-before-define': ['error', { functions: true, classes: true, variables: true }],
     "prettier/prettier": [
