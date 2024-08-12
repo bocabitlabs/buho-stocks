@@ -18,7 +18,6 @@ interface IProps {
   portfolioBaseCurrency: string;
   isVisible: boolean;
   onCloseCallback: () => void;
-  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: IRightsTransactionFormFields) => void;
 }
 
@@ -80,7 +79,7 @@ export default function RightsTransactionForm({
     }
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: IRightsTransactionFormFields) => {
     onSubmitCallback(values);
   };
 

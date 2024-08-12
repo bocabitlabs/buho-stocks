@@ -1,10 +1,10 @@
 import { UseFormReturnType } from "@mantine/form";
 import { RichTextEditor, Link } from "@mantine/tiptap";
-import Highlight from "@tiptap/extension-highlight";
-import TextAlign from "@tiptap/extension-text-align";
-import Underline from "@tiptap/extension-underline";
+import { Highlight } from "@tiptap/extension-highlight";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { Underline } from "@tiptap/extension-underline";
 import { EditorEvents, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import { StarterKit } from "@tiptap/starter-kit";
 import { ICompanyFormFields } from "types/company";
 
 interface Props {

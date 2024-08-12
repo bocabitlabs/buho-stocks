@@ -2,7 +2,7 @@ import UpdatePortfolioForm from "./components/UpdatePortfolioForm/UpdatePortfoli
 
 interface Props {
   portfolioId: number | undefined;
-  onPortfolioUpdated: Function;
+  onPortfolioUpdated: () => void;
 }
 
 export default function UpdatePortfolioStep({

@@ -2,12 +2,12 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { LineChart } from "@mantine/charts";
 import { Center, Stack, Title } from "@mantine/core";
-import { IBenchmark } from "types/benchmark";
+import { IBenchmark, IBenchmarkYear } from "types/benchmark";
 import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
 interface Props {
   data: IPortfolioYearStats[];
-  indexData: IBenchmark;
+  indexData: IBenchmark | undefined;
 }
 
 export default function ChartPortfolioReturns({ data, indexData }: Props) {
@@ -38,10 +38,15 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
 
   const chartData = useMemo(() => {
     if (data && data.length > 0) {
-      const newYears: any = [];
-      const returnsPercent: any = [];
+      const newYears: number[] = [];
+      const returnsPercent: {
+        year: number;
+        returnsPercent: number;
+        returnWithDividendsPercent: number;
+        indexData: number | null | undefined;
+      }[] = [];
 
-      data.sort((a: any, b: any) => {
+      data.sort((a: IPortfolioYearStats, b: IPortfolioYearStats) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -50,19 +55,15 @@ export default function ChartPortfolioReturns({ data, indexData }: Props) {
         }
         return 0;
       });
-      data.forEach((year: any) => {
-        if (
-          !newYears.includes(year.year) &&
-          year.year !== "all" &&
-          year.year !== 9999
-        ) {
+      data.forEach((year: IPortfolioYearStats) => {
+        if (!newYears.includes(year.year) && year.year !== 9999) {
           returnsPercent.push({
             year: year.year,
             returnsPercent: Number(year.returnPercent),
             returnWithDividendsPercent: Number(year.returnWithDividendsPercent),
             indexData: indexData
               ? indexData.years.find(
-                  (indexItem: any) => indexItem.year === year.year,
+                  (indexItem: IBenchmarkYear) => indexItem.year === year.year,
                 )?.returnPercentage
               : null,
           });
