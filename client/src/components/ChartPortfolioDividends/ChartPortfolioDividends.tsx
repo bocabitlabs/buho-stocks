@@ -26,14 +26,14 @@ export default function ChartPortfolioDividends({
 
   const chartData = useMemo(() => {
     if (data && data.length > 0) {
-      const newYears: any = [];
-      const dividends: any = [];
+      const newYears: number[] = [];
+      const dividends: number[] = [];
       const dividendsPerYear: {
         year: number;
         value: number;
       }[] = [];
 
-      data.sort((a: any, b: any) => {
+      data.sort((a: IPortfolioYearStats, b: IPortfolioYearStats) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -42,12 +42,8 @@ export default function ChartPortfolioDividends({
         }
         return 0;
       });
-      data.forEach((year: any) => {
-        if (
-          !newYears.includes(year.year) &&
-          year.year !== "all" &&
-          year.year !== 9999
-        ) {
+      data.forEach((year: IPortfolioYearStats) => {
+        if (!newYears.includes(year.year) && year.year !== 9999) {
           newYears.push(year.year);
           dividends.push(Number(year.dividends));
           dividendsPerYear.push({

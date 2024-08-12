@@ -1,11 +1,9 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
 import { Select } from "@mantine/core";
 import { IBenchmark } from "types/benchmark";
 
 interface Props {
   benchmarks: IBenchmark[];
-  // eslint-disable-next-line no-unused-vars
   onChangeCallback: (value: string) => void;
 }
 
@@ -15,7 +13,7 @@ export default function BenchmarkSelect({
 }: Props) {
   const { t } = useTranslation();
 
-  const selectOptions = benchmarks?.map((benchmark: any) => ({
+  const selectOptions = benchmarks?.map((benchmark: IBenchmark) => ({
     value: benchmark.id.toString(),
     label: benchmark.name,
   }));

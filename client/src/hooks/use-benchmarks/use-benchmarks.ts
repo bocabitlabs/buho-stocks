@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -20,7 +20,7 @@ type BenchmarksApiResponse = {
 
 interface Params {
   pagination: MRT_PaginationState;
-  otherOptions?: any;
+  otherOptions?: QueryOptions<BenchmarksApiResponse, Error>;
 }
 
 export const fetchBenchmarks = async (pagination: MRT_PaginationState) => {
@@ -67,8 +67,11 @@ export const fetchBenchmarkValues = async (id: number | undefined) => {
   return data;
 };
 
-export function useBenchmarkValues(id: number | undefined, otherOptions?: any) {
-  return useQuery<IBenchmark>({
+export function useBenchmarkValues(
+  id: number | undefined,
+  otherOptions?: QueryOptions<IBenchmark[], Error>,
+) {
+  return useQuery<IBenchmark[]>({
     queryKey: ["benchmarks", id],
     queryFn: () => fetchBenchmarkValues(id),
     enabled: !!id,
@@ -86,7 +89,10 @@ export const fetchBenchmark = async (id: number | undefined) => {
   return data;
 };
 
-export function useBenchmark(id: number | undefined, options?: any) {
+export function useBenchmark(
+  id: number | undefined,
+  options?: QueryOptions<IBenchmark, Error>,
+) {
   return useQuery<IBenchmark, Error>({
     queryKey: ["benchmarks", id],
     queryFn: () => fetchBenchmark(id),
@@ -96,8 +102,8 @@ export function useBenchmark(id: number | undefined, options?: any) {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddBenchmark = (props?: MutateProps) => {

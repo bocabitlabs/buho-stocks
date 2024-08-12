@@ -1,6 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  Query,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -64,7 +69,10 @@ export const fetchCurrency = async (id: number | undefined) => {
   return data;
 };
 
-export function useCurrency(id: number | undefined, options?: any) {
+export function useCurrency(
+  id: number | undefined,
+  options?: Query<ICurrency, Error>,
+) {
   return useQuery<ICurrency, Error>({
     queryKey: ["currencies", id],
     queryFn: () => fetchCurrency(id),
@@ -74,8 +82,8 @@ export function useCurrency(id: number | undefined, options?: any) {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddCurrency = (props?: MutateProps) => {

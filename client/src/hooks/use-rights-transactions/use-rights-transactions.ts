@@ -25,8 +25,8 @@ interface IDeleteTransactionMutationProps {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const fetchRightsTransaction = async (

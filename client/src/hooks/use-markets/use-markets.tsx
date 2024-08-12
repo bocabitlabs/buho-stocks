@@ -1,6 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  QueryOptions,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -71,7 +76,10 @@ export const fetchMarket = async (marketId: number | undefined) => {
   return data;
 };
 
-export function useMarket(marketId: number | undefined, options?: any) {
+export function useMarket(
+  marketId: number | undefined,
+  options?: QueryOptions<IMarket, Error>,
+) {
   return useQuery<IMarket, Error>({
     queryKey: ["markets", marketId],
     queryFn: () => fetchMarket(marketId),
@@ -81,8 +89,8 @@ export function useMarket(marketId: number | undefined, options?: any) {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddMarket = (props?: MutateProps) => {

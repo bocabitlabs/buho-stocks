@@ -116,8 +116,8 @@ export function usePortfolioAllYearStats(
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 interface IUpdateYearStatsMutationProps {

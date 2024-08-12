@@ -1,6 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  QueryOptions,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
 import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -25,8 +30,8 @@ interface DeleteTransactionMutationProps {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const fetchTransaction = async (transactionId: number | undefined) => {
@@ -172,7 +177,7 @@ export function useDividendsTransactions(
 
 export function useDividendsTransaction(
   transactionId: number | undefined,
-  options?: any,
+  options?: QueryOptions<IDividendsTransaction, Error>,
 ) {
   return useQuery<IDividendsTransaction, Error>({
     queryKey: ["dividendsTransactions", transactionId],
