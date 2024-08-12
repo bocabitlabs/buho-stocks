@@ -16,8 +16,8 @@ export const fetchSettings = async () => {
 };
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useUpdateSettings = (props?: MutateProps) => {

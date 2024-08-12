@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IPortfolio, IPortfolioFormFields } from "types/portfolio";
@@ -30,8 +30,8 @@ export const fetchPortfolio = async (portfolioId: number | undefined) => {
 };
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddPortfolio = (props?: MutateProps) => {
@@ -114,7 +114,10 @@ export function usePortfolios() {
   });
 }
 
-export function usePortfolio(portfolioId: number | undefined, options?: any) {
+export function usePortfolio(
+  portfolioId: number | undefined,
+  options?: QueryOptions<IPortfolio, Error>,
+) {
   return useQuery<IPortfolio, Error>({
     queryKey: ["portfolios", portfolioId],
     queryFn: () => fetchPortfolio(portfolioId),

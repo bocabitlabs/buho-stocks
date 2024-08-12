@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { MRT_PaginationState, MRT_SortingState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
@@ -95,7 +95,7 @@ export function useCompaniesAll(
   sorting?: MRT_SortingState,
   pagination?: MRT_PaginationState,
   closed: boolean = false,
-  options?: any,
+  options?: QueryOptions<ICompany[], Error>,
 ) {
   return useQuery<ICompany[], Error>({
     queryKey: ["portfolios", portfolioId, closed],
@@ -118,8 +118,8 @@ export const fetchCompany = async (
 };
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddCompany = (props?: MutateProps) => {
@@ -204,7 +204,7 @@ export const useUpdateCompany = (props?: MutateProps) => {
 export function useCompany(
   portfolioId: number | undefined,
   companyId: number | undefined,
-  options?: any,
+  options?: QueryOptions<ICompany, Error>,
 ) {
   return useQuery<ICompany, Error>({
     queryKey: ["portfolios", portfolioId, companyId],

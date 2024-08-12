@@ -35,8 +35,8 @@ interface IUpdateYearStatsMutationProps {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useUpdateYearStats = (props?: MutateProps) => {

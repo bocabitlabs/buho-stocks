@@ -115,8 +115,8 @@ export function useExchangeRateDetails(id: number | undefined) {
 }
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddExchangeRate = (props?: MutateProps) => {

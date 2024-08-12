@@ -95,8 +95,8 @@ export const useUpdateCompanyStockPrice = () => {
 };
 
 interface MutateProps {
-  onSuccess?: Function;
-  onError?: Function;
+  onSuccess?: () => void;
+  onError?: () => void;
 }
 
 export const useAddStockPrice = (props?: MutateProps) => {
