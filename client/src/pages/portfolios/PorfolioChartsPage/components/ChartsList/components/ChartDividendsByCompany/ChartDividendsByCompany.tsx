@@ -9,6 +9,13 @@ interface ChartProps {
   width: number;
 }
 
+interface ItemProps {
+  name: string;
+  label: string;
+  value: number;
+  color: string;
+}
+
 export default function ChartDividendsByCompany({
   data,
   currency,
@@ -23,7 +30,7 @@ export default function ChartDividendsByCompany({
         color: string;
       }[] = [];
 
-      data.forEach((stat: any) => {
+      data.forEach((stat: IPortfolioYearStats) => {
         companies.push({
           name: stat.company.ticker.replace(".", ""),
           label: stat.company.ticker,
@@ -46,7 +53,7 @@ export default function ChartDividendsByCompany({
         labelsType="percent"
         valueFormatter={(value: number) => `${value} ${currency}`}
         tooltipProps={{
-          label: (item: any) => {
+          label: (item: ItemProps) => {
             console.log(item);
             return item.label;
           },

@@ -15,17 +15,21 @@ export default function ChartCurrenciesByCompany({ data }: ChartProps) {
 
   const filteredData = useMemo(
     function createChartData() {
-      const filteredCompanies: any = data.filter((item: any) => {
+      const filteredCompanies = data.filter((item: IPortfolioYearStats) => {
         return item.sharesCount > 0;
       });
       const currencies: { name: string; value: number; color: string }[] = [];
       const res = groupByName(filteredCompanies, "currencyCode");
 
-      Object.entries(res).forEach(([k, v]) => {
+      Object.entries<IterableIterator<[string, IPortfolioYearStats[]]>>(
+        res,
+      ).forEach(([key, value]) => {
+        const valueArray = Array.from(value);
+
         currencies.push({
-          name: k,
-          value: (v as any[]).length,
-          color: getColorShade(k),
+          name: key,
+          value: valueArray.length,
+          color: getColorShade(key),
         });
       });
       currencies.sort((a, b) => b.value - a.value);
