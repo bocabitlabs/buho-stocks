@@ -1,4 +1,6 @@
-const countries: any = [
+import { ICountry } from "types/country";
+
+const countries: ICountry[] = [
   {
     key: "ca",
     name: "Canada",

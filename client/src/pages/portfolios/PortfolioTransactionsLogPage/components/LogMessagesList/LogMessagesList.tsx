@@ -1,9 +1,8 @@
-import React, { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Badge, Button, Group, Menu, Modal } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {
   MantineReactTable,
   MRT_ColumnDef,
@@ -68,7 +67,8 @@ function MessageTypeCell({ row }: Readonly<{ row: MRT_Row<ILogMessage> }>) {
         return defaultValue;
       }
       return foundValue;
-    } catch (e: unknown) {
+    } catch (error) {
+      console.error(error);
       return defaultValue;
     }
   };
@@ -119,60 +119,6 @@ export default function LogMessagesList({
     closeDeleteModal();
     setSelectedMessageId(undefined);
   };
-
-  // const columns: any = [
-  //   {
-  //     title: t("Type"),
-  //     dataIndex: "messageType",
-  //     key: "messageType",
-  //     render: (messageType: string) => {
-  //       const messageValue = getMessageValue(messageType);
-  //       return <Badge color={messageValue.color}>{messageValue.text}</Badge>;
-  //     },
-  //   },
-  //   {
-  //     title: t("Date"),
-  //     dataIndex: "dateCreated",
-  //     key: "dateCreated",
-  //     sorter: (a: ILogMessage, b: ILogMessage) =>
-  //       a.dateCreated.localeCompare(b.dateCreated),
-  //     render: (text: string) =>
-  //       moment(new Date(text)).format("DD/MM/YYYY HH:mm:ss"),
-  //   },
-  //   {
-  //     title: t("Text"),
-  //     dataIndex: "messageText",
-  //     key: "messageText",
-  //   },
-  //   {
-  //     title: t("Action"),
-  //     key: "action",
-  //     render: (text: string, record: any) => (
-  //       <Space size="middle">
-  //         <Popconfirm
-  //           key={`market-delete-${record.key}`}
-  //           title={`${t("Delete message")} ${record.name}?`}
-  //           onConfirm={() => confirmDelete(record.id)}
-  //           okText={t("Yes")}
-  //           cancelText={t("No")}
-  //         >
-  //           <Button danger icon={<DeleteOutlined />} />
-  //         </Popconfirm>
-  //       </Space>
-  //     ),
-  //   },
-  // ];
-  // const getData = () => {
-  //   return messages
-  //     ? messages.map((element: ILogMessage) => ({
-  //         id: element.id,
-  //         key: element.id,
-  //         messageType: element.messageType,
-  //         messageText: element.messageText,
-  //         dateCreated: element.dateCreated,
-  //       }))
-  //     : [];
-  // };
 
   const columns = useMemo<MRT_ColumnDef<ILogMessage>[]>(
     () => [
