@@ -9,7 +9,6 @@ interface AddEditFormProps {
   isUpdate?: boolean;
   isVisible: boolean;
   onCloseCallback?: () => void;
-  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: IStockPriceFormFields) => void;
 }
 

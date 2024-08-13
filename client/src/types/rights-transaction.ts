@@ -13,6 +13,7 @@ export interface IRightsTransactionFormFields {
   company: number;
   notes: string;
   type: TransactionType;
+  transactionType?: string;
 }
 
 export interface IRightsTransaction extends IRightsTransactionFormFields {
