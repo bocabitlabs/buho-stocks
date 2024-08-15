@@ -1,18 +1,11 @@
-import { setLogger } from "@tanstack/react-query";
-import { renderHook, waitFor } from "@testing-library/react";
 import { useAllCurrencies } from "./use-currencies";
 import currenciesList from "mocks/responses/currencies";
-import { wrapper } from "utils/mock-providers";
+import { renderHook, waitFor } from "test-utils";
+import { wrapper } from "test-utils/render";
 
 describe("useCurrencies Hook tests", () => {
   afterEach(() => {
     vi.clearAllMocks();
-  });
-
-  setLogger({
-    log: console.log,
-    warn: console.warn,
-    error: () => {},
   });
 
   it("Gets a list of currencies", async () => {
