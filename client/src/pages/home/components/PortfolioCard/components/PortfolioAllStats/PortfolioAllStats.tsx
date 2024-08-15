@@ -52,12 +52,14 @@ export default function PortfolioAllStats({ portfolioId }: Readonly<Props>) {
             ? numberFormatter.format(stats.returnWithDividends)
             : numberFormatter.format(0)}{" "}
           {stats?.portfolioCurrency}
-        </Text>{" "}
-        {" / "}
-        <Text
-          c={stats && stats?.returnWithDividendsPercent <= 0 ? "red" : "green"}
-        >
-          <Center>
+        </Text>
+        <Text>/</Text>
+        <Center>
+          <Text
+            c={
+              stats && stats?.returnWithDividendsPercent <= 0 ? "red" : "green"
+            }
+          >
             {Number(stats?.portfolioValue) <=
             Number(stats?.accumulatedInvestment) ? (
               <IconArrowDown />
@@ -68,8 +70,8 @@ export default function PortfolioAllStats({ portfolioId }: Readonly<Props>) {
               ? numberFormatter.format(stats?.returnWithDividendsPercent)
               : numberFormatter.format(0)}
             %
-          </Center>
-        </Text>
+          </Text>
+        </Center>
       </Group>
     </div>
   );
