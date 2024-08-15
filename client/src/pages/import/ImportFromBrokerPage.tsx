@@ -13,7 +13,7 @@ import { IconArrowUp } from "@tabler/icons-react";
 import ImportFromBrokerPageHeader from "./components/ImportFromBrokerPageHeader/ImportFromBrokerPageHeader";
 import ImportSteps from "./components/ImportSteps/ImportSteps";
 
-export default function ImportFromBrokerPage() {
+export function ImportFromBrokerPage() {
   const [scroll, scrollTo] = useWindowScroll();
   const { t } = useTranslation();
   return (
@@ -48,3 +48,5 @@ export default function ImportFromBrokerPage() {
     </Grid>
   );
 }
+
+export default ImportFromBrokerPage;

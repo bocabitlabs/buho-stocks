@@ -10,7 +10,7 @@ import CompanyStatsProvider from "./components/CompanyStats/CompanyStatsProvider
 import TransactionsTabs from "./components/TransactionsTabs/TransactionsTabs";
 import { useCompany } from "hooks/use-companies/use-companies";
 
-export default function CompanyDetailsPage(): ReactElement {
+export function CompanyDetailsPage(): ReactElement {
   const { t } = useTranslation();
   const { id, companyId } = useParams();
   const { data: company, isFetching, error } = useCompany(+id!, +companyId!);
@@ -74,3 +74,5 @@ export default function CompanyDetailsPage(): ReactElement {
     </Grid>
   );
 }
+
+export default CompanyDetailsPage;

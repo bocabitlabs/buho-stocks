@@ -3,7 +3,7 @@ import { Grid } from "@mantine/core";
 import PortfoliosPageHeader from "./components/HomePageHeader/HomePageHeader";
 import PortfolioList from "./components/PortfolioList/PortfolioList";
 
-export default function HomePage(): ReactElement {
+export function HomePage(): ReactElement {
   return (
     <Grid p={20}>
       <Grid.Col span={12}>
@@ -15,3 +15,5 @@ export default function HomePage(): ReactElement {
     </Grid>
   );
 }
+
+export default HomePage;

@@ -20,7 +20,7 @@ function LogMessagesListContent() {
   );
 }
 
-export default function PortfolioLogTransactionsPage() {
+export function PortfolioLogTransactionsPage() {
   const { id } = useParams();
   const { data: portfolio } = usePortfolio(+id!);
 
@@ -40,3 +40,5 @@ export default function PortfolioLogTransactionsPage() {
     </Grid>
   );
 }
+
+export default PortfolioLogTransactionsPage;

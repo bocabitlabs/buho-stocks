@@ -17,7 +17,7 @@ function CurrenciesListTableContent() {
   );
 }
 
-export default function CurrenciesListPage() {
+export function CurrenciesListPage() {
   return (
     <Grid p={20}>
       <Grid.Col span={12}>
@@ -31,3 +31,5 @@ export default function CurrenciesListPage() {
     </Grid>
   );
 }
+
+export default CurrenciesListPage;
