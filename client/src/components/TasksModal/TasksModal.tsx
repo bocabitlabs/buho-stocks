@@ -1,32 +1,44 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useWebSocket, { ReadyState } from "react-use-websocket";
+import { ActionIcon, Progress, rem, Text } from "@mantine/core";
+import { notifications } from "@mantine/notifications";
 import {
-  ActionIcon,
-  Button,
-  Modal,
-  Progress,
-  Stack,
-  Text,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
-import { IconClockHour3, IconWifi, IconWifiOff } from "@tabler/icons-react";
-import {
-  ITaskDetails,
-  ITaskResult,
-  ITaskResultWrapper,
-} from "types/task-result";
+  IconCheck,
+  IconClockHour3,
+  IconWifi,
+  IconWifiOff,
+} from "@tabler/icons-react";
+import { ITaskResult, ITaskResultWrapper } from "types/task-result";
+
+const getProgressStatus = (status: string) => {
+  if (status === "FAILED") {
+    return "Error";
+  }
+  if (status === "COMPLETED") {
+    return "Completed";
+  }
+  return "Active";
+};
+
+const getProgressColor = (status: string) => {
+  if (status === "FAILED") {
+    return "red";
+  }
+  if (status === "COMPLETED") {
+    return "teal";
+  }
+  return "blue";
+};
 
 function TasksModal() {
-  // List of tasks and their statuses
-  const [tasks, setTasks] = useState<ITaskResult[]>([]);
   const { t } = useTranslation();
-  const [opened, { open, close }] = useDisclosure(false);
 
   // URL must be set in .env file or if it is empty, get the current URL base
   // Env variables are injected at build time
   const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
   const websocketUrl = `${baseUrl}/ws/tasks/`;
+  const [messageHistory, setMessageHistory] = useState<ITaskResult[]>([]);
 
   const { lastJsonMessage, readyState } = useWebSocket<ITaskResultWrapper>(
     websocketUrl,
@@ -36,100 +48,99 @@ function TasksModal() {
     },
   );
 
-  const clearCompletedTasksList = () => {
-    setTasks((prevTasks: ITaskResult[]) => {
-      const updatedTasks = prevTasks.filter(
-        (task: ITaskResult) =>
-          task.status !== "COMPLETED" && task.status !== "FAILED",
-      );
-
-      return updatedTasks;
-    });
-  };
-
-  const updateTaskProgress = (
-    task_id: string,
-    task_name: string,
-    progress: number,
-    status: string,
-    details: ITaskDetails,
-  ) => {
-    setTasks((prevTasks: ITaskResult[]) => {
-      const updatedTasks = prevTasks.map((task: ITaskResult) => {
-        if (task.task_id === task_id) {
-          return { ...task, task_name, details, progress, status };
-        }
-        return task;
-      });
-
-      // If the task_id was not found, add a new task
-      if (!updatedTasks.some((task: ITaskResult) => task.task_id === task_id)) {
-        updatedTasks.push({ task_id, task_name, details, progress, status });
-      }
-
-      return updatedTasks;
-    });
-  };
-
-  const getProgressStatus = (status: string) => {
-    if (status === "FAILED") {
-      return t("Error");
-    }
-    if (status === "COMPLETED") {
-      return t("Completed");
-    }
-    return t("Active");
-  };
-
   useEffect(() => {
-    if (lastJsonMessage) {
-      updateTaskProgress(
-        lastJsonMessage.status.task_id,
-        lastJsonMessage.status.task_name,
-        lastJsonMessage.status.progress,
-        lastJsonMessage.status.status,
-        lastJsonMessage.status.details,
-      );
+    if (lastJsonMessage !== null && lastJsonMessage !== undefined) {
+      setMessageHistory((prev) => {
+        // If the task.id is already in the list, update it, do not add a new one
+        const existingMessageIndex = prev.findIndex(
+          (msg: ITaskResult) => msg.task_id === lastJsonMessage.status.task_id,
+        );
+
+        if (existingMessageIndex !== -1) {
+          const updatedMessages = [...prev];
+          updatedMessages[existingMessageIndex] = {
+            ...lastJsonMessage.status,
+            notificationId:
+              updatedMessages[existingMessageIndex].notificationId,
+          };
+          notifications.update({
+            id: updatedMessages[existingMessageIndex].notificationId,
+            color: getProgressColor(lastJsonMessage.status.status),
+            title: `${t(lastJsonMessage.status.task_name)}
+             (${lastJsonMessage.status.details.year})`,
+            message: (
+              <div>
+                <Progress value={lastJsonMessage.status.progress} />
+                <Text size="xs" variant="secondary">
+                  {t("Status")}:{" "}
+                  {t(getProgressStatus(lastJsonMessage.status.status))}
+                </Text>
+                <Text variant="secondary" size="xs">
+                  {t(lastJsonMessage.status.details.task_description)}
+                  {": "}
+                  {lastJsonMessage.status.details.company}
+                </Text>
+              </div>
+            ),
+            icon: lastJsonMessage.status.status === "COMPLETED" && (
+              <IconCheck style={{ width: rem(18), height: rem(18) }} />
+            ),
+            withCloseButton: lastJsonMessage.status.status === "COMPLETED",
+            loading: lastJsonMessage.status.status === "PROGRESS",
+            autoClose: false,
+          });
+          return updatedMessages;
+        }
+
+        const notificationId = notifications.show({
+          id: lastJsonMessage.status.task_id,
+          color: getProgressColor(lastJsonMessage.status.status),
+          loading: true,
+          title: `${t(lastJsonMessage.status.task_name)}
+              (${lastJsonMessage.status.details.year})`,
+          message: (
+            <div>
+              <Progress value={lastJsonMessage.status.progress} />
+              <Text size="xs" variant="secondary">
+                {t("Status")}:{" "}
+                {t(getProgressStatus(lastJsonMessage.status.status))}
+              </Text>
+              <Text variant="secondary" size="xs">
+                {t(lastJsonMessage.status.details.task_description)}
+                {": "}
+                {lastJsonMessage.status.details.company}
+              </Text>
+            </div>
+          ),
+          autoClose: false,
+          withCloseButton: false,
+        });
+        const updatedMessage = { ...lastJsonMessage.status };
+        updatedMessage.notificationId = notificationId;
+        prev.push(updatedMessage);
+        return prev;
+      });
     }
-  }, [lastJsonMessage]);
+  }, [lastJsonMessage, t]);
 
   if (readyState === ReadyState.OPEN) {
-    return (
-      <>
-        <ActionIcon style={{ marginLeft: 10 }} variant="default" onClick={open}>
-          {tasks.filter(
-            (task: ITaskResult) =>
-              task.status !== "COMPLETED" && task.status !== "FAILED",
-          ).length > 0 ? (
-            <IconClockHour3 style={{ width: "70%", height: "70%" }} />
-          ) : (
-            <IconWifi style={{ width: "70%", height: "70%" }} />
-          )}
+    if (messageHistory.some((task) => task.status === "PROGRESS")) {
+      return (
+        <ActionIcon
+          style={{ marginLeft: 10 }}
+          variant="default"
+          loading
+          loaderProps={{ type: "dots" }}
+        >
+          <IconClockHour3 style={{ width: "70%", height: "70%" }} />
         </ActionIcon>
-        <Modal title={t("Tasks")} opened={opened} onClose={close}>
-          <Stack>
-            {tasks.length === 0 && <Text>{t("No tasks")}</Text>}
-            {tasks.length > 0 &&
-              tasks.map((task: ITaskResult) => (
-                <div key={task.task_id}>
-                  <Text>
-                    {t(task.task_name)} ({task.details.year}):
-                  </Text>
-                  <Progress value={task.progress} />
-                  <Text size="xs" variant="secondary">
-                    {t("Status")}: {t(getProgressStatus(task.status))}
-                  </Text>
-                  <Text variant="secondary" size="xs">
-                    {t(task.details.task_description)} {task.details.company}
-                  </Text>
-                </div>
-              ))}
-            <Button key="clear" onClick={clearCompletedTasksList}>
-              {t("Clear completed tasks")}
-            </Button>
-          </Stack>
-        </Modal>
-      </>
+      );
+    }
+
+    return (
+      <ActionIcon style={{ marginLeft: 10 }} variant="default">
+        <IconWifi style={{ width: "70%", height: "70%" }} />
+      </ActionIcon>
     );
   }
 
