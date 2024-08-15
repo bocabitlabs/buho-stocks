@@ -5,17 +5,19 @@ import CountryFlag from "components/CountryFlag/CountryFlag";
 import countries from "utils/countries";
 
 interface Props {
-  form: any;
   fieldName?: string;
+  value: string;
+  onChange: (value: string | null) => void;
 }
 
 export default function CountrySelector({
-  form,
   fieldName = "countryCode",
+  value,
+  onChange,
 }: Readonly<Props>) {
   const { t } = useTranslation();
 
-  const countriesOptions = countries?.map((country: any) => ({
+  const countriesOptions = countries?.map((country) => ({
     value: country.code,
     label: t(country.name),
   }));
@@ -27,10 +29,7 @@ export default function CountrySelector({
     <Group flex="1" gap="xs">
       <CountryFlag code={option.value} width={15} />
       {option.label}
-      {checked && (
-        // eslint-disable-next-line react/jsx-props-no-spreading
-        <IconCheck style={{ marginInlineStart: "auto" }} />
-      )}
+      {checked && <IconCheck style={{ marginInlineStart: "auto" }} />}
     </Group>
   );
 
@@ -41,10 +40,13 @@ export default function CountrySelector({
       searchable
       label={t("Country")}
       data={countriesOptions}
-      // eslint-disable-next-line react/jsx-props-no-spreading
-      {...form.getInputProps(fieldName)}
+      id={fieldName}
+      name={fieldName}
+      value={value}
+      onChange={onChange}
       required
       renderOption={renderSelectOption}
+      data-testid="country-selector"
     />
   );
 }

@@ -129,6 +129,12 @@ function CompanyForm({
     label: sector.name,
   }));
 
+  const onCountryChange = (value: string | null) => {
+    if (value) {
+      form.setFieldValue("region", value);
+    }
+  };
+
   return (
     <Modal
       opened={isVisible}
@@ -259,7 +265,10 @@ function CompanyForm({
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("url")}
         />
-        <CountrySelector form={form} />
+        <CountrySelector
+          onChange={onCountryChange}
+          value={form.getValues().countryCode}
+        />
 
         <Input.Wrapper mt="md" label={t("Description")}>
           <NotesField content={company?.description} form={form} />
