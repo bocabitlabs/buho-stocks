@@ -33,12 +33,16 @@ function PriceCell({
 }: Readonly<{ cell: MRT_Cell<ICompany>; row: MRT_Row<ICompany> }>) {
   return (
     <Stack>
-      <NumberFormatter
-        value={cell.getValue() as string}
-        decimalScale={2}
-        thousandSeparator
-      />
-      <Text size="sm">{row.original.allStats?.portfolioCurrency}</Text>
+      <Text size="sm">
+        <NumberFormatter
+          value={cell.getValue() as string}
+          decimalScale={2}
+          thousandSeparator
+        />
+      </Text>
+      <Text c="dimmed" size="xs">
+        {row.original.allStats?.portfolioCurrency}
+      </Text>
     </Stack>
   );
 }
@@ -46,7 +50,7 @@ function PriceCell({
 function ReturnPercentCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
   return (
     <Stack>
-      <Text>
+      <Text size="sm">
         <NumberFormatter
           value={row.original.allStats?.returnWithDividends}
           suffix={` ${row.original.allStats?.portfolioCurrency}`}
@@ -60,6 +64,7 @@ function ReturnPercentCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
             ? "red"
             : "green"
         }
+        size="xs"
       >
         <NumberFormatter
           value={row.original.allStats?.returnWithDividendsPercent}
@@ -77,6 +82,7 @@ function DividendsYieldCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
     <Stack>
       <Text
         c={Number(row.original.allStats?.dividendsYield) <= 0 ? "red" : "green"}
+        size="sm"
       >
         <NumberFormatter
           value={row.original.allStats?.dividendsYield}
@@ -92,14 +98,16 @@ function DividendsYieldCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
 function PortfolioValueCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
   return (
     <Stack>
-      <Text>
+      <Text size="sm">
         <NumberFormatter
           value={row.original.allStats?.portfolioValue}
           decimalScale={2}
           thousandSeparator
         />
       </Text>
-      <Text size="sm">{row.original.allStats?.portfolioCurrency}</Text>
+      <Text c="dimmed" size="xs">
+        {row.original.allStats?.portfolioCurrency}
+      </Text>
     </Stack>
   );
 }
@@ -127,9 +135,9 @@ function CompanyNameCell({
         to={`/portfolios/${row.original.portfolio}/companies/${row.original.id}`}
         component={Link}
       >
-        {row.original.name}
+        <Text size="sm">{row.original.name}</Text>
       </Anchor>
-      <Text c="dimmed" size="sm">
+      <Text c="dimmed" size="xs">
         {row.original.allStats && row.original.allStats.sectorName}
       </Text>
     </Stack>
@@ -143,8 +151,10 @@ function TickerCell({
 }>) {
   return (
     <Stack>
-      <Text fw={700}>{row.original.ticker}</Text>
-      <Text c="dimmed">
+      <Text fw={700} size="sm">
+        {row.original.ticker}
+      </Text>
+      <Text c="dimmed" size="xs">
         {row.original.allStats && row.original.allStats.marketName}
       </Text>
     </Stack>
@@ -168,7 +178,7 @@ export default function CompaniesList({
     pageSize: 60,
   });
   const { data, isLoading, isError, isFetching } = useCompanies(
-    +portfolioId!,
+    +portfolioId || undefined,
     sorting,
     pagination,
     showClosed,
@@ -180,42 +190,35 @@ export default function CompaniesList({
         accessorKey: "logo",
         header: "",
         Cell: LogoCell,
-        maxSize: 50,
       },
       {
         accessorKey: "name",
         header: t("Name"),
         Cell: CompanyNameCell,
-        maxSize: 200,
       },
       {
         accessorKey: "ticker",
         header: t("Ticker"),
         Cell: TickerCell,
-        maxSize: 50,
       },
       {
         accessorKey: "sharesCount",
         header: t("Shares"),
-        maxSize: 50,
       },
       {
         accessorKey: "accumulatedInvestment",
         header: t("Invested"),
         Cell: PriceCell,
-        maxSize: 50,
       },
       {
         accessorKey: "portfolioValue",
         header: t("Portfolio Value"),
         Cell: PortfolioValueCell,
-        maxSize: 50,
       },
       {
         accessorKey: "returnWithDividends",
         header: t("Return + Dividends"),
         Cell: ReturnPercentCell,
-        maxSize: 50,
       },
       {
         accessorKey: "dividendsYield",
@@ -241,6 +244,9 @@ export default function CompaniesList({
     columns,
     data: fetchedCompanies,
     positionActionsColumn: "last",
+    mantineTableBodyCellProps: {
+      align: "center",
+    },
     rowCount: totalRowCount,
     manualPagination: true,
     manualSorting: true,
@@ -263,16 +269,14 @@ export default function CompaniesList({
   });
 
   return (
-    <div>
-      <Stack>
-        <Switch
-          defaultChecked
-          label={t("Display closed companies")}
-          onChange={(event) => setShowClosed(event.currentTarget.checked)}
-          checked={showClosed}
-        />
-        <MantineReactTable table={table} />
-      </Stack>
-    </div>
+    <Stack>
+      <Switch
+        defaultChecked
+        label={t("Display closed companies")}
+        onChange={(event) => setShowClosed(event.currentTarget.checked)}
+        checked={showClosed}
+      />
+      <MantineReactTable table={table} />
+    </Stack>
   );
 }
