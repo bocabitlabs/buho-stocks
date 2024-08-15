@@ -1,21 +1,14 @@
-/* eslint-disable react/jsx-no-constructed-context-values */
-import { screen, render } from "@testing-library/react";
 import MarketsPageHeader from "./MarketsPageHeader";
-import { wrapper } from "utils/mock-providers";
+import { customRender, screen } from "test-utils";
 
 describe("CurrenciesPageHeader tests", () => {
   it("renders expected texts", async () => {
-    render(
-      <MarketsPageHeader>
-        <div>Page content</div>
-      </MarketsPageHeader>,
-      { wrapper },
-    );
+    customRender(<MarketsPageHeader />);
 
     const element = screen.getAllByText(/Markets/i);
-    expect(element).toHaveLength(2);
+    expect(element).toHaveLength(1);
 
-    const body = screen.getByText(/Page Content/i);
-    expect(body).toBeInTheDocument();
+    const el1 = screen.getByText(/Add Market/i);
+    expect(el1).toBeInTheDocument();
   });
 });

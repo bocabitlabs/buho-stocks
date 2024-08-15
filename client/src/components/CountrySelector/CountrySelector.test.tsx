@@ -1,7 +1,5 @@
-import { screen, render } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import CountrySelector from "./CountrySelector";
-import { wrapper } from "utils/mock-providers";
+import { customRender, userEvent, screen } from "test-utils";
 
 describe("CountrySelector tests", () => {
   afterEach(() => {
@@ -14,9 +12,14 @@ describe("CountrySelector tests", () => {
     // Mock function for onCreate
     const onChangeMock = vi.fn();
 
-    render(<CountrySelector handleChange={onChangeMock} />, { wrapper });
-    // eslint-disable-next-line testing-library/no-node-access
-    const element = screen.getByTestId("country-selector").firstElementChild;
+    customRender(
+      <CountrySelector
+        fieldName={"country"}
+        onChange={onChangeMock}
+        value=""
+      />,
+    );
+    const element = screen.getByTestId("country-selector");
     if (!element) throw new Error("Element not found");
     await user.click(element);
 
