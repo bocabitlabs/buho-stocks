@@ -4,7 +4,7 @@ import ChartsList from "./components/ChartsList/ChartsList";
 import PortfolioChartsPageHeader from "./components/PortfolioChartsPageHeader/PortfolioChartsPageHeader";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
 
-export default function PortfolioChartsPage() {
+export function PortfolioChartsPage() {
   const { id } = useParams();
   const { data: portfolio } = usePortfolio(+id!);
 
@@ -25,3 +25,5 @@ export default function PortfolioChartsPage() {
     </Grid>
   );
 }
+
+export default PortfolioChartsPage;

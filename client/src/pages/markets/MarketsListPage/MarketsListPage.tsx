@@ -17,7 +17,7 @@ function MarketsListContent() {
   );
 }
 
-export default function MarketsListPage() {
+export function MarketsListPage() {
   return (
     <Grid p={20}>
       <Grid.Col span={12}>
@@ -31,3 +31,5 @@ export default function MarketsListPage() {
     </Grid>
   );
 }
+
+export default MarketsListPage;

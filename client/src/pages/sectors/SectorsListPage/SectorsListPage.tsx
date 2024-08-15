@@ -17,7 +17,7 @@ function SectorsListTableContent() {
   );
 }
 
-export default function SectorsListPage() {
+export function SectorsListPage() {
   return (
     <Grid p={20}>
       <Grid.Col span={12}>
@@ -31,3 +31,5 @@ export default function SectorsListPage() {
     </Grid>
   );
 }
+
+export default SectorsListPage;

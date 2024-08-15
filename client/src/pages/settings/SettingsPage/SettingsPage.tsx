@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext } from "react";
+import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { Grid, Loader, rem, Tabs } from "@mantine/core";
 import {
@@ -35,7 +35,7 @@ function StockPricesListTableContent() {
   );
 }
 
-export default function SettingsPage(): ReactElement {
+export function SettingsPage() {
   const { t } = useTranslation();
   const iconStyle = { width: rem(12), height: rem(12) };
 
@@ -86,3 +86,5 @@ export default function SettingsPage(): ReactElement {
     </Grid>
   );
 }
+
+export default SettingsPage;

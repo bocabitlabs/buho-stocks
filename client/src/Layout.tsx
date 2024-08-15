@@ -4,7 +4,7 @@ import {
   AppShell,
   Burger,
   Group,
-  Loader,
+  LoadingOverlay,
   ScrollArea,
   useMantineColorScheme,
   useMantineTheme,
@@ -53,7 +53,13 @@ function Layout() {
   }, [data]);
 
   if (isLoading) {
-    return <Loader />;
+    return (
+      <LoadingOverlay
+        visible={isLoading}
+        zIndex={1000}
+        overlayProps={{ radius: "sm", blur: 2 }}
+      />
+    );
   }
 
   if (isError) {

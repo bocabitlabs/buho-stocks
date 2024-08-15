@@ -25,7 +25,7 @@ function CompaniesListContent({ portfolioId }: { portfolioId: string }) {
   );
 }
 
-export default function PortfolioDetailsPage() {
+export function PortfolioDetailsPage() {
   const { id } = useParams();
   const { t } = useTranslation();
 
@@ -77,3 +77,5 @@ export default function PortfolioDetailsPage() {
     </Grid>
   );
 }
+
+export default PortfolioDetailsPage;
