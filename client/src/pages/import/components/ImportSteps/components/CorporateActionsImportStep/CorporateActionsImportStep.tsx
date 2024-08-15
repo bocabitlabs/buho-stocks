@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { Stack, Title } from "@mantine/core";
 import CorporateActionsImportFormProvider from "./components/CorporateActionsImportForm/CorportateActionsImportFormProvider";
+import { ICsvCorporateActionsRow } from "types/csv";
 
 interface Props {
-  corporateActions: any[];
+  corporateActions: ICsvCorporateActionsRow[];
   portfolioId: number | undefined;
   onImportedCallback: () => void;
 }
@@ -16,14 +17,14 @@ export default function CorporateActionsImportStep({
   const { t } = useTranslation();
 
   if (!portfolioId) {
-    return <div>{t("Select a portfolio to import dividends.")}</div>;
+    return <div>{t("Select a portfolio to import corporate actions.")}</div>;
   }
 
   if (corporateActions && corporateActions.length > 0) {
     return (
       <Stack>
         <Title order={2}>{t("Import corporate actions")}</Title>
-        {corporateActions.map((corporateAction: any) => (
+        {corporateActions.map((corporateAction) => (
           <CorporateActionsImportFormProvider
             key={corporateAction.id}
             corporateAction={corporateAction}

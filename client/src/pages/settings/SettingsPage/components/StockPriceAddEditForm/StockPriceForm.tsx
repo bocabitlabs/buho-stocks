@@ -32,7 +32,7 @@ function StockPriceAddEditForm({
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: IStockPriceFormFields) => {
     onSubmitCallback(values);
   };
 

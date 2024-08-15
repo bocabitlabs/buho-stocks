@@ -7,6 +7,7 @@ import {
   MRT_ColumnDef,
   MRT_Localization,
   MRT_PaginationState,
+  MRT_Row,
   useMantineReactTable,
 } from "mantine-react-table";
 import CurrencyFormProvider from "../CurrencyForm/CurrencyFormProvider";
@@ -20,7 +21,7 @@ interface Props {
   mrtLocalization: MRT_Localization;
 }
 
-function NameCell({ row }: Readonly<{ row: any }>) {
+function NameCell({ row }: Readonly<{ row: MRT_Row<ICurrency> }>) {
   const { t } = useTranslation();
   return (
     <Text fw={700} size="sm">

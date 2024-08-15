@@ -12,14 +12,14 @@ import {
 import { useForm } from "@mantine/form";
 import CountrySelector from "components/CountrySelector/CountrySelector";
 import { ICurrency } from "types/currency";
-import { IPortfolio } from "types/portfolio";
+import { IPortfolio, IPortfolioFormFields } from "types/portfolio";
 
 interface AddEditFormProps {
   portfolio?: IPortfolio | undefined;
   currencies: ICurrency[];
   isUpdate?: boolean;
   isVisible: boolean;
-  onSubmitCallback: any;
+  onSubmitCallback: (values: IPortfolioFormFields) => void;
   onCloseCallback: () => void;
 }
 
@@ -33,13 +33,13 @@ function PortfolioForm({
 }: Readonly<AddEditFormProps>) {
   const { t } = useTranslation();
 
-  const form = useForm({
+  const form = useForm<IPortfolioFormFields>({
     mode: "uncontrolled",
     initialValues: {
       name: portfolio ? portfolio.name : "",
       description: portfolio ? portfolio.description : "",
       hideClosedCompanies: portfolio ? portfolio.hideClosedCompanies : true,
-      baseCurrency: portfolio ? portfolio.baseCurrency : "",
+      baseCurrency: portfolio ? portfolio.baseCurrency.id : null,
       countryCode: portfolio ? portfolio.countryCode : "",
       color: "#607d8b",
     },
@@ -53,6 +53,12 @@ function PortfolioForm({
       })),
     [currencies, t],
   );
+
+  const onCountryChange = (value: string | null) => {
+    if (value) {
+      form.setFieldValue("region", value);
+    }
+  };
 
   return (
     <Modal
@@ -79,7 +85,10 @@ function PortfolioForm({
           {...form.getInputProps("baseCurrency")}
           required
         />
-        <CountrySelector form={form} />
+        <CountrySelector
+          onChange={onCountryChange}
+          value={form.getValues().countryCode}
+        />
         <Checkbox
           mt="md"
           label={t("Hide closed companies")}

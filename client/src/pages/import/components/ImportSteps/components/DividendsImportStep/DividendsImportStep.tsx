@@ -1,9 +1,10 @@
 import { useTranslation } from "react-i18next";
 import { Stack, Title } from "@mantine/core";
 import DividendsImportFormProvider from "./components/DividendsImportForm/DividendsImportFormProvider";
+import { ICsvDividendRow } from "types/csv";
 
 interface Props {
-  dividends: any[];
+  dividends: ICsvDividendRow[];
   portfolioId: number | undefined;
   onDividendImported: () => void;
 }
@@ -23,7 +24,7 @@ export default function DividendsImportStep({
     return (
       <Stack>
         <Title order={2}>{t("Import dividends")}</Title>
-        {dividends.map((dividend: any) => (
+        {dividends.map((dividend) => (
           <DividendsImportFormProvider
             key={dividend.id}
             dividend={dividend}

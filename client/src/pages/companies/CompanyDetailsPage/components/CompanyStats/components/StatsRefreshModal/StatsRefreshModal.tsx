@@ -7,7 +7,7 @@ import { useUpdateYearStats } from "hooks/use-stats/use-company-stats";
 
 interface Props {
   companyId: string | undefined;
-  selectedYear: string;
+  selectedYear: string | null;
 }
 
 interface FormValues {
@@ -39,6 +39,9 @@ export default function StatsRefreshModal({ companyId, selectedYear }: Props) {
   });
 
   const handleFormSubmit = (values: FormValues) => {
+    if (!companyId || !selectedYear) {
+      return;
+    }
     updateStats({
       companyId: +companyId!,
       year: selectedYear,

@@ -27,19 +27,26 @@ export default function ChartBrokerByCompany({ data, width }: ChartProps) {
         color: string;
       }[] = [];
 
-      const res = groupByName(filteredCompanies, "broker");
+      const groupedByBroker = groupByName(filteredCompanies, "broker");
+
+      console.log("RES", groupedByBroker);
 
       // Iterate the dictionary res and push the key and value to the brokers array
-      Object.entries<IterableIterator<[string, IPortfolioYearStats[]]>>(
-        res,
-      ).forEach(([key, value]) => {
-        const valueArray = Array.from(value);
+      Object.entries(groupedByBroker).forEach(([year, statsArray]) => {
         brokers.push({
-          name: key,
-          value: valueArray.length,
-          color: getColorShade(key),
+          name: year,
+          value: statsArray.length,
+          color: getColorShade(year),
         });
       });
+      // Object.entries.forEach(([key, value]) => {
+      //   const valueArray = Array.from(value);
+      //   brokers.push({
+      //     name: key,
+      //     value: valueArray.length,
+      //     color: getColorShade(key),
+      //   });
+      // });
       brokers.sort((a, b) => b.value - a.value);
 
       return brokers;

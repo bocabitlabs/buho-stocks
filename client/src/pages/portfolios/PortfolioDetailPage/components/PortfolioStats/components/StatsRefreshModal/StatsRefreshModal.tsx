@@ -45,7 +45,7 @@ export default function StatsRefreshModal({
   const handleFormSubmit = (values: FormValues) => {
     updatePortfolioStats({
       portfolioId: +portfolioId!,
-      year: selectedYear,
+      year: selectedYear ? selectedYear : null,
       updateApiPrice: values.updateStockPrice,
     });
 

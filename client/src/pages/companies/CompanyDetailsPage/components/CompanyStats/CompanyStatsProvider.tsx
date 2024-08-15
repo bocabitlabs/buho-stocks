@@ -25,7 +25,7 @@ function loadInitialYears(firstYear: number) {
 
 export default function YearSelectorProvider({ companyId, firstYear }: Props) {
   const { t } = useTranslation();
-  const [selectedYear, setSelectedYear] = useState<any | null>("all");
+  const [selectedYear, setSelectedYear] = useState<string | null>("all");
 
   const { data, isLoading, isError, error } = useCompanyYearStats(
     +companyId!,
@@ -34,7 +34,7 @@ export default function YearSelectorProvider({ companyId, firstYear }: Props) {
 
   const years = loadInitialYears(firstYear);
 
-  const onYearChange = (year: any) => {
+  const onYearChange = (year: string | null) => {
     setSelectedYear(year);
   };
 

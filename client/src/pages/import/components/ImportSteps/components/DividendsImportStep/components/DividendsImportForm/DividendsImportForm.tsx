@@ -20,12 +20,13 @@ import classes from "./DividendsImportForm.module.css";
 import { useAddDividendsTransaction } from "hooks/use-dividends-transactions/use-dividends-transactions";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import CompanyTickerSelectProvider from "pages/import/components/CompanyTickerSelect/CompanyTickerSelectProvider";
+import { ICsvDividendRow } from "types/csv";
 import { IDividendsTransactionFormFields } from "types/dividends-transaction";
 import { IPortfolio } from "types/portfolio";
 
 interface Props {
   portfolio: IPortfolio;
-  dividend: any | boolean;
+  dividend: ICsvDividendRow;
   onSubmitCallback: () => void;
 }
 
@@ -57,14 +58,13 @@ export default function DividendsImportForm({
   });
 
   const onCompanyChange = useCallback(
-    (value: any) => {
-      console.log("onCompanyChange", value);
-      form.setFieldValue("company", value);
+    (value: string) => {
+      form.setFieldValue("company", +value);
     },
     [form],
   );
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: IDividendsTransactionFormFields) => {
     createDividendsTransaction({
       newTransaction: values,
       updatePortfolio: false,
@@ -141,7 +141,7 @@ export default function DividendsImportForm({
                   onSelect={onCompanyChange}
                   ticker={dividend.ticker}
                   portfolioId={portfolio.id}
-                  form={form}
+                  setFieldValue={form.setFieldValue}
                   withAsterisk
                   description={`${t<string>("Received")}: ${dividend.ticker}`}
                 />

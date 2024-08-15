@@ -12,7 +12,6 @@ interface AddEditFormProps {
   superSectors: ISector[];
   data?: ISector;
   onCloseCallback?: () => void;
-  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: ISectorFormFields) => void;
 }
 
@@ -35,7 +34,7 @@ function SectorForm({
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: ISectorFormFields) => {
     onSubmitCallback(values);
   };
 

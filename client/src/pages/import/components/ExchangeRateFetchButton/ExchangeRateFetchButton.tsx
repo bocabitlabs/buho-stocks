@@ -7,8 +7,8 @@ interface Props {
   fromCurrency: string;
   toCurrency: string | undefined;
   date: string;
-  onChange: Function;
-  onError: Function;
+  onChange: (exchangeRate: number) => void;
+  onError: () => void;
 }
 
 export default function ExchangeRateFetchButton({

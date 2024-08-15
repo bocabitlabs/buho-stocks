@@ -62,7 +62,7 @@ export default function ChartPortfolioDividends({
 
   if (chartData && baseCurrencyCode) {
     return (
-      <Stack>
+      <Stack data-testid="chart">
         <Center>
           <Title order={5}>{t("Portfolio Dividends")}</Title>
         </Center>
@@ -79,11 +79,10 @@ export default function ChartPortfolioDividends({
               interval: 0,
               textAnchor: "end",
               height: 50, // Increase height to avoid clipping the labels
-              tick: {
-                style: { fontSize: 10 },
-                transform: "translate(-10, 0)", // Adjust label position
-              },
+              tickSize: 10,
+              transform: "translate(-10, 0)",
             }}
+            tickLine="y"
           />
         </Center>
       </Stack>

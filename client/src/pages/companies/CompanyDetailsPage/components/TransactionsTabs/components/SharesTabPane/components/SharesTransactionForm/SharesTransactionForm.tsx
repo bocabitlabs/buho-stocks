@@ -80,7 +80,7 @@ export default function SharesTransactionForm({
     }
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: ISharesTransactionFormFields) => {
     onSubmitCallback(values);
   };
 

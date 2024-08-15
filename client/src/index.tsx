@@ -10,6 +10,7 @@ import ReactDOM from "react-dom/client";
 import "./i18n";
 import reportWebVitals from "./reportWebVitals";
 import queryClient from "api/query-client";
+import App from "App";
 import "@mantine/core/styles.css";
 import "@mantine/dropzone/styles.css";
 import "@mantine/dates/styles.css";
@@ -17,7 +18,6 @@ import "mantine-react-table/styles.css";
 import "@mantine/charts/styles.css";
 import "@mantine/tiptap/styles.css";
 import "@mantine/notifications/styles.css";
-import App from "App";
 
 // dependent on utc plugin
 dayjs.extend(utc);

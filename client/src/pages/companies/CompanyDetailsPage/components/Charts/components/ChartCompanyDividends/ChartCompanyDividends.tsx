@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { BarChart } from "@mantine/charts";
 import { Center, Loader, Stack, Title } from "@mantine/core";
 import i18next from "i18next";
+import { CompanyYearStats } from "types/company-year-stats";
 
 interface Props {
-  stats: any;
+  stats: CompanyYearStats[];
   portfolioCurrency: string;
 }
 
@@ -25,17 +26,14 @@ export default function ChartCompanyDividends({
 
   const chartStats = useMemo(() => {
     if (stats) {
-      const newYears: any = [];
-      //     const dividends: any = [];
-      const dividendsPerYear: any = [];
-      stats.forEach((year: any) => {
-        if (
-          !newYears.includes(year.year) &&
-          year.year !== "all" &&
-          year.year !== 9999
-        ) {
+      const newYears: number[] = [];
+      const dividendsPerYear: {
+        year: number;
+        value: number;
+      }[] = [];
+      stats.forEach((year) => {
+        if (!newYears.includes(year.year) && year.year !== 9999) {
           newYears.push(year.year);
-          // dividends.push(Number(year.dividends));
           dividendsPerYear.push({
             year: year.year,
             value: Number(year.dividends),

@@ -19,17 +19,16 @@ export default function ChartCurrenciesByCompany({ data }: ChartProps) {
         return item.sharesCount > 0;
       });
       const currencies: { name: string; value: number; color: string }[] = [];
-      const res = groupByName(filteredCompanies, "currencyCode");
+      const groupedByCurrencyCode = groupByName(
+        filteredCompanies,
+        "currencyCode",
+      );
 
-      Object.entries<IterableIterator<[string, IPortfolioYearStats[]]>>(
-        res,
-      ).forEach(([key, value]) => {
-        const valueArray = Array.from(value);
-
+      Object.entries(groupedByCurrencyCode).forEach(([year, statsArray]) => {
         currencies.push({
-          name: key,
-          value: valueArray.length,
-          color: getColorShade(key),
+          name: year,
+          value: statsArray.length,
+          color: getColorShade(year),
         });
       });
       currencies.sort((a, b) => b.value - a.value);

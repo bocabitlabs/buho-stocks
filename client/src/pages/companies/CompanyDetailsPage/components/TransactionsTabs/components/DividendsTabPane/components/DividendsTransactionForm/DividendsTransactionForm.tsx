@@ -76,7 +76,7 @@ export default function DividendsTransactionForm({
     }
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: IDividendsTransactionFormFields) => {
     onSubmitCallback(values);
   };
 

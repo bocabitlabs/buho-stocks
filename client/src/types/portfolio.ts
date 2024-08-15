@@ -10,7 +10,7 @@ interface IPortfolioBase {
 }
 
 export interface IPortfolioFormFields extends IPortfolioBase {
-  baseCurrency: number;
+  baseCurrency: number | null;
 }
 
 export interface IPortfolio extends IPortfolioBase {
@@ -20,7 +20,6 @@ export interface IPortfolio extends IPortfolioBase {
   companies: ICompanyListItem[];
   dateCreated: string;
   lastUpdated: string;
-  stats: any;
 }
 
 export interface IPortfolioRouteParams {

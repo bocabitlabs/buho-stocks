@@ -6,7 +6,6 @@ import {
   Group,
   Modal,
   Select,
-  SimpleGrid,
   TextInput,
   Image,
   Text,
@@ -33,7 +32,7 @@ interface Props {
   sectors: ISector[];
   markets: IMarket[];
   onCloseCallback: () => void;
-  onSubmitCallback: Function;
+  onSubmitCallback: (values: ICompanyFormFields) => void;
 }
 
 function CompanyForm({
@@ -48,14 +47,18 @@ function CompanyForm({
   onSubmitCallback = () => {},
 }: Readonly<Props>) {
   const { t } = useTranslation();
-
-  const getBase64 = (img: any, callback: any) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => callback(reader.result));
-    reader.readAsDataURL(img);
-  };
-
   const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const getBase64 = (
+    img: Blob,
+    callback: (fileRead: string | ArrayBuffer | null) => void,
+  ) => {
+    const reader = new FileReader();
+    if (reader.result !== null) {
+      reader.addEventListener("load", () => callback(reader.result));
+      reader.readAsDataURL(img);
+    }
+  };
 
   const previews = files.map((file) => {
     const imageUrl = URL.createObjectURL(file);
@@ -63,6 +66,8 @@ function CompanyForm({
       <Image
         key={randomId()}
         src={imageUrl}
+        h={100}
+        w={"auto"}
         onLoad={() => URL.revokeObjectURL(imageUrl)}
       />
     );
@@ -93,13 +98,14 @@ function CompanyForm({
   const handleImagesUpload = (uploadedFiles: FileWithPath[]) => {
     setFiles(uploadedFiles);
 
-    getBase64(uploadedFiles[0], (base64: any) => {
-      form.setFieldValue("logo", base64);
-      console.log(base64);
+    getBase64(uploadedFiles[0], (base64: string | ArrayBuffer | null) => {
+      if (typeof base64 === "string") {
+        form.setFieldValue("logo", base64);
+      }
     });
   };
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: ICompanyFormFields) => {
     onSubmitCallback(values);
   };
 
@@ -169,23 +175,27 @@ function CompanyForm({
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("isin")}
         />
-        <Input.Wrapper mt="md" label={t("Logo")}>
-          <Dropzone
-            mt="md"
-            maxFiles={1}
-            accept={IMAGE_MIME_TYPE}
-            onDrop={handleImagesUpload}
-          >
-            <Text ta="center">{t("Drop an image or click here")}</Text>
-          </Dropzone>
+        <Grid justify="flex-end" align="flex-end">
+          <Grid.Col span={6}>
+            <Input.Wrapper mt="md" label={t("Logo")}>
+              <Dropzone
+                mt="md"
+                maxFiles={1}
+                accept={IMAGE_MIME_TYPE}
+                onDrop={handleImagesUpload}
+              >
+                <Text ta="center">{t("Drop an image or click here")}</Text>
+              </Dropzone>
+            </Input.Wrapper>
+          </Grid.Col>
 
-          <SimpleGrid
-            cols={{ base: 1, sm: 4 }}
-            mt={previews.length > 0 ? "xl" : 0}
-          >
+          <Grid.Col span={6}>
             {previews}
-          </SimpleGrid>
-        </Input.Wrapper>
+            {company?.logo && previews.length == 0 && (
+              <Image src={company.logo} alt={company.name} h={100} w={"auto"} />
+            )}
+          </Grid.Col>
+        </Grid>
         <Select
           mt="md"
           withAsterisk

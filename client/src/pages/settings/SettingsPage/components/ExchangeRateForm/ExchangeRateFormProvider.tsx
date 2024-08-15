@@ -6,6 +6,7 @@ import {
   useExchangeRateDetails,
   useUpdateExchangeRate,
 } from "hooks/use-exchange-rates/use-exchange-rates";
+import { IExchangeRateFormFields } from "types/exchange-rate";
 
 interface Props {
   id?: number;
@@ -31,7 +32,7 @@ export default function ExchangeRateFormProvider({
     onSuccess: onCloseCallback,
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: IExchangeRateFormFields) => {
     if (isUpdate) {
       update({ id, newExchangeRate: values });
     } else {

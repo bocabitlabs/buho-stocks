@@ -9,6 +9,7 @@ import {
 import { useAllCurrencies } from "hooks/use-currencies/use-currencies";
 import { useAllMarkets } from "hooks/use-markets/use-markets";
 import { useAllSectors } from "hooks/use-sectors/use-sectors";
+import { ICompanyFormFields } from "types/company";
 
 type Props = {
   companyId?: number;
@@ -59,12 +60,13 @@ export default function CompanyFormProvider({
     onSuccess: onCloseCallback,
   });
 
-  const onSubmitCallback = (values: any) => {
+  const onSubmitCallback = (values: ICompanyFormFields) => {
     const newValues = { ...values };
     if (
       newValues.logo === null ||
-      newValues.logo.startsWith("https://") ||
-      newValues.logo.startsWith("http://")
+      (newValues.logo &&
+        (newValues.logo.startsWith("https://") ||
+          newValues.logo.startsWith("http://")))
     ) {
       delete newValues.logo;
     }

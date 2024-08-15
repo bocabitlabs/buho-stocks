@@ -16,8 +16,6 @@ function HomePageHeader() {
     setIsModalVisible(false);
   };
 
-  console.log(JSON.stringify(isModalVisible));
-
   return (
     <Group justify="space-between">
       <Title order={1} mt="md" textWrap="pretty">

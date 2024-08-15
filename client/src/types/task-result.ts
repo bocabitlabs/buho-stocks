@@ -11,3 +11,7 @@ export interface ITaskResult {
   task_name: string;
   details: ITaskDetails;
 }
+
+export interface ITaskResultWrapper {
+  status: ITaskResult;
+}

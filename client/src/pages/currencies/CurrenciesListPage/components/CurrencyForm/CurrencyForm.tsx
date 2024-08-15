@@ -8,8 +8,7 @@ interface AddEditFormProps {
   isUpdate?: boolean;
   isVisible: boolean;
   onCloseCallback?: () => void;
-  // eslint-disable-next-line no-unused-vars
-  onSubmitCallback?: (values: any) => void;
+  onSubmitCallback?: (values: ICurrencyFormFields) => void;
 }
 
 function CurrencyForm({
@@ -30,7 +29,7 @@ function CurrencyForm({
     },
   });
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: ICurrencyFormFields) => {
     onSubmitCallback(values);
   };
 

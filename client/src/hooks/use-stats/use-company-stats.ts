@@ -1,14 +1,17 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { CompanyYearStats } from "types/company-year-stats";
 
 export const fetchStats = async (
-  companyId: number | undefined,
-  year: string | undefined,
+  companyId: number | undefined | null,
+  year: string | undefined | null,
 ) => {
+  if (!companyId || !year) {
+    throw new Error("Company ID and year are required");
+  }
   const { data } = await apiClient.get<CompanyYearStats>(
     `/stats/company/${companyId}/year/${year}/`,
   );
@@ -16,9 +19,9 @@ export const fetchStats = async (
 };
 
 export function useCompanyYearStats(
-  companyId: number | undefined,
-  year: string | undefined,
-  otherOptions?: any,
+  companyId: number | undefined | null,
+  year: string | undefined | null,
+  otherOptions?: QueryOptions<CompanyYearStats, Error>,
 ) {
   return useQuery<CompanyYearStats, Error>({
     queryKey: ["companyYearStats", companyId, year],

@@ -1,11 +1,11 @@
 import { Loader } from "@mantine/core";
 import TradesImportForm from "./TradesImportForm";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
-import { ISharesTransactionFormFields } from "types/shares-transaction";
+import { ICsvTradesRow } from "types/csv";
 
 interface Props {
   portfolioId: number;
-  trade: ISharesTransactionFormFields;
+  trade: ICsvTradesRow;
   onImportedCallback: () => void;
 }
 

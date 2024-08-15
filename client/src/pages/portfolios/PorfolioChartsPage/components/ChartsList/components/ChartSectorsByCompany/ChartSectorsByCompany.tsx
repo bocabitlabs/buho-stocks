@@ -15,20 +15,24 @@ export default function ChartSectorsByCompany({ data, width }: ChartProps) {
 
   const filteredData = useMemo(
     function createChartData() {
-      const filteredCompanies: any = data.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
+      const filteredStats: IPortfolioYearStats[] = data.filter(
+        (item: IPortfolioYearStats) => {
+          return item.sharesCount > 0;
+        },
+      );
       const sectors: { name: string; value: number; color: string }[] = [];
 
-      const res = groupByName(filteredCompanies, "sectorName");
+      const groupedBySectorName = groupByName(filteredStats, "sectorName");
 
-      Object.entries(res).forEach(([k, v]) => {
-        sectors.push({
-          name: t(k),
-          value: (v as any[]).length,
-          color: getColorShade(k),
-        });
-      });
+      Object.entries(groupedBySectorName).forEach(
+        ([sectorName, statsArray]) => {
+          sectors.push({
+            name: t(sectorName),
+            value: statsArray.length,
+            color: getColorShade(sectorName),
+          });
+        },
+      );
       // Sort the sectors by value
       sectors.sort((a, b) => b.value - a.value);
       return sectors;

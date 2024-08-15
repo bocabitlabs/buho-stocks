@@ -11,7 +11,11 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconClockHour3, IconWifi, IconWifiOff } from "@tabler/icons-react";
-import { ITaskDetails, ITaskResult } from "types/task-result";
+import {
+  ITaskDetails,
+  ITaskResult,
+  ITaskResultWrapper,
+} from "types/task-result";
 
 function TasksModal() {
   // List of tasks and their statuses
@@ -24,10 +28,13 @@ function TasksModal() {
   const baseUrl = import.meta.env.VITE_API_URL || window.location.origin;
   const websocketUrl = `${baseUrl}/ws/tasks/`;
 
-  const { lastJsonMessage, readyState } = useWebSocket(websocketUrl, {
-    share: false,
-    shouldReconnect: () => true,
-  });
+  const { lastJsonMessage, readyState } = useWebSocket<ITaskResultWrapper>(
+    websocketUrl,
+    {
+      share: false,
+      shouldReconnect: () => true,
+    },
+  );
 
   const clearCompletedTasksList = () => {
     setTasks((prevTasks: ITaskResult[]) => {
@@ -76,13 +83,12 @@ function TasksModal() {
 
   useEffect(() => {
     if (lastJsonMessage) {
-      const jsonMessage: any = lastJsonMessage;
       updateTaskProgress(
-        jsonMessage.status.task_id,
-        jsonMessage.status.task_name,
-        jsonMessage.status.progress,
-        jsonMessage.status.status,
-        jsonMessage.status.details,
+        lastJsonMessage.status.task_id,
+        lastJsonMessage.status.task_name,
+        lastJsonMessage.status.progress,
+        lastJsonMessage.status.status,
+        lastJsonMessage.status.details,
       );
     }
   }, [lastJsonMessage]);

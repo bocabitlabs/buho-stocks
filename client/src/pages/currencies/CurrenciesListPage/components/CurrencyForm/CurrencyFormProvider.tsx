@@ -6,6 +6,7 @@ import {
   useCurrency,
   useUpdateCurrency,
 } from "hooks/use-currencies/use-currencies";
+import { ICurrencyFormFields } from "types/currency";
 
 type Props = {
   id?: number;
@@ -30,7 +31,7 @@ export default function CurrencyFormProvider({
     onSuccess: onCloseCallback,
   });
 
-  const onSubmitCallback = (values: any) => {
+  const onSubmitCallback = (values: ICurrencyFormFields) => {
     if (isUpdate) {
       updateCurrency({ id, newCurrency: values });
     } else {

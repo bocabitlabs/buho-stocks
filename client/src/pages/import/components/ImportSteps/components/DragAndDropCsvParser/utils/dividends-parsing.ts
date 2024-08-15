@@ -1,4 +1,6 @@
+import { convertDataLinesToList } from "./csv-parsing-utils";
 import extractInfoRows from "./info-parsing";
+import { ICsvDividendRow } from "types/csv";
 
 const getDividendsHeaders = () => {
   return ["Dividendos", "Dividends"];
@@ -8,60 +10,57 @@ const getDividendTaxesHeaders = () => {
   return ["Retención de impuestos", "Withholding Tax"];
 };
 
-function convertDataLinesToList(data: []) {
-  const dataRows: [][] = [];
-  data.forEach((line: any) => {
-    dataRows.push(line.data);
-  });
-  return dataRows;
-}
+function extractDividendRows(data: string[][]) {
+  const dividendsRows: string[][] = [];
+  const dividendsHeaders = getDividendsHeaders();
 
-function extractDividendRows(data: [][]) {
-  const dividendsRows: any[][] = [];
-
-  console.log("Searching for dividends...");
-
-  data.forEach((line: any[]) => {
-    if (line && line.length > 0) {
-      if (
-        getDividendsHeaders().includes(line[0]) &&
-        line[1] !== "Header" &&
-        line[1] === "Data" &&
-        line[2] !== "Total"
-      ) {
-        dividendsRows.push(line);
-      }
+  // For each line in the data, check if it's a dividend line (includes any of the dividendsHeaders)
+  // If it is, add it to the dividendsRows array
+  const isDividendLine = (line: string[]) => {
+    return (
+      dividendsHeaders.includes(line[0]) &&
+      line[1] !== "Header" &&
+      line[1] === "Data" &&
+      line[2] !== "Total"
+    );
+  };
+  data.map((line: string[]) => {
+    if (isDividendLine(line)) {
+      dividendsRows.push(line);
     }
   });
-  console.log(`Found ${dividendsRows.length} dividends`);
+
   return dividendsRows;
 }
 
-function extractDividendTaxesRows(data: [][]) {
-  const dividendTaxesRows: any[][] = [];
-
+function extractDividendTaxesRows(data: string[][]) {
+  const dividendTaxesRows: string[][] = [];
+  const dividendTaxesHeaders = getDividendTaxesHeaders();
   console.log("Searching for dividend's taxes...");
 
-  data.forEach((line: any[]) => {
-    if (getDividendTaxesHeaders().includes(line[0])) {
+  data.map((line: string[]) => {
+    if (dividendTaxesHeaders.includes(line[0])) {
       dividendTaxesRows.push(line);
     }
   });
+
   console.log(`Found ${dividendTaxesRows.length} dividend's taxes`);
   return dividendTaxesRows;
 }
 
 function matchDividedsWithTaxes(
-  dividendsRows: any[][],
-  dividendTaxesRows: any[][],
+  dividendsRows: string[][],
+  dividendTaxesRows: string[][],
 ) {
-  const matchedDividendsWithTaxes: any[] = [];
+  const matchedDividendsWithTaxes: (string | number)[][] = [];
+  const companyRegex = /^([^(]*)\((\w+)\)/gis;
+
   console.log(`Matching dividends with their taxes...`);
-  dividendsRows.forEach((dividend) => {
-    const dividendLine: any[] = dividend;
+
+  dividendsRows.map((dividend) => {
+    const dividendLine: (string | number)[] = dividend;
     dividendLine.splice(6);
 
-    let companyRegex = /^([^(]*)\((\w+)\)/gis;
     const companyNameMatches = companyRegex.exec(dividend[4]);
 
     if (companyNameMatches && companyNameMatches.length > 1) {
@@ -75,8 +74,8 @@ function matchDividedsWithTaxes(
       dividendLine.push(companyISIN); // Company ISIN
       dividendLine.push(companyTicker); // Company ticker
       let taxes = 0;
-      dividendTaxesRows.forEach((tax) => {
-        companyRegex = /^([^(]*)\((\w+)\)/gis;
+
+      dividendTaxesRows.map((tax) => {
         const companyNameInTaxMatches = companyRegex.exec(tax[4]);
 
         if (companyNameInTaxMatches && companyNameInTaxMatches.length > 1) {
@@ -85,17 +84,14 @@ function matchDividedsWithTaxes(
             companyNameInTax === companyNameInDividend &&
             tax[3] === dividend[3]
           ) {
-            // eslint-disable-next-line prefer-destructuring
             taxes = +tax[5]; // Taxes
           }
         }
       });
       dividendLine.push(taxes); // Taxes
-
       matchedDividendsWithTaxes.push(dividendLine);
     }
   });
-
   console.log(
     `Matched dividends with taxes: ${matchedDividendsWithTaxes.length}`,
   );
@@ -103,13 +99,13 @@ function matchDividedsWithTaxes(
 }
 
 function matchDividendsWithInfo(
-  dividendsWithTaxesRow: any[][],
-  infoRows: any[][],
+  dividendsWithTaxesRow: (string | number)[][],
+  infoRows: string[][],
 ) {
-  const matchedDividendsWithInfo: any[][] = [];
+  const matchedDividendsWithInfo: string[][] = [];
   console.log(`Matching dividends with their info...`);
   dividendsWithTaxesRow.forEach((dividend) => {
-    const dividendLine = dividend as any;
+    const dividendLine = dividend as string[];
     const ticker = dividendLine[7];
 
     infoRows.forEach((infoRow) => {
@@ -125,10 +121,10 @@ function matchDividendsWithInfo(
   return matchedDividendsWithInfo;
 }
 
-function parseDividendsWithTaxes(matchedDividendsWithTaxes: any[][]) {
-  const parsedDividendsWithTaxes: any[] = [];
+function parseDividendsWithTaxes(matchedDividendsWithTaxes: string[][]) {
+  const parsedDividendsWithTaxes: ICsvDividendRow[] = [];
 
-  matchedDividendsWithTaxes.forEach((line) => {
+  matchedDividendsWithTaxes.map((line) => {
     const transaction = line[0];
     const currency = line[2];
     const date = line[3];
@@ -162,7 +158,7 @@ function parseDividendsWithTaxes(matchedDividendsWithTaxes: any[][]) {
   return parsedDividendsWithTaxes;
 }
 
-export function processDividendsData(data: []) {
+export function processDividendsData(data: string[][]) {
   try {
     const dataLines = convertDataLinesToList(data);
     const dividendsRows = extractDividendRows(dataLines);

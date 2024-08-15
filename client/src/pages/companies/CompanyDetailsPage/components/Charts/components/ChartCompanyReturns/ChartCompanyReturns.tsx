@@ -2,9 +2,10 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { LineChart } from "@mantine/charts";
 import { Center, Stack, Title } from "@mantine/core";
+import { CompanyYearStats } from "types/company-year-stats";
 
 interface Props {
-  stats: any;
+  stats: CompanyYearStats[];
 }
 
 export default function ChartCompanyReturns({ stats }: Props) {
@@ -25,10 +26,14 @@ export default function ChartCompanyReturns({ stats }: Props) {
 
   const chartData = useMemo(() => {
     if (stats) {
-      const newYears: any = [];
-      const returnsPercent: any = [];
+      const newYears: number[] = [];
+      const returnsPercent: {
+        year: number;
+        returnsPercent: number;
+        returnWithDividendsPercent: number;
+      }[] = [];
 
-      stats.sort((a: any, b: any) => {
+      stats.sort((a, b) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -37,12 +42,9 @@ export default function ChartCompanyReturns({ stats }: Props) {
         }
         return 0;
       });
-      stats.forEach((year: any) => {
-        if (
-          !newYears.includes(year.year) &&
-          year.year !== "all" &&
-          year.year !== 9999
-        ) {
+      stats.forEach((year) => {
+        if (!newYears.includes(year.year) && year.year !== 9999) {
+          newYears.push(year.year);
           returnsPercent.push({
             year: year.year,
             returnsPercent: Number(year.returnPercent),

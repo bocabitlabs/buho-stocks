@@ -7,7 +7,7 @@ import { useUpdatePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats
 
 interface Props {
   portfolioId: number | undefined;
-  onPortfolioUpdated: Function;
+  onPortfolioUpdated: () => void;
 }
 
 export default function TradesImportForm({

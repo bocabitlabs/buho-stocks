@@ -10,11 +10,13 @@ import {
   Modal,
   Text,
 } from "@mantine/core";
+import { UseFormReturnType } from "@mantine/form";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useCompanySearch } from "hooks/use-companies/use-companies-search";
+import { ICompanyFormFields } from "types/company";
 
 type Props = {
-  form: any;
+  form: UseFormReturnType<ICompanyFormFields>;
 };
 
 export default function SearchButton({ form }: Props) {

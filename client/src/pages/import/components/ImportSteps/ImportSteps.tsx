@@ -11,13 +11,18 @@ import { processTradesData } from "./components/DragAndDropCsvParser/utils/trade
 import PortfolioSelector from "./components/PortfolioSelector/PortfolioSelector";
 import TradesImportStep from "./components/TradesImportStep/TradesImportStep";
 import UpdatePortfolioStep from "./components/UpdatePortfolioStep/UpdatePortfolioStep";
+import {
+  ICsvCorporateActionsRow,
+  ICsvDividendRow,
+  ICsvTradesRow,
+} from "types/csv";
 
 export default function ImportSteps() {
   const { t } = useTranslation();
 
   const [active, setActive] = useState(0);
   const prevStep = () =>
-    setActive((current) => (current > 0 ? current - 1 : current));
+    setActive((current) => (current > -1 ? current - 1 : current));
 
   // Step 1
   const [selectedPortfolio, setSelectedPortfolio] = useState<
@@ -25,34 +30,36 @@ export default function ImportSteps() {
   >(undefined);
   // Step 2
   const [parsingComplete, setParsingComplete] = useState(false);
-  const [parsedCsvData, setParsedCsvData] = useState<string[]>([]);
+  const [parsedCsvData, setParsedCsvData] = useState<string[][]>([]);
   // Step 3
-  const [dividends, setDividends] = useState<any[]>([]);
+  const [dividends, setDividends] = useState<ICsvDividendRow[]>([]);
   const [importedDividendsCount, setImportedDividendsCount] =
     useState<number>(0);
   // Step 4
-  const [trades, setTrades] = useState<any[]>([]);
+  const [trades, setTrades] = useState<ICsvTradesRow[]>([]);
   const [importedTradesCount, setImportedTradesCount] = useState<number>(0);
   // Step 5
-  const [corporateActions, setCorporateActions] = useState<any[]>([]);
+  const [corporateActions, setCorporateActions] = useState<
+    ICsvCorporateActionsRow[]
+  >([]);
   const [importedCorporateActionsCount, setImportedCorporateActionsCount] =
     useState<number>(0);
   // Step 6
   const [portfolioUpdated, setPortfolioUpdated] = useState(false);
 
-  const onPortfolioSelect = (value: any) => {
+  const onPortfolioSelect = (value: number) => {
     setSelectedPortfolio(value);
   };
 
   const nextStep = useCallback(() => {
     if (active === 0 && !selectedPortfolio) return;
-    if (active === 1 && !parsedCsvData.length) return;
-
+    if (active === 1 && parsedCsvData.length == 0) return;
+    console.log("Current", active);
     setActive((current) => (current < 5 ? current + 1 : current));
     window.scrollTo(0, 0);
   }, [active, parsedCsvData, selectedPortfolio]);
 
-  const onCsvParsingComplete = (value: any) => {
+  const onCsvParsingComplete = (value: string[][]) => {
     setParsedCsvData(value);
     const dividendsFound = processDividendsData(value);
     setDividends(dividendsFound);

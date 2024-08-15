@@ -1,3 +1,5 @@
+import { convertDataLinesToList } from "./csv-parsing-utils";
+
 const getCompanyInfoHeaders = () => {
   return [
     "Información de instrumento financiero",
@@ -5,28 +7,24 @@ const getCompanyInfoHeaders = () => {
   ];
 };
 
-function convertDataLinesToList(data: []) {
-  const dataRows: [][] = [];
-  data.forEach((line: any) => {
-    dataRows.push(line.data);
-  });
-  return dataRows;
-}
-
-export default function extractInfoRows(data: []) {
-  const rows: any[][] = [];
-
+export default function extractInfoRows(data: string[][]) {
+  const rows: string[][] = [];
+  const headers = getCompanyInfoHeaders();
   const dataRows = convertDataLinesToList(data);
 
   console.log("Searching for company information in the CSV file...");
-  const headers = getCompanyInfoHeaders();
-  dataRows.forEach((line: any[]) => {
-    if (
+
+  const isCompanyInfoLine = (line: string[]) => {
+    return (
       headers.includes(line[0]) &&
       line[1] !== "Header" &&
       line[1] === "Data" &&
       line[3]
-    ) {
+    );
+  };
+
+  dataRows.map((line: string[]) => {
+    if (isCompanyInfoLine(line)) {
       rows.push(line);
     }
   });
