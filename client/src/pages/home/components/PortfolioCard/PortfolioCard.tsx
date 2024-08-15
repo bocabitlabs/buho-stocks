@@ -27,12 +27,12 @@ export default function PortfolioCard({
         </Card.Section>
         <Card.Section withBorder inheritPadding py="xs">
           <Group justify="space-between">
-            <Text>
-              <Center>
+            <Center>
+              <Text>
                 <IconBuildingCommunity /> {portfolio.companies.length}{" "}
                 {t("companies")}
-              </Center>
-            </Text>
+              </Text>
+            </Center>
           </Group>
         </Card.Section>
         <Card.Section withBorder inheritPadding py="xs">
