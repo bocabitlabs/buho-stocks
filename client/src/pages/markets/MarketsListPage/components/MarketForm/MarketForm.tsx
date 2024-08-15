@@ -22,7 +22,6 @@ interface AddEditFormProps {
   data?: IMarket;
   isUpdate?: boolean;
   onCloseCallback?: () => void;
-  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: IMarketFormFields) => void;
 }
 
@@ -63,7 +62,7 @@ function MarketForm({
     </ActionIcon>
   );
 
-  const onSubmit = (values: any) => {
+  const onSubmit = (values: IMarketFormFields) => {
     onSubmitCallback(values);
   };
 
@@ -78,6 +77,12 @@ function MarketForm({
   const hideModal = () => {
     form.reset();
     onCloseCallback();
+  };
+
+  const onCountryChange = (value: string | null) => {
+    if (value) {
+      form.setFieldValue("region", value);
+    }
   };
 
   return (
@@ -101,7 +106,11 @@ function MarketForm({
           // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("description")}
         />
-        <CountrySelector form={form} fieldName="region" />
+        <CountrySelector
+          fieldName="region"
+          value={form.getValues().region}
+          onChange={onCountryChange}
+        />
 
         <TimeInput
           label={t("Opening time")}

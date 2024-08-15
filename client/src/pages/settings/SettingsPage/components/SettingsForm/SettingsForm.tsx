@@ -17,7 +17,6 @@ import { ISettingsFormFields } from "types/settings";
 interface Props {
   settings: ISettingsFormFields;
   timezones: ITimezone[];
-  // eslint-disable-next-line no-unused-vars
   onSubmitCallback: (values: ISettingsFormFields) => void;
 }
 

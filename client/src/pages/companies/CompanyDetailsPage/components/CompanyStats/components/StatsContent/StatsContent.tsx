@@ -5,7 +5,11 @@ import { CompanyYearStats } from "types/company-year-stats";
 
 interface Props {
   stats: CompanyYearStats;
-  stockPrice: any;
+  stockPrice: {
+    price: string;
+    priceCurrency: string;
+    transactionDate: string;
+  };
 }
 
 export default function StatsContent({ stats, stockPrice }: Props) {

@@ -9,7 +9,7 @@ interface Props {
 export default function BenchmarkYearFormProvider({ id }: Props) {
   const { mutate: createBenchmarkYear } = useAddBenchmarkYear();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: IBenchmarkYearFormFields) => {
     const { year, value, valueCurrency, returnPercentage } = values;
     const newBenchmark: IBenchmarkYearFormFields = {
       year,

@@ -1,11 +1,11 @@
 import { Loader } from "@mantine/core";
 import DividendsImportForm from "./DividendsImportForm";
 import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
-import { IDividendsTransactionFormFields } from "types/dividends-transaction";
+import { ICsvDividendRow } from "types/csv";
 
 interface Props {
   portfolioId: number;
-  dividend: IDividendsTransactionFormFields;
+  dividend: ICsvDividendRow;
   onImportedCallback: () => void;
 }
 

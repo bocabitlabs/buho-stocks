@@ -13,7 +13,7 @@ module.exports = {
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
-    "plugin:prettier/recommended", // Must be last
+    "prettier", // Must be last
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -31,7 +31,6 @@ module.exports = {
     "jsx-a11y",
     "react-hooks",
     "@typescript-eslint",
-    "prettier",
     "vitest",
   ],
   ignorePatterns: [
@@ -39,6 +38,7 @@ module.exports = {
     "setupProxy.js",
     "setupTests.ts",
     "vite.config.ts",
+    "vitest.setup.mjs",
   ],
   rules: {
     "@typescript-eslint/no-explicit-any": "warn",
@@ -80,13 +80,9 @@ module.exports = {
     "no-console": "off",
     // 'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
     // disallow use of variables before they are defined
-    'no-use-before-define': ['error', { functions: true, classes: true, variables: true }],
-    "prettier/prettier": [
+    "no-use-before-define": [
       "error",
-      {
-        singleQuote: false,
-        trailingComma: "all",
-      },
+      { functions: true, classes: true, variables: true },
     ],
     quotes: ["error", "double", { allowTemplateLiterals: true }],
     // "no-console": ["warn", { "allow": ["warn", "error"] }],
@@ -102,12 +98,12 @@ module.exports = {
     ],
   },
   settings: {
-    "react": {
-      "version": "detect"
+    react: {
+      version: "detect",
     },
     "import/resolver": {
       node: {
-        moduleDirectory: ["src", "node_modules"],
+        moduleDirectory: ["src", "test-utils", "node_modules"],
         extensions: [".js", ".jsx", ".ts", ".tsx"],
       },
     },

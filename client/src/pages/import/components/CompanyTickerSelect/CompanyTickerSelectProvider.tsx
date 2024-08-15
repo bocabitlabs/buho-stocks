@@ -7,10 +7,9 @@ import { ICompany } from "types/company";
 interface Props {
   portfolioId: number | undefined;
   ticker: string;
-  // eslint-disable-next-line no-unused-vars
-  onSelect: (company: any) => void;
+  onSelect: (company: string) => void;
   withAsterisk?: boolean;
-  form: any;
+  setFieldValue: (field: string, value: number) => void;
   description?: string;
 }
 
@@ -19,7 +18,7 @@ export default function CompanyTickerSelectProvider({
   ticker,
   onSelect,
   withAsterisk = false,
-  form,
+  setFieldValue,
   description = undefined,
 }: Props) {
   const { data: companies, isFetching: fetchingCompanies } =
@@ -39,7 +38,7 @@ export default function CompanyTickerSelectProvider({
         });
         if (company) {
           setInitialValue(company);
-          form.setFieldValue("company", company.id);
+          setFieldValue("company", company.id);
         } else {
           setInitialValue(undefined);
         }

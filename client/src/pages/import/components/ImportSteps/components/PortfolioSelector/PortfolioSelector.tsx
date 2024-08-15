@@ -4,7 +4,7 @@ import { usePortfolios } from "hooks/use-portfolios/use-portfolios";
 import { IPortfolio } from "types/portfolio";
 
 interface Props {
-  onSelect: Function;
+  onSelect: (portfolioId: number) => void;
 }
 
 export default function PortfolioSelector({ onSelect }: Props) {
@@ -16,11 +16,10 @@ export default function PortfolioSelector({ onSelect }: Props) {
   } = usePortfolios();
 
   const onPortfolioSelect = (value: string | null) => {
-    console.log(value);
     if (value === null) {
       return;
     }
-    onSelect(value);
+    onSelect(+value);
   };
 
   const selectOptions = data?.map((portfolio: IPortfolio) => ({

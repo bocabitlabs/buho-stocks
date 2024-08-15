@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { BarChart } from "@mantine/charts";
-import i18next from "i18next";
+import i18next, { t } from "i18next";
 import { IPortfolioYearStats } from "types/portfolio-year-stats";
 import { getColorShade } from "utils/colors";
 
@@ -10,7 +10,15 @@ interface Props {
   currency: string;
 }
 
-function MonthLabel({ payload, x, y }: any) {
+interface MonthLabelProps {
+  payload: {
+    value: string;
+  };
+  x: number;
+  y: number;
+}
+
+function MonthLabel({ payload, x, y }: MonthLabelProps) {
   const { t } = useTranslation();
   return (
     <g transform={`translate(${x},${y})`}>
@@ -57,14 +65,17 @@ export default function ChartPortfolioDividendsPerMonth({
         "December",
       ];
 
-      const results: any = [];
+      const results: {
+        month: string;
+        [key: string]: number | string;
+      }[] = [];
 
       // Create an object with the format above for each month
       months.forEach((month) => {
-        results.push({ month });
+        results.push({ month: t<string>(month) });
         Object.entries(data).forEach(([k, v]) => {
           const monthIndex = months.indexOf(month);
-          results[monthIndex][k] = v[month as keyof typeof v];
+          results[monthIndex][k] = v[month as keyof typeof v] as number;
         });
       });
 
@@ -91,8 +102,7 @@ export default function ChartPortfolioDividendsPerMonth({
       dataKey="month"
       series={filteredData.series}
       tooltipProps={{
-        itemSorter: (item: any) => {
-          console.log("Item", item);
+        itemSorter: (item) => {
           return item.name;
         },
       }}
@@ -101,20 +111,7 @@ export default function ChartPortfolioDividendsPerMonth({
       }
       xAxisProps={{
         angle: -45,
-        tick: <MonthLabel />,
-        // label: {
-        //   formatter: (value: string) => {
-        //     // console.log("Value", value);
-        //     return t(value);
-        //   },
-        // },
-        // interval: 0,
-        // textAnchor: "end",
-        // height: 50, // Increase height to avoid clipping the labels
-        // tick: {
-        //   style: { fontSize: 10 },
-        //   transform: "translate(-10, 0)", // Adjust label position
-        // },
+        tick: (props) => <MonthLabel {...props} />,
       }}
     />
   );

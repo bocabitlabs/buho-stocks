@@ -30,16 +30,18 @@ export default function PortfolioStatsProvider({
   const { t } = useTranslation();
 
   const years = loadInitialYears(firstYear);
-  const [selectedYear, setSelectedYear] = useState<any | null>("all");
+  const [selectedYear, setSelectedYear] = useState<string | null>("all");
 
   const { data, isLoading, isError, error } = usePortfolioYearStats(
     +portfolioId!,
     selectedYear,
   );
 
-  const onYearChange = (year: any) => {
+  const onYearChange = (year: string | null) => {
+    if (year === null) {
+      return;
+    }
     setSelectedYear(year);
-    console.log(year);
   };
 
   if (isLoading) {
@@ -67,7 +69,7 @@ export default function PortfolioStatsProvider({
               selectedYear={selectedYear}
               onYearChange={onYearChange}
             />
-            {selectedYear !== "all" && (
+            {selectedYear && selectedYear !== "all" && (
               <StatsRefreshModal
                 portfolioId={portfolioId}
                 selectedYear={selectedYear}

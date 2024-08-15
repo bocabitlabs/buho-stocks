@@ -1,14 +1,17 @@
 import { useTranslation } from "react-i18next";
 import { notifications } from "@mantine/notifications";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { QueryOptions, useMutation, useQuery } from "@tanstack/react-query";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
 export const fetchYearStats = async (
-  portfolioId: number | undefined,
-  year: string | undefined,
+  portfolioId: number | undefined | null,
+  year: string | null | undefined,
 ) => {
+  if (!year || !portfolioId) {
+    throw new Error("Year and portfolioId are required");
+  }
   const { data } = await apiClient.get<IPortfolioYearStats>(
     `/stats/portfolio/${portfolioId}/year/${year}/`,
   );
@@ -50,9 +53,9 @@ export const fetchAllYearsStats = async (portfolioId: number | undefined) => {
  * @returns A IPortfolioYearStats object
  */
 export function usePortfolioYearStats(
-  portfolioId: number | undefined,
-  year: string | undefined,
-  otherOptions?: any,
+  portfolioId: number | null,
+  year: string | null,
+  otherOptions?: QueryOptions<IPortfolioYearStats, Error>,
 ) {
   return useQuery<IPortfolioYearStats, Error>({
     queryKey: ["portfolioYearStats", portfolioId, year],
@@ -72,7 +75,7 @@ export function usePortfolioYearStats(
 export function usePortfolioYearStatsByMonth(
   portfolioId: number | undefined,
   year: string | undefined,
-  otherOptions?: any,
+  otherOptions?: QueryOptions<IPortfolioYearStats[], Error>,
 ) {
   return useQuery<IPortfolioYearStats[], Error>({
     queryKey: ["portfolioYearStats", portfolioId, year, "grouped-by-month"],
@@ -92,7 +95,7 @@ export function usePortfolioYearStatsByMonth(
 export function usePortfolioYearStatsByCompany(
   portfolioId: number | undefined,
   year: string | undefined,
-  otherOptions?: any,
+  otherOptions?: QueryOptions<IPortfolioYearStats[], Error>,
 ) {
   return useQuery<IPortfolioYearStats[], Error>({
     queryKey: ["portfolioYearStats", portfolioId, year, "grouped-by-company"],
@@ -104,7 +107,7 @@ export function usePortfolioYearStatsByCompany(
 
 export function usePortfolioAllYearStats(
   portfolioId: number | undefined,
-  otherOptions?: any,
+  otherOptions?: QueryOptions<IPortfolioYearStats[], Error>,
 ) {
   return useQuery<IPortfolioYearStats[], Error>({
     queryKey: ["portfolioAllYearsStats", portfolioId],
@@ -121,8 +124,8 @@ interface MutateProps {
 }
 
 interface IUpdateYearStatsMutationProps {
-  portfolioId: number | undefined;
-  year: string | undefined;
+  portfolioId: number | undefined | null;
+  year: string | undefined | null;
   updateApiPrice: boolean | undefined;
   companiesIds?: number[];
 }
@@ -136,6 +139,10 @@ export const useUpdatePortfolioYearStats = (props?: MutateProps) => {
       updateApiPrice,
       companiesIds,
     }: IUpdateYearStatsMutationProps) => {
+      if (!portfolioId || !year) {
+        throw new Error("Portfolio ID and year are required");
+      }
+
       let companiesIdsQuery = "";
       if (companiesIds) {
         companiesIdsQuery = `?companiesIds=${companiesIds.join(",")}`;

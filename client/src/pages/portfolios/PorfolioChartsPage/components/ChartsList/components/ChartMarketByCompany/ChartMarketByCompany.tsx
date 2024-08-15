@@ -15,18 +15,20 @@ export default function ChartMarketByCompany({ data, width }: ChartProps) {
 
   const filteredData = useMemo(
     function createChartData() {
-      const filteredCompanies: any = data.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
+      const filteredCompanies: IPortfolioYearStats[] = data.filter(
+        (item: IPortfolioYearStats) => {
+          return item.sharesCount > 0;
+        },
+      );
 
       const markets: { name: string; value: number; color: string }[] = [];
 
-      const res = groupByName(filteredCompanies, "marketName");
-      Object.entries(res).forEach(([k, v]) => {
+      const groupedByMarketName = groupByName(filteredCompanies, "marketName");
+      Object.entries(groupedByMarketName).forEach(([year, statsArray]) => {
         markets.push({
-          name: k,
-          value: (v as any[]).length,
-          color: getColorShade(k),
+          name: year,
+          value: statsArray.length,
+          color: getColorShade(year),
         });
       });
       markets.sort((a, b) => b.value - a.value);

@@ -21,16 +21,18 @@ export default function ChartInvestedByCompanyYearly({
   });
   const filteredData = useMemo(
     function createChartData() {
-      const filteredCompanies: any = data.filter((item: any) => {
-        return item.sharesCount > 0 && item.invested > 0;
-      });
+      const filteredCompanies: IPortfolioYearStats[] = data.filter(
+        (item: IPortfolioYearStats) => {
+          return item.sharesCount > 0 && item.invested > 0;
+        },
+      );
 
       const companies: {
         company: string;
         value: number;
       }[] = [];
 
-      filteredCompanies.forEach((stat: any) => {
+      filteredCompanies.forEach((stat: IPortfolioYearStats) => {
         companies.push({
           company: stat.company.ticker,
           value: Number(stat.invested),
@@ -62,7 +64,7 @@ export default function ChartInvestedByCompanyYearly({
         angle: -45,
         interval: 0,
         textAnchor: "end",
-        height: 50, // Increase height to avoid clipping the labels
+        height: 50,
         tickSize: 10,
         transform: "translate(-10, 0)",
       }}

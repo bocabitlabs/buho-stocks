@@ -20,12 +20,13 @@ import classes from "./TradesImportForm.module.css";
 import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
 import CompanyTickerSelectProvider from "pages/import/components/CompanyTickerSelect/CompanyTickerSelectProvider";
+import { ICsvTradesRow } from "types/csv";
 import { IPortfolio } from "types/portfolio";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
 
 interface Props {
   portfolio: IPortfolio;
-  trade: any;
+  trade: ICsvTradesRow;
   onSubmitCallback: () => void;
 }
 
@@ -62,22 +63,21 @@ export default function TradesImportForm({
   });
 
   const onCompanyChange = useCallback(
-    (value: any) => {
-      console.log("onCompanyChange", value);
-      form.setFieldValue("company", value);
+    (value: string) => {
+      form.setFieldValue("company", +value);
     },
     [form],
   );
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: ISharesTransactionFormFields) => {
     const { totalAmount, totalCommission, grossPricePerShare, notes } = values;
 
     console.log("Creating transaction with:");
     const newValues = {
       ...values,
-      totalAmount: (+totalAmount).toFixed(2),
-      totalCommission: (+totalCommission).toFixed(2),
-      grossPricePerShare: (+grossPricePerShare).toFixed(2),
+      totalAmount: totalAmount,
+      totalCommission: totalCommission,
+      grossPricePerShare: grossPricePerShare,
       notes: `Imported from IB CSV on ${dayjs(new Date()).format(
         "YYYY-MM-DD HH:mm:ss.",
       )}. ${notes}`,
@@ -203,7 +203,7 @@ export default function TradesImportForm({
                   onSelect={onCompanyChange}
                   ticker={trade.ticker}
                   portfolioId={portfolio.id}
-                  form={form}
+                  setFieldValue={form.setFieldValue}
                   withAsterisk
                   description={`${t("Received")}: ${trade.ticker}`}
                 />

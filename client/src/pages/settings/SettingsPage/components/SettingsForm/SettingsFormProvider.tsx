@@ -6,6 +6,7 @@ import {
   useSettings,
   useUpdateSettings,
 } from "hooks/use-settings/use-settings";
+import { ISettingsFormFields } from "types/settings";
 
 export default function SettingsFormProvider() {
   const { t, i18n } = useTranslation();
@@ -25,7 +26,7 @@ export default function SettingsFormProvider() {
     onSuccess,
   });
 
-  const onSubmitCallback = (values: any) => {
+  const onSubmitCallback = (values: ISettingsFormFields) => {
     console.log("values", values);
     updateSettings({ newSettings: values });
   };

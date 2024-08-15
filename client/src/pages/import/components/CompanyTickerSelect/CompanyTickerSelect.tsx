@@ -6,8 +6,7 @@ import { ICompany } from "types/company";
 interface Props {
   companies: ICompany[];
   initialValue: ICompany | undefined;
-  // eslint-disable-next-line no-unused-vars
-  onSelect: (company: any) => void;
+  onSelect: (company: string) => void;
   withAsterisk?: boolean;
   description?: string;
 }
@@ -44,7 +43,6 @@ export default function CompanyTickerSelect({
 
   const onValueChange = useCallback(
     (selectedVal: string) => {
-      console.log("onValueChange", selectedVal);
       const selectedCompany = companies.find(
         (company) => company.id.toString() === selectedVal,
       );
@@ -59,7 +57,6 @@ export default function CompanyTickerSelect({
       resetSelectionOnOptionHover
       withinPortal={false}
       onOptionSubmit={(val) => {
-        console.log(val);
         onValueChange(val);
         combobox.updateSelectedOptionIndex("active");
         combobox.closeDropdown();

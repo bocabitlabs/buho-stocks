@@ -1,23 +1,17 @@
+import { convertDataLinesToList } from "./csv-parsing-utils";
 import extractInfoRows from "./info-parsing";
+import { ICsvTradesRow } from "types/csv";
 
 const getTradesHeaders = () => {
   return ["Operaciones", "Trades"];
 };
 
-function convertDataLinesToList(data: []) {
-  const dataRows: [][] = [];
-  data.forEach((line: any) => {
-    dataRows.push(line.data);
-  });
-  return dataRows;
-}
-
-function extractTradesRows(data: [][]) {
-  const dividendsRows: any[][] = [];
+function extractTradesRows(data: string[][]) {
+  const dividendsRows: string[][] = [];
 
   console.log("Searching for trades...");
 
-  data.forEach((line: any[]) => {
+  data.map((line: string[]) => {
     if (line && line.length > 0) {
       if (
         getTradesHeaders().includes(line[0]) &&
@@ -34,8 +28,8 @@ function extractTradesRows(data: [][]) {
   return dividendsRows;
 }
 
-function matchTradesWithInfo(tradesRows: any[][], infoRows: any[][]) {
-  const matchedTradesWithInfo: any[][] = [];
+function matchTradesWithInfo(tradesRows: string[][], infoRows: string[][]) {
+  const matchedTradesWithInfo: string[][] = [];
   console.log(`Matching trades with their info...`);
   tradesRows.forEach((trade) => {
     const tradeLine = trade;
@@ -56,30 +50,36 @@ function matchTradesWithInfo(tradesRows: any[][], infoRows: any[][]) {
   return matchedTradesWithInfo;
 }
 
-function parseTrades(tradesRows: any[][]) {
-  const parsedRows: any[] = [];
+function parseTrades(tradesRows: (string | number)[][]) {
+  const parsedRows: ICsvTradesRow[] = [];
 
-  tradesRows.forEach((line) => {
-    const transaction = line[0];
-    const category = line[3];
-    const currency = line[4];
-    const ticker = line[5];
+  tradesRows.map((line) => {
+    console.log("Line is: ", line);
+    const category = line[3].toString();
+    const currency = line[4].toString();
+    const ticker = line[5].toString();
+    console.log("Date is: ", line[6]);
     const date = line[6];
-    const count = line[7];
-    const price = line[8];
-    const total = line[10] > 0 ? line[10] : line[10] * -1;
+    console.log("Count is: ", line[7]);
+    const count = +line[7];
+    const price = +line[8];
+    const transactionType = line[0].toString();
+
+    const line10NumberValue = +line[10];
+    const total =
+      line10NumberValue > 0 ? line10NumberValue : -line10NumberValue;
     let commission = 0;
-    if (line[11] && line[11] > 0) {
-      // eslint-disable-next-line prefer-destructuring
-      commission = line[11];
-    } else if (line[11] && line[11] < 0) {
-      commission = line[11] * -1;
+    const line11NumberValue = +line[11];
+    if (line11NumberValue && line11NumberValue > 0) {
+      commission = line11NumberValue;
+    } else if (line11NumberValue && line11NumberValue < 0) {
+      commission = -line11NumberValue;
     }
-    // commission = line[11] ? line[11] : 0;
-    const totalWithCommission = line[12];
-    const companyName = line[16];
-    const companyISIN = line[17];
-    const market = line[18];
+
+    const totalWithCommission = +line[12];
+    const companyName = line[16].toString();
+    const companyISIN = line[17].toString();
+    const market = line[18].toString();
 
     const newDate = new Date(date);
     const year = newDate.getFullYear();
@@ -89,7 +89,6 @@ function parseTrades(tradesRows: any[][]) {
 
     const parsedRow = {
       id: Math.random().toString(16).slice(2),
-      transactionType: transaction,
       date: `${year}-${month}-${day}`,
       ticker,
       companyName,
@@ -103,14 +102,14 @@ function parseTrades(tradesRows: any[][]) {
       totalWithCommission,
       category,
       description,
+      transactionType,
     };
-
     parsedRows.push(parsedRow);
   });
   return parsedRows;
 }
 
-export function processTradesData(data: []) {
+export function processTradesData(data: string[][]) {
   try {
     const dataLines = convertDataLinesToList(data);
     const tradesRows = extractTradesRows(dataLines);

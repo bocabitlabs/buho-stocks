@@ -1,9 +1,10 @@
 import { Grid, Paper } from "@mantine/core";
 import ChartCompanyDividends from "./components/ChartCompanyDividends/ChartCompanyDividends";
 import ChartCompanyReturns from "./components/ChartCompanyReturns/ChartCompanyReturns";
+import { CompanyYearStats } from "types/company-year-stats";
 
 interface Props {
-  stats: any[];
+  stats: CompanyYearStats[];
   portfolioCurrency: string;
 }
 

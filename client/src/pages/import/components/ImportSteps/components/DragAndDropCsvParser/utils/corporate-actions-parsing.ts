@@ -1,20 +1,16 @@
+import { convertDataLinesToList } from "./csv-parsing-utils";
+import { ICsvCorporateActionsRow } from "types/csv";
+
 const getCorporatedActionsHeaders = () => {
   return ["Acciones corporativas", "Corporate Actions"];
 };
-function convertDataLinesToList(data: []) {
-  const dataRows: [][] = [];
-  data.forEach((line: any) => {
-    dataRows.push(line.data);
-  });
-  return dataRows;
-}
 
-function extractRows(data: [][]) {
-  const rows: any[][] = [];
+function extractRows(data: string[][]) {
+  const rows: string[][] = [];
 
   console.log("Searching for corporate actions...");
 
-  data.forEach((line: any[]) => {
+  data.map((line: string[]) => {
     if (line && line.length > 0) {
       if (
         getCorporatedActionsHeaders().includes(line[0]) &&
@@ -30,67 +26,70 @@ function extractRows(data: [][]) {
   return rows;
 }
 
-function parseCorporateActions(rows: any[][]) {
+function parseCorporateActions(rows: string[][]) {
   console.log("Parsing corporate actions...");
-  const parsedRows: any[] = [];
+  const parsedRows: ICsvCorporateActionsRow[] = [];
 
-  rows.forEach((line) => {
-    const transaction = line[0];
-    const category = line[2];
-    const currency = line[3];
-    const date = line[4];
+  rows.map((line) => {
+    if (typeof line[8] === "number") {
+      const transaction = line[0];
+      const category = line[2];
+      const currency = line[3];
+      const date = line[4];
 
-    const description = line[6];
-    const count = line[7];
-    const price = line[9];
-    const total = line[8] > 0 || line[8] < 0 ? line[8] * -1 : line[8];
+      const description = line[6];
+      const count = +line[7];
+      const price = +line[9];
+      const total = line[8] > 0 || line[8] < 0 ? +line[8] * -1 : +line[8];
 
-    const newDate = new Date(date);
-    const year = newDate.getFullYear();
-    const month = newDate.getMonth() + 1;
-    const day = newDate.getDay();
+      const newDate = new Date(date);
+      const year = newDate.getFullYear();
+      const month = newDate.getMonth() + 1;
+      const day = newDate.getDay();
 
-    const regExp = /\(([^()]*)\)/g;
-    const matches = description.match(regExp);
-    if (!matches) {
-      return;
+      const regExp = /\(([^()]*)\)/g;
+      const matches = description.match(regExp);
+      if (!matches) {
+        return;
+      }
+      const tradeInfo = matches[matches.length - 1].split(",");
+      let ticker = "";
+      let companyName = "";
+      let isin = "";
+      if (tradeInfo.length > 2) {
+        ticker = tradeInfo[0].replace("(", "").trim();
+        companyName = tradeInfo[1].trim();
+        isin = tradeInfo[2].replace(")", "").trim();
+      }
+
+      const commission = 0;
+      const totalWithCommission = total;
+
+      parsedRows.push({
+        id: Math.random().toString(16).slice(2),
+        transactionType: transaction,
+        date: `${year}-${month}-${day}`,
+        ticker,
+        companyName,
+        isin,
+        market: "", // market
+        currency,
+        count,
+        price,
+        total,
+        commission,
+        totalWithCommission,
+        category,
+        description,
+      });
     }
-    const tradeInfo = matches[matches.length - 1].split(",");
-    let ticker = "";
-    let companyName = "";
-    let isin = "";
-    if (tradeInfo.length > 2) {
-      ticker = tradeInfo[0].replace("(", "").trim();
-      companyName = tradeInfo[1].trim();
-      isin = tradeInfo[2].replace(")", "").trim();
-    }
-
-    const commission = 0;
-    const totalWithCommission = total;
-
-    parsedRows.push({
-      id: Math.random().toString(16).slice(2),
-      transactionType: transaction,
-      date: `${year}-${month}-${day}`,
-      ticker,
-      companyName,
-      isin,
-      market: "", // market
-      currency,
-      count,
-      price,
-      total,
-      commission,
-      totalWithCommission,
-      category,
-      description,
-    });
   });
+
   console.log("Corporate actions parsed.");
   return parsedRows;
 }
 
-export function processCorporateActionsData(data: []) {
+export function processCorporateActionsData(data: string[][]) {
   try {
     // Parses CSV file into data array.
 

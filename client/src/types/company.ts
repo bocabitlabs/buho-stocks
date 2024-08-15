@@ -39,8 +39,7 @@ export interface ICompanyItemBase extends ICompanyBase {
   dividendsTransactions: IDividendsTransaction[];
   dateCreated: string;
   lastUpdated: string;
-  allStats: any;
-  stats: any;
+  stats: CompanyYearStats[];
   firstYear: number;
   lastTransactionMonth: string;
   lastDividendMonth: string;

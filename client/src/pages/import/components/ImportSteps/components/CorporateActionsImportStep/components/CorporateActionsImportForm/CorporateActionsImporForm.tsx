@@ -21,12 +21,13 @@ import { useExchangeRate } from "hooks/use-exchange-rates/use-exchange-rates";
 import { useAddRightsTransaction } from "hooks/use-rights-transactions/use-rights-transactions";
 import { useAddSharesTransaction } from "hooks/use-shares-transactions/use-shares-transactions";
 import CompanyTickerSelectProvider from "pages/import/components/CompanyTickerSelect/CompanyTickerSelectProvider";
+import { ICsvCorporateActionsRow } from "types/csv";
 import { IPortfolio } from "types/portfolio";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
 
 interface Props {
   portfolio: IPortfolio;
-  corporateAction: any | boolean;
+  corporateAction: ICsvCorporateActionsRow;
   onSubmitCallback: () => void;
 }
 
@@ -75,14 +76,13 @@ export default function CorporateActionsImportForm({
   });
 
   const onCompanyChange = useCallback(
-    (value: any) => {
-      console.log("onCompanyChange", value);
-      form.setFieldValue("company", value);
+    (value: string) => {
+      form.setFieldValue("company", +value);
     },
     [form],
   );
 
-  const handleSubmit = (values: any) => {
+  const handleSubmit = (values: ISharesTransactionFormFields) => {
     const {
       totalAmount,
       totalCommission,
@@ -94,9 +94,9 @@ export default function CorporateActionsImportForm({
     console.log("Creating transaction with:");
     const newValues = {
       ...values,
-      totalAmount: (+totalAmount).toFixed(2),
-      totalCommission: (+totalCommission).toFixed(2),
-      grossPricePerShare: (+grossPricePerShare).toFixed(2),
+      totalAmount: totalAmount,
+      totalCommission: totalCommission,
+      grossPricePerShare: grossPricePerShare,
       notes: `Imported from IB CSV on ${dayjs(new Date()).format(
         "YYYY-MM-DD HH:mm:ss.",
       )}. ${notes}`,
@@ -190,19 +190,6 @@ export default function CorporateActionsImportForm({
                   {...form.getInputProps("transactionType")}
                 />
               </Grid.Col>
-              {/* <Col span={12}>
-                <Form.Item
-                  label={t("Transaction's type")}
-                  name="transactionType"
-                  rules={[{ required: true }]}
-                >
-                  <Radio.Group
-                    options={optionsTradeRight}
-                    optionType="button"
-                    buttonStyle="solid"
-                  />
-                </Form.Item>
-              </Col> */}
               <Grid.Col span={6}>
                 <NumberInput
                   withAsterisk
@@ -248,7 +235,7 @@ export default function CorporateActionsImportForm({
                   onSelect={onCompanyChange}
                   ticker={corporateAction.ticker}
                   portfolioId={portfolio.id}
-                  form={form}
+                  setFieldValue={form.setFieldValue}
                   withAsterisk
                   description={`${t("Received")}: ${corporateAction.ticker}`}
                 />

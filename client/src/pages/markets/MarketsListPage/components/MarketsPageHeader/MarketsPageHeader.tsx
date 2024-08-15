@@ -20,7 +20,7 @@ import { useInitializeMarkets } from "hooks/use-markets/use-markets";
 function MarketsPageHeader() {
   const { t } = useTranslation();
   const theme = useMantineTheme();
-  const { mutate: initializeMarkets, isLoading: isInitializingMarkets } =
+  const { mutate: initializeMarkets, isPending: isInitializingMarkets } =
     useInitializeMarkets();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
