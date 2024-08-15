@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from companies.models import Company
 from stats.calculators.company_stats_utils import CompanyStatsCalculator
 from stats.serializers.company_stats import CompanyStatsForYearSerializer
-from stats.tasks import update_portolfio_stats
+from stats.tasks import update_portfolio_stats
 
 logger = logging.getLogger("buho_backend")
 
@@ -28,7 +28,7 @@ class CompanyStatsAPIView(APIView):
     def update_object(self, company_id, year, update_api_price=False):
         logger.debug("Updating company stats")
         company = Company.objects.get(id=company_id)
-        update_portolfio_stats.delay(
+        update_portfolio_stats.delay(
             company.portfolio_id, [company_id], year, update_api_price
         )
         return True
@@ -43,10 +43,7 @@ class CompanyStatsAPIView(APIView):
             year = settings.YEAR_FOR_ALL
         instance = self.get_object(company_id, year)
         if not instance:
-            return Response(
-                {"res": "Object with transaction id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+            return Response(None, status=status.HTTP_200_OK)
         serializer = CompanyStatsForYearSerializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
 

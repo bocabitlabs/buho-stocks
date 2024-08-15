@@ -3,7 +3,7 @@ import time
 from typing import Any, Tuple, TypedDict
 
 import requests_cache
-import yfinance as yf  # type: ignore
+import yfinance as yf
 from django.conf import settings
 from pandas import Timestamp  # type: ignore
 from redis import Redis
@@ -28,6 +28,18 @@ class TypedYFinanceStockPrice(TypedDict):
 class YFinanceApiClient:
     def __init__(self, wait_time=2):
         self.wait_time = wait_time
+
+    def get_company_info_by_ticker(self, ticker: str) -> dict | None:
+        company = yf.Ticker(ticker, session=session)
+        if not company:
+            logger.warning(f"{ticker}: Company not found.")
+            return None
+        logger.info(f"{ticker} company.")
+        isin = company.isin
+        info: dict = company.info
+        info["isin"] = isin
+
+        return info
 
     def get_stock_prices_list(
         self, ticker: str, start_date: str, end_date: str

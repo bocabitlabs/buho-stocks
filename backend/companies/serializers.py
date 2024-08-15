@@ -43,6 +43,20 @@ class CompanySerializer(serializers.ModelSerializer):
     last_dividend_month = serializers.SerializerMethodField()
     sector_name = serializers.CharField(source="sector.name", read_only=True)
 
+    accumulated_investment = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    shares_count = serializers.IntegerField(read_only=True)
+    portfolio_value = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    dividends_yield = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+
     class Meta:
         model = Company
         fields = [
@@ -69,6 +83,11 @@ class CompanySerializer(serializers.ModelSerializer):
             "last_updated",
             "last_transaction_month",
             "last_dividend_month",
+            "accumulated_investment",
+            "shares_count",
+            "portfolio_value",
+            "return_with_dividends",
+            "dividends_yield",
         ]
 
     def get_all_stats(self, obj):
@@ -110,6 +129,20 @@ class CompanySerializerGet(serializers.ModelSerializer):
     last_transaction_month = serializers.SerializerMethodField()
     base_currency = serializers.SerializerMethodField()
     dividends_currency = serializers.SerializerMethodField()
+
+    accumulated_investment = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    shares_count = serializers.IntegerField(read_only=True)
+    portfolio_value = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    dividends_yield = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
 
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
 
@@ -177,4 +210,22 @@ class CompanySerializerGet(serializers.ModelSerializer):
             "last_updated",
             "first_year",
             "last_transaction_month",
+            "accumulated_investment",
+            "shares_count",
+            "portfolio_value",
+            "return_with_dividends",
+            "dividends_yield",
         ]
+
+
+class CompanySearchSerializer(serializers.Serializer):
+    country = serializers.CharField(max_length=200)
+    financialCurrency = serializers.CharField(max_length=200)
+    industry = serializers.CharField(max_length=200)
+    irWebsite = serializers.CharField(max_length=200)
+    isin = serializers.CharField(max_length=200)
+    longBusinessSummary = serializers.CharField(max_length=200)
+    shortName = serializers.CharField(max_length=200)
+    sectorDisp = serializers.CharField(max_length=200)
+    symbol = serializers.CharField(max_length=200)
+    exchange = serializers.CharField(max_length=200)

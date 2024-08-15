@@ -3,6 +3,7 @@ import logging
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import generics, viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
 from markets.models import Market, get_all_timezones
 from markets.serializers import MarketSerializer, TimezoneSerializer
@@ -16,6 +17,7 @@ class MarketViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = MarketSerializer
+    pagination_class = LimitOffsetPagination
     queryset = Market.objects.all()
 
 

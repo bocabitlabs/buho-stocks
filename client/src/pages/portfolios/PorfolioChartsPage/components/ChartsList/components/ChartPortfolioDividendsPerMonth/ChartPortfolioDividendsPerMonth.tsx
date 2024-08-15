@@ -1,110 +1,118 @@
-import React, { ReactElement, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { manyColors, hexToRgb } from "utils/colors";
+import { BarChart } from "@mantine/charts";
+import i18next, { t } from "i18next";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
+import { getColorShade } from "utils/colors";
 
-export default function ChartPortfolioDividendsPerMonth(): ReactElement | null {
-  const { t } = useTranslation();
-  const { id } = useParams();
-  const { data: portfolio } = usePortfolio(+id!);
+interface Props {
+  data: IPortfolioYearStats[];
+  currency: string;
+}
 
-  const [chartData, setChartData] = React.useState<any>(null);
-  const { data } = usePortfolioYearStats(+id!, "all", "month");
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
-      },
-      title: {
-        display: true,
-        text: t("Portfolio Dividends per month"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )} ${portfolio?.baseCurrency.code}`;
-            return percentage;
-          },
-        },
-      },
-    },
+interface MonthLabelProps {
+  payload: {
+    value: string;
   };
+  x: number;
+  y: number;
+}
 
-  useEffect(() => {
-    function getTranslatedLabels() {
-      return [
-        t("January"),
-        t("February"),
-        t("March"),
-        t("April"),
-        t("May"),
-        t("June"),
-        t("July"),
-        t("August"),
-        t("September"),
-        t("October"),
-        t("November"),
-        t("December"),
+function MonthLabel({ payload, x, y }: MonthLabelProps) {
+  const { t } = useTranslation();
+  return (
+    <g transform={`translate(${x},${y})`}>
+      <text
+        x={0}
+        y={0}
+        dy={16}
+        textAnchor="middle"
+        fill="#666"
+        fontSize={12} // Customize the font size
+      >
+        {t<string>(payload.value)}
+      </text>
+    </g>
+  );
+}
+
+export default function ChartPortfolioDividendsPerMonth({
+  data,
+  currency,
+}: Props) {
+  const { resolvedLanguage } = i18next;
+
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const filteredData = useMemo(
+    function createChartData() {
+      const months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
       ];
-    }
-    function getChartData() {
-      return {
-        labels: [
-          "January",
-          "February",
-          "March",
-          "April",
-          "May",
-          "June",
-          "July",
-          "August",
-          "September",
-          "October",
-          "November",
-          "December",
-        ],
-        datasets: [],
-      };
-    }
-    if (data) {
-      const tempChartData = getChartData();
-      const dataSets: any = [];
 
-      Object.entries(data).forEach(([k, v], index: number) => {
-        const colorsArray: any[] = Array(12).fill(hexToRgb(manyColors[index]));
+      const results: {
+        month: string;
+        [key: string]: number | string;
+      }[] = [];
 
-        const monthlyValues: any[] = Array(12).fill(0);
-
-        Object.entries(v as object).forEach(([k1, v1]) => {
-          const monthIndex = tempChartData.labels.indexOf(k1);
-          monthlyValues[monthIndex] = v1;
+      // Create an object with the format above for each month
+      months.forEach((month) => {
+        results.push({ month: t<string>(month) });
+        Object.entries(data).forEach(([k, v]) => {
+          const monthIndex = months.indexOf(month);
+          results[monthIndex][k] = v[month as keyof typeof v] as number;
         });
-
-        const newDataset = {
-          label: k,
-          data: monthlyValues,
-          backgroundColor: colorsArray,
-        };
-        dataSets.push(newDataset);
       });
-      const sortedArrayOfObj = dataSets.sort((a: any, b: any) => {
-        return b.label > a.label;
-      });
-      tempChartData.datasets = sortedArrayOfObj;
-      tempChartData.labels = getTranslatedLabels();
-      setChartData(tempChartData);
-    }
-  }, [data, t]);
 
-  if (chartData) {
-    return <Bar options={options} data={chartData} />;
-  }
-  return null;
+      // Generate the series for years
+      const series = Object.keys(data).map((year) => ({
+        name: year,
+        color: getColorShade(year),
+      }));
+
+      const tempChartData = {
+        series,
+        data: results,
+      };
+
+      return tempChartData;
+    },
+    [data],
+  );
+
+  return (
+    <BarChart
+      h={400}
+      data={filteredData.data}
+      dataKey="month"
+      series={filteredData.series}
+      tooltipProps={{
+        itemSorter: (item) => {
+          return item.name;
+        },
+      }}
+      valueFormatter={(value: number) =>
+        `${numberFormatter.format(value)} ${currency}`
+      }
+      xAxisProps={{
+        angle: -45,
+        tick: (props) => <MonthLabel {...props} />,
+      }}
+    />
+  );
 }

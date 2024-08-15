@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
+import { QueryOptions, useMutation, useQuery } from "@tanstack/react-query";
+import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { IBenchmark, IBenchmarkFormFields } from "types/benchmark";
@@ -10,29 +11,70 @@ interface UpdateMutationProps {
   id: number | undefined;
 }
 
-export const fetchBenchmarks = async () => {
-  const { data } = await apiClient.get(`/benchmarks/`);
+type BenchmarksApiResponse = {
+  results: Array<IBenchmark>;
+  count: number;
+  next: number | null;
+  previous: number | null;
+};
+
+interface Params {
+  pagination: MRT_PaginationState;
+  otherOptions?: QueryOptions<BenchmarksApiResponse, Error>;
+}
+
+export const fetchBenchmarks = async (pagination: MRT_PaginationState) => {
+  const fetchURL = new URL("benchmarks/", apiClient.defaults.baseURL);
+
+  fetchURL.searchParams.set(
+    "offset",
+    `${pagination.pageIndex * pagination.pageSize}`,
+  );
+  fetchURL.searchParams.set("limit", `${pagination.pageSize}`);
+  const { data } = await apiClient.get<BenchmarksApiResponse>(fetchURL.href);
   return data;
 };
 
-export function useBenchmarks(otherOptions?: any) {
-  return useQuery<IBenchmark[], Error>(
-    ["benchmarks"],
-    () => fetchBenchmarks(),
-    {
-      ...otherOptions,
-    },
-  );
+export function useBenchmarks({
+  pagination,
+  otherOptions = undefined,
+}: Params) {
+  return useQuery<BenchmarksApiResponse, Error>({
+    queryKey: ["benchmarks", pagination],
+    queryFn: () => fetchBenchmarks(pagination),
+    ...otherOptions,
+  });
+}
+
+export const fetchAllBenchmarks = async () => {
+  const fetchURL = new URL("benchmarks/", apiClient.defaults.baseURL);
+
+  const { data } = await apiClient.get<IBenchmark[]>(fetchURL.href);
+  return data;
+};
+
+export function useAllBenchmarks() {
+  return useQuery<IBenchmark[], Error>({
+    queryKey: ["benchmarks"],
+    queryFn: fetchAllBenchmarks,
+  });
 }
 
 export const fetchBenchmarkValues = async (id: number | undefined) => {
-  const { data } = await apiClient.get(`/benchmarks/${id}/`);
+  const fetchURL = new URL(`benchmarks/${id}/`, apiClient.defaults.baseURL);
+
+  const { data } = await apiClient.get<IBenchmark>(fetchURL.href);
   return data;
 };
 
-export function useBenchmarkValues(id: number | undefined, otherOptions?: any) {
-  return useQuery(["benchmarks", id], () => fetchBenchmarkValues(id), {
-    enabled: id !== undefined,
+export function useBenchmarkValues(
+  id: number | undefined,
+  otherOptions?: QueryOptions<IBenchmark, Error>,
+) {
+  return useQuery<IBenchmark>({
+    queryKey: ["benchmarks", id],
+    queryFn: () => fetchBenchmarkValues(id),
+    enabled: !!id,
     ...otherOptions,
   });
 }
@@ -41,88 +83,119 @@ export const fetchBenchmark = async (id: number | undefined) => {
   if (!id) {
     throw new Error("Id is required");
   }
-  const { data } = await apiClient.get<IBenchmark>(`/benchmarks/${id}/`);
+  const fetchURL = new URL(`benchmarks/${id}/`, apiClient.defaults.baseURL);
+
+  const { data } = await apiClient.get<IBenchmark>(fetchURL.href);
   return data;
 };
 
-export function useBenchmark(id: number | undefined, options?: any) {
-  return useQuery<IBenchmark, Error>(
-    ["benchmarks", id],
-    () => fetchBenchmark(id),
-    {
-      enabled: !!id,
-      ...options,
-    },
-  );
+export function useBenchmark(
+  id: number | undefined,
+  options?: QueryOptions<IBenchmark, Error>,
+) {
+  return useQuery<IBenchmark, Error>({
+    queryKey: ["benchmarks", id],
+    queryFn: () => fetchBenchmark(id),
+    enabled: !!id,
+    ...options,
+  });
 }
 
-export const useAddBenchmark = () => {
+interface MutateProps {
+  onSuccess?: () => void;
+  onError?: () => void;
+}
+
+export const useAddBenchmark = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    (newBenchmark: IBenchmarkFormFields) =>
-      apiClient.post(`/benchmarks/`, newBenchmark),
-    {
-      onSuccess: () => {
-        toast.success(t("Benchmark created"));
-        queryClient.invalidateQueries(["benchmarks"]);
-      },
-      onError: () => {
-        toast.error(t("Unable to create benchmark"));
-        queryClient.invalidateQueries(["benchmarks"]);
-      },
+  return useMutation({
+    mutationFn: (newBenchmark: IBenchmarkFormFields) => {
+      const fetchURL = new URL(`benchmarks/`, apiClient.defaults.baseURL);
+      return apiClient.post(fetchURL.href, newBenchmark);
     },
-  );
+    onSuccess: () => {
+      props?.onSuccess?.();
+      notifications.show({
+        color: "green",
+        message: t("Benchmark created"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
+    },
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Unable to create benchmark"),
+      });
+    },
+  });
 };
 
 export const useDeleteBenchmark = () => {
   const { t } = useTranslation();
 
-  return useMutation((id: number) => apiClient.delete(`/benchmarks/${id}/`), {
+  return useMutation({
+    mutationFn: (id: number) => apiClient.delete(`/benchmarks/${id}/`),
     onSuccess: () => {
-      toast.success(t("Benchmark deleted"));
-      queryClient.invalidateQueries(["benchmarks"]);
+      notifications.show({
+        color: "green",
+        message: t("Benchmark deleted"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
     onError: () => {
-      toast.error(t("Unable to delete benchmark"));
-      queryClient.invalidateQueries(["benchmarks"]);
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete benchmark"),
+      });
     },
   });
 };
 
-export const useUpdateBenchmark = () => {
+export const useUpdateBenchmark = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    ({ id, newBenchmark }: UpdateMutationProps) =>
+  return useMutation({
+    mutationFn: ({ id, newBenchmark }: UpdateMutationProps) =>
       apiClient.put(`/benchmarks/${id}/`, newBenchmark),
-    {
-      onSuccess: () => {
-        toast.success(t("Benchmark has been updated"));
-        queryClient.invalidateQueries(["benchmarks"]);
-      },
-      onError: () => {
-        toast.error(t("Unable to update benchmark"));
-        queryClient.invalidateQueries(["benchmarks"]);
-      },
+    onSuccess: () => {
+      props?.onSuccess?.();
+      notifications.show({
+        color: "green",
+        message: t("Benchmark has been updated"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Unable to update benchmark"),
+      });
+    },
+  });
 };
 
 export const useInitializeBenchmarks = () => {
   const { t } = useTranslation();
 
-  return useMutation(
-    () => apiClient.post<IBenchmark[]>(`/initialize-data/benchmarks/`),
-    {
-      onSuccess: () => {
-        toast.success(t("Benchmarks created"));
-        queryClient.invalidateQueries(["benchmarks"]);
-      },
-      onError: () => {
-        toast.error(t("Unable to create benchmarks"));
-        queryClient.invalidateQueries(["benchmarks"]);
-      },
+  return useMutation({
+    mutationFn: () =>
+      apiClient.post<IBenchmark[]>(`/initialize-data/benchmarks/`),
+
+    onSuccess: () => {
+      notifications.show({
+        color: "green",
+        message: t("Benchmarks created"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["benchmarks"] });
     },
-  );
+    onError: () => {
+      notifications.show({
+        color: "red",
+        message: t("Unable to create benchmarks"),
+      });
+    },
+  });
 };

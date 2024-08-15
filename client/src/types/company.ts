@@ -1,3 +1,4 @@
+import { CompanyYearStats } from "./company-year-stats";
 import { ICurrency } from "./currency";
 import { IDividendsTransaction } from "./dividends-transaction";
 import { IMarket } from "./market";
@@ -22,9 +23,9 @@ interface ICompanyBase {
 
 export interface ICompanyFormFields extends ICompanyBase {
   baseCurrency: string;
-  dividendsCurrency: number;
-  sector: number;
-  market: number;
+  dividendsCurrency: string | undefined;
+  sector: string | undefined;
+  market: string | undefined;
   portfolio: number;
 }
 
@@ -38,8 +39,7 @@ export interface ICompanyItemBase extends ICompanyBase {
   dividendsTransactions: IDividendsTransaction[];
   dateCreated: string;
   lastUpdated: string;
-  allStats: any;
-  stats: any;
+  stats: CompanyYearStats[];
   firstYear: number;
   lastTransactionMonth: string;
   lastDividendMonth: string;
@@ -48,6 +48,12 @@ export interface ICompanyItemBase extends ICompanyBase {
 export interface ICompany extends ICompanyItemBase {
   baseCurrency: ICurrency;
   dividendsCurrency: ICurrency;
+  allStats: CompanyYearStats;
+  sharesCount: number;
+  portfolioValue: number;
+  accumulatedInvestment: number;
+  accumulatedDividends: number;
+  dividendsYield: number;
 }
 
 export interface ICompanyListItem extends ICompanyItemBase {
@@ -63,4 +69,17 @@ export interface ICompanyRouteParams {
       companyId: string;
     };
   };
+}
+
+export interface ICompanySearchResult {
+  symbol: string;
+  country: string;
+  financialCurrency: string;
+  industry: string;
+  irWebsite: string;
+  isin: string;
+  longBusinessSummary: string;
+  shortName: string;
+  sectorDisp: string;
+  exchange: string;
 }

@@ -1,64 +1,39 @@
-import React, { ReactElement, useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { Spin } from "antd";
-import { AxiosError } from "axios";
-import { usePortfolio } from "hooks/use-portfolios/use-portfolios";
-import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
+import { BarChart } from "@mantine/charts";
+import { Center, Loader, Stack, Title } from "@mantine/core";
+import i18next from "i18next";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
-export default function ChartPortfolioDividends(): ReactElement | null {
+interface Props {
+  data: IPortfolioYearStats[];
+  baseCurrencyCode: string;
+}
+
+export default function ChartPortfolioDividends({
+  data,
+  baseCurrencyCode,
+}: Props) {
   const { t } = useTranslation();
-  const { id } = useParams();
-  const [chartData, setChartData] = React.useState<any>(null);
-  const { data, isFetching, error } = usePortfolioAllYearStats(+id!);
-  const { data: portfolio } = usePortfolio(+id!);
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: t("Portfolio Dividends"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )} ${portfolio?.baseCurrency.code}`;
-            return percentage;
-          },
-        },
-      },
-    },
-  };
+  const { resolvedLanguage } = i18next;
 
-  useEffect(() => {
-    function getChartData() {
-      return {
-        labels: [],
-        datasets: [
-          {
-            label: t("Dividends"),
-            data: [],
-            borderColor: "rgb(255, 99, 132)",
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-          },
-        ],
-      };
-    }
-    if (data) {
-      const tempChartData = getChartData();
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 
-      const newYears: any = [];
-      const dividends: any = [];
+  const chartData = useMemo(() => {
+    if (data && data.length > 0) {
+      const newYears: number[] = [];
+      const dividends: number[] = [];
+      const dividendsPerYear: {
+        year: number;
+        value: number;
+      }[] = [];
 
-      data.sort((a: any, b: any) => {
+      data.sort((a: IPortfolioYearStats, b: IPortfolioYearStats) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -67,46 +42,51 @@ export default function ChartPortfolioDividends(): ReactElement | null {
         }
         return 0;
       });
-      data.forEach((year: any) => {
-        if (
-          !newYears.includes(year.year) &&
-          year.year !== "all" &&
-          year.year !== 9999
-        ) {
+      data.forEach((year: IPortfolioYearStats) => {
+        if (!newYears.includes(year.year) && year.year !== 9999) {
           newYears.push(year.year);
           dividends.push(Number(year.dividends));
+          dividendsPerYear.push({
+            year: year.year,
+            value: Number(year.dividends),
+          });
         }
       });
-      tempChartData.labels = newYears;
-      const { chartColors } = mapColorsToLabels(newYears);
 
-      tempChartData.datasets[0].data = dividends;
-      tempChartData.datasets[0].backgroundColor = chartColors;
+      // Sort the sectors by value
+      dividendsPerYear.sort((a, b) => a.year - b.year);
 
-      setChartData(tempChartData);
+      return dividendsPerYear;
     }
-  }, [data, t]);
+  }, [data]);
 
-  if (error) {
-    if ((error as AxiosError)?.response?.status === 404) {
-      return <div>No stats yet</div>;
-    }
-    return <div>Something went wrong</div>;
-  }
-
-  if (isFetching) {
-    return <Spin data-testid="loader" />;
-  }
-
-  if (chartData) {
+  if (chartData && baseCurrencyCode) {
     return (
-      <Bar
-        id="portfolio-dividends"
-        data-testid="canvas"
-        options={options}
-        data={chartData}
-      />
+      <Stack data-testid="chart">
+        <Center>
+          <Title order={5}>{t("Portfolio Dividends")}</Title>
+        </Center>
+        <Center>
+          <BarChart
+            h={400}
+            data={chartData}
+            dataKey="year"
+            series={[{ name: "value", color: "red" }]}
+            valueFormatter={(value: number) =>
+              `${numberFormatter.format(value)} ${baseCurrencyCode}`
+            }
+            xAxisProps={{
+              interval: 0,
+              textAnchor: "end",
+              height: 50, // Increase height to avoid clipping the labels
+              tickSize: 10,
+              transform: "translate(-10, 0)",
+            }}
+            tickLine="y"
+          />
+        </Center>
+      </Stack>
     );
   }
-  return <Spin data-testid="loader" />;
+  return <Loader data-testid="loader" />;
 }

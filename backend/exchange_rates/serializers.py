@@ -4,6 +4,8 @@ from exchange_rates.models import ExchangeRate
 
 
 class ExchangeRateSerializer(serializers.ModelSerializer):
+    exchange_date = serializers.DateField()
+
     class Meta:
         model = ExchangeRate
         fields = [

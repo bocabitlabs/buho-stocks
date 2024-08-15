@@ -1,22 +1,32 @@
-import React from "react";
-import { Col, Row } from "antd";
-import DividendsChart from "../DividendsChart/DividendsChart";
-import ReturnsChart from "../ReturnsChart/ReturnsChart";
+import { Grid, Paper } from "@mantine/core";
+import ChartCompanyDividends from "./components/ChartCompanyDividends/ChartCompanyDividends";
+import ChartCompanyReturns from "./components/ChartCompanyReturns/ChartCompanyReturns";
+import { CompanyYearStats } from "types/company-year-stats";
 
 interface Props {
-  stats: any[];
+  stats: CompanyYearStats[];
   portfolioCurrency: string;
 }
 
 export default function Charts({ stats, portfolioCurrency }: Props) {
+  if (stats.length === 0) {
+    return null;
+  }
   return (
-    <Row style={{ marginTop: 16, marginBottom: 16 }}>
-      <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <ReturnsChart stats={stats} />
-      </Col>
-      <Col xs={{ span: 24 }} md={{ span: 12 }}>
-        <DividendsChart stats={stats} portfolioCurrency={portfolioCurrency} />
-      </Col>
-    </Row>
+    <Grid>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+        <Paper p="lg" shadow="xs">
+          <ChartCompanyReturns stats={stats} />
+        </Paper>
+      </Grid.Col>
+      <Grid.Col span={{ base: 12, md: 6, lg: 6 }}>
+        <Paper p="lg" shadow="xs">
+          <ChartCompanyDividends
+            stats={stats}
+            portfolioCurrency={portfolioCurrency}
+          />
+        </Paper>
+      </Grid.Col>
+    </Grid>
   );
 }

@@ -1,229 +1,282 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
-import { Avatar, Table, Tag, Typography } from "antd";
-import CompanyAddEditForm from "pages/companies/CompanyDetailsPage/components/CompanyAddEditForm/CompanyAddEditForm";
-import { ICompanyListItem } from "types/company";
-import { ICurrency } from "types/currency";
+import { Link } from "react-router-dom";
+import {
+  NumberFormatter,
+  Stack,
+  Switch,
+  Image,
+  Anchor,
+  Text,
+} from "@mantine/core";
+import {
+  MantineReactTable,
+  MRT_Cell,
+  MRT_ColumnDef,
+  MRT_Localization,
+  MRT_PaginationState,
+  MRT_Row,
+  MRT_SortingState,
+  useMantineReactTable,
+} from "mantine-react-table";
+import { useCompanies } from "hooks/use-companies/use-companies";
+import { ICompany } from "types/company";
 
 interface IProps {
-  companies: ICompanyListItem[];
-  portfolioBaseCurrency: ICurrency;
-  isFetching: boolean;
+  portfolioId: string;
+  mrtLocalization: MRT_Localization;
+}
+
+function PriceCell({
+  cell,
+  row,
+}: Readonly<{ cell: MRT_Cell<ICompany>; row: MRT_Row<ICompany> }>) {
+  return (
+    <Stack>
+      <Text size="sm">
+        <NumberFormatter
+          value={cell.getValue() as string}
+          decimalScale={2}
+          thousandSeparator
+        />
+      </Text>
+      <Text c="dimmed" size="xs">
+        {row.original.allStats?.portfolioCurrency}
+      </Text>
+    </Stack>
+  );
+}
+
+function ReturnPercentCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
+  return (
+    <Stack>
+      <Text size="sm">
+        <NumberFormatter
+          value={row.original.allStats?.returnWithDividends}
+          suffix={` ${row.original.allStats?.portfolioCurrency}`}
+          decimalScale={2}
+          thousandSeparator
+        />
+      </Text>
+      <Text
+        c={
+          Number(row.original.allStats?.returnWithDividendsPercent) <= 0
+            ? "red"
+            : "green"
+        }
+        size="xs"
+      >
+        <NumberFormatter
+          value={row.original.allStats?.returnWithDividendsPercent}
+          suffix={` %`}
+          decimalScale={2}
+          thousandSeparator
+        />
+      </Text>
+    </Stack>
+  );
+}
+
+function DividendsYieldCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
+  return (
+    <Stack>
+      <Text
+        c={Number(row.original.allStats?.dividendsYield) <= 0 ? "red" : "green"}
+        size="sm"
+      >
+        <NumberFormatter
+          value={row.original.allStats?.dividendsYield}
+          suffix={` %`}
+          decimalScale={2}
+          thousandSeparator
+        />
+      </Text>
+    </Stack>
+  );
+}
+
+function PortfolioValueCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
+  return (
+    <Stack>
+      <Text size="sm">
+        <NumberFormatter
+          value={row.original.allStats?.portfolioValue}
+          decimalScale={2}
+          thousandSeparator
+        />
+      </Text>
+      <Text c="dimmed" size="xs">
+        {row.original.allStats?.portfolioCurrency}
+      </Text>
+    </Stack>
+  );
+}
+
+function LogoCell({
+  row,
+}: Readonly<{
+  row: MRT_Row<ICompany>;
+}>) {
+  return (
+    <Stack>
+      <Image src={row.original.logo} alt={`${row.original.name} logo`} w={50} />
+    </Stack>
+  );
+}
+
+function CompanyNameCell({
+  row,
+}: Readonly<{
+  row: MRT_Row<ICompany>;
+}>) {
+  return (
+    <Stack>
+      <Anchor
+        to={`/portfolios/${row.original.portfolio}/companies/${row.original.id}`}
+        component={Link}
+      >
+        <Text size="sm">{row.original.name}</Text>
+      </Anchor>
+      <Text c="dimmed" size="xs">
+        {row.original.allStats && row.original.allStats.sectorName}
+      </Text>
+    </Stack>
+  );
+}
+
+function TickerCell({
+  row,
+}: Readonly<{
+  row: MRT_Row<ICompany>;
+}>) {
+  return (
+    <Stack>
+      <Text fw={700} size="sm">
+        {row.original.ticker}
+      </Text>
+      <Text c="dimmed" size="xs">
+        {row.original.allStats && row.original.allStats.marketName}
+      </Text>
+    </Stack>
+  );
 }
 
 export default function CompaniesList({
-  companies,
-  portfolioBaseCurrency,
-  isFetching,
+  portfolioId,
+  mrtLocalization,
 }: IProps) {
   const { t } = useTranslation();
-  const { id } = useParams();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
+  const [showClosed, setShowClosed] = useState<boolean>(false);
+  const [sorting, setSorting] = useState<MRT_SortingState>([
+    {
+      desc: false,
+      id: "name",
+    },
+  ]);
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: 0,
+    pageSize: 60,
+  });
+  const { data, isLoading, isError, isFetching } = useCompanies(
+    +portfolioId || undefined,
+    sorting,
+    pagination,
+    showClosed,
+  );
 
-  const onCancel = () => {
-    setIsModalVisible(false);
-  };
+  const columns = useMemo<MRT_ColumnDef<ICompany>[]>(
+    () => [
+      {
+        accessorKey: "logo",
+        header: "",
+        Cell: LogoCell,
+      },
+      {
+        accessorKey: "name",
+        header: t("Name"),
+        Cell: CompanyNameCell,
+      },
+      {
+        accessorKey: "ticker",
+        header: t("Ticker"),
+        Cell: TickerCell,
+      },
+      {
+        accessorKey: "sharesCount",
+        header: t("Shares"),
+      },
+      {
+        accessorKey: "accumulatedInvestment",
+        header: t("Invested"),
+        Cell: PriceCell,
+      },
+      {
+        accessorKey: "portfolioValue",
+        header: t("Portfolio Value"),
+        Cell: PortfolioValueCell,
+      },
+      {
+        accessorKey: "returnWithDividends",
+        header: t("Return + Dividends"),
+        Cell: ReturnPercentCell,
+      },
+      {
+        accessorKey: "dividendsYield",
+        header: t("Dividends Yield"),
+        Cell: DividendsYieldCell,
+      },
+      {
+        accessorKey: "lastTransactionMonth",
+        header: t("Last buy"),
+      },
+      {
+        accessorKey: "lastDividendMonth",
+        header: t("Last dividend"),
+      },
+    ],
+    [t],
+  );
 
-  const columns: any = [
-    {
-      title: "",
-      dataIndex: "logo",
-      key: "logo",
-      render: (text: string) => <Avatar src={text} />,
-      fixed: "left",
+  const fetchedCompanies = data?.results ?? [];
+  const totalRowCount = data?.count ?? 0;
+
+  const table = useMantineReactTable({
+    columns,
+    data: fetchedCompanies,
+    positionActionsColumn: "last",
+    mantineTableBodyCellProps: {
+      align: "center",
     },
-    {
-      title: t("Name"),
-      dataIndex: "name",
-      key: "name",
-      render: (text: string, record: ICompanyListItem) => (
-        <>
-          <Link to={`companies/${record.id}`}>{text}</Link>
-          {record.sector !== null && (
-            <>
-              <br />
-              <Typography.Text
-                type="secondary"
-                style={{ fontSize: "0.8em" }}
-                title={record.sectorName}
-              >
-                {t(record.sectorName)}
-              </Typography.Text>
-            </>
-          )}
-        </>
-      ),
-      sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
-        a.name.localeCompare(b.name),
-      fixed: "left",
+    rowCount: totalRowCount,
+    manualPagination: true,
+    manualSorting: true,
+    mantineToolbarAlertBannerProps: isError
+      ? {
+          color: "red",
+          children: "Error loading data",
+        }
+      : undefined,
+    onPaginationChange: setPagination,
+    onSortingChange: setSorting,
+    state: {
+      isLoading,
+      showAlertBanner: isError,
+      showProgressBars: isFetching,
+      pagination,
+      sorting,
     },
-    {
-      title: t("Ticker"),
-      dataIndex: "ticker",
-      key: "ticker",
-      sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
-        a.ticker.localeCompare(b.ticker),
-    },
-    {
-      title: t("Shares"),
-      dataIndex: "sharesCount",
-      key: "sharesCount",
-      sorter: (a: any, b: any) => +a.sharesCount - +b.sharesCount,
-    },
-    {
-      title: t("Broker"),
-      dataIndex: "broker",
-      key: "broker",
-      sorter: (a: ICompanyListItem, b: ICompanyListItem) =>
-        a.broker.localeCompare(b.broker),
-      responsive: ["md"],
-    },
-    {
-      title: t("Invested"),
-      dataIndex: "accumulatedInvestment",
-      key: "accumulatedInvestment",
-      render: (text: string) => (
-        <>
-          {(+text).toFixed(2)}
-          <br />
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: "0.8em" }}
-            title={portfolioBaseCurrency.code}
-          >
-            {t(portfolioBaseCurrency.code)}
-          </Typography.Text>
-        </>
-      ),
-      sorter: (a: any, b: any) =>
-        +a.accumulatedInvestment - +b.accumulatedInvestment,
-    },
-    {
-      title: t("Portfolio value"),
-      dataIndex: "portfolioValue",
-      key: "portfolioValue",
-      render: (text: string) => (
-        <>
-          {(+text).toFixed(2)}
-          <br />
-          <Typography.Text
-            type="secondary"
-            style={{ fontSize: "0.8em" }}
-            title={portfolioBaseCurrency.code}
-          >
-            {t(portfolioBaseCurrency.code)}
-          </Typography.Text>
-        </>
-      ),
-      sorter: (a: any, b: any) => +a.portfolioValue - +b.portfolioValue,
-    },
-    {
-      title: t("Return + dividends"),
-      dataIndex: "returnWithDividendsPercent",
-      key: "returnWithDividendsPercent",
-      render: (text: string) => (
-        <Typography.Text type={Number(text) < 0 ? "danger" : "success"}>
-          {(+text).toFixed(2)} %
-        </Typography.Text>
-      ),
-      sorter: (a: any, b: any) =>
-        +a.returnWithDividendsPercent - +b.returnWithDividendsPercent,
-    },
-    {
-      title: t("Dividends yield"),
-      dataIndex: "dividendsYield",
-      key: "dividendsYield",
-      render: (text: string) => (
-        <Typography.Text type={Number(text) < 0 ? "danger" : "success"}>
-          {(+text).toFixed(2)} %
-        </Typography.Text>
-      ),
-      sorter: (a: any, b: any) => +a.dividendsYield - +b.dividendsYield,
-    },
-    {
-      title: t("Last buy"),
-      dataIndex: "lastTransactionMonth",
-      key: "lastTransactionMonth",
-      render: (text: string) => <Tag>{text}</Tag>,
-      sorter: (a: ICompanyListItem, b: ICompanyListItem) => {
-        return (
-          Date.parse(b.lastTransactionMonth) -
-          Date.parse(a.lastTransactionMonth)
-        );
-      },
-    },
-    {
-      title: t("Last dividend"),
-      dataIndex: "lastDividendMonth",
-      key: "lastDividendMonth",
-      render: (text: string) => <Tag>{text}</Tag>,
-      sorter: (a: ICompanyListItem, b: ICompanyListItem) => {
-        return (
-          Date.parse(b.lastDividendMonth) - Date.parse(a.lastDividendMonth)
-        );
-      },
-    },
-  ];
-  const getData = () => {
-    return companies.map((element: ICompanyListItem) => ({
-      id: element.id,
-      key: element.id,
-      name: element.name,
-      ticker: element.ticker,
-      sharesCount: element.allStats ? element.allStats?.sharesCount : 0,
-      description: element.description,
-      dividendsYield: element.allStats ? element.allStats.dividendsYield : 0,
-      color: element.color,
-      portfolio: element.portfolio,
-      logo: element.logo,
-      countryCode: element.countryCode,
-      sector: element.sector,
-      sectorName: element.sectorName,
-      broker: element.broker,
-      baseCurrency: element.baseCurrency,
-      accumulatedInvestment: element.allStats
-        ? element.allStats.accumulatedInvestment
-        : 0,
-      portfolioValue: element.allStats ? element.allStats.portfolioValue : 0,
-      returnWithDividendsPercent: element.allStats
-        ? element.allStats.returnWithDividendsPercent
-        : 0,
-      portfolioCurrency: element.allStats
-        ? element.allStats.portfolioCurrency
-        : 0,
-      lastTransactionMonth: element.lastTransactionMonth
-        ? element.lastTransactionMonth
-        : "",
-      lastDividendMonth: element.lastDividendMonth
-        ? element.lastDividendMonth
-        : "",
-    }));
-  };
+    localization: mrtLocalization,
+  });
 
   return (
-    <div>
-      <Table
-        loading={!companies || isFetching}
-        pagination={{ defaultPageSize: 60 }}
-        columns={columns}
-        size="small"
-        dataSource={getData()}
-        scroll={{ x: 600 }}
-        style={{ marginTop: 16 }}
+    <Stack>
+      <Switch
+        defaultChecked
+        label={t("Display closed companies")}
+        onChange={(event) => setShowClosed(event.currentTarget.checked)}
+        checked={showClosed}
       />
-      <CompanyAddEditForm
-        title="Update company"
-        okText="Update"
-        portfolioId={+id!}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={onCancel}
-      />
-    </div>
+      <MantineReactTable table={table} />
+    </Stack>
   );
 }

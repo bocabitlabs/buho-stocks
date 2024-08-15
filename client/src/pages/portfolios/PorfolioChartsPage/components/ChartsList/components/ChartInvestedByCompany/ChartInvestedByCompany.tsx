@@ -1,118 +1,68 @@
-import React, { useEffect } from "react";
-import { Bar } from "react-chartjs-2";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
+import { BarChart } from "@mantine/charts";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
 interface ChartProps {
-  selectedYear: string;
-  currency: string | undefined;
+  data: IPortfolioYearStats[];
+  currency: string;
 }
 
-export default function ChartInvestedByCompany({
-  selectedYear,
-  currency,
-}: ChartProps): React.ReactElement | null {
-  const { id } = useParams();
-  const { t } = useTranslation();
-  const [data, setData] = React.useState<any>(null);
+export default function ChartInvestedByCompany({ data, currency }: ChartProps) {
+  const {
+    i18n: { resolvedLanguage },
+  } = useTranslation();
 
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { data: statsData } = usePortfolioYearStats(
-    +id!,
-    selectedYear,
-    "company",
+  const numberFormatter = new Intl.NumberFormat(resolvedLanguage, {
+    style: "decimal",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  const filteredData = useMemo(
+    function createChartData() {
+      const filteredStats: IPortfolioYearStats[] = data.filter(
+        (item: IPortfolioYearStats) => {
+          return item.sharesCount > 0;
+        },
+      );
+
+      const stats: {
+        company: string;
+        value: number;
+      }[] = [];
+
+      filteredStats.forEach((stat) => {
+        stats.push({
+          company: stat.company.ticker,
+          value: Number(stat.accumulatedInvestment),
+        });
+      });
+
+      stats.sort((a, b) => b.value - a.value);
+
+      return stats;
+    },
+    [data],
   );
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: t("Accumulated investment by company"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.label}: ${context.raw.toFixed(
-              2,
-            )} ${currency}`;
-            return percentage;
-          },
-        },
-      },
-    },
-    scales: {
-      x: {
-        ticks: {
-          autoSkip: false,
-          maxRotation: 90,
-          minRotation: 0,
-        },
-      },
-    },
-  };
-
-  useEffect(() => {
-    if (statsData) {
-      const tempData: any = statsData.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
-      setFilteredChartData(tempData);
-    }
-  }, [statsData]);
-
-  useEffect(() => {
-    function loadInitialStats() {
-      if (filteredChartData) {
-        const tempData = {
-          labels: [],
-          datasets: [
-            {
-              label: t("Accumulated investment"),
-              data: [],
-              borderColor: "rgb(53, 162, 235)",
-              backgroundColor: "rgba(53, 162, 235, 0.5)",
-            },
-          ],
-        };
-        const companies: any = [];
-        const accumulatedInvestment: any = [];
-
-        filteredChartData.sort((a: any, b: any) => {
-          if (
-            Number(a.accumulatedInvestment) < Number(b.accumulatedInvestment)
-          ) {
-            return 1;
-          }
-          if (
-            Number(a.accumulatedInvestment) > Number(b.accumulatedInvestment)
-          ) {
-            return -1;
-          }
-          return 0;
-        });
-        filteredChartData.forEach((stat: any) => {
-          companies.push(stat.company.name);
-          accumulatedInvestment.push(Number(stat.accumulatedInvestment));
-        });
-        tempData.labels = companies;
-        const { chartColors } = mapColorsToLabels(companies);
-
-        tempData.datasets[0].data = accumulatedInvestment;
-        tempData.datasets[0].backgroundColor = chartColors;
-        setData(tempData);
+  return (
+    <BarChart
+      h={400}
+      data={filteredData}
+      dataKey="company"
+      series={[{ name: "value", color: "red" }]}
+      valueFormatter={(value: number) =>
+        `${numberFormatter.format(value)} ${currency}`
       }
-    }
-    loadInitialStats();
-  }, [filteredChartData, t]);
-
-  if (data) {
-    return <Bar options={options} data={data} />;
-  }
-  return null;
+      xAxisProps={{
+        angle: -45,
+        interval: 0,
+        textAnchor: "end",
+        height: 50,
+        tickSize: 10,
+        transform: "translate(-10, 0)",
+      }}
+    />
+  );
 }

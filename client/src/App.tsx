@@ -1,70 +1,117 @@
-import React, { useEffect, useState } from "react";
-import "./index.css";
-import "./App.css";
-import { useTranslation } from "react-i18next";
-import { ToastContainer, toast } from "react-toastify";
-import * as Sentry from "@sentry/react";
-import { BrowserTracing } from "@sentry/react";
-import { ConfigProvider, theme } from "antd";
-import AppLayout from "AppLayout";
-import config from "config";
-import { useSettings } from "hooks/use-settings/use-settings";
-import i18n from "i18n";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import Layout from "Layout";
+import routes from "routes";
 
-function useDarkMode() {
-  return (
-    window.matchMedia &&
-    window.matchMedia("(prefers-color-scheme:dark)").matches
-  );
+const router = createBrowserRouter([
+  {
+    element: <Layout />,
+    children: [
+      {
+        path: "/",
+        async lazy() {
+          const { HomePage } = await import("pages/home/HomePage");
+          return { Component: HomePage };
+        },
+      },
+      {
+        path: routes.benchmarksRoute,
+        async lazy() {
+          const { BenchmarksListPage } = await import(
+            "pages/benchmarks/BenchmarksListPage/BenchmarksListPage"
+          );
+          return { Component: BenchmarksListPage };
+        },
+      },
+      {
+        path: routes.currenciesRoute,
+        async lazy() {
+          const { CurrenciesListPage } = await import(
+            "pages/currencies/CurrenciesListPage/CurrenciesListPage"
+          );
+          return { Component: CurrenciesListPage };
+        },
+      },
+      {
+        path: routes.importCsvRoute,
+        async lazy() {
+          const { ImportFromBrokerPage } = await import(
+            "pages/import/ImportFromBrokerPage"
+          );
+          return { Component: ImportFromBrokerPage };
+        },
+      },
+      {
+        path: routes.marketsRoute,
+        async lazy() {
+          const { MarketsListPage } = await import(
+            "pages/markets/MarketsListPage/MarketsListPage"
+          );
+          return { Component: MarketsListPage };
+        },
+      },
+      {
+        path: routes.sectorsRoute,
+        async lazy() {
+          const { SectorsListPage } = await import(
+            "pages/sectors/SectorsListPage/SectorsListPage"
+          );
+          return { Component: SectorsListPage };
+        },
+      },
+      {
+        path: routes.settingsRoute,
+        async lazy() {
+          const { SettingsPage } = await import(
+            "pages/settings/SettingsPage/SettingsPage"
+          );
+          return { Component: SettingsPage };
+        },
+      },
+      {
+        path: "/portfolios/*",
+        children: [
+          {
+            path: ":id",
+            async lazy() {
+              const { PortfolioDetailsPage } = await import(
+                "pages/portfolios/PortfolioDetailPage/PortfolioDetailsPage"
+              );
+              return { Component: PortfolioDetailsPage };
+            },
+          },
+          {
+            path: routes.portfoliosChartsRoute,
+            async lazy() {
+              const { PortfolioChartsPage } = await import(
+                "pages/portfolios/PorfolioChartsPage/PortfolioChartsPage"
+              );
+              return { Component: PortfolioChartsPage };
+            },
+          },
+          {
+            path: routes.portfoliosLogsRoute,
+            async lazy() {
+              const { PortfolioLogTransactionsPage } = await import(
+                "pages/portfolios/PortfolioTransactionsLogPage/PortfolioTransactionsLogPage"
+              );
+              return { Component: PortfolioLogTransactionsPage };
+            },
+          },
+          {
+            path: routes.companiesDetailsRoute,
+            async lazy() {
+              const { CompanyDetailsPage } = await import(
+                "pages/companies/CompanyDetailsPage/CompanyDetailsPage"
+              );
+              return { Component: CompanyDetailsPage };
+            },
+          },
+        ],
+      },
+    ],
+  },
+]);
+
+export default function App() {
+  return <RouterProvider router={router} />;
 }
-
-function App() {
-  const { t } = useTranslation();
-  const [isDarkMode, setIsDarkMode] = useState(useDarkMode());
-  const changeTheme = () => {
-    setIsDarkMode((previousValue) => !previousValue);
-  };
-
-  const { data, error: errorSettings } = useSettings({
-    onError: () => {
-      toast.error<string>(t("Unable to load settings"));
-    },
-  });
-
-  useEffect(() => {
-    if (data) {
-      i18n.changeLanguage(data?.language);
-
-      Sentry.init({
-        dsn: data.sentryDsn,
-        enabled: data.sentryEnabled,
-        environment: config.SENTRY_ENV,
-        integrations: [new BrowserTracing()],
-
-        // Set tracesSampleRate to 1.0 to capture 100%
-        // of transactions for performance monitoring.
-        // We recommend adjusting this value in production
-        tracesSampleRate: 0.5,
-      });
-    }
-  }, [data]);
-
-  return (
-    <ConfigProvider
-      theme={{
-        algorithm: isDarkMode ? theme.darkAlgorithm : theme.defaultAlgorithm,
-      }}
-    >
-      {errorSettings ? (
-        <div>Unable to fetch application&apos;s settings.</div>
-      ) : (
-        <div className="App">
-          <AppLayout changeTheme={changeTheme} />
-          <ToastContainer position="top-center" theme="colored" newestOnTop />
-        </div>
-      )}
-    </ConfigProvider>
-  );
-}
-
-export default App;

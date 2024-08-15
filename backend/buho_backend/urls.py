@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 import re
 
 from django.conf import settings
@@ -50,37 +51,44 @@ schema_view = get_schema_view(
     permission_classes=[permissions.AllowAny],
 )
 
+api_base_url = "api/v1/"
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/v1/", include(benchmarks_router.urls)),
-    path("api/v1/", include(markets_router.urls)),
-    path("api/v1/", include("markets.urls")),
-    path("api/v1/", include(sectors_router.urls)),
-    path("api/v1/", include(currencies_router.urls)),
-    path("api/v1/", include(exchange_rates_router.urls)),
-    path("api/v1/", include(dividends_transactions_router.urls)),
-    path("api/v1/", include(rights_transactions_router.urls)),
-    path("api/v1/", include(shares_transactions_router.urls)),
-    path("api/v1/", include(stock_prices_router.urls)),
+    path(api_base_url, include(benchmarks_router.urls)),
+    path(api_base_url, include(markets_router.urls)),
+    path(api_base_url, include(markets_router.urls)),
+    path(api_base_url, include(sectors_router.urls)),
+    path(api_base_url, include(currencies_router.urls)),
+    path(api_base_url, include(exchange_rates_router.urls)),
+    path(api_base_url, include(dividends_transactions_router.urls)),
+    path(api_base_url, include(rights_transactions_router.urls)),
+    path(api_base_url, include(shares_transactions_router.urls)),
+    path(api_base_url, include(stock_prices_router.urls)),
+    path(
+        "api/v1/companies/",
+        include("companies.urls.companies"),
+        name="companies",
+    ),
     path(
         "api/v1/exchange-rates/", include("exchange_rates.urls"), name="exchange_rates"
     ),
     path("api/v1/initialize-data/", include("initialize_data.urls")),
     path("api/v1/portfolios/", include("portfolios.urls"), name="portfolios"),
     path(
+        "api/v1/portfolios/<int:portfolio_id>/companies/",
+        include("companies.urls.companies_portfolio"),
+        name="companies",
+    ),
+    path(
         "api/v1/portfolios/<int:portfolio_id>/messages/",
         include("log_messages.urls"),
         name="log-messages",
     ),
-    path(
-        "api/v1/portfolios/<int:portfolio_id>/companies/",
-        include("companies.urls"),
-        name="companies",
-    ),
     path("api/v1/settings/", include("settings.urls")),
     path("api/v1/stats/", include("stats.urls")),
     path("api/v1/tasks-results/", TaskResultList.as_view(), name="task_result_list"),
+    path(api_base_url, include("markets.urls"), name="timezones_list"),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
         schema_view.without_ui(cache_timeout=0),  # type: ignore

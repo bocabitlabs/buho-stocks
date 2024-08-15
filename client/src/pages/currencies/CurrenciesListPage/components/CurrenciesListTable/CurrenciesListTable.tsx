@@ -1,137 +1,157 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Alert, Button, Popconfirm, Space, Table } from "antd";
-import CurrencyAddEditForm from "../CurrencyAddEditForm/CurrencyAddEditForm";
+import { Button, Group, Menu, Modal, Text } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import {
+  MantineReactTable,
+  MRT_ColumnDef,
+  MRT_Localization,
+  MRT_PaginationState,
+  MRT_Row,
+  useMantineReactTable,
+} from "mantine-react-table";
+import CurrencyFormProvider from "../CurrencyForm/CurrencyFormProvider";
 import {
   useCurrencies,
   useDeleteCurrency,
 } from "hooks/use-currencies/use-currencies";
 import { ICurrency } from "types/currency";
 
-export default function CurrenciesListTable() {
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
+
+function NameCell({ row }: Readonly<{ row: MRT_Row<ICurrency> }>) {
   const { t } = useTranslation();
-  const { data: currencies, error, isFetching } = useCurrencies();
+  return (
+    <Text fw={700} size="sm">
+      {t(row.original.name)}
+    </Text>
+  );
+}
+
+export default function CurrenciesListTable({ mrtLocalization }: Props) {
+  const { t } = useTranslation();
+  const [pagination, setPagination] = useState<MRT_PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const { data, isLoading, isFetching, isError } = useCurrencies({
+    pagination,
+  });
 
   const { mutate: deleteCurrency } = useDeleteCurrency();
   const [selectedCurrencyId, setSelectedCurrencyId] = useState<
     number | undefined
   >(undefined);
   const [isModalVisible, setIsModalVisible] = useState(false);
-
+  const [deleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] =
+    useDisclosure(false);
   const showModal = (recordId: number) => {
     setSelectedCurrencyId(recordId);
     setIsModalVisible(true);
   };
 
-  const confirmDelete = async (recordId: number) => {
+  const showDeleteModal = (recordId: number) => {
+    setSelectedCurrencyId(recordId);
+    openDeleteModal();
+  };
+
+  const confirmDelete = async (recordId: number | undefined) => {
+    if (!recordId) return;
     deleteCurrency(recordId);
+    closeDeleteModal();
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
-    setIsModalVisible(false);
-  };
-
-  const handleCancel = () => {
+  const onCloseCallback = () => {
     setIsModalVisible(false);
     setSelectedCurrencyId(undefined);
   };
 
-  const columns: any = [
-    {
-      title: "#",
-      dataIndex: "count",
-      key: "count",
-    },
-    {
-      title: t("Name"),
-      dataIndex: "name",
-      key: "name",
-      sorter: (a: ICurrency, b: ICurrency) => a.name.localeCompare(b.name),
-    },
-    {
-      title: t("Code"),
-      dataIndex: "code",
-      key: "code",
-      sorter: (a: ICurrency, b: ICurrency) => a.code.localeCompare(b.code),
-    },
-    {
-      title: t("Symbol"),
-      dataIndex: "symbol",
-      key: "symbol",
-      sorter: (a: ICurrency, b: ICurrency) => a.symbol.localeCompare(b.symbol),
-    },
-    {
-      title: t("Action"),
-      key: "action",
-      render: (text: string, record: any) => (
-        <Space size="middle">
-          <Button
-            data-testid="editButton"
-            icon={<EditOutlined />}
-            onClick={() => showModal(record.id)}
-          />
-          <Popconfirm
-            key={`currency-delete-${record.key}`}
-            title={`${t("Delete currency")} ${record.name}?`}
-            onConfirm={() => confirmDelete(record.id)}
-            okText={t("Yes")}
-            cancelText={t("No")}
-          >
-            <Button
-              data-testid="deleteButton"
-              danger
-              icon={<DeleteOutlined />}
-            />
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
-
-  const getData = () => {
-    return (
-      currencies &&
-      currencies.map((currency: ICurrency, index: number) => ({
-        id: currency.id,
-        count: index + 1,
-        key: currency.id,
-        name: currency.name,
-        code: currency.code,
-        symbol: currency.symbol,
-      }))
-    );
+  const onDeleteCloseCallback = () => {
+    closeDeleteModal();
+    setSelectedCurrencyId(undefined);
   };
 
-  if (error) {
-    return (
-      <Alert
-        showIcon
-        message={t("Unable to load currencies")}
-        description={error.message}
-        type="error"
-      />
-    );
-  }
+  const columns = useMemo<MRT_ColumnDef<ICurrency>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: t("Name"),
+        Cell: NameCell,
+      },
+      {
+        accessorKey: "code",
+        header: t("Code"),
+      },
+      {
+        accessorKey: "symbol",
+        header: t("Symbol"),
+      },
+    ],
+    [t],
+  );
+
+  const fetchedCurrencies = data?.results ?? [];
+  const totalRowCount = data?.count ?? 0;
+
+  const table = useMantineReactTable({
+    columns,
+    data: fetchedCurrencies, // must be memoized or stable (useState, useMemo, defined outside of this component, etc.)
+    enableRowActions: true,
+    positionActionsColumn: "last",
+    renderRowActionMenuItems: ({ row }) => (
+      <>
+        <Menu.Item onClick={() => showModal(row.original.id)}>
+          {t("Edit")}
+        </Menu.Item>
+        <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
+          {t("Delete")}
+        </Menu.Item>
+      </>
+    ),
+    rowCount: totalRowCount,
+    manualPagination: true,
+    mantineToolbarAlertBannerProps: isError
+      ? {
+          color: "red",
+          children: t("Error loading data"),
+        }
+      : undefined,
+    onPaginationChange: setPagination,
+    state: {
+      isLoading,
+      showAlertBanner: isError,
+      showProgressBars: isFetching,
+      pagination,
+    },
+    localization: mrtLocalization,
+  });
 
   return (
     <div>
-      <Table
-        scroll={{ x: 600 }}
-        style={{ marginTop: 16 }}
-        columns={columns}
-        dataSource={getData()}
-        loading={isFetching}
-      />
-      <CurrencyAddEditForm
-        title={t("Update currency")}
-        okText={t("Update")}
+      <MantineReactTable table={table} />
+      <CurrencyFormProvider
         id={selectedCurrencyId}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={handleCancel}
+        isVisible={isModalVisible}
+        onCloseCallback={onCloseCallback}
       />
+      <Modal
+        opened={deleteModalOpen}
+        onClose={closeDeleteModal}
+        title={t("Delete currency")}
+      >
+        <Text>{t("Are you sure you want to delete this currency?")}</Text>
+        <Group mt="md">
+          <Button
+            disabled={!selectedCurrencyId}
+            onClick={() => confirmDelete(selectedCurrencyId)}
+          >
+            {t("Yes")}
+          </Button>
+          <Button onClick={onDeleteCloseCallback}>{t("No")}</Button>
+        </Group>
+      </Modal>
     </div>
   );
 }

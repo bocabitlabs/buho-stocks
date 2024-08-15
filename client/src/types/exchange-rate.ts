@@ -1,5 +1,5 @@
 export interface IExchangeRateFormFields {
-  exchangeDate: string;
+  exchangeDate: Date;
   exchangeRate: number;
   exchangeFrom: string;
   exchangeTo: string;
