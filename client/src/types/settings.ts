@@ -13,7 +13,5 @@ export interface ISettingsFormFields {
 
 export interface ISettings extends ISettingsFormFields {
   id: number;
-  allowFetch: boolean;
-  dateCreated: string;
   lastUpdated: string;
 }
