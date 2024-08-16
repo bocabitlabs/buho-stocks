@@ -43,6 +43,7 @@ module.exports = {
   rules: {
     "@typescript-eslint/no-explicit-any": "warn",
     "@typescript-eslint/no-unsafe-function-type": "warn",
+    "vitest/no-commented-out-tests": "warn",
     "comma-dangle": "off",
     "import/order": [
       "error",
