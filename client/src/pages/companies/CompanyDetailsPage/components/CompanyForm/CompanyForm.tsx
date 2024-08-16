@@ -53,11 +53,12 @@ function CompanyForm({
     img: Blob,
     callback: (fileRead: string | ArrayBuffer | null) => void,
   ) => {
+    console.log(img);
     const reader = new FileReader();
-    if (reader.result !== null) {
-      reader.addEventListener("load", () => callback(reader.result));
-      reader.readAsDataURL(img);
-    }
+    console.log("reader result is not null");
+    console.log(reader.result);
+    reader.addEventListener("load", () => callback(reader.result));
+    reader.readAsDataURL(img);
   };
 
   const previews = files.map((file) => {
