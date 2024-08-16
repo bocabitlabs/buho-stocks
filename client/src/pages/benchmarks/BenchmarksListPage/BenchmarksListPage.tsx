@@ -17,7 +17,7 @@ function BenchmarksListContent() {
   );
 }
 
-export default function BenchmarksListPage() {
+export function BenchmarksListPage() {
   return (
     <Grid p={20}>
       <Grid.Col span={12}>
@@ -31,3 +31,5 @@ export default function BenchmarksListPage() {
     </Grid>
   );
 }
+
+export default BenchmarksListPage;
