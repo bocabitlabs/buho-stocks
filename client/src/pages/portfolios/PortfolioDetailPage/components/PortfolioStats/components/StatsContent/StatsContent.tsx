@@ -12,7 +12,7 @@ export default function StatsContent({ stats }: Props) {
 
   return (
     <Grid>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Invested")}</Text>
           <Text size="xl">
@@ -25,7 +25,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Accum. investment")}</Text>
           <Text size="xl">
@@ -38,7 +38,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Portfolio value")}</Text>
           <Text size="xl">
@@ -58,7 +58,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Dividends")}</Text>
           <Text size="xl">
@@ -71,7 +71,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Accum. Dividends")}</Text>
           <Text size="xl">
@@ -84,7 +84,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Dividends yield")}</Text>
           <Text size="xl">
@@ -97,7 +97,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Return")}</Text>
           <Text size="xl">
@@ -119,7 +119,7 @@ export default function StatsContent({ stats }: Props) {
           </Text>
         </Stack>
       </Grid.Col>
-      <Grid.Col span={{ base: 12, md: 3, lg: 3 }}>
+      <Grid.Col span={{ base: 6, md: 6, lg: 3 }}>
         <Stack gap="xs">
           <Text>{t("Return + dividends")}</Text>
           <Text size="xl">
