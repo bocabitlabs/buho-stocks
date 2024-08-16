@@ -33,6 +33,7 @@ jobs:
         run: |
           mv .env.ci.sample .env
           cp .env .env.ci
+          cp .env.ci backend/.env
           poetry install
       - name: Run Tests
         run: |
