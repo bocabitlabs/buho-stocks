@@ -36,5 +36,6 @@ jobs:
       - name: Run Tests
         run: |
           cd backend && poetry run coverage run manage.py test
+          coverage report
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
