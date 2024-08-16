@@ -16,7 +16,3 @@ export interface ITaskResult {
 export interface ITaskResultWrapper {
   status: ITaskResult;
 }
-
-export interface ITaskResultWrapper {
-  status: ITaskResult;
-}
