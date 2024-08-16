@@ -75,6 +75,8 @@ def update_portfolio_stats(
             logger.debug(f"{self.request.id} - Progress: {percent}")
             if year == settings.YEAR_FOR_ALL:
                 year_text = "All"
+                update_api_price = False
+
             update_task_status(
                 self.request.id,
                 "Updating portfolio stats",

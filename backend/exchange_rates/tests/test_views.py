@@ -23,7 +23,8 @@ class ExchangeRatesListTestCase(BaseApiTestCase):
         response = self.client.get(self.url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 0)
+        logger.debug(response.data)
+        self.assertEqual(len(response.data), 0)
 
         for _ in range(0, 4):
             ExchangeRateFactory.create()
@@ -31,7 +32,7 @@ class ExchangeRatesListTestCase(BaseApiTestCase):
         response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data["results"]), 4)
+        self.assertEqual(len(response.data), 4)
 
 
 class ExchangeRatesDetailTestCase(BaseApiTestCase):

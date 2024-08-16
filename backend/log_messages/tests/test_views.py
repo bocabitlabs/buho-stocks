@@ -19,7 +19,7 @@ class LogMessagesListTestCase(BaseApiTestCase):
 
     def test_get_companies(self):
         portfolio = PortfolioFactory.create()
-        url = reverse("log-message-list", args=[portfolio.id])
+        url = reverse("message-list", args=[portfolio.id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -44,11 +44,9 @@ class CompanisDetailTestCase(BaseApiTestCase):
         self.instances = instances
 
     def test_delete_company(self):
-        url = reverse(
-            "log-message-detail", args=[self.portfolio.id, self.instances[0].id]
-        )
+        url = reverse("message-detail", args=[self.portfolio.id, self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(LogMessage.DoesNotExist):
             LogMessage.objects.get(id=self.instances[0].id)

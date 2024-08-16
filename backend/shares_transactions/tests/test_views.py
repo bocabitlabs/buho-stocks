@@ -95,9 +95,12 @@ class SharesTransactionsDetailTestCase(BaseApiTestCase):
         temp_data["company"] = self.company.id
         temp_data["gross_price_per_share_currency"] = self.company.base_currency
         temp_data["total_commission_currency"] = self.company.base_currency
+        temp_data["total_amount"] = 20
+        temp_data["total_amount_currency"] = self.company.base_currency
 
         url = reverse("shares-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
+        logger.debug(response.data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(
