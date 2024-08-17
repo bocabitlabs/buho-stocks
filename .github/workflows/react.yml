@@ -35,6 +35,9 @@ jobs:
           cd client && npm run lint
       - name: Run Tests
         run: |
-          cd client && npm run test --coverage
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1
+          cd client && npm run coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # required
+          verbose: true # optional (default = false)
