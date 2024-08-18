@@ -52,7 +52,15 @@ class SharesViewSet(viewsets.ModelViewSet):
         company = Company.objects.get(id=instance.company.id)
         super().perform_destroy(instance)
         self.create_delete_shares_log_message(instance, company)
-        self.add_shares_update_company_stats(instance, company)
+        self.delete_shares_update_company_stats(instance, company)
+
+    def delete_shares_update_company_stats(self, instance: SharesTransaction, company):
+        logger.debug(f"Updating company stats for {company.name} after adding shares")
+        update_portfolio = self.request.query_params.get("updatePortfolio", False)
+        if update_portfolio == "true":
+            update_portfolio_stats.delay(
+                company.portfolio_id, [company.id], instance.transaction_date.year
+            )
 
     def add_shares_update_company_stats(self, serializer, company):
         logger.debug(f"Updating company stats for {company.name} after adding shares")

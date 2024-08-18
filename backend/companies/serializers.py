@@ -53,6 +53,9 @@ class CompanySerializer(serializers.ModelSerializer):
     return_with_dividends = serializers.DecimalField(
         max_digits=12, decimal_places=3, read_only=True
     )
+    return_with_dividends_percent = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
     dividends_yield = serializers.DecimalField(
         max_digits=12, decimal_places=3, read_only=True
     )

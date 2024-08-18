@@ -52,7 +52,7 @@ class RightsViewSet(viewsets.ModelViewSet):
         company = Company.objects.get(id=instance.company.id)
         super().perform_destroy(instance)
         self.create_delete_rights_log_message(instance, company)
-        self.add_rights_update_company_stats(instance, company)
+        self.delete_rights_update_company_stats(instance, company)
 
     def add_rights_update_company_stats(self, serializer, company):
         logger.debug(f"Updating company stats for {company.name} after adding rights")
@@ -64,6 +64,15 @@ class RightsViewSet(viewsets.ModelViewSet):
         if update_portfolio == "true":
             update_portfolio_stats.delay(
                 company.portfolio_id, [company.id], transaction_date.year
+            )
+
+    def delete_rights_update_company_stats(self, instance: RightsTransaction, company):
+        logger.debug(f"Updating company stats for {company.name} after adding rights")
+
+        update_portfolio = self.request.query_params.get("updatePortfolio", False)
+        if update_portfolio == "true":
+            update_portfolio_stats.delay(
+                company.portfolio_id, [company.id], instance.transaction_date.year
             )
 
     def create_add_rights_log_message(self, serializer, company):
