@@ -1,25 +1,25 @@
 import logging
 
-from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
+from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from log_messages.models import LogMessage
 from log_messages.tests.factory import LogMessageFactory
 from portfolios.tests.factory import PortfolioFactory
-from rest_framework import status
 
 logger = logging.getLogger("buho_backend")
 
 
 class LogMessagesListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.faker_obj = Faker()
 
     def test_get_companies(self):
         portfolio = PortfolioFactory.create()
-        url = reverse("log-message-list", args=[portfolio.id])
+        url = reverse("message-list", args=[portfolio.id])
         response = self.client.get(url)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -34,20 +34,19 @@ class LogMessagesListTestCase(BaseApiTestCase):
 
 
 class CompanisDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.portfolio = PortfolioFactory.create()
+    def setUp(self):
+        super().setUp()
+        self.portfolio = PortfolioFactory.create()
         instances = []
         for _ in range(0, 4):
-            instance = LogMessageFactory.create(portfolio=cls.portfolio)
+            instance = LogMessageFactory.create(portfolio=self.portfolio)
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_delete_company(self):
-        url = reverse("log-message-detail", args=[self.portfolio.id, self.instances[0].id])
+        url = reverse("message-detail", args=[self.portfolio.id, self.instances[0].id])
         response = self.client.delete(url)
         # Check status response
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(LogMessage.DoesNotExist):
             LogMessage.objects.get(id=self.instances[0].id)

@@ -1,8 +1,6 @@
 [flake8]
-max-line-length = 120
-
-exclude = migrations
-
+# black compatibility
+max-line-length = 88
 extend-exclude =
     client
     docs
@@ -10,7 +8,8 @@ extend-exclude =
     media
     venv
     env
+    migrations
 
 select = C,E,F,W,DJ,DJ10
-
-extend-ignore = E203
+# black compatibility
+extend-ignore = E203,W503

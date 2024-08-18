@@ -1,21 +1,21 @@
 import logging
 
-from buho_backend.tests.base_test_case import BaseApiTestCase
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
 from sectors.tests.factory import SectorFactory
 
 logger = logging.getLogger("buho_backend")
 
 
 class SectorsListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.sectors_url = reverse("sectors-list")
-        cls.super_sectors_url = reverse("super_sectors-list")
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.sectors_url = reverse("sectors-list")
+        self.super_sectors_url = reverse("super_sectors-list")
+        self.faker_obj = Faker()
 
     def test_get_sectors(self):
         response = self.client.get(self.sectors_url)
@@ -32,14 +32,13 @@ class SectorsListTestCase(BaseApiTestCase):
 
 
 class SectorsDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUp(self):
+        super().setUp()
         instances = []
         for _ in range(0, 4):
             instance = SectorFactory.create()
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_sector(self):
         url = reverse("sectors-detail", args=[self.instances[0].id])

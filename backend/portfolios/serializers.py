@@ -1,10 +1,11 @@
 import logging
 
+from rest_framework import serializers
+
 from companies.serializers_lite import CompanySerializerLite
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from portfolios.models import Portfolio
-from rest_framework import serializers
 from shares_transactions.models import SharesTransaction
 
 logger = logging.getLogger("buho_backend")
@@ -55,9 +56,9 @@ class PortfolioSerializerGet(PortfolioSerializer):
         return serialized_currency.data
 
     def get_first_year(self, obj):
-        query = SharesTransaction.objects.filter(company__portfolio=obj.id, company__is_closed=False).order_by(
-            "transaction_date"
-        )
+        query = SharesTransaction.objects.filter(
+            company__portfolio=obj.id, company__is_closed=False
+        ).order_by("transaction_date")
         if query.exists():
             return query[0].transaction_date.year
         return None

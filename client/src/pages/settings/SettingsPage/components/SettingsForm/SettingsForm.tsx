@@ -1,137 +1,120 @@
-import React, { ReactElement } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Form, Input, Select, Switch } from "antd";
-import { useTimezones } from "hooks/use-markets/use-markets";
 import {
-  useSettings,
-  useUpdateSettings,
-} from "hooks/use-settings/use-settings";
+  Button,
+  Checkbox,
+  Group,
+  Paper,
+  Select,
+  Stack,
+  TextInput,
+  Title,
+} from "@mantine/core";
+import { useForm } from "@mantine/form";
+import { ITimezone } from "types/market";
 import { ISettingsFormFields } from "types/settings";
 
-function SettingsForm(): ReactElement | null {
-  const [form] = Form.useForm();
-  const { isFetching, data, error } = useSettings();
-  const { mutate: updateSettings } = useUpdateSettings();
-  const { t, i18n } = useTranslation();
-  const { data: timezones, isLoading: timezonesLoading } = useTimezones();
+interface Props {
+  settings: ISettingsFormFields;
+  timezones: ITimezone[];
+  onSubmitCallback: (values: ISettingsFormFields) => void;
+}
 
-  const handleUpdate = async (values: any) => {
-    const {
-      // companyDisplayMode,
-      // companySortBy,
-      language,
-      timezone,
-      sentryDsn,
-      sentryEnabled,
-      backendHostname,
-      // mainPortfolio,
-      // portfolioDisplayMode,
-      // portfolioSortBy
-    } = values;
-    const newSettings: ISettingsFormFields = {
-      language,
-      timezone,
-      sentryDsn,
-      sentryEnabled,
-      backendHostname,
-      companyDisplayMode: "TODO",
-      companySortBy: "TODO",
-      mainPortfolio: "TODO",
-      portfolioDisplayMode: "TODO",
-      portfolioSortBy: "TODO",
-    };
-    if (data) {
-      updateSettings({ newSettings });
-      i18n.changeLanguage(newSettings.language);
-    }
-  };
+function SettingsForm({
+  settings,
+  timezones,
+  onSubmitCallback,
+}: Readonly<Props>) {
+  const { t } = useTranslation();
 
-  if (isFetching) {
-    return <div>{t("Fetching settings...")}</div>;
-  }
+  const form = useForm<ISettingsFormFields>({
+    mode: "uncontrolled",
+    initialValues: {
+      companySortBy: settings.companySortBy,
+      companyDisplayMode: settings.companyDisplayMode,
+      language: settings?.language || "en",
+      mainPortfolio: settings.mainPortfolio,
+      portfolioSortBy: settings.portfolioSortBy,
+      portfolioDisplayMode: settings.portfolioDisplayMode,
+      sentryDsn: settings?.sentryDsn || "",
+      sentryEnabled: settings?.sentryEnabled || false,
+      displayWelcome: settings.displayWelcome,
+      timezone: settings?.timezone || "UTC",
+    },
+  });
 
-  if (error) {
-    return <div>{t("Unable to fetch settings.")}</div>;
-  }
+  const timezonesOptions = useMemo(() => {
+    const tzOptions = timezones?.map((timezone: ITimezone) => ({
+      value: timezone.name,
+      label: t(timezone.name),
+    }));
+    return tzOptions;
+  }, [timezones, t]);
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={handleUpdate}
-      initialValues={{
-        // companyDisplayMode: settings.companyDisplayMode,
-        // companySortBy: settings.companySortBy,
-        language: data?.language,
-        timezone: data?.timezone,
-        sentryDsn: data?.sentryDsn,
-        sentryEnabled: data?.sentryEnabled,
-        backendHostname: data?.backendHostname,
-        // mainPortfolio: settings.mainPortfolio,
-        // portfolioDisplayMode: settings.portfolioDisplayMode,
-        // portfolioSortBy: settings.portfolioSortBy
-      }}
-    >
-      <Form.Item name="language" label={t("Language")}>
-        <Select placeholder={t("Select a language")}>
-          <Select.Option value="en" key="en">
-            English
-          </Select.Option>
-          <Select.Option value="es" key="es">
-            Español
-          </Select.Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="timezone"
-        label={t("Account Timezone")}
-        rules={[{ required: true }]}
-      >
-        <Select
-          showSearch
-          loading={timezonesLoading}
-          style={{ width: 200 }}
-          placeholder={t("Search to Select")}
-          optionFilterProp="children"
-          filterOption={(input: any, option: any) =>
-            option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-          }
-        >
-          {timezones?.map((timezone: any) => (
-            <Select.Option value={timezone.name} key={timezone.name}>
-              {timezone.name}
-            </Select.Option>
-          ))}
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="sentryEnabled"
-        label={t("Sentry enabled")}
-        valuePropName="checked"
-        help={t(
-          "If enabled, errors will be sent to Sentry. You need to set the Sentry DSN below.",
-        )}
-      >
-        <Switch />
-      </Form.Item>
-      <Form.Item name="sentryDsn" label={t("Sentry DSN")}>
-        <Input type="text" />
-      </Form.Item>
-      <Form.Item
-        name="backendHostname"
-        label={t("Backend hostname")}
-        help={t(
-          "It needs to be set in order to retrieve the status of the background tasks",
-        )}
-      >
-        <Input type="text" />
-      </Form.Item>
-      <Form.Item style={{ marginTop: "3em" }}>
-        <Button type="primary" htmlType="submit">
-          {t("Update settings")}
-        </Button>
-      </Form.Item>
-    </Form>
+    <Stack mt={20}>
+      <Title order={2}>{t("Application Settings")}</Title>
+      <Paper p="lg" shadow="xs">
+        <form onSubmit={form.onSubmit(onSubmitCallback)}>
+          <Select
+            mt="md"
+            withAsterisk
+            searchable
+            label={t("Select a language")}
+            data={[
+              { value: "en", label: "English" },
+              { value: "es", label: "Español" },
+            ]}
+            key={form.key("language")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("language")}
+            required
+          />
+
+          <Select
+            mt="md"
+            withAsterisk
+            searchable
+            label={t("Timezone")}
+            data={timezonesOptions}
+            key={form.key("timezone")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("timezone")}
+            required
+          />
+
+          <Checkbox
+            mt="md"
+            label={t("Sentry enabled")}
+            key={form.key("sentryEnabled")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("sentryEnabled", { type: "checkbox" })}
+          />
+
+          <TextInput
+            mt="md"
+            label={t("Sentry DSN")}
+            key={form.key("sentryDsn")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("sentryDsn")}
+          />
+
+          <Checkbox
+            mt="md"
+            label={t("Show welcome screen")}
+            key={form.key("displayWelcome")}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...form.getInputProps("displayWelcome", { type: "checkbox" })}
+          />
+
+          <Group justify="space-between" mt="xl">
+            <Button type="submit" color="blue">
+              {t("Update settings")}
+            </Button>
+          </Group>
+        </form>
+      </Paper>
+    </Stack>
   );
 }
 

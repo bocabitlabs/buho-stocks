@@ -1,7 +1,7 @@
-# type: ignore
 from django.urls import path
-from markets import views
 from rest_framework.routers import DefaultRouter
+
+from markets import views
 
 router = DefaultRouter()
 

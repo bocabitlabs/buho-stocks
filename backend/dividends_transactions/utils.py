@@ -1,11 +1,13 @@
 from datetime import date
 from decimal import Decimal
 
-from dividends_transactions.models import DividendsTransaction
+from django.conf import settings
 from django.db.models.query import QuerySet
 
+from dividends_transactions.models import DividendsTransaction
 
-class DividendsTransactionsUtils:
+
+class DividendsTransactionCalculator:
     def __init__(
         self,
         transactions: QuerySet[DividendsTransaction],
@@ -14,7 +16,9 @@ class DividendsTransactionsUtils:
         self.transactions = transactions
         self.use_portfolio_currency = use_portfolio_currency
 
-    def _get_transactions_query(self, year: int, use_accumulated: bool = False):
+    def _get_multiple_transactions_query(
+        self, year: int, use_accumulated: bool = False
+    ):
         """[summary]
 
         Args:
@@ -32,32 +36,42 @@ class DividendsTransactionsUtils:
 
         return query
 
-    def _get_transaction_amount(self, item: DividendsTransaction) -> Decimal:
-        exchange_rate = 1
+    def _calculate_single_transaction_amount(
+        self, item: DividendsTransaction
+    ) -> Decimal:
+        exchange_rate = Decimal(1)
+        total = Decimal(0)
         if self.use_portfolio_currency:
             exchange_rate = item.exchange_rate
-        total = (item.total_amount.amount * exchange_rate) - (item.total_commission.amount * exchange_rate)
+        total = (item.total_amount.amount * exchange_rate) - (
+            item.total_commission.amount * exchange_rate
+        )
         return total
 
-    def _get_transactions_amount(self, query: QuerySet[DividendsTransaction]) -> Decimal:
+    def _calculate_multiple_transactions_amount(
+        self, query: QuerySet[DividendsTransaction]
+    ) -> Decimal:
         total: Decimal = Decimal(0)
         for item in query:
-            total += self._get_transaction_amount(item)
+            total += self._calculate_single_transaction_amount(item)
         return total
 
-    def get_dividends_of_year(self, year: int):
+    def calculate_dividends_of_year(self, year: int) -> Decimal:
+        total = Decimal(0)
+        if year == settings.YEAR_FOR_ALL:
+            total = self.get_accumulated_dividends_until_current_year()
+            return total
+        query = self._get_multiple_transactions_query(year)
+        total = self._calculate_multiple_transactions_amount(query)
+        return total
+
+    def calculate_accumulated_dividends_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
-        query = self._get_transactions_query(year)
-        total = self._get_transactions_amount(query)
+        query = self._get_multiple_transactions_query(year, use_accumulated=True)
+        total = self._calculate_multiple_transactions_amount(query)
         return total
 
-    def get_accumulated_dividends_until_year(self, year: int):
-        total: Decimal = Decimal(0)
-        query = self._get_transactions_query(year, use_accumulated=True)
-        total = self._get_transactions_amount(query)
-        return total
-
-    def get_accumulated_dividends_until_current_year(self):
+    def get_accumulated_dividends_until_current_year(self) -> Decimal:
         year = date.today().year
-        total = self.get_accumulated_dividends_until_year(year)
+        total = self.calculate_accumulated_dividends_until_year(year)
         return total

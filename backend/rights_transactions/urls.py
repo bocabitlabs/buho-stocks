@@ -1,4 +1,5 @@
 from rest_framework.routers import DefaultRouter
+
 from rights_transactions import views
 
 router = DefaultRouter()

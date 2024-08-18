@@ -1,98 +1,55 @@
-import React, { useEffect } from "react";
-import { Pie } from "react-chartjs-2";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
+import { PieChart } from "@mantine/charts";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
+import { getColorShade } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
 interface ChartProps {
-  selectedYear: string;
+  data: IPortfolioYearStats[];
+  width: number;
 }
 
-export default function ChartMarketByCompany({
-  selectedYear,
-}: ChartProps): React.ReactElement | null {
+export default function ChartMarketByCompany({ data, width }: ChartProps) {
   const { t } = useTranslation();
-  const [data, setData] = React.useState<any>(null);
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { id } = useParams();
-  const { data: statsData } = usePortfolioYearStats(
-    +id!,
-    selectedYear,
-    "company",
+
+  const filteredData = useMemo(
+    function createChartData() {
+      const filteredCompanies: IPortfolioYearStats[] = data.filter(
+        (item: IPortfolioYearStats) => {
+          return item.sharesCount > 0;
+        },
+      );
+
+      const markets: { name: string; value: number; color: string }[] = [];
+
+      const groupedByMarketName = groupByName(filteredCompanies, "marketName");
+      Object.entries(groupedByMarketName).forEach(([year, statsArray]) => {
+        markets.push({
+          name: year,
+          value: statsArray.length,
+          color: getColorShade(year),
+        });
+      });
+      markets.sort((a, b) => b.value - a.value);
+
+      return markets;
+    },
+    [data],
   );
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: "bottom" as const,
-      },
-      title: {
-        display: true,
-        text: t("Markets"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const count = `${context.label}: ${context.raw} ${t("companies")}`;
-            return count;
-          },
-        },
-      },
-    },
-  };
-
-  useEffect(() => {
-    if (statsData) {
-      const tempData: any = statsData.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
-
-      setFilteredChartData(tempData);
-    }
-  }, [statsData]);
-
-  useEffect(() => {
-    function loadInitialStats() {
-      if (filteredChartData) {
-        const tempData = {
-          labels: [],
-          datasets: [
-            {
-              label: t("Markets"),
-              data: [],
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
-            },
-          ],
-        };
-        const sectors: any = [];
-        const sectorsCount: any = [];
-
-        const res = groupByName(filteredChartData, "marketName");
-        Object.entries(res).forEach(([k, v]) => {
-          sectors.push(k);
-          sectorsCount.push((v as any[]).length);
-        });
-
-        tempData.labels = sectors;
-        const { chartColors, chartBorders } = mapColorsToLabels(sectors);
-
-        tempData.datasets[0].data = sectorsCount;
-        tempData.datasets[0].backgroundColor = chartColors;
-        tempData.datasets[0].borderColor = chartBorders;
-
-        setData(tempData);
-      }
-    }
-    loadInitialStats();
-  }, [filteredChartData, t]);
-
-  if (data) {
-    return <Pie options={options} data={data} />;
-  }
-  return null;
+  return (
+    <PieChart
+      withLabelsLine
+      labelsPosition="outside"
+      labelsType="value"
+      withLabels
+      data={filteredData}
+      withTooltip
+      startAngle={90}
+      endAngle={-270}
+      size={width}
+      valueFormatter={(value: number) => `${value} ${t("companies")}`}
+    />
+  );
 }

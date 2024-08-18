@@ -1,160 +1,164 @@
-import React, { ReactElement } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DeleteOutlined } from "@ant-design/icons";
 import {
-  Alert,
+  Accordion,
   Button,
-  Collapse,
+  Group,
+  Loader,
+  Menu,
   Modal,
-  Popconfirm,
-  Space,
-  Table,
-  Typography,
-} from "antd";
-import BenchmarkYearAddForm from "../BenchmarkYearAddForm/BenchmarkYearAddForm";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
+  Text,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import { IconPlus } from "@tabler/icons-react";
+import {
+  MantineReactTable,
+  MRT_ColumnDef,
+  MRT_Localization,
+  MRT_Row,
+  useMantineReactTable,
+} from "mantine-react-table";
+import BenchmarkYearFormProvider from "../BenchmarkYearForm/BenchmarkYearFormProvider";
 import { useDeleteBenchmarkYear } from "hooks/use-benchmarks/use-benchmark-years";
 import { useBenchmark } from "hooks/use-benchmarks/use-benchmarks";
 import { IBenchmarkYear } from "types/benchmark";
 
 interface BenchmarkModalProps {
   id: number;
-  title: string;
   isModalVisible: boolean;
   onCancel: () => void;
+  mrtLocalization: MRT_Localization;
+}
+
+function ValueCell({ row }: Readonly<{ row: MRT_Row<IBenchmarkYear> }>) {
+  return (
+    <span>
+      {row.original.value} {row.original.valueCurrency}
+    </span>
+  );
+}
+
+function ReturnCell({ row }: Readonly<{ row: MRT_Row<IBenchmarkYear> }>) {
+  return <span>{row.original.returnPercentage} %</span>;
 }
 
 function BenchmarkDetailsModal({
-  title,
   isModalVisible,
   onCancel,
   id,
-}: BenchmarkModalProps): ReactElement | null {
-  // const [form] = Form.useForm();
+  mrtLocalization,
+}: BenchmarkModalProps) {
   const { t } = useTranslation();
   const { mutate: deleteBenchmarkYear } = useDeleteBenchmarkYear();
-  const {
-    data: benchmark,
-    error: errorFetching,
-    isFetching,
-    isSuccess,
-  } = useBenchmark(id);
+  const { data: benchmark, isError, isFetching, isLoading } = useBenchmark(id);
+  const [deleteModalOpen, { open: openDeleteModal, close: closeDeleteModal }] =
+    useDisclosure(false);
+  const [selectedYearId, setSelectedMarketId] = useState<number | undefined>(
+    undefined,
+  );
 
-  const confirmDelete = async (recordId: number) => {
-    if (benchmark) {
-      deleteBenchmarkYear({ id: recordId, benchmarkId: benchmark.id });
+  const showDeleteModal = (recordId: number) => {
+    setSelectedMarketId(recordId);
+    openDeleteModal();
+  };
+
+  const onDeleteCloseCallback = () => {
+    closeDeleteModal();
+    setSelectedMarketId(undefined);
+  };
+  const confirmDelete = async (recordId: number | undefined) => {
+    if (recordId) {
+      deleteBenchmarkYear({ id: recordId });
     }
   };
 
-  const getData = () => {
-    return (
-      benchmark &&
-      benchmark.years &&
-      benchmark.years.map((year: IBenchmarkYear, index: number) => ({
-        id: year.id,
-        count: index + 1,
-        key: year.id,
-        returnPercentage: year.returnPercentage,
-        year: year.year,
-        value: year.value,
-        valueCurrency: year.valueCurrency,
-      }))
-    );
-  };
+  const columns = useMemo<MRT_ColumnDef<IBenchmarkYear>[]>(
+    () => [
+      {
+        accessorKey: "year",
+        header: t("Year"),
+      },
+      {
+        accessorKey: "returnPercentage",
+        header: t("Return"),
+        Cell: ReturnCell,
+      },
+      {
+        accessorKey: "value",
+        header: t("Value"),
+        Cell: ValueCell,
+      },
+    ],
+    [t],
+  );
 
-  const columns: any = [
-    {
-      title: "#",
-      dataIndex: "count",
-      key: "count",
+  const fetchedYears = benchmark?.years ?? [];
+
+  const table = useMantineReactTable({
+    columns,
+    data: fetchedYears,
+    enableRowActions: true,
+    enablePagination: false,
+    enableTopToolbar: false,
+    enableBottomToolbar: false,
+    positionActionsColumn: "last",
+    renderRowActionMenuItems: ({ row }) => (
+      <Menu.Item onClick={() => showDeleteModal(row.original.id)}>
+        {t("Delete")}
+      </Menu.Item>
+    ),
+    mantineToolbarAlertBannerProps: isError
+      ? {
+          color: "red",
+          children: t("Error loading data"),
+        }
+      : undefined,
+    state: {
+      isLoading,
+      showAlertBanner: isError,
+      showProgressBars: isFetching,
     },
-    {
-      title: t("Year"),
-      dataIndex: "year",
-      key: "year",
-    },
-    {
-      title: t("Return"),
-      dataIndex: "returnPercentage",
-      key: "returnPercentage",
-      render: (text: string) => <span>{text} %</span>,
-    },
-    {
-      title: t("Value"),
-      dataIndex: "value",
-      key: "value",
-      render: (text: string, record: IBenchmarkYear) => (
-        <span>
-          {text} {record.valueCurrency}
-        </span>
-      ),
-    },
-    {
-      title: t("Action"),
-      key: "action",
-      render: (text: string, record: any) => (
-        <Space size="middle">
-          {/* //       <Button
-    //         data-testid="editButton"
-    //         icon={<EditOutlined />}
-    //         onClick={() => showModal(record.id)}
-    //       /> */}
-          <Popconfirm
-            key={`benchmark-delete-${record.key}`}
-            title={`${t("Delete benchmark")} ${record.name}?`}
-            onConfirm={() => confirmDelete(record.id)}
-            okText={t("Yes")}
-            cancelText={t("No")}
-          >
-            <Button
-              data-testid="deleteButton"
-              danger
-              icon={<DeleteOutlined />}
-            />
-          </Popconfirm>
-        </Space>
-      ),
-    },
-  ];
+    localization: mrtLocalization,
+  });
+
+  if (isLoading) {
+    return <Loader />;
+  }
 
   return (
     <Modal
-      okType="primary"
-      open={isModalVisible}
-      title={title}
-      afterClose={onCancel}
-      footer={[
-        <Button key="back" onClick={onCancel}>
-          Close
-        </Button>,
-      ]}
-      onCancel={onCancel}
+      size="xl"
+      opened={isModalVisible}
+      onClose={onCancel}
+      title={benchmark.name}
     >
-      {isFetching && <LoadingSpin />}
-      {errorFetching && (
-        <Alert
-          showIcon
-          message={t("Unable to load benchmark")}
-          description={errorFetching.message}
-          type="error"
-        />
-      )}
-      {isSuccess && (
-        <div>
-          <Typography.Title level={5}>{benchmark.name}</Typography.Title>
-          <Collapse defaultActiveKey={[]}>
-            <Collapse.Panel header="Add a new year" key="1">
-              <BenchmarkYearAddForm benchmarkId={benchmark.id} />
-            </Collapse.Panel>
-          </Collapse>
-          <Table
-            style={{ marginTop: 16 }}
-            columns={columns}
-            dataSource={getData()}
-            loading={isFetching}
-          />
-        </div>
-      )}
+      <Accordion>
+        <Accordion.Item key="add" value="add">
+          <Accordion.Control icon={<IconPlus />}>
+            {t("Add year")}
+          </Accordion.Control>
+          <Accordion.Panel>
+            <BenchmarkYearFormProvider id={benchmark.id} />
+          </Accordion.Panel>
+        </Accordion.Item>
+      </Accordion>
+      <MantineReactTable table={table} />
+      <Modal
+        opened={deleteModalOpen}
+        onClose={closeDeleteModal}
+        title={t("Delete year")}
+      >
+        <Text>{t("Are you sure you want to delete this year?")}</Text>
+        <Group mt="md">
+          <Button
+            disabled={!selectedYearId}
+            onClick={() => confirmDelete(selectedYearId)}
+          >
+            {t("Yes")}
+          </Button>
+          <Button onClick={onDeleteCloseCallback}>{t("No")}</Button>
+        </Group>
+      </Modal>
     </Modal>
   );
 }

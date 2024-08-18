@@ -1,10 +1,10 @@
 from rest_framework import serializers
+
 from companies.serializers_lite import CompanySerializerLite
 from stats.models.company_stats import CompanyStatsForYear
 
 
 class CompanyStatsForYearSerializer(serializers.ModelSerializer):
-
     company = CompanySerializerLite(many=False, read_only=True)
     sector_name = serializers.CharField(source="company.sector.name")
     super_sector_name = serializers.CharField(

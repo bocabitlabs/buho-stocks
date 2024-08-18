@@ -4,16 +4,16 @@ module.exports = {
     es2021: true,
   },
   extends: [
+    "eslint:recommended", // Must be first
+    "plugin:import/recommended", // After eslint:recommended
+    "plugin:import/typescript",
+    "plugin:@typescript-eslint/recommended",
     "plugin:vitest/recommended",
     "plugin:testing-library/react",
-    "airbnb",
-    "airbnb-typescript",
-    "plugin:import/recommended",
-    "plugin:jsx-a11y/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:import/typescript",
     "plugin:react/recommended",
-    "plugin:prettier/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:jsx-a11y/recommended",
+    "prettier", // Must be last
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -31,7 +31,6 @@ module.exports = {
     "jsx-a11y",
     "react-hooks",
     "@typescript-eslint",
-    "prettier",
     "vitest",
   ],
   ignorePatterns: [
@@ -39,8 +38,12 @@ module.exports = {
     "setupProxy.js",
     "setupTests.ts",
     "vite.config.ts",
+    "vitest.setup.mjs",
   ],
   rules: {
+    "@typescript-eslint/no-explicit-any": "warn",
+    "@typescript-eslint/no-unsafe-function-type": "warn",
+    "vitest/no-commented-out-tests": "warn",
     "comma-dangle": "off",
     "import/order": [
       "error",
@@ -76,22 +79,32 @@ module.exports = {
       },
     ],
     "no-console": "off",
-    "prettier/prettier": [
+    // 'no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+    // disallow use of variables before they are defined
+    "no-use-before-define": [
       "error",
-      {
-        singleQuote: false,
-        trailingComma: "all",
-      },
+      { functions: true, classes: true, variables: true },
     ],
     quotes: ["error", "double", { allowTemplateLiterals: true }],
     // "no-console": ["warn", { "allow": ["warn", "error"] }],
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": [1, { extensions: [".js", ".ts", ".tsx"] }],
+    "react/no-unstable-nested-components": ["error", { allowAsProps: true }],
+    "react/require-default-props": [
+      "error",
+      {
+        classes: "defaultProps",
+        functions: "defaultArguments",
+      },
+    ],
   },
   settings: {
+    react: {
+      version: "detect",
+    },
     "import/resolver": {
       node: {
-        moduleDirectory: ["src", "node_modules"],
+        moduleDirectory: ["src", "test-utils", "node_modules"],
         extensions: [".js", ".jsx", ".ts", ".tsx"],
       },
     },

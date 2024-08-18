@@ -1,11 +1,19 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
+import { Grid } from "@mantine/core";
 import PortfoliosPageHeader from "./components/HomePageHeader/HomePageHeader";
 import PortfolioList from "./components/PortfolioList/PortfolioList";
 
-export default function HomePage(): ReactElement {
+export function HomePage(): ReactElement {
   return (
-    <PortfoliosPageHeader>
-      <PortfolioList />
-    </PortfoliosPageHeader>
+    <Grid p={20}>
+      <Grid.Col span={12}>
+        <PortfoliosPageHeader />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <PortfolioList />
+      </Grid.Col>
+    </Grid>
   );
 }
+
+export default HomePage;

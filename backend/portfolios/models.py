@@ -1,11 +1,4 @@
-from typing import TYPE_CHECKING
-
 from django.db import models
-
-if TYPE_CHECKING:
-    # This doesn't really exists on django so it always need to be imported this way
-    from companies.models import Company  # noqa
-    from django.db.models.manager import RelatedManager
 
 
 # Create your models here.
@@ -21,9 +14,6 @@ class Portfolio(models.Model):
 
     base_currency = models.CharField(max_length=50)
     country_code = models.CharField(max_length=200)
-
-    if TYPE_CHECKING:
-        companies = RelatedManager["Company"]()
 
     class Meta:
         ordering = ["name"]

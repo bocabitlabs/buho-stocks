@@ -1,12 +1,11 @@
-import React, { ReactElement } from "react";
-import { Layout } from "antd";
+import { Box } from "@mantine/core";
 import { PACKAGE_VERSION } from "version";
 
-export default function PageFooter(): ReactElement {
+export default function PageFooter() {
   return (
-    <Layout.Footer style={{ textAlign: "center", zIndex: 999 }}>
+    <Box style={{ textAlign: "center" }}>
       Buho Stocks {PACKAGE_VERSION} - Bocabitlabs ©2021 -{" "}
       {new Date().getFullYear()}
-    </Layout.Footer>
+    </Box>
   );
 }

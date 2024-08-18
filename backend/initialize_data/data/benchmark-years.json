@@ -1,42 +1,35 @@
 [
   {
-    "value_currency": "EUR",
-    "value": 169.54,
-    "year": 2016,
-    "return_percentage": 8.15,
+    "value_currency": "USD",
+    "value": 3169.18,
+    "year": 2023,
+    "return_percentage": 21.77,
     "benchmark": "MSCI World"
   },
   {
-    "value_currency": "EUR",
-    "value": 178.872,
-    "year": 2017,
-    "return_percentage": 23.07,
+    "value_currency": "USD",
+    "value": 4769.83,
+    "year": 2023,
+    "return_percentage": 24.23,
+    "benchmark": "S&P 500"
+  },
+  {
+    "value_currency": "USD",
+    "value": 2602.0,
+    "year": 2022,
+    "return_percentage": -17.73,
     "benchmark": "MSCI World"
   },
   {
-    "value_currency": "EUR",
-    "value": 168.281,
-    "year": 2018,
-    "return_percentage": -8.2,
-    "benchmark": "MSCI World"
+    "value_currency": "USD",
+    "value": 3839.5,
+    "year": 2022,
+    "return_percentage": -19.44,
+    "benchmark": "S&P 500"
   },
   {
-    "value_currency": "EUR",
-    "value": 214.548,
-    "year": 2019,
-    "return_percentage": 28.4,
-    "benchmark": "MSCI World"
-  },
-  {
-    "value_currency": "EUR",
-    "value": 224.501,
-    "year": 2020,
-    "return_percentage": 16.5,
-    "benchmark": "MSCI World"
-  },
-  {
-    "value_currency": "EUR",
-    "value": 290.188,
+    "value_currency": "USD",
+    "value": 3231.41,
     "year": 2021,
     "return_percentage": 22.35,
     "benchmark": "MSCI World"
@@ -50,10 +43,24 @@
   },
   {
     "value_currency": "USD",
+    "value": 2804.26,
+    "year": 2020,
+    "return_percentage": 14.84,
+    "benchmark": "MSCI World"
+  },
+  {
+    "value_currency": "USD",
     "value": 3756.07,
     "year": 2020,
     "return_percentage": 16.26,
     "benchmark": "S&P 500"
+  },
+  {
+    "value_currency": "USD",
+    "value": 2862.47,
+    "year": 2019,
+    "return_percentage": 26.21,
+    "benchmark": "MSCI World"
   },
   {
     "value_currency": "USD",
@@ -64,6 +71,13 @@
   },
   {
     "value_currency": "USD",
+    "value": 2375.74,
+    "year": 2018,
+    "return_percentage": -8.71,
+    "benchmark": "MSCI World"
+  },
+  {
+    "value_currency": "USD",
     "value": 2506.85,
     "year": 2018,
     "return_percentage": -6.24,
@@ -71,10 +85,24 @@
   },
   {
     "value_currency": "USD",
+    "value": 2236.16,
+    "year": 2017,
+    "return_percentage": 22.4,
+    "benchmark": "MSCI World"
+  },
+  {
+    "value_currency": "USD",
     "value": 2673.61,
     "year": 2017,
     "return_percentage": 19.42,
     "benchmark": "S&P 500"
+  },
+  {
+    "value_currency": "USD",
+    "value": 1690.88,
+    "year": 2016,
+    "return_percentage": 7.51,
+    "benchmark": "MSCI World"
   },
   {
     "value_currency": "USD",

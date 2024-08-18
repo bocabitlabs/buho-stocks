@@ -1,85 +1,100 @@
-import React, { ReactNode, useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { PageHeader } from "@ant-design/pro-layout";
-import { Dropdown, MenuProps, Typography, theme } from "antd";
-import MarketAddEditForm from "../MarketAddEditForm/MarketAddEditForm";
-import breadCrumbRender from "breadcrumbs";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  Menu,
+  rem,
+  Title,
+  useMantineTheme,
+} from "@mantine/core";
+import {
+  IconChevronDown,
+  IconDatabaseImport,
+  IconPlus,
+} from "@tabler/icons-react";
+import MarketFormProvider from "../MarketForm/MarketFormProvider";
 import { useInitializeMarkets } from "hooks/use-markets/use-markets";
 
-interface Props {
-  children: ReactNode;
-}
-const { useToken } = theme;
-
-function MarketsPageHeader({ children }: Props) {
+function MarketsPageHeader() {
   const { t } = useTranslation();
-  const { mutate: initializeMarkets } = useInitializeMarkets();
+  const theme = useMantineTheme();
+  const { mutate: initializeMarkets, isPending: isInitializingMarkets } =
+    useInitializeMarkets();
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const { token } = useToken();
-  const routes = [
-    {
-      href: `/markets`,
-      title: t("Markets"),
-    },
-  ];
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  const onCreate = (values: any) => {
-    console.log("Received values of form: ", values);
+  const hideModal = () => {
     setIsModalVisible(false);
   };
 
-  const onCancel = () => {
-    setIsModalVisible(false);
+  const handleClose = () => {
+    hideModal();
   };
-
-  const onMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("click", e);
-    if (e.key === "1") {
-      console.log("Initializing markets");
-      initializeMarkets();
-    }
-  };
-
-  const items = [
-    {
-      key: "1",
-      label: t("Initialize markets"),
-    },
-  ];
 
   return (
-    <PageHeader
-      className="site-page-header"
-      style={{
-        background: token.colorBgContainer,
-      }}
-      title={<Typography.Title level={2}>{t("Markets")}</Typography.Title>}
-      breadcrumb={{ items: routes }}
-      breadcrumbRender={breadCrumbRender}
-      extra={[
-        <Dropdown.Button
-          menu={{ items, onClick: onMenuClick }}
-          type="primary"
-          key="company-add-header"
+    <Group justify="space-between">
+      <Title order={1} textWrap="pretty">
+        {t("Markets")}
+      </Title>
+      <Group wrap="nowrap" gap={0}>
+        <Button
+          leftSection={<IconPlus />}
+          style={{
+            borderTopRightRadius: 0,
+            borderBottomRightRadius: 0,
+          }}
           onClick={showModal}
         >
           {t("Add Market")}
-        </Dropdown.Button>,
-      ]}
-    >
-      {children}
-      <MarketAddEditForm
-        title={t("Add new market")}
-        okText={t("Create")}
-        isModalVisible={isModalVisible}
-        onCreate={onCreate}
-        onCancel={onCancel}
+        </Button>
+        <Menu
+          transitionProps={{ transition: "pop" }}
+          position="bottom-start"
+          withinPortal
+        >
+          <Menu.Target>
+            <ActionIcon
+              variant="filled"
+              color={theme.primaryColor}
+              size={36}
+              style={{
+                borderTopLeftRadius: 0,
+                borderBottomLeftRadius: 0,
+              }}
+            >
+              <IconChevronDown
+                style={{ width: rem(16), height: rem(16) }}
+                stroke={1.5}
+              />
+            </ActionIcon>
+          </Menu.Target>
+          <Menu.Dropdown>
+            <Menu.Item
+              leftSection={
+                <IconDatabaseImport
+                  style={{ width: rem(16), height: rem(16) }}
+                  stroke={1.5}
+                  color={theme.colors.blue[5]}
+                />
+              }
+              onClick={() => initializeMarkets()}
+              disabled={isInitializingMarkets}
+            >
+              {t("Initialize markets")}
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      </Group>
+      <MarketFormProvider
+        onCloseCallback={handleClose}
+        isVisible={isModalVisible}
       />
-    </PageHeader>
+    </Group>
   );
 }
 

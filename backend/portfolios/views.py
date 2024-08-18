@@ -1,8 +1,9 @@
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import viewsets
+
 from portfolios.models import Portfolio
 from portfolios.serializers import PortfolioSerializer, PortfolioSerializerGet
-from rest_framework import viewsets
 
 
 @method_decorator(

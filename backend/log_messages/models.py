@@ -1,4 +1,5 @@
 from django.db import models
+
 from portfolios.models import Portfolio
 
 
@@ -8,12 +9,15 @@ class LogMessage(models.Model):
     MESSAGE_TYPE_DELETE_COMPANY = "DELETE_COMPANY"
 
     MESSAGE_TYPE_ADD_DIVIDEND = "ADD_DIVIDEND"
+    MESSAGE_TYPE_UPDATE_DIVIDEND = "UPDATE_DIVIDEND"
     MESSAGE_TYPE_DELETE_DIVIDEND = "DELETE_DIVIDEND"
 
     MESSAGE_TYPE_ADD_SHARES = "ADD_SHARES"
+    MESSAGE_TYPE_UPDATE_SHARES = "UPDATE_SHARES"
     MESSAGE_TYPE_DELETE_SHARES = "DELETE_SHARES"
 
     MESSAGE_TYPE_ADD_RIGHTS = "ADD_RIGHTS"
+    MESSAGE_TYPE_UPDATE_RIGHTS = "UPDATE_RIGHTS"
     MESSAGE_TYPE_DELETE_RIGHTS = "DELETE_RIGHTS"
 
     MESSAGE_TYPE_ADD_PRICE = "ADD_PRICE"
@@ -24,8 +28,9 @@ class LogMessage(models.Model):
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 
-    portfolio_id: int
-    portfolio = models.ForeignKey["Portfolio"](Portfolio, on_delete=models.CASCADE, related_name="log_messages")
+    portfolio = models.ForeignKey(
+        Portfolio, on_delete=models.CASCADE, related_name="log_messages"
+    )
 
     class Meta:
         verbose_name = "Log Message"

@@ -8,12 +8,13 @@ logger = logging.getLogger("buho_backend")
 
 
 class StockPricesTransactionsDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.company = CompanyFactory.create()
+    def setUp(self):
+        super().setUp()
+        self.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
-            instance = StockPriceTransactionFactory.create(price_currency=cls.company.base_currency)
+            instance = StockPriceTransactionFactory.create(
+                price_currency=self.company.base_currency
+            )
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances

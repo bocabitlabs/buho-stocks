@@ -1,8 +1,10 @@
 import logging
 
+from rest_framework import viewsets
+from rest_framework.pagination import LimitOffsetPagination
+
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
-from rest_framework import viewsets
 
 logger = logging.getLogger("buho_backend")
 
@@ -13,4 +15,5 @@ class CurrencyViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = CurrencySerializer
+    pagination_class = LimitOffsetPagination
     queryset = Currency.objects.all()

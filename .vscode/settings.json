@@ -27,15 +27,16 @@
   "[jinja-html]": {
     "editor.defaultFormatter": "monosans.djlint"
   },
-  "python.autoComplete.extraPaths": [
-    "venv",
-    "backend"
-  ],
+  "python.analysis.autoSearchPaths": true,
+  "python.analysis.extraPaths": ["backend"],
   "python.analysis.ignore": [
     "**/site-packages/**/*.py",
     "**/migrations/*.py"
   ],
-  "python.analysis.autoSearchPaths": true,
+  "python.autoComplete.extraPaths": [
+    ".venv",
+    "backend"
+  ],
   "python.terminal.activateEnvInCurrentTerminal": true,
   "python.testing.pytestEnabled": true,
   "[python]": {
@@ -43,8 +44,11 @@
       "source.organizeImports": "explicit"
     }
   },
-  "python.analysis.extraPaths": [
-    "venv",
-    "backend"
-  ]
+  "search.exclude": {
+    "**/.venv": true,
+    "**/node_modules": true,
+    "**/mypy_cache": true,
+    "**/package-lock.json": true,
+    "**/poetry.lock": true,
+  }
 }

@@ -1,13 +1,10 @@
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { MRT_PaginationState, MRT_SortingState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
-import {
-  IStockPrice,
-  IStockPriceFormFields,
-  IStockPriceListResponse,
-} from "types/stock-prices";
+import { IStockPrice, IStockPriceFormFields } from "types/stock-prices";
 
 interface IUpdateYearStatsMutationProps {
   companyId: number | undefined;
@@ -19,65 +16,53 @@ interface UpdateMutationProps {
   id: number | undefined;
 }
 
-export const fetchExchangeRates = async (
-  page: number = 1,
-  pageSize: number = 100,
-  sortBy: string = "transactionDate",
-  orderBy: string = "descend",
+type StockPriceApiResponse = {
+  results: Array<IStockPrice>;
+  count: number;
+  next: number | null;
+  previous: number | null;
+};
+
+interface Params {
+  sorting: MRT_SortingState;
+  pagination: MRT_PaginationState;
+}
+
+export const fetchStockPrices = async (
+  pagination: MRT_PaginationState,
+  sorting: MRT_SortingState,
 ) => {
-  const sortValidValues = [
-    "transactionDate",
-    "price",
-    "priceCurrency",
-    "ticker",
-  ];
-
-  const orderValidValues = ["ascend", "descend"];
-
-  if (!sortValidValues.includes(sortBy)) {
-    throw new Error("sortBy is invalid");
+  const fetchURL = new URL("/api/v1/stock-prices/", apiClient.defaults.baseURL);
+  if (pagination) {
+    fetchURL.searchParams.set(
+      "offset",
+      `${pagination.pageIndex * pagination.pageSize}`,
+    );
+    fetchURL.searchParams.set("limit", `${pagination.pageSize}`);
   }
 
-  let newOrderBy = orderBy;
-  if (!orderBy) {
-    newOrderBy = "descend";
+  if (sorting?.length === 0) {
+    fetchURL.searchParams.set("sort_by", "transactionDate");
+    fetchURL.searchParams.set("order_by", "asc");
+  } else {
+    const newSortBy = sorting?.[0].id ?? "transactionDate";
+    fetchURL.searchParams.set("sort_by", newSortBy);
+    const newOrderBy = sorting?.[0].desc ? "desc" : "asc";
+    fetchURL.searchParams.set("order_by", newOrderBy);
   }
-  if (!orderValidValues.includes(newOrderBy)) {
-    throw new Error("orderBy is invalid");
-  }
 
-  const parsedSortByValues: any = {
-    transactionDate: "transaction_date",
-    price: "price",
-    priceCurrency: "price_currency",
-    ticker: "ticker",
-  };
+  const { data } = await apiClient.get<StockPriceApiResponse>(fetchURL.href);
 
-  const newSortBy = parsedSortByValues[sortBy];
-
-  const parsedOrderByValues: any = {
-    ascend: "asc",
-    descend: "desc",
-  };
-
-  newOrderBy = parsedOrderByValues[newOrderBy];
-
-  const { data } = await apiClient.get<IStockPriceListResponse>(
-    `/stock-prices/?page=${page}&page_size=${pageSize}&sort_by=${newSortBy}&order_by=${newOrderBy}`,
-  );
   return data;
 };
 
-export function useStockPrices(
-  page: number,
-  pageSize: number,
-  sortBy: string,
-  orderBy: string,
-) {
-  return useQuery<IStockPriceListResponse, Error>(
-    ["stock-prices", page, pageSize, sortBy, orderBy],
-    () => fetchExchangeRates(page, pageSize, sortBy, orderBy),
-  );
+export function useStockPrices({ sorting, pagination }: Params) {
+  return useQuery<StockPriceApiResponse, Error>({
+    queryKey: ["stock-prices", pagination, sorting],
+    queryFn: () => fetchStockPrices(pagination, sorting),
+    placeholderData: keepPreviousData, // useful for paginated queries by keeping data from previous pages on screen while fetching the next page
+    staleTime: 30_000, // don't refetch previously viewed pages until cache is more than 30 seconds old
+  });
 }
 
 export const fetchStockPrice = async (id: number | undefined) => {
@@ -89,82 +74,101 @@ export const fetchStockPrice = async (id: number | undefined) => {
 };
 
 export function useStockPrice(id: number | undefined) {
-  return useQuery<IStockPrice, Error>(
-    ["stock-prices", id],
-    () => fetchStockPrice(id),
-    {
-      enabled: !!id,
-    },
-  );
+  return useQuery<IStockPrice, Error>({
+    queryKey: ["stock-prices", id],
+    queryFn: () => fetchStockPrice(id),
+    enabled: !!id,
+  });
 }
 
 export const useUpdateCompanyStockPrice = () => {
-  return useMutation(
-    ({ companyId, year }: IUpdateYearStatsMutationProps) =>
+  return useMutation({
+    mutationFn: ({ companyId, year }: IUpdateYearStatsMutationProps) =>
       apiClient.put(`/companies/${companyId}/stock-prices/${year}/`, {}),
-    {
-      onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([
-          "companyYearStats",
-          variables.companyId,
-          variables.year,
-        ]);
-      },
+
+    onSuccess: (data, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: ["companyYearStats", variables.companyId, variables.year],
+      });
     },
-  );
+  });
 };
 
-export const useAddStockPrice = () => {
+interface MutateProps {
+  onSuccess?: () => void;
+  onError?: () => void;
+}
+
+export const useAddStockPrice = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    (newExchangeRate: IStockPriceFormFields) =>
+  return useMutation({
+    mutationFn: (newExchangeRate: IStockPriceFormFields) =>
       apiClient.post(`/stock-prices/`, newExchangeRate),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Stock price created"));
-        queryClient.invalidateQueries(["stock-prices"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to create stock price"));
-        queryClient.invalidateQueries(["stock-prices"]);
-      },
+
+    onSuccess: () => {
+      props?.onSuccess?.();
+
+      notifications.show({
+        color: "green",
+        message: t("Stock price created"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["stock-prices"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Unable to create stock price"),
+      });
+    },
+  });
 };
 
 export const useDeleteStockPrice = () => {
   const { t } = useTranslation();
 
-  return useMutation((id: number) => apiClient.delete(`/stock-prices/${id}/`), {
+  return useMutation({
+    mutationFn: (id: number) => apiClient.delete(`/stock-prices/${id}/`),
     onSuccess: () => {
-      toast.success<string>(t("Stock price deleted"));
-      queryClient.invalidateQueries(["stock-prices"]);
+      notifications.show({
+        color: "green",
+        message: t("Stock price deleted"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["stock-prices"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete stock price"));
-      queryClient.invalidateQueries(["stock-prices"]);
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete stock price"),
+      });
     },
   });
 };
 
-export const useUpdateStockPrice = () => {
+export const useUpdateStockPrice = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    ({ id, newStockPrice }: UpdateMutationProps) =>
+  return useMutation({
+    mutationFn: ({ id, newStockPrice }: UpdateMutationProps) =>
       apiClient.put(`/stock-prices/${id}/`, newStockPrice),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Stock price has been updated"));
-        queryClient.invalidateQueries(["stock-prices"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to update stock price"));
-        queryClient.invalidateQueries(["stock-prices"]);
-      },
+
+    onSuccess: () => {
+      props?.onSuccess?.();
+      notifications.show({
+        color: "green",
+        message: t("Stock price has been updated"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["stock-prices"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Unable to update stock price"),
+      });
+    },
+  });
 };
 
 export default useUpdateCompanyStockPrice;

@@ -1,4 +1,5 @@
 from rest_framework import serializers
+
 from stock_prices.models import StockPrice
 
 

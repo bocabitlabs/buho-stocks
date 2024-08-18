@@ -1,9 +1,11 @@
-from sectors.models import Sector, SuperSector
 from rest_framework import serializers
+from rest_framework.fields import Field
+
+from sectors.models import Sector, SuperSector
 
 
 class SectorSerializer(serializers.ModelSerializer):
-    super_sector = serializers.PrimaryKeyRelatedField(
+    super_sector: Field = serializers.PrimaryKeyRelatedField(
         queryset=SuperSector.objects,
         many=False,
         read_only=False,

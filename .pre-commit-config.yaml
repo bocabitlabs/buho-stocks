@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 24.3.0
     hooks:
       - id: black
 
@@ -18,9 +18,4 @@ repos:
     rev: "6.0.0" # pick a git hash / tag to point to
     hooks:
       - id: flake8
-  - repo: local
-    hooks:
-      - id: prettier
-        name: prettier
-        entry: cd client && yarn run prettier:fix
-        language: system
+        additional_dependencies: [flake8-django==1.4.0]

@@ -1,98 +1,41 @@
-import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { DownOutlined } from "@ant-design/icons";
-import { Button, Dropdown, MenuProps, Space, Tabs } from "antd";
-import SectorAddEditForm from "../SectorAddEditForm/SectorAddEditForm";
+import { rem, Tabs } from "@mantine/core";
+import { IconHierarchy, IconHierarchy3 } from "@tabler/icons-react";
+import { MRT_Localization } from "mantine-react-table";
 import SectorsTable from "../SectorsTable/SectorsTable";
-import SuperSectorAddEditForm from "../SuperSectorAddEditForm/SuperSectorAddEditForm";
 import SuperSectorsTable from "../SuperSectorsTable/SuperSectorsTable";
-import { useInitializeSectors } from "hooks/use-sectors/use-sectors";
 
-type PositionType = "right";
+interface Props {
+  mrtLocalization: MRT_Localization;
+}
 
-export default function SectorsListTable() {
+export default function SectorsListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
-  const { mutate: initializeSectors } = useInitializeSectors();
-  const [addSectorModalVisible, setAddSectorModalVisible] = useState(false);
-  const [addSuperSectorModalVisible, setAddSuperSectorModalVisible] =
-    useState(false);
-
-  const menuItems = [
-    {
-      key: "1",
-      label: t("Add sector"),
-    },
-    {
-      key: "2",
-      label: t("Add super sector"),
-    },
-    {
-      key: "3",
-      label: t("Initialize sectors"),
-    },
-  ];
-  const onMenuClick: MenuProps["onClick"] = (e) => {
-    console.log("click", e);
-    if (e.key === "1") {
-      console.log("Add sector");
-      setAddSectorModalVisible(true);
-    }
-    if (e.key === "2") {
-      console.log("Add super sector");
-      setAddSuperSectorModalVisible(true);
-    }
-    if (e.key === "3") {
-      console.log("Add sector");
-      initializeSectors();
-    }
-  };
-
-  const OperationsSlot: Record<PositionType, React.ReactNode> = {
-    right: (
-      <Dropdown
-        menu={{ items: menuItems, onClick: onMenuClick }}
-        key="company-add-header"
-      >
-        <Button type="primary">
-          <Space>
-            Actions
-            <DownOutlined />
-          </Space>
-        </Button>
-      </Dropdown>
-    ),
-  };
-
-  const items = [
-    { label: t("Sectors"), key: "1", children: <SectorsTable /> },
-    { label: t("Super sectors"), key: "2", children: <SuperSectorsTable /> },
-  ];
-
-  const onCancel = () => {
-    setAddSectorModalVisible(false);
-  };
-
-  const onSuperSectorCancel = () => {
-    setAddSuperSectorModalVisible(false);
-  };
+  const iconStyle = { width: rem(12), height: rem(12) };
 
   return (
-    <>
-      <Tabs items={items} tabBarExtraContent={OperationsSlot} />
-      <SectorAddEditForm
-        title={t("Add new sector")}
-        okText={t("Create")}
-        isModalVisible={addSectorModalVisible}
-        onCreate={onCancel}
-        onCancel={onCancel}
-      />
-      <SuperSectorAddEditForm
-        title={t("Add new super sector")}
-        okText={t("Create")}
-        isModalVisible={addSuperSectorModalVisible}
-        onCreate={onSuperSectorCancel}
-        onCancel={onSuperSectorCancel}
-      />
-    </>
+    <Tabs defaultValue="sectors">
+      <Tabs.List>
+        <Tabs.Tab
+          value="sectors"
+          leftSection={<IconHierarchy3 style={iconStyle} />}
+        >
+          {t("Sectors")}
+        </Tabs.Tab>
+        <Tabs.Tab
+          value="super-sectors"
+          leftSection={<IconHierarchy style={iconStyle} />}
+        >
+          {t("Super sectors")}
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="sectors">
+        <SectorsTable mrtLocalization={mrtLocalization} />
+      </Tabs.Panel>
+
+      <Tabs.Panel value="super-sectors">
+        <SuperSectorsTable mrtLocalization={mrtLocalization} />
+      </Tabs.Panel>
+    </Tabs>
   );
 }

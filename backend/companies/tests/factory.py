@@ -1,5 +1,6 @@
-from companies.models import Company
 from factory import Faker, SubFactory, django, post_generation
+
+from companies.models import Company
 from markets.tests.factory import MarketFactory
 from portfolios.tests.factory import PortfolioFactory
 from sectors.tests.factory import SectorFactory

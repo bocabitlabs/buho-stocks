@@ -2,22 +2,22 @@ import logging
 from decimal import Decimal
 
 import factory
+from django.urls import reverse
+from faker import Faker
+from rest_framework import status
+
 from buho_backend.tests.base_test_case import BaseApiTestCase
 from companies.tests.factory import CompanyFactory
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.tests.factory import DividendsTransactionFactory
-from django.urls import reverse
-from faker import Faker
-from rest_framework import status
 
 logger = logging.getLogger("buho_backend")
 
 
 class DividendsTransactionsListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self) -> None:
+        super().setUp()
+        self.faker_obj = Faker()
 
     def test_get_dividends(self):
         company = CompanyFactory.create()
@@ -41,19 +41,18 @@ class DividendsTransactionsListTestCase(BaseApiTestCase):
 
 
 class DividendsTransactionsDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.company = CompanyFactory.create()
+    def setUp(self) -> None:
+        super().setUp()
+        self.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
             instance = DividendsTransactionFactory.create(
-                company=cls.company,
-                gross_price_per_share_currency=cls.company.base_currency,
-                total_commission_currency=cls.company.base_currency,
+                company=self.company,
+                gross_price_per_share_currency=self.company.base_currency,
+                total_commission_currency=self.company.base_currency,
             )
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_dividends(self):
         index = 0

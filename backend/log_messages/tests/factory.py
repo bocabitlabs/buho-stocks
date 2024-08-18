@@ -1,4 +1,5 @@
 from factory import Faker, SubFactory, django
+
 from log_messages.models import LogMessage
 from portfolios.tests.factory import PortfolioFactory
 

@@ -1,5 +1,6 @@
 import { initReactI18next } from "react-i18next";
 import i18n from "i18next";
+import english from "locales/en/translation.json";
 import spanishSectors from "locales/es/sectors.json";
 import spanish from "locales/es/translation.json";
 
@@ -7,9 +8,13 @@ import spanish from "locales/es/translation.json";
 // (tip move them in a JSON file and import them,
 // or even better, manage them via a UI: https://react.i18next.com/guides/multiple-translation-files#manage-your-translations-with-a-management-gui)
 const resources = {
+  en: {
+    translation: { ...english },
+  },
   es: { translation: { ...spanish, ...spanishSectors } },
 };
 
+// eslint-disable-next-line import/no-named-as-default-member
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({

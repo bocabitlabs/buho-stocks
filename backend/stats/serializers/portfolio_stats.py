@@ -1,8 +1,9 @@
 from rest_framework import serializers
+
 from stats.models.portfolio_stats import PortfolioStatsForYear
 
-class PortfolioStatsForYearSerializer(serializers.ModelSerializer):
 
+class PortfolioStatsForYearSerializer(serializers.ModelSerializer):
     class Meta:
         model = PortfolioStatsForYear
         fields = [

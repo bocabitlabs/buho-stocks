@@ -1,6 +1,12 @@
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery } from "react-query";
-import { toast } from "react-toastify";
+import { notifications } from "@mantine/notifications";
+import {
+  keepPreviousData,
+  Query,
+  useMutation,
+  useQuery,
+} from "@tanstack/react-query";
+import { MRT_PaginationState } from "mantine-react-table";
 import { apiClient } from "api/api-client";
 import queryClient from "api/query-client";
 import { ICurrency, ICurrencyFormFields } from "types/currency";
@@ -10,12 +16,49 @@ interface UpdateMutationProps {
   id: number | undefined;
 }
 
-export const fetchCurrencies = async () => {
+type CurrenciesApiResponse = {
+  results: Array<ICurrency>;
+  count: number;
+  next: number | null;
+  previous: number | null;
+};
+
+interface Params {
+  pagination?: MRT_PaginationState;
+}
+
+export const fetchCurrencies = async (
+  pagination: MRT_PaginationState | undefined,
+) => {
+  const fetchURL = new URL("currencies/", apiClient.defaults.baseURL);
+  if (pagination) {
+    fetchURL.searchParams.set(
+      "offset",
+      `${pagination.pageIndex * pagination.pageSize}`,
+    );
+    fetchURL.searchParams.set("limit", `${pagination.pageSize}`);
+  }
+  const { data } = await apiClient.get<CurrenciesApiResponse>(fetchURL.href);
+  return data;
+};
+export function useCurrencies({ pagination = undefined }: Params) {
+  return useQuery<CurrenciesApiResponse, Error>({
+    queryKey: ["currencies", pagination],
+    queryFn: () => fetchCurrencies(pagination),
+    placeholderData: keepPreviousData, // useful for paginated queries by keeping data from previous pages on screen while fetching the next page
+    staleTime: 30_000, // don't refetch previously viewed pages until cache is more than 30 seconds old
+  });
+}
+
+export const fetchAllCurrencies = async () => {
   const { data } = await apiClient.get<ICurrency[]>("/currencies/");
   return data;
 };
-export function useCurrencies() {
-  return useQuery<ICurrency[], Error>("currencies", fetchCurrencies);
+export function useAllCurrencies() {
+  return useQuery<ICurrency[], Error>({
+    queryKey: ["currencies"],
+    queryFn: fetchAllCurrencies,
+  });
 }
 
 export const fetchCurrency = async (id: number | undefined) => {
@@ -26,84 +69,107 @@ export const fetchCurrency = async (id: number | undefined) => {
   return data;
 };
 
-export function useCurrency(id: number | undefined, options?: any) {
-  return useQuery<ICurrency, Error>(
-    ["currencies", id],
-    () => fetchCurrency(id),
-    {
-      enabled: !!id,
-      ...options,
-    },
-  );
+export function useCurrency(
+  id: number | undefined,
+  options?: Query<ICurrency, Error>,
+) {
+  return useQuery<ICurrency, Error>({
+    queryKey: ["currencies", id],
+    queryFn: () => fetchCurrency(id),
+    enabled: !!id,
+    ...options,
+  });
 }
 
-export const useAddCurrency = () => {
+interface MutateProps {
+  onSuccess?: () => void;
+  onError?: () => void;
+}
+
+export const useAddCurrency = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    (newCurrency: ICurrencyFormFields) =>
+  return useMutation({
+    mutationFn: (newCurrency: ICurrencyFormFields) =>
       apiClient.post(`/currencies/`, newCurrency),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Currency created"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to create currency"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
+    onSuccess: () => {
+      props?.onSuccess?.();
+      notifications.show({
+        color: "green",
+        message: t("Currency created"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["currencies"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+      notifications.show({
+        color: "red",
+        message: t("Unable to create currency"),
+      });
+    },
+  });
 };
 
 export const useDeleteCurrency = () => {
   const { t } = useTranslation();
 
-  return useMutation((id: number) => apiClient.delete(`/currencies/${id}/`), {
+  return useMutation({
+    mutationFn: (id: number) => apiClient.delete(`/currencies/${id}/`),
     onSuccess: () => {
-      toast.success<string>(t("Currency deleted"));
-      queryClient.invalidateQueries(["currencies"]);
+      notifications.show({
+        color: "green",
+        message: t("Currency deleted"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["currencies"] });
     },
     onError: () => {
-      toast.error<string>(t("Unable to delete currency"));
-      queryClient.invalidateQueries(["currencies"]);
+      notifications.show({
+        color: "red",
+        message: t("Unable to delete currency"),
+      });
     },
   });
 };
 
-export const useUpdateCurrency = () => {
+export const useUpdateCurrency = (props?: MutateProps) => {
   const { t } = useTranslation();
 
-  return useMutation(
-    ({ id, newCurrency }: UpdateMutationProps) =>
+  return useMutation({
+    mutationFn: ({ id, newCurrency }: UpdateMutationProps) =>
       apiClient.put(`/currencies/${id}/`, newCurrency),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Currency has been updated"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to update currency"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
+    onSuccess: () => {
+      props?.onSuccess?.();
+
+      notifications.show({
+        color: "green",
+        message: t("Currency has been updated"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["currencies"] });
     },
-  );
+    onError: () => {
+      props?.onError?.();
+    },
+  });
 };
 
 export const useInitializeCurrencies = () => {
   const { t } = useTranslation();
 
-  return useMutation(
-    () => apiClient.post<ICurrency[]>(`/initialize-data/currencies/`),
-    {
-      onSuccess: () => {
-        toast.success<string>(t("Currencies created"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
-      onError: () => {
-        toast.error<string>(t("Unable to create currencies"));
-        queryClient.invalidateQueries(["currencies"]);
-      },
+  return useMutation({
+    mutationFn: () =>
+      apiClient.post<ICurrency[]>(`/initialize-data/currencies/`),
+    onSuccess: () => {
+      notifications.show({
+        color: "green",
+        message: t("Currencies created"),
+      });
+      queryClient.invalidateQueries({ queryKey: ["currencies"] });
     },
-  );
+    onError: () => {
+      notifications.show({
+        color: "red",
+        message: t("Unable to create currencies"),
+      });
+    },
+  });
 };

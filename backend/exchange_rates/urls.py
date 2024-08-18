@@ -1,6 +1,7 @@
 from django.urls import path
-from exchange_rates import views
 from rest_framework.routers import DefaultRouter
+
+from exchange_rates import views
 
 router = DefaultRouter()
 

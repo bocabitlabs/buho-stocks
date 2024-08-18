@@ -2,11 +2,12 @@ import logging
 from decimal import Decimal
 
 import factory
-from buho_backend.tests.base_test_case import BaseApiTestCase
-from companies.tests.factory import CompanyFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
+from companies.tests.factory import CompanyFactory
 from rights_transactions.models import RightsTransaction
 from rights_transactions.tests.factory import RightsTransactionFactory
 
@@ -14,10 +15,9 @@ logger = logging.getLogger("buho_backend")
 
 
 class RightsTransactionsListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.faker_obj = Faker()
 
     def test_get_rights(self):
         company = CompanyFactory.create()
@@ -41,19 +41,18 @@ class RightsTransactionsListTestCase(BaseApiTestCase):
 
 
 class RightsTransactionsDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.company = CompanyFactory.create()
+    def setUp(self):
+        super().setUp()
+        self.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
             instance = RightsTransactionFactory.create(
-                company=cls.company,
-                gross_price_per_share_currency=cls.company.base_currency,
-                total_commission_currency=cls.company.base_currency,
+                company=self.company,
+                gross_price_per_share_currency=self.company.base_currency,
+                total_commission_currency=self.company.base_currency,
             )
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_shares(self):
         index = 0

@@ -7,8 +7,8 @@ export interface IMarketFormFields {
   description: string;
   color: string;
   region: string;
-  openTime: string;
-  closeTime: string;
+  openTime: Date | string;
+  closeTime: Date | string;
   timezone: string;
 }
 

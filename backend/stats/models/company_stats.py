@@ -1,7 +1,8 @@
 import logging
 
-from companies.models import Company
 from django.db import models
+
+from companies.models import Company
 
 logger = logging.getLogger("buho_backend")
 
@@ -23,10 +24,14 @@ class CompanyStatsForYear(models.Model):
     portfolio_value_is_down = models.BooleanField()
     return_value = models.DecimalField(max_digits=12, decimal_places=3)
     return_percent = models.DecimalField(max_digits=12, decimal_places=3)
-    accumulated_return_percent = models.DecimalField(max_digits=12, decimal_places=3, null=True)
+    accumulated_return_percent = models.DecimalField(
+        max_digits=12, decimal_places=3, null=True
+    )
     return_with_dividends = models.DecimalField(max_digits=12, decimal_places=3)
     return_with_dividends_percent = models.DecimalField(max_digits=12, decimal_places=3)
-    accumulated_return_with_dividends_percent = models.DecimalField(max_digits=12, decimal_places=3, null=True)
+    accumulated_return_with_dividends_percent = models.DecimalField(
+        max_digits=12, decimal_places=3, null=True
+    )
 
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
@@ -39,4 +44,7 @@ class CompanyStatsForYear(models.Model):
         verbose_name_plural = "Companies Stats"
 
     def __str__(self):
-        return f"Company Stats: {self.company.name} ({self.year})"
+        return (
+            f"Company Stats: {self.company.name} ({self.year}) - "
+            f"{self.portfolio_currency} - Dv.yield: {self.dividends_yield}"
+        )

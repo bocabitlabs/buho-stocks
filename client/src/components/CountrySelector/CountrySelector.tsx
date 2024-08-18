@@ -1,58 +1,52 @@
-import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
-import { Select } from "antd";
+import { Group, Select, SelectProps } from "@mantine/core";
+import { IconCheck } from "@tabler/icons-react";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 import countries from "utils/countries";
 
 interface Props {
-  handleChange: any;
-  initialValue?: string;
+  fieldName?: string;
+  value: string;
+  onChange: (value: string | null) => void;
 }
 
 export default function CountrySelector({
-  handleChange,
-  initialValue,
-}: Props): ReactElement {
+  fieldName = "countryCode",
+  value,
+  onChange,
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
-  const getLabel = (element: any) => (
-    <div className="demo-option-label-item">
-      <span
-        role="img"
-        aria-label={element.name}
-        style={{ paddingRight: "1em" }}
-      >
-        <CountryFlag code={element.code} width={15} />
-      </span>
-      {element.name}
-    </div>
+  const countriesOptions = countries?.map((country) => ({
+    value: country.code,
+    label: t(country.name),
+  }));
+
+  const renderSelectOption: SelectProps["renderOption"] = ({
+    option,
+    checked,
+  }) => (
+    <Group flex="1" gap="xs">
+      <CountryFlag code={option.value} width={15} />
+      {option.label}
+      {checked && <IconCheck style={{ marginInlineStart: "auto" }} />}
+    </Group>
   );
+
   return (
     <Select
-      placeholder={t("Select a country")}
-      style={{ width: "100%" }}
-      onChange={handleChange}
-      optionLabelProp="label"
-      value={initialValue}
-      defaultValue={initialValue}
+      mt="md"
+      withAsterisk
+      searchable
+      label={t("Country")}
+      data={countriesOptions}
+      id={fieldName}
+      name={fieldName}
+      value={value}
+      onChange={onChange}
+      required
+      renderOption={renderSelectOption}
       data-testid="country-selector"
-    >
-      {Object.keys(countries).map((key: string) => {
-        const element = countries[key];
-        return (
-          <Select.Option
-            key={element.key}
-            value={element.code}
-            label={getLabel(element)}
-          >
-            {getLabel(element)}
-          </Select.Option>
-        );
-      })}
-    </Select>
+    />
   );
 }
-
-CountrySelector.defaultProps = {
-  initialValue: "",
-};

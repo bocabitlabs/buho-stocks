@@ -1,65 +1,78 @@
-import React, { ReactElement } from "react";
+import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Alert } from "antd";
+import { Alert, Grid, Loader } from "@mantine/core";
+import { IconInfoCircle } from "@tabler/icons-react";
 import Charts from "./components/Charts/Charts";
 import CompanyDetailsPageHeader from "./components/CompanyDetailsPageHeader/CompanyDetailsPageHeader";
 import CompanyExtraInfo from "./components/CompanyExtraInfo/CompanyExtraInfo";
-import CompanyInfo from "./components/CompanyInfo/CompanyInfo";
+import CompanyStatsProvider from "./components/CompanyStats/CompanyStatsProvider";
 import TransactionsTabs from "./components/TransactionsTabs/TransactionsTabs";
-import YearSelector from "./components/YearSelector/YearSelector";
-import LoadingSpin from "components/LoadingSpin/LoadingSpin";
 import { useCompany } from "hooks/use-companies/use-companies";
 
-export default function CompanyDetailsPage(): ReactElement {
+export function CompanyDetailsPage(): ReactElement {
   const { t } = useTranslation();
   const { id, companyId } = useParams();
   const { data: company, isFetching, error } = useCompany(+id!, +companyId!);
+  const icon = <IconInfoCircle />;
 
   if (isFetching || !company) {
-    return <LoadingSpin style={{ marginTop: 20 }} />;
+    return <Loader />;
   }
 
   if (error) {
     return (
       <Alert
-        style={{ marginTop: 20 }}
-        showIcon
-        message={t("Unable to load company")}
-        description={error.message}
-        type="error"
+        variant="light"
+        color="red"
+        title={t("Unable to load company")}
+        icon={icon}
+      >
+        {error.message}
+      </Alert>
+    );
+  }
+
+  if (!companyId) {
+    return (
+      <Alert
+        variant="light"
+        color="red"
+        title={t("Company not found")}
+        icon={icon}
       />
     );
   }
 
   return (
-    <CompanyDetailsPageHeader
-      companyName={company.name}
-      portfolioName={company.portfolio.name}
-      companyCountryCode={company.countryCode}
-    >
-      <CompanyInfo
-        companyTicker={company.ticker}
-        companyLogo={company.logo}
-        companyUrl={company.url}
-        companySectorName={company.sector.name}
-        companySuperSectorName={company.sector.superSector?.name}
-        marketName={company.market.name}
-        currencyCode={company.baseCurrency.code}
-        dividendsCurrencyCode={company.dividendsCurrency.code}
-        isin={company.isin}
-      />
-      <YearSelector companyId={companyId} firstYear={company.firstYear} />
-      <Charts
-        stats={company.stats}
-        portfolioCurrency={company.portfolio.baseCurrency}
-      />
-      <TransactionsTabs
-        companyBaseCurrency={company.baseCurrency}
-        companyDividendsCurrency={company.dividendsCurrency}
-        portfolioBaseCurrency={company.portfolio.baseCurrency}
-      />
-      <CompanyExtraInfo companyDescription={company.description} />
-    </CompanyDetailsPageHeader>
+    <Grid p={20}>
+      <Grid.Col span={12}>
+        <CompanyDetailsPageHeader company={company} />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <CompanyExtraInfo companyDescription={company.description} />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <CompanyStatsProvider
+          companyId={companyId}
+          firstYear={company.firstYear}
+        />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <Charts
+          stats={company.stats}
+          portfolioCurrency={company.portfolio.baseCurrency}
+        />
+      </Grid.Col>
+      <Grid.Col span={12}>
+        <TransactionsTabs
+          companyBaseCurrency={company.baseCurrency}
+          companyDividendsCurrency={company.dividendsCurrency}
+          portfolioBaseCurrency={company.portfolio.baseCurrency}
+        />
+      </Grid.Col>
+    </Grid>
   );
 }
+
+export default CompanyDetailsPage;

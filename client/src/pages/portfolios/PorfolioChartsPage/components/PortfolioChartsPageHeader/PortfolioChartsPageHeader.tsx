@@ -1,58 +1,63 @@
-import React, { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { PageHeader } from "@ant-design/pro-layout";
-import { Spin, Typography, theme } from "antd";
-import breadCrumbRender from "breadcrumbs";
+import {
+  Anchor,
+  Breadcrumbs,
+  Group,
+  Loader,
+  Stack,
+  Title,
+} from "@mantine/core";
 import CountryFlag from "components/CountryFlag/CountryFlag";
 
 interface Props {
   portfolioName: string;
-  portfolioDescription: string;
   portfolioCountryCode: string;
-  children: ReactNode;
 }
-const { useToken } = theme;
 
 function PortfolioChartsPageHeader({
   portfolioName,
-  portfolioDescription,
   portfolioCountryCode,
-  children,
 }: Props) {
   const { t } = useTranslation();
   const { id } = useParams();
-  const { token } = useToken();
   const routes = [
+    { href: "/", title: t("Home"), id: "home" },
     {
       href: `/portfolios/${id}`,
       title: portfolioName,
+      id: "portfolio",
     },
     {
       href: `/portfolios/${id}/charts`,
       title: `${t("Charts")}`,
+      id: "charts",
     },
-  ];
+  ].map((item) => (
+    <Anchor href={item.href} key={item.id}>
+      {item.title}
+    </Anchor>
+  ));
 
   if (!portfolioName) {
-    return <Spin />;
+    return <Loader />;
   }
   return (
-    <PageHeader
-      className="site-page-header"
-      style={{
-        background: token.colorBgContainer,
-      }}
-      title={<Typography.Title level={2}>{portfolioName}</Typography.Title>}
-      subTitle={portfolioDescription}
-      breadcrumb={{ items: routes }}
-      breadcrumbRender={breadCrumbRender}
-      tags={[
-        <CountryFlag code={portfolioCountryCode} key={portfolioCountryCode} />,
-      ]}
-    >
-      {children}
-    </PageHeader>
+    <Stack>
+      <Breadcrumbs>{routes}</Breadcrumbs>
+      <Group justify="space-between">
+        <Group>
+          <Title order={1}>
+            {portfolioName}{" "}
+            <CountryFlag
+              code={portfolioCountryCode}
+              key={portfolioCountryCode}
+              width={30}
+            />
+          </Title>
+        </Group>
+      </Group>
+    </Stack>
   );
 }
 

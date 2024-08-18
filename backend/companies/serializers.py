@@ -1,18 +1,18 @@
 import logging
 
-from buho_backend.settings.common import YEAR_FOR_ALL
+from django.conf import settings
+from drf_extra_fields.fields import Base64ImageField  # type: ignore
+from rest_framework import serializers
+
 from companies.models import Company
 from currencies.models import Currency
 from currencies.serializers import CurrencySerializer
 from dividends_transactions.models import DividendsTransaction
 from dividends_transactions.serializers import DividendsTransactionSerializer
-from drf_extra_fields.fields import Base64ImageField  # type: ignore
 from markets.models import Market
 from markets.serializers import MarketSerializer
 from portfolios.models import Portfolio
 from portfolios.serializers_lite import PortfolioSerializerLite
-from rest_framework import serializers
-from rest_framework.fields import SerializerMethodField
 from rights_transactions.serializers import RightsTransactionSerializer
 from sectors.models import Sector
 from sectors.serializers import SectorSerializerGet
@@ -25,25 +25,44 @@ logger: logging.Logger = logging.getLogger("buho_backend")
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    market: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
+    market = serializers.PrimaryKeyRelatedField(
         queryset=Market.objects, many=False, read_only=False
     )
-    sector: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
+    sector = serializers.PrimaryKeyRelatedField(
         queryset=Sector.objects, many=False, read_only=False
     )
-    portfolio: serializers.PrimaryKeyRelatedField = serializers.PrimaryKeyRelatedField(
+    portfolio = serializers.PrimaryKeyRelatedField(
         queryset=Portfolio.objects, many=False, read_only=False
     )
 
-    logo = Base64ImageField(max_length=None, use_url=True, allow_null=True, required=False)
+    logo = Base64ImageField(
+        max_length=None, use_url=True, allow_null=True, required=False
+    )
     all_stats = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
     last_dividend_month = serializers.SerializerMethodField()
     sector_name = serializers.CharField(source="sector.name", read_only=True)
 
+    accumulated_investment = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    shares_count = serializers.IntegerField(read_only=True)
+    portfolio_value = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends_percent = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    dividends_yield = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+
     class Meta:
         model = Company
-        fields: list[str] = [
+        fields = [
             "id",
             "alt_tickers",
             "base_currency",
@@ -67,42 +86,72 @@ class CompanySerializer(serializers.ModelSerializer):
             "last_updated",
             "last_transaction_month",
             "last_dividend_month",
+            "accumulated_investment",
+            "shares_count",
+            "portfolio_value",
+            "return_with_dividends",
+            "return_with_dividends_percent",
+            "dividends_yield",
         ]
 
     def get_all_stats(self, obj):
-        query = CompanyStatsForYear.objects.filter(company=obj.id, year=YEAR_FOR_ALL)
+        query = CompanyStatsForYear.objects.filter(
+            company=obj.id, year=settings.YEAR_FOR_ALL
+        )
         if query.exists():
             serializer = CompanyStatsForYearSerializer(query[0])
             return serializer.data
         return None
 
     def get_last_transaction_month(self, obj):
-        query = SharesTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
+        query = SharesTransaction.objects.filter(company_id=obj.id).order_by(
+            "transaction_date"
+        )
         if query.exists():
             last_element = query[len(query) - 1]
             return last_element.transaction_date
         return None
 
     def get_last_dividend_month(self, obj):
-        query = DividendsTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
+        query = DividendsTransaction.objects.filter(company_id=obj.id).order_by(
+            "transaction_date"
+        )
         if query.exists():
             last_element = query[len(query) - 1]
             return last_element.transaction_date
         return None
 
 
-class CompanySerializerGet(CompanySerializer):
-    base_currency = SerializerMethodField()
-    dividends_currency = SerializerMethodField()
-
-    market: MarketSerializer = MarketSerializer(many=False, read_only=True)
-    sector: SectorSerializerGet = SectorSerializerGet(many=False, read_only=True)
+class CompanySerializerGet(serializers.ModelSerializer):
+    market = MarketSerializer(many=False, read_only=True)
+    sector = SectorSerializerGet(many=False, read_only=True)
     shares_transactions = SharesTransactionSerializer(many=True, read_only=True)
     rights_transactions = RightsTransactionSerializer(many=True, read_only=True)
     dividends_transactions = DividendsTransactionSerializer(many=True, read_only=True)
-    portfolio: PortfolioSerializerLite = PortfolioSerializerLite(many=False, read_only=True)
+    portfolio = PortfolioSerializerLite(many=False, read_only=True)
     first_year = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
+    last_dividend_month = serializers.SerializerMethodField()
+    base_currency = serializers.SerializerMethodField()
+    dividends_currency = serializers.SerializerMethodField()
+
+    accumulated_investment = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    shares_count = serializers.IntegerField(read_only=True)
+    portfolio_value = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends_percent = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    dividends_yield = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+
     stats = CompanyStatsForYearSerializer(many=True, read_only=True)
 
     def get_base_currency(self, obj):
@@ -123,15 +172,33 @@ class CompanySerializerGet(CompanySerializer):
         return None
 
     def get_first_year(self, obj):
-        query = SharesTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
+        query = SharesTransaction.objects.filter(company_id=obj.id).order_by(
+            "transaction_date"
+        )
         if query.exists():
             return query[0].transaction_date.year
         return None
 
     def get_last_transaction_month(self, obj):
-        query = SharesTransaction.objects.filter(company_id=obj.id).order_by("transaction_date")
+        query = SharesTransaction.objects.filter(company_id=obj.id).order_by(
+            "transaction_date"
+        )
         if query.exists():
-            return f"{query[len(query)-1].transaction_date.year}-{query[len(query)-1].transaction_date.month}"
+            last_transaction = query[len(query) - 1]
+            year = last_transaction.transaction_date.year
+            month = last_transaction.transaction_date.month
+            return f"{year}-{month}"
+        return None
+
+    def get_last_dividend_month(self, obj):
+        query = DividendsTransaction.objects.filter(company_id=obj.id).order_by(
+            "transaction_date"
+        )
+        if query.exists():
+            last_transaction = query[len(query) - 1]
+            year = last_transaction.transaction_date.year
+            month = last_transaction.transaction_date.month
+            return f"{year}-{month}"
         return None
 
     class Meta:
@@ -162,4 +229,24 @@ class CompanySerializerGet(CompanySerializer):
             "last_updated",
             "first_year",
             "last_transaction_month",
+            "last_dividend_month",
+            "accumulated_investment",
+            "shares_count",
+            "portfolio_value",
+            "return_with_dividends",
+            "return_with_dividends_percent",
+            "dividends_yield",
         ]
+
+
+class CompanySearchSerializer(serializers.Serializer):
+    country = serializers.CharField(max_length=200)
+    financialCurrency = serializers.CharField(max_length=200)
+    industry = serializers.CharField(max_length=200)
+    website = serializers.CharField(max_length=200)
+    isin = serializers.CharField(max_length=200)
+    longBusinessSummary = serializers.CharField(max_length=200)
+    shortName = serializers.CharField(max_length=200)
+    sectorDisp = serializers.CharField(max_length=200)
+    symbol = serializers.CharField(max_length=200)
+    exchange = serializers.CharField(max_length=200)

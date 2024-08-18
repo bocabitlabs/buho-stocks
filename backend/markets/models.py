@@ -12,7 +12,9 @@ class Market(models.Model):
     region: models.CharField = models.CharField(max_length=200)
     open_time: models.TimeField = models.TimeField()
     close_time: models.TimeField = models.TimeField()
-    timezone: models.CharField = models.CharField(max_length=200, choices=TIMEZONES, default="UTC")
+    timezone: models.CharField = models.CharField(
+        max_length=200, choices=TIMEZONES, default="UTC"
+    )
 
     date_created: models.DateTimeField = models.DateTimeField(auto_now_add=True)
     last_updated: models.DateTimeField = models.DateTimeField(auto_now=True)

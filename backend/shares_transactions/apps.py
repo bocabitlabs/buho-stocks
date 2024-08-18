@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class SharesTransactionsConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'shares_transactions'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "shares_transactions"

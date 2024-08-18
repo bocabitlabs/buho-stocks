@@ -1,4 +1,5 @@
 from factory import Faker, SubFactory, django
+
 from sectors.models import Sector, SuperSector
 
 

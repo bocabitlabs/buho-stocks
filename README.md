@@ -5,7 +5,9 @@
 <p align="center">Application to manage and track a stocks portfolio with dividends and return for a <a href="https://en.wikipedia.org/wiki/Buy_and_hold" title="Wikipedia">Buy & Hold investment</a> investment strategy.</p>
 
 <p align="center">
-<img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/gh/bocabitlabs/buho-stocks" title="CodeCov"><img src="https://codecov.io/gh/bocabitlabs/buho-stocks/branch/main/graph/badge.svg" alt="codecov"/></a>
+<img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/django.yml" alt="Django CI"/> <img src="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml/badge.svg" href="https://github.com/bocabitlabs/buho-stocks/actions/workflows/react.yml" alt="React CI"/> <a href="https://codecov.io/github/bocabitlabs/buho-stocks" > 
+ <img src="https://codecov.io/github/bocabitlabs/buho-stocks/graph/badge.svg?token=GeXfRGSLzP"/> 
+ </a>
 </p>
 <p align="center">
 <img src="./docs/static/img/screenshots/0.0.63-alpha/buho-stocks-portfolio.jpg" alt="Buho Stocks portfolio screen"/>
@@ -45,7 +47,7 @@ Documentation is available on [Github Pages](https://bocabitlabs.github.io/buho-
 - React
 - Django
 - Typescript
-- Ant Design (UI)
+- Mantine (UI)
 - Docker
 
 ## 🫂 How to contribute

@@ -14,7 +14,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        python-version: [3.10.8]
+        python-version: [3.11.9]
 
     steps:
       - uses: actions/checkout@v3
@@ -31,10 +31,15 @@ jobs:
           key: venv-${{ hashFiles('poetry.lock') }}
       - name: Install the project dependencies
         run: |
-          mv .env.sample .env
+          mv .env.ci.sample .env
           poetry install
       - name: Run Tests
         run: |
-          poetry run coverage run backend/manage.py test
+          cd backend && poetry run coverage run manage.py test
+          poetry run coverage report
+          poetry run coverage xml
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }} # required
+          verbose: true # optional (default = false)

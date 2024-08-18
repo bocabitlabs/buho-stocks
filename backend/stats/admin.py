@@ -1,5 +1,6 @@
-from buho_backend.admin import BaseAdmin
 from django.contrib import admin
+
+from buho_backend.admin import BaseAdmin
 from stats.models.company_stats import CompanyStatsForYear
 from stats.models.portfolio_stats import PortfolioStatsForYear
 

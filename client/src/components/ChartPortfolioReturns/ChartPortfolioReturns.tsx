@@ -1,102 +1,52 @@
-import React, { ReactElement, useEffect } from "react";
-import { Line } from "react-chartjs-2";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { Select, Spin } from "antd";
-import { AxiosError } from "axios";
-import {
-  useBenchmarks,
-  useBenchmarkValues,
-} from "hooks/use-benchmarks/use-benchmarks";
-import { usePortfolioAllYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { hexToRgb, manyColors } from "utils/colors";
+import { LineChart } from "@mantine/charts";
+import { Center, Stack, Title } from "@mantine/core";
+import { IBenchmark, IBenchmarkYear } from "types/benchmark";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
 
-export default function ChartPortfolioReturns(): ReactElement | null {
+interface Props {
+  data: IPortfolioYearStats[];
+  indexData: IBenchmark | undefined;
+}
+
+export default function ChartPortfolioReturns({ data, indexData }: Props) {
   const { t } = useTranslation();
-  const { id } = useParams();
-  const [chartData, setChartData] = React.useState<any>();
-  const {
-    data,
-    isFetching: areStatsFetching,
-    error: errorFetchingStats,
-  } = usePortfolioAllYearStats(+id!);
 
-  const { data: benchmarks, isFetching } = useBenchmarks();
-
-  const [selectedIndex, setSelectedIndex] = React.useState<number | undefined>(
-    undefined,
-  );
-  const { data: indexData, isFetching: indexIsFetching } = useBenchmarkValues(
-    selectedIndex !== undefined && benchmarks && benchmarks?.length > 0
-      ? benchmarks[selectedIndex].id
-      : undefined,
-  );
-
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top" as const,
+  const series = useMemo(() => {
+    const baseSeries = [
+      {
+        name: "returnsPercent",
+        label: t<string>("Return"),
+        color: "indigo.6",
       },
-      title: {
-        display: true,
-        text: t("Portfolio Returns"),
+      {
+        name: "returnWithDividendsPercent",
+        label: t<string>("Return + dividends"),
+        color: "teal.6",
       },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const percentage = `${context.dataset.label}: ${context.raw.toFixed(
-              2,
-            )}%`;
-            return percentage;
-          },
-        },
-      },
-    },
-    scales: {
-      y: {
-        type: "linear" as const,
-        display: true,
-        position: "left" as const,
-      },
-    },
-  };
-
-  const onChange = (value: number) => {
-    setSelectedIndex(value);
-  };
-
-  useEffect(() => {
-    function getChartData() {
-      return {
-        labels: [],
-        datasets: [
-          {
-            label: t("Return Percent"),
-            data: [],
-            borderColor: hexToRgb(manyColors[10], 1),
-            backgroundColor: hexToRgb(manyColors[10], 1),
-            // yAxisID: "y",
-          },
-          {
-            label: t("Return + dividends"),
-            data: [],
-            borderColor: hexToRgb(manyColors[16], 1),
-            backgroundColor: hexToRgb(manyColors[16], 1),
-            // yAxisID: "y",
-          },
-        ],
-      };
+    ];
+    if (indexData) {
+      baseSeries.push({
+        name: "indexData",
+        label: indexData.name,
+        color: "red.6",
+      });
     }
-    if (data) {
-      const tempChartData = getChartData();
+    return baseSeries;
+  }, [indexData, t]);
 
-      const newYears: any = [];
-      const returnsPercent: any = [];
-      const returnsWithDividendsPercent: any = [];
-      const indexPercents: any = [];
+  const chartData = useMemo(() => {
+    if (data && data.length > 0) {
+      const newYears: number[] = [];
+      const returnsPercent: {
+        year: number;
+        returnsPercent: number;
+        returnWithDividendsPercent: number;
+        indexData: number | null | undefined;
+      }[] = [];
 
-      data.sort((a: any, b: any) => {
+      data.sort((a: IPortfolioYearStats, b: IPortfolioYearStats) => {
         if (a.year > b.year) {
           return 1;
         }
@@ -105,83 +55,40 @@ export default function ChartPortfolioReturns(): ReactElement | null {
         }
         return 0;
       });
-      data.forEach((year: any) => {
-        if (
-          !newYears.includes(year.year) &&
-          year.year !== "all" &&
-          year.year !== 9999
-        ) {
-          newYears.push(year.year);
-          returnsPercent.push(Number(year.returnPercent));
-          returnsWithDividendsPercent.push(
-            Number(year.returnWithDividendsPercent),
-          );
-          let indexValue = null;
-          if (indexData) {
-            indexValue = indexData.years.find(
-              (indexItem: any) => indexItem.year === year.year,
-            );
-            indexPercents.push(
-              indexValue ? Number(indexValue.returnPercentage) : 0,
-            );
-          }
+      data.forEach((year: IPortfolioYearStats) => {
+        if (!newYears.includes(year.year) && year.year !== 9999) {
+          returnsPercent.push({
+            year: year.year,
+            returnsPercent: Number(year.returnPercent),
+            returnWithDividendsPercent: Number(year.returnWithDividendsPercent),
+            indexData: indexData
+              ? indexData.years.find(
+                  (indexItem: IBenchmarkYear) => indexItem.year === year.year,
+                )?.returnPercentage
+              : null,
+          });
         }
       });
-      tempChartData.labels = newYears;
-      tempChartData.datasets[0].data = returnsPercent;
-      tempChartData.datasets[1].data = returnsWithDividendsPercent;
-
-      if (
-        indexData &&
-        selectedIndex !== undefined &&
-        benchmarks &&
-        benchmarks.length > 0
-      ) {
-        tempChartData.datasets[2] = {
-          label: benchmarks[selectedIndex].name,
-          data: [],
-          borderColor: hexToRgb(manyColors[17], 1),
-          backgroundColor: hexToRgb(manyColors[17], 1),
-          // yAxisID: "y",
-        };
-        tempChartData.datasets[2].data = indexPercents;
-      }
-
-      setChartData(tempChartData);
+      return returnsPercent;
     }
-  }, [data, indexData, benchmarks, selectedIndex, t]);
-
-  if (errorFetchingStats) {
-    if ((errorFetchingStats as AxiosError)?.response?.status === 404) {
-      return <div>No stats yet</div>;
-    }
-    return <div>Something went wrong</div>;
-  }
-
-  if (areStatsFetching) {
-    return <Spin data-testid="loader" />;
-  }
+  }, [data, indexData]);
 
   if (chartData) {
     return (
-      <div>
-        {!indexIsFetching && <Line options={options} data={chartData} />}
-        {benchmarks && benchmarks.length > 0 && (
-          <Select
-            showSearch
-            placeholder="Select a index"
-            onChange={onChange}
-            loading={isFetching}
-            style={{ marginTop: 20, minWidth: 200 }}
-          >
-            {benchmarks.map((element: any, index: number) => (
-              <Select.Option key={element.id} value={index}>
-                {element.name}
-              </Select.Option>
-            ))}
-          </Select>
-        )}
-      </div>
+      <Stack>
+        <Center>
+          <Title order={5}>{t("Return per year")}</Title>
+        </Center>
+        <Center />
+        <LineChart
+          h={300}
+          data={chartData}
+          dataKey="year"
+          withLegend
+          series={series}
+          valueFormatter={(value) => `${value} %`}
+        />
+      </Stack>
     );
   }
   return null;

@@ -1,8 +1,9 @@
 from rest_framework import serializers
+
 from portfolios.models import Portfolio
 
-class PortfolioSerializerLite(serializers.ModelSerializer):
 
+class PortfolioSerializerLite(serializers.ModelSerializer):
     class Meta:
         model = Portfolio
         fields = [

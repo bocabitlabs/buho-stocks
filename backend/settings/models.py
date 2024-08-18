@@ -1,4 +1,5 @@
 from django.db import models
+
 from markets.models import TIMEZONES
 
 
@@ -11,9 +12,9 @@ class UserSettings(models.Model):
     company_sort_by = models.CharField(max_length=200, blank=True, default="")
     company_display_mode = models.CharField(max_length=200, blank=True, default="")
     timezone = models.CharField(max_length=200, choices=TIMEZONES, default="UTC")
-    backend_hostname = models.CharField(max_length=200, blank=True, default="localhost:8081")
     sentry_dsn = models.CharField(max_length=200, blank=True, default="")
     sentry_enabled = models.BooleanField(default=False)
+    display_welcome = models.BooleanField(default=True)
 
     allow_fetch = models.BooleanField(default=False)
 

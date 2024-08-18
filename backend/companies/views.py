@@ -1,12 +1,23 @@
 import logging
 
-from companies.models import Company
-from companies.serializers import CompanySerializer, CompanySerializerGet
+from django.db.models import OuterRef, Subquery
 from django.utils.decorators import method_decorator
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status, viewsets
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from companies.models import Company
+from companies.serializers import (
+    CompanySearchSerializer,
+    CompanySerializer,
+    CompanySerializerGet,
+)
 from log_messages.models import LogMessage
 from portfolios.models import Portfolio
-from rest_framework import viewsets
+from stats.models.company_stats import CompanyStatsForYear
+from stock_prices.services.yfinance_api_client import YFinanceApiClient
 
 logger = logging.getLogger("buho_backend")
 
@@ -70,6 +81,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = CompanySerializer
+    pagination_class = LimitOffsetPagination
     lookup_url_kwarg = "company_id"
     lookup_field = "id"
 
@@ -78,15 +90,67 @@ class CompanyViewSet(viewsets.ModelViewSet):
         portfolio_id = self.kwargs.get("portfolio_id")
         closed = self.request.query_params.get("closed")
 
+        sort_by = self.request.query_params.get("sort_by", "name")
+        order_by = self.request.query_params.get("order_by", "asc")
+
+        sort_by_fields = {
+            "ticker": "ticker",
+            "name": "name",
+            "sharesCount": "shares_count",
+            "accumulatedInvestment": "accumulated_investment",
+            "portfolioValue": "portfolio_value",
+            "returnWithDividends": "return_with_dividends",
+            "dividendsYield": "dividends_yield",
+        }
+
         if closed == "true":
             closed = True
         else:
             closed = False
 
-        if self.action == "list" or self.action == "create":
-            return Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+        if order_by == "desc":
+            order_by = "-"
+        else:
+            order_by = ""
 
-        return Company.objects.filter(id=company_id, portfolio=portfolio_id)
+        global_stats_subquery = (
+            CompanyStatsForYear.objects.filter(company=OuterRef("id"), year=9999)
+            # .order_by()
+            .values(
+                "accumulated_investment",
+                "shares_count",
+                "portfolio_value",
+                "return_with_dividends",
+                "return_with_dividends_percent",
+                "dividends_yield",
+            )
+        )
+
+        if self.action == "list" or self.action == "create":
+            results = Company.objects.filter(portfolio=portfolio_id, is_closed=closed)
+        else:
+            results = Company.objects.filter(id=company_id, portfolio=portfolio_id)
+
+        results = results.annotate(
+            accumulated_investment=Subquery(
+                global_stats_subquery.values("accumulated_investment")[:1]
+            ),
+            shares_count=Subquery(global_stats_subquery.values("shares_count")[:1]),
+            portfolio_value=Subquery(
+                global_stats_subquery.values("portfolio_value")[:1]
+            ),
+            return_with_dividends=Subquery(
+                global_stats_subquery.values("return_with_dividends")[:1]
+            ),
+            return_with_dividends_percent=Subquery(
+                global_stats_subquery.values("return_with_dividends_percent")[:1]
+            ),
+            dividends_yield=Subquery(
+                global_stats_subquery.values("dividends_yield")[:1]
+            ),
+        ).order_by(f"{order_by}{sort_by_fields.get(sort_by, 'name')}")
+
+        return results
 
     def perform_create(self, serializer):
         portfolio_id = self.kwargs.get("portfolio_id")
@@ -94,13 +158,42 @@ class CompanyViewSet(viewsets.ModelViewSet):
 
         LogMessage.objects.create(
             message_type=LogMessage.MESSAGE_TYPE_CREATE_COMPANY,
-            message_text=f"Company created: {serializer.data.get('name')} ({serializer.data.get('ticker')})",
+            message_text=(
+                f"Company created: {serializer.data.get('name')} "
+                f"({serializer.data.get('ticker')})"
+            ),
             portfolio=Portfolio.objects.get(id=portfolio_id),
         )
 
     def get_serializer_class(self):
-        if self.action == "list":
-            return CompanySerializer
-        elif self.action == "retrieve":
+        if self.action == "list" or self.action == "retrieve":
             return CompanySerializerGet
         return super().get_serializer_class()
+
+
+class CompanySearchAPIView(APIView):
+
+    # 3. Retrieve
+    @swagger_auto_schema(tags=["company_search"])
+    def get(self, request, ticker, *args, **kwargs):
+        """
+        Retrieve the company item with given company_id
+        """
+        if not ticker:
+            return Response(
+                {"res": "Ticker is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        api_client = YFinanceApiClient()
+        searched_company = api_client.get_company_info_by_ticker(ticker)
+
+        logger.debug(f"Company searched: {searched_company}")
+
+        if not searched_company or searched_company.get("quoteType") == "NONE":
+            return Response(None, status=status.HTTP_200_OK)
+
+        logger.debug(f"Company searched: {searched_company}")
+
+        serializer = CompanySearchSerializer(searched_company)
+        return Response(serializer.data, status=status.HTTP_200_OK)

@@ -2,11 +2,12 @@ import logging
 from decimal import Decimal
 
 import factory
-from buho_backend.tests.base_test_case import BaseApiTestCase
-from companies.tests.factory import CompanyFactory
 from django.urls import reverse
 from faker import Faker
 from rest_framework import status
+
+from buho_backend.tests.base_test_case import BaseApiTestCase
+from companies.tests.factory import CompanyFactory
 from shares_transactions.models import SharesTransaction
 from shares_transactions.tests.factory import SharesTransactionFactory
 
@@ -14,10 +15,9 @@ logger = logging.getLogger("buho_backend")
 
 
 class SharesTransactionsListTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.faker_obj = Faker()
+    def setUp(self):
+        super().setUp()
+        self.faker_obj = Faker()
 
     def test_get_shares(self):
         company = CompanyFactory.create()
@@ -42,19 +42,18 @@ class SharesTransactionsListTestCase(BaseApiTestCase):
 
 
 class SharesTransactionsDetailTestCase(BaseApiTestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
-        cls.company = CompanyFactory.create()
+    def setUp(self):
+        super().setUp()
+        self.company = CompanyFactory.create()
         instances = []
         for _ in range(0, 4):
             instance = SharesTransactionFactory.create(
-                company=cls.company,
-                gross_price_per_share_currency=cls.company.base_currency,
-                total_commission_currency=cls.company.base_currency,
+                company=self.company,
+                gross_price_per_share_currency=self.company.base_currency,
+                total_commission_currency=self.company.base_currency,
             )
             instances.append(instance)
-        cls.instances = instances
+        self.instances = instances
 
     def test_get_shares(self):
         index = 0
@@ -96,9 +95,12 @@ class SharesTransactionsDetailTestCase(BaseApiTestCase):
         temp_data["company"] = self.company.id
         temp_data["gross_price_per_share_currency"] = self.company.base_currency
         temp_data["total_commission_currency"] = self.company.base_currency
+        temp_data["total_amount"] = 20
+        temp_data["total_amount_currency"] = self.company.base_currency
 
         url = reverse("shares-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
+        logger.debug(response.data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(

@@ -1,5 +1,6 @@
-from dividends_transactions import views
 from rest_framework.routers import DefaultRouter
+
+from dividends_transactions import views
 
 router = DefaultRouter()
 

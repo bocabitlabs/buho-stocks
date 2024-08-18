@@ -1,102 +1,71 @@
-import React, { useEffect } from "react";
-import { Pie } from "react-chartjs-2";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { usePortfolioYearStats } from "hooks/use-stats/use-portfolio-stats";
-import { mapColorsToLabels } from "utils/colors";
+import { PieChart } from "@mantine/charts";
+import { IPortfolioYearStats } from "types/portfolio-year-stats";
+import { getColorShade } from "utils/colors";
 import { groupByName } from "utils/grouping";
 
 interface ChartProps {
-  selectedYear: string;
+  data: IPortfolioYearStats[];
+  width: number;
 }
 
-export default function ChartBrokerByCompany({
-  selectedYear,
-}: ChartProps): React.ReactElement | null {
+export default function ChartBrokerByCompany({ data, width }: ChartProps) {
   const { t } = useTranslation();
-  const [data, setData] = React.useState<any>(null);
-  const [filteredChartData, setFilteredChartData] = React.useState<any>(null);
-  const { id } = useParams();
-  const { data: statsData } = usePortfolioYearStats(
-    +id!,
-    selectedYear,
-    "company",
+
+  const filteredData = useMemo(
+    function createChartData() {
+      const filteredCompanies: IPortfolioYearStats[] = data.filter(
+        (item: IPortfolioYearStats) => {
+          return item.sharesCount > 0;
+        },
+      );
+
+      const brokers: {
+        name: string;
+        value: number;
+        color: string;
+      }[] = [];
+
+      const groupedByBroker = groupByName(filteredCompanies, "broker");
+
+      console.log("RES", groupedByBroker);
+
+      // Iterate the dictionary res and push the key and value to the brokers array
+      Object.entries(groupedByBroker).forEach(([year, statsArray]) => {
+        brokers.push({
+          name: year,
+          value: statsArray.length,
+          color: getColorShade(year),
+        });
+      });
+      // Object.entries.forEach(([key, value]) => {
+      //   const valueArray = Array.from(value);
+      //   brokers.push({
+      //     name: key,
+      //     value: valueArray.length,
+      //     color: getColorShade(key),
+      //   });
+      // });
+      brokers.sort((a, b) => b.value - a.value);
+
+      return brokers;
+    },
+    [data],
   );
 
-  const options = {
-    responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-        position: "bottom" as const,
-      },
-      title: {
-        display: true,
-        text: t("Brokers"),
-      },
-      tooltip: {
-        callbacks: {
-          label(context: any) {
-            const amount = `${context.label}: ${context.raw} ${t("companies")}`;
-            return amount;
-          },
-        },
-      },
-    },
-  };
-
-  useEffect(() => {
-    if (statsData) {
-      const tempData: any = statsData.filter((item: any) => {
-        return item.sharesCount > 0;
-      });
-
-      setFilteredChartData(tempData);
-    }
-  }, [statsData]);
-
-  useEffect(() => {
-    async function loadInitialStats() {
-      if (filteredChartData) {
-        console.log(
-          `Loading brokers data for ${filteredChartData.length} companies`,
-        );
-        const tempData = {
-          labels: [],
-          datasets: [
-            {
-              label: t("Brokers"),
-              data: [],
-              borderColor: "rgb(255, 99, 132)",
-              backgroundColor: "rgba(255, 99, 132, 0.5)",
-            },
-          ],
-        };
-        const sectors: any = [];
-        const sectorsCount: any = [];
-
-        const res = groupByName(filteredChartData, "broker");
-
-        Object.entries(res).forEach(([k, v]) => {
-          sectors.push(k);
-          sectorsCount.push((v as any[]).length);
-        });
-
-        tempData.labels = sectors;
-        const { chartColors, chartBorders } = mapColorsToLabels(sectors);
-
-        tempData.datasets[0].data = sectorsCount;
-        tempData.datasets[0].backgroundColor = chartColors;
-        tempData.datasets[0].borderColor = chartBorders;
-
-        setData(tempData);
-      }
-    }
-    loadInitialStats();
-  }, [filteredChartData, t]);
-
-  if (data) {
-    return <Pie options={options} data={data} />;
-  }
-  return null;
+  return (
+    <PieChart
+      withLabelsLine
+      labelsPosition="outside"
+      labelsType="value"
+      withLabels
+      withTooltip
+      startAngle={90}
+      endAngle={-270}
+      data={filteredData}
+      size={width}
+      valueFormatter={(value: number) => `${value} ${t("companies")}`}
+    />
+  );
 }

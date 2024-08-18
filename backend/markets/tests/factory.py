@@ -1,4 +1,4 @@
-from factory import django, Faker
+from factory import Faker, django
 
 from markets.models import Market
 

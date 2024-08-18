@@ -9,10 +9,11 @@ export interface IRightsTransactionFormFields {
   totalCommission: number;
   totalCommissionCurrency: string;
   exchangeRate: number;
-  transactionDate: string;
+  transactionDate: Date;
   company: number;
   notes: string;
   type: TransactionType;
+  transactionType?: string;
 }
 
 export interface IRightsTransaction extends IRightsTransactionFormFields {

@@ -27,8 +27,8 @@ def create_initial_currencies_from_json(json_path: str) -> list[Currency]:
         "r",
         encoding="utf-8",
     ) as file:
-        data = file.read()
-        data = json.loads(data)
+        file_data = file.read()
+        data = json.loads(file_data)
         for currency in data:
             existing = Currency.objects.filter(code=currency["code"]).exists()
             if existing:
@@ -39,6 +39,7 @@ def create_initial_currencies_from_json(json_path: str) -> list[Currency]:
                 symbol=currency["symbol"],
                 code=currency["code"],
             )
+
             if result:
-                currencies_list.append(currency)
+                currencies_list.append(currency)  # help
     return currencies_list
