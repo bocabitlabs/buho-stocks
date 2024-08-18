@@ -47,7 +47,7 @@ Documentation is available on [Github Pages](https://bocabitlabs.github.io/buho-
 - React
 - Django
 - Typescript
-- Ant Design (UI)
+- Mantine (UI)
 - Docker
 
 ## 🫂 How to contribute
