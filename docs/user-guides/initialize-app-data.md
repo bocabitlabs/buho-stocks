@@ -13,6 +13,6 @@ In order to initialize each of these items, just select them and click the "Subm
 
 If you don't want to see this window again, check the corresponding checkbox.
 
-Next: [Create your first portfolio](https://github.com/bocabitlabs/buho-stocks/wiki/Create-your-first-portfolio)
+Next: [Create your first portfolio](create-portfolio.md)
 
-Previous: [Deploy the application](deploy-te-application-docker-compose.md)
+Previous: [Deploy the application](deploy-docker-compose.md)

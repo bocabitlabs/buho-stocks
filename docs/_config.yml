@@ -1,0 +1,29 @@
+# Site settings
+title: Buho Stocks
+description: Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investment investment strategy.
+theme: jekyll-theme-cayman
+
+# Sidebar settings
+sidebar:
+  - title: Home
+    url: /
+  - title: User Guides
+    pages:
+      - title: Introduction
+        url: /user-guides/
+      - title: Deploy the application using Docker Compose
+        url: /user-guides/deploy-docker-compose.html
+      - title: Initialize app data
+        url: /user-guides/initialize-app-data.html
+      - title: Create a portfolio
+        url: /user-guides/create-portfolio.html
+      - title: Create a company
+        url: /user-guides/create-company.html
+  - title: Development
+    pages:
+      - title: Introduction
+        url: /development/
+      - title: Page 3
+        url: /page3.html
+      - title: Page 4
+        url: /page4.html
