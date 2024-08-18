@@ -10,16 +10,26 @@ import {
   Modal,
   Text,
 } from "@mantine/core";
-import { UseFormReturnType } from "@mantine/form";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { useCompanySearch } from "hooks/use-companies/use-companies-search";
-import { ICompanyFormFields } from "types/company";
 
 type Props = {
-  form: UseFormReturnType<ICompanyFormFields>;
+  ticker: string;
+  name: string;
+  website: string;
+  isin: string;
+  description: string;
+  setFieldValue: (fieldName: string, value: string) => void;
 };
 
-export default function SearchButton({ form }: Props) {
+export default function SearchButton({
+  setFieldValue,
+  ticker,
+  name,
+  website,
+  isin,
+  description,
+}: Props) {
   const { t } = useTranslation();
 
   const [
@@ -38,7 +48,7 @@ export default function SearchButton({ form }: Props) {
         type="button"
         color="blue"
         onClick={() => {
-          setSearchValue(form.getValues().ticker);
+          setSearchValue(ticker);
           openCompanySearch();
         }}
         loading={isLoading}
@@ -62,7 +72,7 @@ export default function SearchButton({ form }: Props) {
 
         {!searchData && !isLoading && (
           <Alert mt={"md"} title={t("No results found")} color="yellow">
-            {t("No search results for company")} {form.getValues().ticker}
+            {t("No search results for company")} {ticker}
           </Alert>
         )}
 
@@ -71,16 +81,14 @@ export default function SearchButton({ form }: Props) {
             <Grid.Col span={8}>
               <Text fw={700}>{t("Company name")}:</Text>
               <Text size="xs">
-                {form.getValues().name} → {searchData?.shortName}
+                {name} → {searchData?.shortName}
               </Text>
             </Grid.Col>
             <Grid.Col span={4}>
               <Button
                 size="xs"
                 variant="default"
-                onClick={() =>
-                  form.setFieldValue("name", searchData?.shortName)
-                }
+                onClick={() => setFieldValue("name", searchData?.shortName)}
               >
                 {t("Set field")}
               </Button>
@@ -98,9 +106,7 @@ export default function SearchButton({ form }: Props) {
                 size="xs"
                 variant="default"
                 disabled
-                onClick={() =>
-                  form.setFieldValue("market", searchData?.exchange)
-                }
+                onClick={() => setFieldValue("market", searchData?.exchange)}
               >
                 {t("Set field")}
               </Button>
@@ -119,11 +125,8 @@ export default function SearchButton({ form }: Props) {
                 variant="default"
                 disabled
                 onClick={() => {
-                  form.setFieldValue(
-                    "baseCurrency",
-                    searchData?.financialCurrency,
-                  );
-                  form.setFieldValue(
+                  setFieldValue("baseCurrency", searchData?.financialCurrency);
+                  setFieldValue(
                     "dividendsCurrency",
                     searchData?.financialCurrency,
                   );
@@ -145,28 +148,26 @@ export default function SearchButton({ form }: Props) {
                 size="xs"
                 variant="default"
                 disabled
-                onClick={() =>
-                  form.setFieldValue("sector", searchData?.sectorDisp)
-                }
+                onClick={() => setFieldValue("sector", searchData?.sectorDisp)}
               >
                 {t("Set field")}
               </Button>
             </Grid.Col>
           </Grid>
         )}
-        {searchData?.irWebsite && (
+        {searchData?.website && (
           <Grid grow mt="md">
             <Grid.Col span={8}>
               <Text fw={700}>{t("URL")}:</Text>
               <Text size="xs">
-                {form.getValues().url} → {searchData?.irWebsite}
+                {website} → {searchData?.website}
               </Text>
             </Grid.Col>
             <Grid.Col span={4}>
               <Button
                 size="xs"
                 variant="default"
-                onClick={() => form.setFieldValue("url", searchData?.irWebsite)}
+                onClick={() => setFieldValue("url", searchData?.website)}
               >
                 {t("Set field")}
               </Button>
@@ -178,14 +179,14 @@ export default function SearchButton({ form }: Props) {
             <Grid.Col span={8}>
               <Text fw={700}>{t("ISIN")}:</Text>
               <Text size="xs">
-                {form.getValues().isin} → {searchData?.isin}
+                {isin} → {searchData?.isin}
               </Text>
             </Grid.Col>
             <Grid.Col span={4}>
               <Button
                 size="xs"
                 variant="default"
-                onClick={() => form.setFieldValue("isin", searchData?.isin)}
+                onClick={() => setFieldValue("isin", searchData?.isin)}
               >
                 {t("Set field")}
               </Button>
@@ -203,7 +204,7 @@ export default function SearchButton({ form }: Props) {
                     <Text size="xs">{t("Show old description")}</Text>
                   </Accordion.Control>
                   <Accordion.Panel>
-                    <Text size="xs">{form.getValues().description}</Text>
+                    <Text size="xs">{description}</Text>
                   </Accordion.Panel>
                 </Accordion.Item>
                 <Accordion.Item
@@ -224,10 +225,7 @@ export default function SearchButton({ form }: Props) {
                 size="xs"
                 variant="default"
                 onClick={() =>
-                  form.setFieldValue(
-                    "description",
-                    searchData?.longBusinessSummary,
-                  )
+                  setFieldValue("description", searchData?.longBusinessSummary)
                 }
               >
                 {t("Set field")}

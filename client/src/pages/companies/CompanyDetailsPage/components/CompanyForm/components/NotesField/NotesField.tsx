@@ -1,18 +1,17 @@
-import { UseFormReturnType } from "@mantine/form";
+import { useEffect } from "react";
 import { RichTextEditor, Link } from "@mantine/tiptap";
 import { Highlight } from "@tiptap/extension-highlight";
 import { TextAlign } from "@tiptap/extension-text-align";
 import { Underline } from "@tiptap/extension-underline";
 import { EditorEvents, useEditor } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
-import { ICompanyFormFields } from "types/company";
 
 interface Props {
   content: string | undefined;
-  form: UseFormReturnType<ICompanyFormFields>;
+  setFieldValue: (value: string) => void;
 }
 
-export function NotesField({ content, form }: Props) {
+export function NotesField({ content, setFieldValue }: Props) {
   const notesEditor = useEditor({
     extensions: [
       StarterKit,
@@ -23,10 +22,16 @@ export function NotesField({ content, form }: Props) {
     ],
     onUpdate({ editor }: EditorEvents["update"]) {
       const fieldContent = editor.getHTML();
-      form.setFieldValue("description", fieldContent);
+      setFieldValue(fieldContent);
     },
     content,
   });
+
+  useEffect(() => {
+    if (content === undefined) return;
+    if (notesEditor === null) return;
+    notesEditor.commands.setContent(content || "");
+  }, [content, notesEditor]);
 
   return (
     <RichTextEditor editor={notesEditor}>

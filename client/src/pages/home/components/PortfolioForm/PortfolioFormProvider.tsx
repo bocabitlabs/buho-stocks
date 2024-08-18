@@ -71,6 +71,7 @@ export default function PortfolioFormProvider({
         onSubmitCallback={onSubmitCallback}
         onCloseCallback={onCloseCallback}
         isVisible={isVisible}
+        isUpdate={isUpdate}
       />
     );
   }

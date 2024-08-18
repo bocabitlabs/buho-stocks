@@ -56,14 +56,15 @@ function PortfolioForm({
 
   const onCountryChange = (value: string | null) => {
     if (value) {
-      form.setFieldValue("region", value);
+      console.log("countryCode", value);
+      form.setFieldValue("countryCode", value);
     }
   };
 
   return (
     <Modal
       opened={isVisible}
-      title={isUpdate ? t("Add new portfolio") : t("Update portfolio")}
+      title={isUpdate ? t("Update portfolio") : t("Add new portfolio")}
       onClose={onCloseCallback}
     >
       <form onSubmit={form.onSubmit(onSubmitCallback)}>

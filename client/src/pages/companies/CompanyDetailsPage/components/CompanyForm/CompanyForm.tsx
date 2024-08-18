@@ -14,7 +14,7 @@ import {
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useForm } from "@mantine/form";
-import { randomId } from "@mantine/hooks";
+import { randomId, useDebouncedValue } from "@mantine/hooks";
 import { NotesField } from "./components/NotesField/NotesField";
 import SearchButton from "./components/SearchButton/SearchButton";
 import CountrySelector from "components/CountrySelector/CountrySelector";
@@ -74,6 +74,12 @@ function CompanyForm({
     );
   });
 
+  const [ticker, setTicker] = useState<string>(company?.ticker || "");
+  const [debouncedTicker] = useDebouncedValue(ticker, 300);
+  const [description, setDescription] = useState<string>(
+    company ? company.description : "",
+  );
+
   const form = useForm<ICompanyFormFields>({
     mode: "uncontrolled",
     initialValues: {
@@ -94,6 +100,9 @@ function CompanyForm({
       countryCode: company ? company.countryCode : "",
       color: "#2196F3",
     },
+    onValuesChange: (values) => {
+      setTicker(values.ticker);
+    },
   });
 
   const handleImagesUpload = (uploadedFiles: FileWithPath[]) => {
@@ -107,6 +116,8 @@ function CompanyForm({
   };
 
   const onSubmit = (values: ICompanyFormFields) => {
+    console.log("values", values);
+    console.log(ticker);
     onSubmitCallback(values);
   };
 
@@ -132,8 +143,20 @@ function CompanyForm({
 
   const onCountryChange = (value: string | null) => {
     if (value) {
-      form.setFieldValue("region", value);
+      form.setFieldValue("countryCode", value);
     }
+  };
+
+  const setFieldValue = (fieldName: string, value: string) => {
+    form.setFieldValue(fieldName, value);
+    if (fieldName === "description") {
+      setDescription(value);
+    }
+  };
+
+  const updateDescription = (value: string) => {
+    setDescription(value);
+    setFieldValue("description", value);
   };
 
   return (
@@ -153,8 +176,16 @@ function CompanyForm({
                 key={form.key("ticker")}
                 // eslint-disable-next-line react/jsx-props-no-spreading
                 {...form.getInputProps("ticker")}
+                // onChange={(event) => setTicker(event.currentTarget.value)}
               />
-              <SearchButton form={form} />
+              <SearchButton
+                setFieldValue={setFieldValue}
+                ticker={debouncedTicker}
+                name={form.getValues().name}
+                website={form.getValues().url}
+                isin={form.getValues().isin}
+                description={form.getValues().description}
+              />
             </Group>
           </Grid.Col>
         </Grid>
@@ -168,7 +199,6 @@ function CompanyForm({
         />
         <TextInput
           mt="md"
-          withAsterisk
           label={t("Alternative tickers")}
           key={form.key("altTickers")}
           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -176,7 +206,6 @@ function CompanyForm({
         />
         <TextInput
           mt="md"
-          withAsterisk
           label={t("ISIN")}
           key={form.key("isin")}
           // eslint-disable-next-line react/jsx-props-no-spreading
@@ -272,7 +301,7 @@ function CompanyForm({
         />
 
         <Input.Wrapper mt="md" label={t("Description")}>
-          <NotesField content={company?.description} form={form} />
+          <NotesField content={description} setFieldValue={updateDescription} />
         </Input.Wrapper>
 
         <Group justify="space-between" mt="md">
