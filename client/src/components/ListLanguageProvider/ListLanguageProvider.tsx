@@ -8,16 +8,15 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const LanguageContext = createContext<MRT_Localization | undefined>(
-  undefined,
-);
+export const LanguageContext =
+  createContext<MRT_Localization>(MRT_Localization_EN);
 
 export function LanguageProvider({ children }: Props) {
   const { data: settings } = useSettings();
 
   const localization = useMemo(() => {
     if (!settings) {
-      return undefined;
+      return MRT_Localization_EN;
     }
     if (settings.language === "en") {
       return MRT_Localization_EN;
@@ -25,7 +24,7 @@ export function LanguageProvider({ children }: Props) {
     if (settings.language === "es") {
       return MRT_Localization_ES;
     }
-    return undefined; // default language
+    return MRT_Localization_EN;
   }, [settings]);
 
   return (
