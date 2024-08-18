@@ -41,7 +41,7 @@ function PriceCell({
         />
       </Text>
       <Text c="dimmed" size="xs">
-        {row.original.allStats?.portfolioCurrency}
+        {row.original.portfolio.baseCurrency}
       </Text>
     </Stack>
   );
@@ -52,22 +52,22 @@ function ReturnPercentCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
     <Stack>
       <Text size="sm">
         <NumberFormatter
-          value={row.original.allStats?.returnWithDividends}
-          suffix={` ${row.original.allStats?.portfolioCurrency}`}
+          value={row.original?.returnWithDividends}
+          suffix={` ${row.original.portfolio.baseCurrency}`}
           decimalScale={2}
           thousandSeparator
         />
       </Text>
       <Text
         c={
-          Number(row.original.allStats?.returnWithDividendsPercent) <= 0
+          Number(row.original?.returnWithDividendsPercent) <= 0
             ? "red"
             : "green"
         }
         size="xs"
       >
         <NumberFormatter
-          value={row.original.allStats?.returnWithDividendsPercent}
+          value={row.original?.returnWithDividendsPercent}
           suffix={` %`}
           decimalScale={2}
           thousandSeparator
@@ -81,11 +81,11 @@ function DividendsYieldCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
   return (
     <Stack>
       <Text
-        c={Number(row.original.allStats?.dividendsYield) <= 0 ? "red" : "green"}
+        c={Number(row.original?.dividendsYield) <= 0 ? "red" : "green"}
         size="sm"
       >
         <NumberFormatter
-          value={row.original.allStats?.dividendsYield}
+          value={row.original?.dividendsYield}
           suffix={` %`}
           decimalScale={2}
           thousandSeparator
@@ -100,13 +100,13 @@ function PortfolioValueCell({ row }: Readonly<{ row: MRT_Row<ICompany> }>) {
     <Stack>
       <Text size="sm">
         <NumberFormatter
-          value={row.original.allStats?.portfolioValue}
+          value={row.original.portfolioValue}
           decimalScale={2}
           thousandSeparator
         />
       </Text>
       <Text c="dimmed" size="xs">
-        {row.original.allStats?.portfolioCurrency}
+        {row.original.portfolio.baseCurrency}
       </Text>
     </Stack>
   );
@@ -132,7 +132,7 @@ function CompanyNameCell({
   return (
     <Stack>
       <Anchor
-        to={`/portfolios/${row.original.portfolio}/companies/${row.original.id}`}
+        to={`/portfolios/${row.original.portfolio.id}/companies/${row.original.id}`}
         component={Link}
       >
         <Text size="sm">{row.original.name}</Text>

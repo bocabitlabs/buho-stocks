@@ -87,6 +87,7 @@ class CompanySerializer(serializers.ModelSerializer):
             "shares_count",
             "portfolio_value",
             "return_with_dividends",
+            "return_with_dividends_percent",
             "dividends_yield",
         ]
 
@@ -127,6 +128,7 @@ class CompanySerializerGet(serializers.ModelSerializer):
     portfolio = PortfolioSerializerLite(many=False, read_only=True)
     first_year = serializers.SerializerMethodField()
     last_transaction_month = serializers.SerializerMethodField()
+    last_dividend_month = serializers.SerializerMethodField()
     base_currency = serializers.SerializerMethodField()
     dividends_currency = serializers.SerializerMethodField()
 
@@ -138,6 +140,9 @@ class CompanySerializerGet(serializers.ModelSerializer):
         max_digits=12, decimal_places=3, read_only=True
     )
     return_with_dividends = serializers.DecimalField(
+        max_digits=12, decimal_places=3, read_only=True
+    )
+    return_with_dividends_percent = serializers.DecimalField(
         max_digits=12, decimal_places=3, read_only=True
     )
     dividends_yield = serializers.DecimalField(
@@ -182,6 +187,17 @@ class CompanySerializerGet(serializers.ModelSerializer):
             return f"{year}-{month}"
         return None
 
+    def get_last_dividend_month(self, obj):
+        query = DividendsTransaction.objects.filter(company_id=obj.id).order_by(
+            "transaction_date"
+        )
+        if query.exists():
+            last_transaction = query[len(query) - 1]
+            year = last_transaction.transaction_date.year
+            month = last_transaction.transaction_date.month
+            return f"{year}-{month}"
+        return None
+
     class Meta:
         model = Company
         fields = [
@@ -210,10 +226,12 @@ class CompanySerializerGet(serializers.ModelSerializer):
             "last_updated",
             "first_year",
             "last_transaction_month",
+            "last_dividend_month",
             "accumulated_investment",
             "shares_count",
             "portfolio_value",
             "return_with_dividends",
+            "return_with_dividends_percent",
             "dividends_yield",
         ]
 

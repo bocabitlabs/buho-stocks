@@ -65,6 +65,8 @@ export const useAddDividendsTransaction = (props?: MutateProps) => {
         message: t("Transaction created successfully"),
       });
       queryClient.invalidateQueries({ queryKey: ["dividendsTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["companyYearStats"] });
     },
     onError: () => {
       notifications.show({
@@ -79,13 +81,15 @@ export const useDeleteDividendsTransaction = () => {
   const { t } = useTranslation();
   return useMutation({
     mutationFn: ({ transactionId }: DeleteTransactionMutationProps) =>
-      apiClient.delete(`/dividends/${transactionId}/`),
+      apiClient.delete(`/dividends/${transactionId}/?updatePortfolio=true`),
     onSuccess: () => {
       notifications.show({
         color: "green",
         message: t("Transaction deleted"),
       });
       queryClient.invalidateQueries({ queryKey: ["dividendsTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["companyYearStats"] });
     },
     onError: () => {
       notifications.show({
@@ -122,6 +126,8 @@ export const useUpdateDividendsTransaction = (props?: MutateProps) => {
         message: t("Transaction updated"),
       });
       queryClient.invalidateQueries({ queryKey: ["dividendsTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["companyYearStats"] });
     },
     onError: () => {
       props?.onError?.();

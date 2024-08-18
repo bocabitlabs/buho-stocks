@@ -47,15 +47,21 @@ class DividendsViewSet(viewsets.ModelViewSet):
         self.create_update_dividends_log_message(serializer, company)
         self.add_dividends_update_company_stats(serializer, company)
 
+    def perform_destroy(self, instance):
+        company = Company.objects.get(id=instance.company.id)
+        super().perform_destroy(instance)
+        self.create_delete_dividends_log_message(instance, company)
+        self.add_dividends_update_company_stats(instance, company)
+
     def add_dividends_update_company_stats(self, serializer, company):
         logger.debug(f"Updating company stats for {company.name} after adding dividend")
         transaction_date = datetime.strptime(
             serializer.data.get("transaction_date"), "%Y-%m-%d"
         )
 
-        update_portfolio = self.request.data.get("updatePortfolio", False)
+        update_portfolio = self.request.query_params.get("updatePortfolio", False)
 
-        if update_portfolio:
+        if update_portfolio == "true":
             update_portfolio_stats.delay(
                 company.portfolio_id, [company.id], transaction_date.year
             )
@@ -77,5 +83,12 @@ class DividendsViewSet(viewsets.ModelViewSet):
                 f"Dividend updated: {company.name} ({company.ticker}). Amount: "
                 f"{serializer.data.get('total_amount')}. {serializer.data.get('notes')}"
             ),
+            portfolio=company.portfolio,
+        )
+
+    def create_delete_dividends_log_message(self, instance, company):
+        LogMessage.objects.create(
+            message_type=LogMessage.MESSAGE_TYPE_UPDATE_DIVIDEND,
+            message_text=(f"Dividend deleted: {company.name} ({company.ticker})."),
             portfolio=company.portfolio,
         )

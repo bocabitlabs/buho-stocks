@@ -23,7 +23,7 @@ class Transaction(models.Model):
     )
     total_amount = MoneyField(max_digits=12, decimal_places=3)
     total_commission = MoneyField(max_digits=12, decimal_places=3)
-    notes = models.TextField()
+    notes = models.TextField(blank=True, default="")
     date_created = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True)
 

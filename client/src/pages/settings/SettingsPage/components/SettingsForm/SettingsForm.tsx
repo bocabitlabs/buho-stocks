@@ -32,14 +32,14 @@ function SettingsForm({
     initialValues: {
       companySortBy: settings.companySortBy,
       companyDisplayMode: settings.companyDisplayMode,
-      language: settings.language,
+      language: settings?.language || "en",
       mainPortfolio: settings.mainPortfolio,
       portfolioSortBy: settings.portfolioSortBy,
       portfolioDisplayMode: settings.portfolioDisplayMode,
-      sentryDsn: settings.sentryDsn,
-      sentryEnabled: settings.sentryEnabled,
+      sentryDsn: settings?.sentryDsn || "",
+      sentryEnabled: settings?.sentryEnabled || false,
       displayWelcome: settings.displayWelcome,
-      timezone: settings.timezone,
+      timezone: settings?.timezone || "UTC",
     },
   });
 

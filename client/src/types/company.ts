@@ -54,6 +54,8 @@ export interface ICompany extends ICompanyItemBase {
   accumulatedInvestment: number;
   accumulatedDividends: number;
   dividendsYield: number;
+  returnWithDividends: number;
+  returnWithDividendsPercent: number;
 }
 
 export interface ICompanyListItem extends ICompanyItemBase {

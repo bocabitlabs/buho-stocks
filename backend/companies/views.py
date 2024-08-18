@@ -121,6 +121,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
                 "shares_count",
                 "portfolio_value",
                 "return_with_dividends",
+                "return_with_dividends_percent",
                 "dividends_yield",
             )
         )
@@ -140,6 +141,9 @@ class CompanyViewSet(viewsets.ModelViewSet):
             ),
             return_with_dividends=Subquery(
                 global_stats_subquery.values("return_with_dividends")[:1]
+            ),
+            return_with_dividends_percent=Subquery(
+                global_stats_subquery.values("return_with_dividends_percent")[:1]
             ),
             dividends_yield=Subquery(
                 global_stats_subquery.values("dividends_yield")[:1]

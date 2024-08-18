@@ -36,6 +36,9 @@ class PortfolioStatsGroupedByCompanyAPIView(APIView):
             portfolio_id, year=year, update_api_price=update_api_price
         )
         stats = portfolio_stats.get_year_stats_by_company()
+        logger.debug(f"Stats: {stats}")
+        # remove all years that are None
+        stats = [stat for stat in stats if stat is not None]
         return CompanyStatsForYearSerializer(stats, many=True).data
 
     def get(self, request, portfolio_id, year, *args, **kwargs):

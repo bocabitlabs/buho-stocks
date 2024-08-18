@@ -48,14 +48,20 @@ class RightsViewSet(viewsets.ModelViewSet):
         self.create_update_rights_log_message(serializer, company)
         self.add_rights_update_company_stats(serializer, company)
 
+    def perform_destroy(self, instance):
+        company = Company.objects.get(id=instance.company.id)
+        super().perform_destroy(instance)
+        self.create_delete_rights_log_message(instance, company)
+        self.add_rights_update_company_stats(instance, company)
+
     def add_rights_update_company_stats(self, serializer, company):
         logger.debug(f"Updating company stats for {company.name} after adding rights")
         transaction_date = datetime.strptime(
             serializer.data.get("transaction_date"), "%Y-%m-%d"
         )
 
-        update_portfolio = self.request.data.get("updatePortfolio", False)
-        if update_portfolio:
+        update_portfolio = self.request.query_params.get("updatePortfolio", False)
+        if update_portfolio == "true":
             update_portfolio_stats.delay(
                 company.portfolio_id, [company.id], transaction_date.year
             )
@@ -83,5 +89,12 @@ class RightsViewSet(viewsets.ModelViewSet):
                 f"{serializer.data.get('gross_price_per_share')}. "
                 f"{serializer.data.get('notes')}"
             ),
+            portfolio=company.portfolio,
+        )
+
+    def create_delete_rights_log_message(self, instance, company):
+        LogMessage.objects.create(
+            message_type=LogMessage.MESSAGE_TYPE_DELETE_RIGHTS,
+            message_text=(f"Rights deleted: {company.name} ({company.ticker})."),
             portfolio=company.portfolio,
         )

@@ -62,6 +62,8 @@ export const useAddRightsTransaction = (props?: MutateProps) => {
         message: t("Rights added successfully"),
       });
       queryClient.invalidateQueries({ queryKey: ["rightsTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["companyYearStats"] });
     },
     onError: () => {
       props?.onError?.();
@@ -99,6 +101,8 @@ export const useUpdateRightsTransaction = (props?: MutateProps) => {
         message: t("Rights updated successfully"),
       });
       queryClient.invalidateQueries({ queryKey: ["rightsTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["companyYearStats"] });
     },
     onError: () => {
       props?.onError?.();
@@ -115,13 +119,15 @@ export const useDeleteRightsTransaction = () => {
   const { t } = useTranslation();
   return useMutation({
     mutationFn: ({ transactionId }: IDeleteTransactionMutationProps) =>
-      apiClient.delete(`/rights/${transactionId}/`),
+      apiClient.delete(`/rights/${transactionId}/?updatePortfolio=true`),
     onSuccess: () => {
       notifications.show({
         color: "green",
         message: t("Rights deleted successfully"),
       });
       queryClient.invalidateQueries({ queryKey: ["rightsTransactions"] });
+      queryClient.invalidateQueries({ queryKey: ["portfolios"] });
+      queryClient.invalidateQueries({ queryKey: ["companyYearStats"] });
     },
     onError: () => {
       notifications.show({
