@@ -36,11 +36,15 @@ User guides are available [in its corresponding section](./user-guides/index.md)
 
 # Navigation
 
-1. [User Guides](./user-guides/index.md)
-   1. [Deploy the application using Docker Compose](deploy-docker-compose.md)
-   2. [Initialize the app data](initialize-app-data.md)
-   3. [Create a portfolio](create-portfolio.md)
-2. [Development guides](./development/index.md)
-   1. [Requirements](./development/requirements.md)
-   2. [Select a database](./development/database-select.md)
-   3. [Install and run the project locally](./development/run-project-locally.md)
+1. [User Guides](/user-guides/index.md)
+   1. [Deploy the application using Docker Compose](/user-guides/deploy-docker-compose.md)
+   2. [Initialize the app data](/user-guides/initialize-app-data.md)
+   3. [Create a portfolio](/user-guides/create-portfolio.md)
+   4. [Create a company](/user-guides/create-company.md)
+   5. Add your first shares and dividends
+   6. Import dividends from Interactive Brokers
+   7. Analyze your portfolio stats and charts
+2. [Development guides](/development/index.md)
+   1. [Requirements](/development/requirements.md)
+   2. [Select a database](/development/database-select.md)
+   3. [Install and run the project locally](/development/run-project-locally.md)
