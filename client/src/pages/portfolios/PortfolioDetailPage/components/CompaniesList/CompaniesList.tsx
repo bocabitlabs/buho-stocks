@@ -138,7 +138,7 @@ function CompanyNameCell({
         <Text size="sm">{row.original.name}</Text>
       </Anchor>
       <Text c="dimmed" size="xs">
-        {row.original.allStats && row.original.allStats.sectorName}
+        {row.original.sector.name}
       </Text>
     </Stack>
   );
@@ -155,7 +155,7 @@ function TickerCell({
         {row.original.ticker}
       </Text>
       <Text c="dimmed" size="xs">
-        {row.original.allStats && row.original.allStats.marketName}
+        {row.original.market.name}
       </Text>
     </Stack>
   );
@@ -190,6 +190,10 @@ export default function CompaniesList({
         accessorKey: "logo",
         header: "",
         Cell: LogoCell,
+        size: 50, //small column
+        enableSorting: false,
+        enableColumnFilter: false,
+        enableColumnActions: false,
       },
       {
         accessorKey: "name",

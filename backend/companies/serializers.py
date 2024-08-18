@@ -222,7 +222,7 @@ class CompanySearchSerializer(serializers.Serializer):
     country = serializers.CharField(max_length=200)
     financialCurrency = serializers.CharField(max_length=200)
     industry = serializers.CharField(max_length=200)
-    irWebsite = serializers.CharField(max_length=200)
+    website = serializers.CharField(max_length=200)
     isin = serializers.CharField(max_length=200)
     longBusinessSummary = serializers.CharField(max_length=200)
     shortName = serializers.CharField(max_length=200)

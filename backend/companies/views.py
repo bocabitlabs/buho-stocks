@@ -162,9 +162,7 @@ class CompanyViewSet(viewsets.ModelViewSet):
         )
 
     def get_serializer_class(self):
-        if self.action == "list":
-            return CompanySerializer
-        elif self.action == "retrieve":
+        if self.action == "list" or self.action == "retrieve":
             return CompanySerializerGet
         return super().get_serializer_class()
 

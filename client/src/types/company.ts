@@ -76,7 +76,7 @@ export interface ICompanySearchResult {
   country: string;
   financialCurrency: string;
   industry: string;
-  irWebsite: string;
+  website: string;
   isin: string;
   longBusinessSummary: string;
   shortName: string;
