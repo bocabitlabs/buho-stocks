@@ -1,4 +1,3 @@
-import { ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { rem, Tabs } from "@mantine/core";
@@ -23,7 +22,7 @@ export default function TransactionsTabs({
   companyBaseCurrency,
   companyDividendsCurrency,
   portfolioBaseCurrency,
-}: IProps): ReactElement {
+}: IProps) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const query = useQueryParameters();
