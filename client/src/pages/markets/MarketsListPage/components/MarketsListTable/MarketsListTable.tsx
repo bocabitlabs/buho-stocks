@@ -75,7 +75,7 @@ export default function MarketsListTable({ mrtLocalization }: Props) {
   const { t } = useTranslation();
   const [pagination, setPagination] = useState<MRT_PaginationState>({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 4,
   });
   const {
     data: marketsData,
