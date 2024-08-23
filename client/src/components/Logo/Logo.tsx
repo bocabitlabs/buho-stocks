@@ -5,7 +5,7 @@ export default function Logo() {
     <Group>
       <Image
         fit="contain"
-        src="/icons/android-icon-72x72.png"
+        src="/icons/favicon-96x96.png"
         width="auto"
         height={40}
         style={{ width: "auto" }}
