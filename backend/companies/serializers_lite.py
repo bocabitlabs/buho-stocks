@@ -19,4 +19,5 @@ class CompanySerializerLite(serializers.ModelSerializer):
             "dividends_currency",
             "market",
             "sector",
+            "is_closed",
         ]
