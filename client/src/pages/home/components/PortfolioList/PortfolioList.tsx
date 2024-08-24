@@ -32,7 +32,13 @@ export default function PortfolioList(): ReactElement {
     <Grid>
       {portfolios?.map((portfolio) => (
         <Grid.Col span={{ base: 12, md: 6, lg: 4 }} key={portfolio.id}>
-          <PortfolioCard key={portfolio.id} portfolio={portfolio} />
+          <PortfolioCard
+            key={portfolio.id}
+            currencyCode={portfolio.baseCurrency.code}
+            name={portfolio.name}
+            id={portfolio.id}
+            companies={portfolio.companies}
+          />
         </Grid.Col>
       ))}
     </Grid>
