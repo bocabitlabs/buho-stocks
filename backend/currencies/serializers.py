@@ -6,4 +6,4 @@ from currencies.models import Currency
 class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Currency
-        fields = ["name", "code", "symbol", "id"]
+        fields = ["name", "code", "symbol", "id", "date_created", "last_updated"]

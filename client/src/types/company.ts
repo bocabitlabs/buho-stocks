@@ -58,10 +58,15 @@ export interface ICompany extends ICompanyItemBase {
   returnWithDividendsPercent: number;
 }
 
-export interface ICompanyListItem extends ICompanyItemBase {
+export interface ICompanyListItem {
+  id: number;
+  name: string;
+  ticker: string;
+  isClosed: boolean;
+  sector: ISector;
+  market: IMarket;
   baseCurrency: string;
   dividendsCurrency: string;
-  sectorName: string;
 }
 
 export interface ICompanyRouteParams {

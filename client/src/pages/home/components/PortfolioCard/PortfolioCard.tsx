@@ -1,42 +1,52 @@
-import { ReactElement } from "react";
+import { ReactElement, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Card, Center, Group, Text } from "@mantine/core";
 import { IconBuildingCommunity } from "@tabler/icons-react";
 import PortfolioAllStats from "./components/PortfolioAllStats/PortfolioAllStats";
 import CountryFlag from "components/CountryFlag/CountryFlag";
-import { IPortfolio } from "types/portfolio";
+import { ICompanyListItem } from "types/company";
 
 interface Props {
-  portfolio: IPortfolio;
+  currencyCode: string;
+  name: string;
+  id: number;
+  companies: ICompanyListItem[];
 }
 
 export default function PortfolioCard({
-  portfolio,
+  companies,
+  currencyCode,
+  name,
+  id,
 }: Readonly<Props>): ReactElement {
   const { t } = useTranslation();
 
+  const openCompaniesLength = useMemo(
+    () => companies.filter((company) => !company.isClosed).length,
+    [companies],
+  );
+
   return (
-    <Link to={`/portfolios/${portfolio.id}`} style={{ textDecoration: "none" }}>
+    <Link to={`/portfolios/${id}`} style={{ textDecoration: "none" }}>
       <Card withBorder shadow="sm" radius="md">
         <Card.Section withBorder inheritPadding py="xs">
           <Group justify="space-between">
-            <Text fw={500}>{portfolio.name}</Text>
-            <CountryFlag code={portfolio.baseCurrency.code} />
+            <Text fw={500}>{name}</Text>
+            <CountryFlag code={currencyCode} />
           </Group>
         </Card.Section>
         <Card.Section withBorder inheritPadding py="xs">
           <Group justify="space-between">
             <Center>
               <Text>
-                <IconBuildingCommunity /> {portfolio.companies.length}{" "}
-                {t("companies")}
+                <IconBuildingCommunity /> {openCompaniesLength} {t("companies")}
               </Text>
             </Center>
           </Group>
         </Card.Section>
         <Card.Section withBorder inheritPadding py="xs">
-          <PortfolioAllStats portfolioId={portfolio.id} />
+          <PortfolioAllStats portfolioId={id} />
         </Card.Section>
       </Card>
     </Link>
