@@ -133,3 +133,4 @@ volumes/logs
 .env.prod
 *yfinance.cache
 dump.rdb
+client/dev-dist/
