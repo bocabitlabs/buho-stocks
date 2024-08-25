@@ -23,22 +23,22 @@ export default ({ command, mode }) => {
           theme_color: '#ffffff',
           icons: [
             {
-              src: '/icons/favicon-96x96.png',
+              src: '/favicon-96x96.png',
               sizes: '96x96',
               type: 'image/png'
             },
             {
-              src: '/icons/apple-icon-144x144.png',
+              src: '/apple-icon-144x144.png',
               sizes: '144x144',
               type: 'image/png'
             },
             {
-              src: '/icons/apple-icon-192x192.png',
+              src: '/apple-icon-192x192.png',
               sizes: '192x192',
               type: 'image/png'
             },
             {
-              src: '/icons/apple-icon-512x512.png',
+              src: '/apple-icon-512x512.png',
               sizes: '512x512',
               type: 'image/png'
             }
