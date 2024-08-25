@@ -113,7 +113,10 @@ function Layout() {
         </AppShell.Navbar>
         <AppShell.Main
           style={{
-            backgroundColor: colorScheme === "dark" ? "" : theme.colors.gray[0],
+            backgroundColor:
+              colorScheme === "dark"
+                ? theme.colors.gray[9]
+                : theme.colors.gray[0],
           }}
         >
           <Outlet />
