@@ -166,9 +166,14 @@ class CompanySerializerGet(serializers.ModelSerializer):
 
     def get_logo(self, obj):
         request = self.context.get("request")
-        photo_url = obj.fingerprint.url
         if request:
-            return request.build_absolute_uri(photo_url)
+            photo_url = obj.fingerprint.url
+            logo_url = (
+                request.build_absolute_uri(photo_url)
+                .replace("http://", "//")
+                .replace("https://", "//")
+            )
+            return logo_url
         return None
 
     def get_first_year(self, obj):
