@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "buho-stocks"
-version = "1.0.4-beta1"
+version = "1.0.4-beta.2"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{ include = "backend" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.11"
 celery = "^5.3.4"
 channels = { extras = ["daphne"], version = "^4.0.0" }
 channels-redis = "^4.1.0"
