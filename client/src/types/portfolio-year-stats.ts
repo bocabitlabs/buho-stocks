@@ -1,22 +1,21 @@
 export interface IPortfolioYearStats {
-  company: {
-    id: number;
-    name: string;
-    ticker: string;
-    baseCurrency: string;
-    dividendsCurrency: string;
-  };
+  // company: {
+  //   id: number;
+  //   name: string;
+  //   ticker: string;
+  //   baseCurrency: string;
+  //   dividendsCurrency: string;
+  // };
   year: number;
-  invested: number;
-  dividends: number;
-  dividendsYield: number;
-  sharesCount: number;
+  invested: string;
+  dividends: string;
+  dividendsYield: string;
   portfolioCurrency: string;
-  accumulatedInvestment: number;
-  accumulatedDividends: number;
-  portfolioValue: number;
-  returnValue: number;
-  returnPercent: number;
-  returnWithDividends: number;
-  returnWithDividendsPercent: number;
+  accumulatedInvestment: string;
+  accumulatedDividends: string;
+  portfolioValue: string;
+  returnValue: string;
+  returnPercent: string;
+  returnWithDividends: string;
+  returnWithDividendsPercent: string;
 }

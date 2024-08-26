@@ -10,7 +10,10 @@ interface Props {
   indexData: IBenchmark | undefined;
 }
 
-export default function ChartPortfolioReturns({ data, indexData }: Props) {
+export default function ChartPortfolioReturns({
+  data,
+  indexData,
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
   const series = useMemo(() => {

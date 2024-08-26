@@ -13,7 +13,7 @@ interface Props {
 export default function ChartPortfolioDividends({
   data,
   baseCurrencyCode,
-}: Props) {
+}: Readonly<Props>) {
   const { t } = useTranslation();
 
   const { resolvedLanguage } = i18next;

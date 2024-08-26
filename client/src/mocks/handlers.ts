@@ -1,15 +1,22 @@
 import { http, HttpResponse } from "msw";
+import { allBenchmarksList } from "./responses/benchmarks/allBenchmarksList";
 import currenciesList from "./responses/currencies";
 import allMarkets from "./responses/markets/allMarkets";
+import timezonesResponse from "./responses/markets/markets-timezones";
 import {
   page1Markets,
   page2Markets,
 } from "./responses/markets/paginatedMarkets";
-import timezonesResponse from "./responses/markets-timezones";
+import { portfolioDetails } from "./responses/portfolios/portfolioDetails";
+import { allSectorsList } from "./responses/sectors/allSectorsList";
 import settingsMock from "./responses/settings";
-import allYears from "./responses/stats-1-year-all";
+import allYears from "./responses/stats/stats-1-year-all";
+import { portfolioYearAllStats } from "./responses/stats/yearsAll";
 
 export const handlers = [
+  http.get("http://127.0.0.1:8001/api/v1/benchmarks/", () => {
+    return HttpResponse.json(allBenchmarksList);
+  }),
   http.get("http://127.0.0.1:8001/api/v1/currencies/", () => {
     return HttpResponse.json(currenciesList);
   }),
@@ -29,7 +36,9 @@ export const handlers = [
 
     return HttpResponse.json(allMarkets);
   }),
-
+  http.get("http://127.0.0.1:8001/api/v1/sectors/", () => {
+    return HttpResponse.json(allSectorsList);
+  }),
   http.get("http://127.0.0.1:8001/api/v1/timezones/", () => {
     return HttpResponse.json(timezonesResponse);
   }),
@@ -37,10 +46,13 @@ export const handlers = [
     return HttpResponse.json(settingsMock);
   }),
   http.get("http://127.0.0.1:8001/api/v1/portfolios/1/", () => {
-    return HttpResponse.json(allYears);
+    return HttpResponse.json(portfolioDetails);
   }),
   http.get("http://127.0.0.1:8001/api/v1/stats/portfolio/1/", () => {
     return HttpResponse.json(allYears);
+  }),
+  http.get("http://127.0.0.1:8001/api/v1/stats/portfolio/1/year/all/", () => {
+    return HttpResponse.json(portfolioYearAllStats);
   }),
 ];
 

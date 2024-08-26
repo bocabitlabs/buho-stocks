@@ -4,8 +4,8 @@ export interface IBenchmarkFormFields {
 
 export interface IBenchmarkYearFormFields {
   year: number;
-  returnPercentage: number;
-  value: number;
+  returnPercentage: string;
+  value: string;
   valueCurrency: string;
   benchmark: number;
 }
@@ -14,6 +14,12 @@ export interface IBenchmarkYear extends IBenchmarkYearFormFields {
   id: number;
   dateCreated: string;
   lastUpdated: string;
+}
+
+export interface IBenchmarkItem extends IBenchmarkFormFields {
+  dateCreated: string;
+  lastUpdated: string;
+  id: number;
 }
 
 export interface IBenchmark extends IBenchmarkFormFields {
