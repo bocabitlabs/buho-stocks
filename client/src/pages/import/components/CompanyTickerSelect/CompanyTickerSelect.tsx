@@ -24,9 +24,12 @@ export default function CompanyTickerSelect({
   const combobox = useCombobox({
     onDropdownClose: () => {
       combobox.resetSelectedOption();
+      combobox.focusTarget();
       setSearch("");
     },
     onDropdownOpen: (eventSource) => {
+      combobox.focusSearchInput();
+
       if (eventSource === "keyboard") {
         combobox.selectActiveOption();
       } else {
