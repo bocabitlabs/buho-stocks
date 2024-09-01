@@ -23,6 +23,7 @@ import CompanyTickerSelectProvider from "pages/import/components/CompanyTickerSe
 import { ICsvDividendRow } from "types/csv";
 import { IDividendsTransactionFormFields } from "types/dividends-transaction";
 import { IPortfolio } from "types/portfolio";
+import { maxDecimalPlaces } from "utils/numbers";
 
 interface Props {
   portfolio: IPortfolio;
@@ -47,9 +48,9 @@ export default function DividendsImportForm({
     mode: "uncontrolled",
     initialValues: {
       transactionDate: new Date(dividend.date),
-      totalAmount: dividend.amount,
+      totalAmount: maxDecimalPlaces(dividend.amount, 3),
       totalAmountCurrency: dividend.currency,
-      totalCommission: dividend.commissions,
+      totalCommission: maxDecimalPlaces(dividend.commissions, 3),
       totalCommissionCurrency: dividend.currency,
       notes: dividend.description,
       exchangeRate: 1,
@@ -154,7 +155,7 @@ export default function DividendsImportForm({
                       label={t("Exchange Rate")}
                       key={form.key("exchangeRate")}
                       suffix={` ${dividend.currency}${portfolio?.baseCurrency.code}`}
-                      decimalScale={2}
+                      decimalScale={3}
                       description={`${dividend.currency} ${t("to")} ${
                         portfolio?.baseCurrency.code
                       }`}
