@@ -33,9 +33,13 @@ class TransactionCalculator:
         if use_portfolio_currency:
             exchange_rate = transaction.exchange_rate
 
+        if transaction.total_amount.amount < 0:
+            transaction.total_amount.amount *= -1
+
         total = (transaction.total_amount.amount * exchange_rate) + (
             transaction.total_commission.amount * exchange_rate
         )
+
         return total
 
     def calculate_transactions_amount(

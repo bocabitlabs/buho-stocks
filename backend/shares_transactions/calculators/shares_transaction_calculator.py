@@ -188,7 +188,11 @@ class SharesTransactionCalculator:
             if item.type == TransactionType.BUY:
                 total += item.count
             else:
-                total -= item.count
+                # If its a sell transaction but the count is possitive
+                if item.count > 0:
+                    total -= item.count
+                else:
+                    total += item.count
         return total
 
     def calculate_shares_count_on_year(self, year: int) -> int:
@@ -205,10 +209,11 @@ class SharesTransactionCalculator:
         query = self._get_multiple_transactions_query(year)
 
         for item in query:
-            if item.type == TransactionType.BUY:
-                total += item.count
-            else:
+            # If its a sell transaction but the count is possitive
+            if item.count > 0:
                 total -= item.count
+            else:
+                total += item.count
         return total
 
     def get_shares_count_until_current_year(self) -> int:
@@ -221,6 +226,18 @@ class SharesTransactionCalculator:
         if year == settings.YEAR_FOR_ALL:
             year = date.today().year
         query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
+        transactions_utils = TransactionCalculator()
+        total = transactions_utils.calculate_transactions_amount(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+        # logger.debug(f"Total accumulated return from sales: {total}")
+        return total
+
+    def calculate_total_buys_until_year(self, year: int) -> Decimal:
+        total: Decimal = Decimal(0)
+        if year == settings.YEAR_FOR_ALL:
+            year = date.today().year
+        query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
         transactions_utils = TransactionCalculator()
         total = transactions_utils.calculate_transactions_amount(
             query, use_portfolio_currency=self.use_portfolio_currency
