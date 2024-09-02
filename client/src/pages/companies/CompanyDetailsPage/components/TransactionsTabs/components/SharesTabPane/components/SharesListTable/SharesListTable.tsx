@@ -47,6 +47,13 @@ function TotalPriceCell({
         suffix={` ${row.original.totalAmountCurrency}`}
         decimalScale={2}
       />
+      <Text c="dimmed" size="sm">
+        <NumberFormatter
+          value={row.original.exchangeRate}
+          prefix={`ER: `}
+          decimalScale={2}
+        />
+      </Text>
     </Stack>
   );
 }
@@ -56,25 +63,28 @@ function CommissionCell({
 }: Readonly<{
   row: MRT_Row<ISharesTransaction>;
 }>) {
-  const comissionPercentage =
+  let comissionPercentage =
     (+row.original.totalCommission / +row.original.totalAmount) * 100;
+
+  if (comissionPercentage < 0) {
+    comissionPercentage *= -1;
+  }
+
   return (
-    <Group>
+    <Stack>
       <NumberFormatter
         value={row.original.totalCommission}
         suffix={` ${row.original.totalCommissionCurrency}`}
         decimalScale={2}
       />
       <Text c="dimmed" size="sm">
-        (
         <NumberFormatter
           value={comissionPercentage}
           suffix={` %`}
           decimalScale={2}
         />
-        )
       </Text>
-    </Group>
+    </Stack>
   );
 }
 
@@ -140,6 +150,7 @@ export default function DividendsListTable({
 
   const onCloseCallback = () => {
     setIsModalVisible(false);
+    setSelectedId(undefined);
   };
 
   const confirmDelete = async (recordId: number | undefined) => {

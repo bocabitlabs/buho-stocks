@@ -19,10 +19,17 @@ export default function CompanyTickerSelect({
   description = undefined,
 }: Props) {
   const { t } = useTranslation();
+  const [search, setSearch] = useState("");
   const [value, setValue] = useState<ICompany | undefined>(initialValue);
   const combobox = useCombobox({
-    onDropdownClose: () => combobox.resetSelectedOption(),
+    onDropdownClose: () => {
+      combobox.resetSelectedOption();
+      combobox.focusTarget();
+      setSearch("");
+    },
     onDropdownOpen: (eventSource) => {
+      combobox.focusSearchInput();
+
       if (eventSource === "keyboard") {
         combobox.selectActiveOption();
       } else {
@@ -31,15 +38,19 @@ export default function CompanyTickerSelect({
     },
   });
 
-  const options = companies.map((item) => (
-    <Combobox.Option
-      value={item.id.toString()}
-      key={item.id.toString()}
-      active={item.id.toString() === value?.id.toString()}
-    >
-      {item.name} ({item.ticker})
-    </Combobox.Option>
-  ));
+  const options = companies
+    .filter((item) =>
+      item.ticker.toLowerCase().includes(search.toLowerCase().trim()),
+    )
+    .map((item) => (
+      <Combobox.Option
+        value={item.id.toString()}
+        key={item.id.toString()}
+        active={item.id.toString() === value?.id.toString()}
+      >
+        {item.name} ({item.ticker})
+      </Combobox.Option>
+    ));
 
   const onValueChange = useCallback(
     (selectedVal: string) => {
@@ -83,7 +94,14 @@ export default function CompanyTickerSelect({
         </InputBase>
       </Combobox.Target>
       <Combobox.Dropdown>
-        <Combobox.Options>{options}</Combobox.Options>
+        <Combobox.Search
+          value={search}
+          onChange={(event) => setSearch(event.currentTarget.value)}
+          placeholder="Search companies"
+        />
+        <Combobox.Options mah={200} style={{ overflowY: "auto" }}>
+          {options}
+        </Combobox.Options>
       </Combobox.Dropdown>
     </Combobox>
   );

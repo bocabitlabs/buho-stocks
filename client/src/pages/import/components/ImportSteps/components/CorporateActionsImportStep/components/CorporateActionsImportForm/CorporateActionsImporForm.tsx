@@ -24,6 +24,7 @@ import CompanyTickerSelectProvider from "pages/import/components/CompanyTickerSe
 import { ICsvCorporateActionsRow } from "types/csv";
 import { IPortfolio } from "types/portfolio";
 import { ISharesTransactionFormFields } from "types/shares-transaction";
+import { maxDecimalPlaces } from "utils/numbers";
 
 interface Props {
   portfolio: IPortfolio;
@@ -61,15 +62,15 @@ export default function CorporateActionsImportForm({
     mode: "uncontrolled",
     initialValues: {
       transactionDate: new Date(corporateAction.date),
-      totalAmount: corporateAction.totalWithCommission,
+      totalAmount: maxDecimalPlaces(corporateAction.totalWithCommission, 3),
       totalAmountCurrency: corporateAction.currency,
-      totalCommission: corporateAction.commission,
+      totalCommission: maxDecimalPlaces(corporateAction.commission, 3),
       totalCommissionCurrency: corporateAction.currency,
       notes: corporateAction.description,
       exchangeRate: 1,
       company: 0,
       count: corporateAction.count,
-      grossPricePerShare: corporateAction.price,
+      grossPricePerShare: maxDecimalPlaces(corporateAction.price, 3),
       grossPricePerShareCurrency: corporateAction.currency,
       type: corporateAction.count < 0 ? "SELL" : "BUY",
     },
@@ -201,7 +202,7 @@ export default function CorporateActionsImportForm({
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("totalAmount")}
                   suffix={` ${corporateAction.currency}`}
-                  decimalScale={2}
+                  decimalScale={3}
                 />
               </Grid.Col>
               <Grid.Col span={6}>
@@ -213,7 +214,7 @@ export default function CorporateActionsImportForm({
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("grossPricePerShare")}
                   suffix={` ${corporateAction.currency}`}
-                  decimalScale={2}
+                  decimalScale={3}
                 />
               </Grid.Col>
               <Grid.Col span={6}>
@@ -227,7 +228,7 @@ export default function CorporateActionsImportForm({
                   // eslint-disable-next-line react/jsx-props-no-spreading
                   {...form.getInputProps("totalCommission")}
                   suffix={` ${corporateAction.currency}`}
-                  decimalScale={2}
+                  decimalScale={3}
                 />
               </Grid.Col>
               <Grid.Col span={6}>
@@ -249,7 +250,7 @@ export default function CorporateActionsImportForm({
                       label={t("Exchange Rate")}
                       key={form.key("exchangeRate")}
                       suffix={` ${corporateAction.currency}${portfolio?.baseCurrency.code}`}
-                      decimalScale={2}
+                      decimalScale={3}
                       description={`${corporateAction.currency} ${t("to")} ${
                         portfolio.baseCurrency.code
                       }`}

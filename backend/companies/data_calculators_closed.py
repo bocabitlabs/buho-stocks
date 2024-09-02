@@ -64,29 +64,17 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
         total: Decimal = Decimal(0)
 
         # Any year after the last sell transaction year
-        if (
-            int(year) >= self.last_transaction.transaction_date.year
-            and year != settings.YEAR_FOR_ALL
-        ):
+        if int(year) >= self.last_transaction.transaction_date.year:
             return Decimal(0)
-        # YEAR_FOR_ALL
-        if (
-            int(year) == settings.YEAR_FOR_ALL
-            or int(year) < self.last_transaction.transaction_date.year
-        ):
-            total = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
-                year
-            )
-            return total
+
         # Years before the last sell transaction
-        if int(year) < self.last_transaction.transaction_date.year:
-            total += self.shares_calculator.calculate_accumulated_investment_until_year(
-                year
-            )
-            total += self.rights_calculator.calculate_accumulated_investment_until_year(
-                year
-            )
-            logger.debug(f"Total accum on year {year}: {total}")
+        total += self.shares_calculator.calculate_accumulated_investment_until_year(
+            year
+        )
+        total += self.rights_calculator.calculate_accumulated_investment_until_year(
+            year
+        )
+        logger.debug(f"Total accum on year {year}: {total}")
 
         return total
 
@@ -109,36 +97,6 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
         if int(year) < self.last_transaction.transaction_date.year:
             logger.debug("Year is before last sell")
             return super().calculate_company_value_on_year(year)
-        # year > last_transaction and != YEAR_FOR_ALL
-        # 0
-        elif (
-            int(year) > self.last_transaction.transaction_date.year
-            and year != settings.YEAR_FOR_ALL
-        ):
-            logger.debug("Year is after last sell and not ALL")
-            return Decimal(0)
-
-        # year > last_transaction and == YEAR_FOR_ALL
-        # or year == last_transaction
-        # get the value from last sell * exchange rate
-        elif (
-            int(year) > self.last_transaction.transaction_date.year
-            and year == settings.YEAR_FOR_ALL
-        ) or (int(year) == self.last_transaction.transaction_date.year):
-            logger.debug("Year is the same as last sell or ALL")
-            exchange_rates_fetcher = ExchangeRateFetcher()
-            datetime_from_date = datetime.datetime.combine(
-                self.last_transaction.transaction_date, datetime.datetime.min.time()
-            )
-            exchange_rate = exchange_rates_fetcher.get_exchange_rate_for_date(
-                self.company.base_currency,
-                self.company.portfolio.base_currency,
-                datetime_from_date,
-            )
-            if exchange_rate:
-                total = self.last_transaction.total_amount.amount * Decimal(
-                    exchange_rate.exchange_rate
-                )
 
         return total
 
@@ -181,26 +139,21 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
         if int(year) < self.last_transaction.transaction_date.year:
             logger.debug("Year is before last sell")
             return super().calculate_return_on_year(year)
-        # year > last_transaction and != YEAR_FOR_ALL
-        # 0
-        elif (
-            int(year) > self.last_transaction.transaction_date.year
-            and year != settings.YEAR_FOR_ALL
-        ):
-            logger.debug("Year is after last sell and not ALL")
-            return Decimal(0)
 
-        elif (
-            int(year) > self.last_transaction.transaction_date.year
-            and year == settings.YEAR_FOR_ALL
-        ) or (int(year) == self.last_transaction.transaction_date.year):
-            accum_investment = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
+        sales = (
+            self.shares_calculator.calculate_accumulated_return_from_sales_until_year(
                 year
             )
+        )
+        buys = self.shares_calculator.calculate_total_buys_until_year(year)
 
-            company_value = self.calculate_company_value_on_year(year)
+        # accum_investment = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
+        #     year
+        # )
 
-            total = company_value - accum_investment
+        # company_value = self.calculate_company_value_on_year(year)
+
+        total = sales - buys
 
         return total
 
@@ -210,29 +163,11 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
         if int(year) < self.last_transaction.transaction_date.year:
             logger.debug("Year is before last sell")
             return super().calculate_return_with_dividends_on_year(year)
-        # year > last_transaction and != YEAR_FOR_ALL
-        # 0
-        elif (
-            int(year) > self.last_transaction.transaction_date.year
-            and year != settings.YEAR_FOR_ALL
-        ):
-            logger.debug("Year is after last sell and not ALL")
-            return Decimal(0)
 
-        elif (
-            int(year) > self.last_transaction.transaction_date.year
-            and year == settings.YEAR_FOR_ALL
-        ) or (int(year) == self.last_transaction.transaction_date.year):
-            accum_investment = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
-                year
-            )
+        return_year = self.calculate_return_on_year(year)
+        accumulated_dividends = self.calculate_accumulated_dividends_until_year(year)
 
-            company_value = self.calculate_company_value_on_year(year)
-            accumulated_dividends = self.calculate_accumulated_dividends_until_year(
-                year
-            )
-
-        return company_value - accum_investment + accumulated_dividends
+        return return_year + accumulated_dividends
 
     def calculate_return_yield_on_year(self, year: int) -> Decimal:
         return_value = self.calculate_return_on_year(year)
