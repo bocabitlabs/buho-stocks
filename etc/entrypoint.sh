@@ -18,6 +18,10 @@ echo 'Load virtual env...'
 . /usr/src/.venv/bin/activate
 echo 'Virtual env loaded!'
 
+echo 'Go to app dir...'
+cd /usr/src/app
+echo 'on app dir!'
+
 echo 'Running migrations...'
 python manage.py migrate
 echo 'Migrations finished!'
