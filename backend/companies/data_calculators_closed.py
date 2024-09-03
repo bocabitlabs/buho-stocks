@@ -167,17 +167,14 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
         return return_year + accumulated_dividends
 
     def calculate_return_yield_on_year(self, year: int) -> Decimal:
+
         return_value = self.calculate_return_on_year(year)
 
-        if (
-            int(year) == self.last_transaction.transaction_date.year
-            or year == settings.YEAR_FOR_ALL
-        ) or (int(year) == self.last_transaction.transaction_date.year):
-            total_invested = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
-                year
-            )
-        else:
-            total_invested = self.calculate_accumulated_investment_until_year(year)
+        # Years before the last sell transaction
+        total_invested = Decimal(0)
+        total_invested = self.shares_calculator.calculate_total_investments_until_year(
+            year
+        )
 
         if total_invested != 0:
             return (return_value / total_invested) * 100
@@ -185,15 +182,9 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
 
     def calculate_return_yield_with_dividends_on_year(self, year: int) -> Decimal:
         return_with_dividends = self.calculate_return_with_dividends_on_year(year)
-        if (
-            int(year) == self.last_transaction.transaction_date.year
-            or year == settings.YEAR_FOR_ALL
-        ) or (int(year) == self.last_transaction.transaction_date.year):
-            total_invested = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
-                year
-            )
-        else:
-            total_invested = self.calculate_accumulated_investment_until_year(year)
+        total_invested = self.shares_calculator.calculate_total_investments_until_year(
+            year
+        )
 
         if total_invested != 0:
             return (return_with_dividends / total_invested) * 100

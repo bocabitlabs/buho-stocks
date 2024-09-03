@@ -152,13 +152,13 @@ class SharesTransactionCalculator:
         # BUY
         query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
         transactions_calculator = TransactionCalculator()
-        buy_total = transactions_calculator.calculate_transactions_amount(
+        buy_total = transactions_calculator.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
         # SELL
         query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
         transactions_calculator = TransactionCalculator()
-        sell_total = transactions_calculator.calculate_transactions_amount(
+        sell_total = transactions_calculator.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
 
