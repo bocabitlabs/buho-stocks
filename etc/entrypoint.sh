@@ -15,7 +15,7 @@ if [ "$DB_TYPE" = "mysql" ] || [ "$DB_TYPE" = "postgresql" ]; then
 fi
 
 echo 'Load virtual env...'
-. /usr/src/app/.venv/bin/activate
+. /usr/src/.venv/bin/activate
 echo 'Virtual env loaded!'
 
 echo 'Running migrations...'
