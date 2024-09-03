@@ -221,25 +221,43 @@ class SharesTransactionCalculator:
         total = self.calculate_shares_count_until_year(year)
         return total
 
-    def calculate_accumulated_return_from_sales_until_year(self, year: int) -> Decimal:
+    def calculate_total_sales_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
         if year == settings.YEAR_FOR_ALL:
             year = date.today().year
+
         query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
+
         transactions_utils = TransactionCalculator()
-        total = transactions_utils.calculate_transactions_amount(
+        total = transactions_utils.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
         # logger.debug(f"Total accumulated return from sales: {total}")
         return total
 
-    def calculate_total_buys_until_year(self, year: int) -> Decimal:
+    def calculate_total_investments_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
         if year == settings.YEAR_FOR_ALL:
             year = date.today().year
+
         query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
+
         transactions_utils = TransactionCalculator()
-        total = transactions_utils.calculate_transactions_amount(
+        total = transactions_utils.calculate_investments(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+        # logger.debug(f"Total accumulated return from sales: {total}")
+        return total
+
+    def calculate_total_commissions_until_year(self, year: int) -> Decimal:
+        total: Decimal = Decimal(0)
+        if year == settings.YEAR_FOR_ALL:
+            year = date.today().year
+
+        query = self._get_multiple_transactions_query(year, use_accumulated=True)
+
+        transactions_utils = TransactionCalculator()
+        total = transactions_utils.calculate_commissions(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
         # logger.debug(f"Total accumulated return from sales: {total}")
