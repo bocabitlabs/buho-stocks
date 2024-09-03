@@ -140,20 +140,17 @@ class CompanyClosedDataCalculator(CompanyDataCalculator):
             logger.debug("Year is before last sell")
             return super().calculate_return_on_year(year)
 
-        sales = (
-            self.shares_calculator.calculate_accumulated_return_from_sales_until_year(
-                year
-            )
+        investments = self.shares_calculator.calculate_total_investments_until_year(
+            year
         )
-        buys = self.shares_calculator.calculate_total_buys_until_year(year)
+        # Commissions from all the transactions
+        commissions = self.shares_calculator.calculate_total_commissions_until_year(
+            year
+        )
 
-        # accum_investment = self.shares_calculator.calculate_accumulated_investment_until_year_excluding_last_sale(  # noqa
-        #     year
-        # )
+        sales = self.shares_calculator.calculate_total_sales_until_year(year)
 
-        # company_value = self.calculate_company_value_on_year(year)
-
-        total = sales - buys
+        total = sales - investments - commissions
 
         return total
 

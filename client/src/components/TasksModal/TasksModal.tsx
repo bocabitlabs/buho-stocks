@@ -87,7 +87,9 @@ function TasksModal() {
             ),
             withCloseButton: lastJsonMessage.status.status === "COMPLETED",
             loading: lastJsonMessage.status.status === "PROGRESS",
-            autoClose: false,
+            autoClose:
+              lastJsonMessage.status.status === "COMPLETED" ? 5 : false,
+            showCloseButton: lastJsonMessage.status.status === "COMPLETED",
           });
           return updatedMessages;
         }
