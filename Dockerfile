@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/
 
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -31,10 +31,10 @@ COPY poetry.lock ./
 # Using Poetry to install dependencies without requiring the project main files to be present
 RUN pip install poetry==${POETRY_VERSION} && poetry install --only main --no-root --no-directory
 
-COPY ./backend $WORKDIR
-COPY ./etc /usr/src/etc
+COPY ./backend $WORKDIR/app
+COPY ./etc ${WORKDIR}/etc
 
-RUN chmod +x /usr/src/etc/entrypoint.sh
+RUN chmod +x ${WORKDIR}/etc/entrypoint.sh
 
 EXPOSE 8000
 
