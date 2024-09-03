@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Group, Modal, NumberInput, Textarea } from "@mantine/core";
+import {
+  Button,
+  Group,
+  Modal,
+  NumberInput,
+  Select,
+  Textarea,
+} from "@mantine/core";
 import { DateInput } from "@mantine/dates";
 import { useForm } from "@mantine/form";
 import dayjs from "dayjs";
@@ -106,7 +113,6 @@ export default function RightsTransactionForm({
           key={form.key("totalAmount")}
           suffix={` ${companyBaseCurrency}`}
           decimalScale={2}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("totalAmount")}
         />
 
@@ -115,8 +121,14 @@ export default function RightsTransactionForm({
           withAsterisk
           label={t("Shares count")}
           key={form.key("count")}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("count")}
+        />
+
+        <Select
+          mt="md"
+          label={t("Type")}
+          data={["BUY", "SELL"]}
+          {...form.getInputProps("type")}
         />
 
         <NumberInput
@@ -126,7 +138,6 @@ export default function RightsTransactionForm({
           key={form.key("grossPricePerShare")}
           suffix={` ${companyBaseCurrency}`}
           decimalScale={2}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("grossPricePerShare")}
         />
 
@@ -137,7 +148,6 @@ export default function RightsTransactionForm({
           key={form.key("totalCommission")}
           suffix={` ${companyBaseCurrency}`}
           decimalScale={2}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("totalCommission")}
         />
 
@@ -148,7 +158,6 @@ export default function RightsTransactionForm({
           key={form.key("transactionDate")}
           valueFormat={dateFormat}
           defaultValue={new Date()}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("transactionDate")}
         />
 
@@ -163,7 +172,6 @@ export default function RightsTransactionForm({
               description={`${companyBaseCurrency} ${t(
                 "to",
               )} ${portfolioBaseCurrency}`}
-              // eslint-disable-next-line react/jsx-props-no-spreading
               {...form.getInputProps("exchangeRate")}
             />
             <Button
@@ -184,7 +192,6 @@ export default function RightsTransactionForm({
           mt="md"
           label={t("Notes")}
           key={form.key("notes")}
-          // eslint-disable-next-line react/jsx-props-no-spreading
           {...form.getInputProps("notes")}
         />
         <Group justify="space-between" mt="md">
