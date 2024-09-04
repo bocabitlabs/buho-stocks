@@ -55,7 +55,6 @@ class RightsViewSet(viewsets.ModelViewSet):
         self.delete_rights_update_company_stats(instance, company)
 
     def add_rights_update_company_stats(self, serializer, company):
-        logger.debug(f"Updating company stats for {company.name} after adding rights")
         transaction_date = datetime.strptime(
             serializer.data.get("transaction_date"), "%Y-%m-%d"
         )
@@ -67,8 +66,6 @@ class RightsViewSet(viewsets.ModelViewSet):
             )
 
     def delete_rights_update_company_stats(self, instance: RightsTransaction, company):
-        logger.debug(f"Updating company stats for {company.name} after adding rights")
-
         update_portfolio = self.request.query_params.get("updatePortfolio", False)
         if update_portfolio == "true":
             update_portfolio_stats.delay(

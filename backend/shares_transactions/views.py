@@ -55,7 +55,6 @@ class SharesViewSet(viewsets.ModelViewSet):
         self.delete_shares_update_company_stats(instance, company)
 
     def delete_shares_update_company_stats(self, instance: SharesTransaction, company):
-        logger.debug(f"Updating company stats for {company.name} after adding shares")
         update_portfolio = self.request.query_params.get("updatePortfolio", False)
         if update_portfolio == "true":
             update_portfolio_stats.delay(

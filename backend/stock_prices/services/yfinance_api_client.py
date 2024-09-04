@@ -104,18 +104,15 @@ class YFinanceApiClient:
         company = yf.Ticker(ticker, session=session)
         if not company:
             logger.warning(f"{ticker}: Company not found.")
-        logger.info(f"{ticker} company.")
         try:
             currency: str = company.fast_info["currency"]
             currency = currency.upper()
-            logger.info(f"{ticker} currency: {currency}")
             return currency
         except KeyError as error:
             logger.error(f"{ticker}: Currency not found.")
             raise error
 
     def convert_api_data_to_dict(self, api_data: Any) -> dict | None:
-        logger.debug(f"Converting API data to dict: {api_data}")
         result = api_data.sort_values("Date", ascending=False)
         dates_dict: dict = result.to_dict("index")
         if dates_dict == {}:
@@ -130,12 +127,7 @@ class YFinanceApiClient:
         try:
             currency = self.get_company_currency(ticker)
             result = yf.download(ticker, start=from_date, end=to_date, session=session)
-            logger.info(result)
             result_as_dict = self.convert_api_data_to_dict(result)
-            logger.info(
-                f"{ticker} ({from_date}/{to_date}) "
-                f"dates returned from YFinance API {result_as_dict}"
-            )
             return result_as_dict, currency
 
         except (IndexError, TypeError, KeyError) as error:

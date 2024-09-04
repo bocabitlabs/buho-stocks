@@ -74,24 +74,28 @@ class RightsTransactionCalculator:
         query = self._get_multiple_buy_transactions_query(year)
 
         transactions_calculator = TransactionCalculator()
-        total = transactions_calculator.calculate_transactions_amount(
+        total = transactions_calculator.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
         return total
 
     def calculate_accumulated_investment_until_year(self, year: int) -> Decimal:
-        """Get the total amount invested until a given year (included)
-
-        Returns:
-            [type]: [description]
-        """
         total: Decimal = Decimal(0)
+        # BUY
         query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
-
         transactions_calculator = TransactionCalculator()
-        total = transactions_calculator.calculate_transactions_amount(
+        buy_total = transactions_calculator.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
+        # SELL
+        query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
+        transactions_calculator = TransactionCalculator()
+        sell_total = transactions_calculator.calculate_investments(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+
+        total = buy_total - sell_total
+
         return total
 
     def get_accumulated_investment_until_current_year(self) -> Decimal:

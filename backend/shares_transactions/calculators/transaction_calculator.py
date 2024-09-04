@@ -120,10 +120,9 @@ class TransactionCalculator:
         Returns:
             Decimal: The total amount of all the transactions
         """
-        total: Decimal = Decimal(0)
+        total = Decimal(0)
         for transaction in transactions:
-            exchange_rate: Decimal = Decimal(1)
-            total = Decimal(0)
+            exchange_rate = Decimal(1)
             if use_portfolio_currency:
                 exchange_rate = transaction.exchange_rate
 
