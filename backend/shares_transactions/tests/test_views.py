@@ -100,7 +100,6 @@ class SharesTransactionsDetailTestCase(BaseApiTestCase):
 
         url = reverse("shares-detail", args=[self.instances[index].id])
         response = self.client.put(url, temp_data)
-        logger.debug(response.data)
         # Check status response
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(

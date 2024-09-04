@@ -1,17 +1,20 @@
 import datetime
 import logging
-from decimal import Decimal
-from functools import reduce
 
 from faker import Faker
 
 from buho_backend.tests.base_test_case import BaseApiTestCase
-from buho_backend.transaction_types import TransactionType
 from companies.tests.factory import CompanyFactory
 from shares_transactions.calculators.shares_transaction_calculator import (
     SharesTransactionCalculator,
 )
-from shares_transactions.tests.factory import SharesTransactionFactory
+from shares_transactions.tests import (
+    create_first_shares_sales_transaction,
+    create_first_shares_transaction,
+    create_second_shares_sales_transaction,
+    create_second_shares_transaction,
+    create_third_shares_transaction,
+)
 
 logger = logging.getLogger("buho_backend")
 
@@ -20,95 +23,85 @@ class SharesInvestedTestCase(BaseApiTestCase):
     def setUp(self):
         super().setUp()
         self.faker_obj = Faker()
-        # Create company
-        # Add shares
         self.company = CompanyFactory.create()
-        self.shares_count = 0
-        self.total_amount = 0
-        self.total_transactions = 0
-        self.years = [2018, 2020, 2021, datetime.date.today().year]
-        self.counts = [1, 2, 3, 4]
-        self.totalAmounts = [1, 2, 3, 4]
-        self.accumulated_counts = [1, 3, 6, 10]
-        self.prices = [Decimal(1), Decimal(2), Decimal(3), Decimal(4)]
-        self.exchange_rate = 0.5
-        self.commissions = [Decimal(1), Decimal(2), Decimal(3), Decimal(4)]
-        self.prices_times_counts = [
-            1 * self.exchange_rate,  # 50.5
-            2 * self.exchange_rate,  # 201
-            3 * self.exchange_rate,  # 451.5
-            4 * self.exchange_rate,  # 802
-        ]
-        for index in range(0, len(self.years)):
-            first_datetime = datetime.datetime.strptime(
-                f"{self.years[index]}-01-01", "%Y-%m-%d"
-            )
-            SharesTransactionFactory.create(
-                company=self.company,
-                gross_price_per_share_currency=self.company.base_currency,
-                total_commission_currency=self.company.base_currency,
-                count=self.counts[index],
-                type=TransactionType.BUY,
-                gross_price_per_share=self.prices[index],
-                exchange_rate=self.exchange_rate,
-                total_commission=self.commissions[index],
-                transaction_date=datetime.date(
-                    first_datetime.year, first_datetime.month, first_datetime.day
-                ),
-            )
-            self.shares_count += self.counts[index]
-            self.total_transactions += 1
 
-    # def setUp(self):
-    #     pass
+    def test_shares_get_accumulated_investment_until_current_year(self):
 
-    def test_calculate_invested_on_year(self):
-        index = 3
+        create_first_shares_transaction(self.company)
+        create_second_shares_transaction(self.company)
+
         utils = SharesTransactionCalculator(self.company.shares_transactions)
-        self.assertEqual(
-            utils.calculate_invested_on_year(self.years[index]),
-            self.prices_times_counts[index],
-        )
+        self.assertEqual(utils.get_accumulated_investment_until_current_year(), 235)
 
-        index = 0
+    def test_shares_get_accumulated_invested_for_two_transactions(self):
+
+        create_first_shares_transaction(self.company)
+        create_second_shares_transaction(self.company)
+        create_third_shares_transaction(self.company)
+
         utils = SharesTransactionCalculator(self.company.shares_transactions)
-        self.assertEqual(
-            utils.calculate_invested_on_year(self.years[index]),
-            self.prices_times_counts[index],
-        )
+        self.assertEqual(utils.get_accumulated_investment_until_current_year(), 415)
 
-    def test_get_accumulated_investment_until_current_year(self):
-        index = 3
+    def test_shares_get_accumulated_commission_for_two_transactions(self):
+
+        create_first_shares_transaction(self.company)
+        create_second_shares_transaction(self.company)
+
         utils = SharesTransactionCalculator(self.company.shares_transactions)
+
         self.assertEqual(
-            utils.get_accumulated_investment_until_current_year(),
-            reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
+            utils.calculate_total_commissions_until_year(datetime.date.today().year), 15
+        )
+        self.assertEqual(
+            utils.get_accumulated_investment_until_current_year()
+            + utils.calculate_total_commissions_until_year(datetime.date.today().year),
+            250,
         )
 
-    def test_calculate_invested_on_year_all(self):
-        index = 3
-        utils = SharesTransactionCalculator(
-            self.company.shares_transactions,
+    def test_shares_get_invested_on_year(self):
+
+        first_datetime = create_first_shares_transaction(self.company)
+        second_datetime = create_second_shares_transaction(self.company)
+        third_datetime = create_third_shares_transaction(self.company)
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+
+        self.assertEqual(utils.calculate_invested_on_year(first_datetime.year), 100 - 5)
+
+        self.assertEqual(
+            utils.calculate_invested_on_year(second_datetime.year), 150 - 10
         )
         self.assertEqual(
-            utils.calculate_invested_on_year(self.years[index]),
-            self.prices_times_counts[index],
+            utils.calculate_invested_on_year(third_datetime.year), 200 - 20
         )
 
-    def test_get_accumulated_investment_on_year(self):
-        index = 3
-        utils = SharesTransactionCalculator(
-            self.company.shares_transactions,
-        )
+    def test_shares_calculate_invested_on_year_all(self):
+
+        create_first_shares_transaction(self.company)
+        create_second_shares_transaction(self.company)
+        create_third_shares_transaction(self.company)
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        total = 450
+        commissions = 5 + 10 + 20
+        self.assertEqual(utils.calculate_invested_on_year(9999), total - commissions)
+
+    def test_shares_calculate_invested_accummulated_with_sales(self):
+
+        create_first_shares_transaction(self.company)  # 100 - 5
+        create_second_shares_transaction(self.company)  # 150 - 10
+        third_transaction_date = create_third_shares_transaction(
+            self.company
+        )  # 200 - 20
+        create_first_shares_sales_transaction(self.company)  # 100 - 5
+        create_second_shares_sales_transaction(self.company)  # 150 - 10
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        total = 415 - 235  # 180
+
         self.assertEqual(
-            utils.calculate_accumulated_investment_until_year(self.years[index]),
-            reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
-        )
-        index = 1
-        utils = SharesTransactionCalculator(
-            self.company.shares_transactions,
-        )
-        self.assertEqual(
-            utils.calculate_accumulated_investment_until_year(self.years[index]),
-            reduce(lambda a, b: a + b, self.prices_times_counts[: index + 1]),
+            utils.calculate_accumulated_investment_until_year(
+                third_transaction_date.year
+            ),
+            total,
         )

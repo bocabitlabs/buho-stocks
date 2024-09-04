@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
+import { Outlet, ScrollRestoration } from "react-router-dom";
 import {
   AppShell,
   Burger,
@@ -27,11 +27,6 @@ function Layout() {
   const [desktopOpened, { toggle: toggleDesktop }] = useDisclosure(true);
   const theme = useMantineTheme();
   const { colorScheme } = useMantineColorScheme();
-
-  const location = useLocation();
-  useEffect(() => {
-    close();
-  }, [location]);
 
   const { data, isLoading, error, isError } = useSettings();
 
@@ -113,7 +108,10 @@ function Layout() {
         </AppShell.Navbar>
         <AppShell.Main
           style={{
-            backgroundColor: colorScheme === "dark" ? "" : theme.colors.gray[0],
+            backgroundColor:
+              colorScheme === "dark"
+                ? theme.colors.gray[9]
+                : theme.colors.gray[0],
           }}
         >
           <Outlet />

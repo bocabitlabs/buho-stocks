@@ -54,7 +54,6 @@ class DividendsViewSet(viewsets.ModelViewSet):
         self.delete_dividends_update_company_stats(instance, company)
 
     def add_dividends_update_company_stats(self, serializer, company):
-        logger.debug(f"Updating company stats for {company.name} after adding dividend")
         transaction_date = datetime.strptime(
             serializer.data.get("transaction_date"), "%Y-%m-%d"
         )
@@ -67,8 +66,6 @@ class DividendsViewSet(viewsets.ModelViewSet):
             )
 
     def delete_dividends_update_company_stats(self, instance, company):
-        logger.debug(f"Updating company stats for {company.name} after adding dividend")
-
         update_portfolio = self.request.query_params.get("updatePortfolio", False)
 
         if update_portfolio == "true":

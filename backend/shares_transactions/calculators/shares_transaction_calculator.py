@@ -108,13 +108,13 @@ class SharesTransactionCalculator:
         # BUY
         buy_query = self._get_multiple_buy_transactions_query(year)
         transactions_calculator = TransactionCalculator()
-        buy_total = transactions_calculator.calculate_transactions_amount(
+        buy_total = transactions_calculator.calculate_investments(
             buy_query, use_portfolio_currency=self.use_portfolio_currency
         )
         # SELL
         sell_query = self._get_multiple_sell_transactions_query(year)
         transactions_calculator = TransactionCalculator()
-        sell_total = transactions_calculator.calculate_transactions_amount(
+        sell_total = transactions_calculator.calculate_investments(
             sell_query, use_portfolio_currency=self.use_portfolio_currency
         )
 
@@ -152,13 +152,13 @@ class SharesTransactionCalculator:
         # BUY
         query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
         transactions_calculator = TransactionCalculator()
-        buy_total = transactions_calculator.calculate_transactions_amount(
+        buy_total = transactions_calculator.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
         # SELL
         query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
         transactions_calculator = TransactionCalculator()
-        sell_total = transactions_calculator.calculate_transactions_amount(
+        sell_total = transactions_calculator.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
 
@@ -167,6 +167,11 @@ class SharesTransactionCalculator:
         return total
 
     def get_accumulated_investment_until_current_year(self) -> Decimal:
+        year = date.today().year
+        total = self.calculate_accumulated_investment_until_year(year)
+        return total
+
+    def get_accumulated_commission_until_current_year(self) -> Decimal:
         year = date.today().year
         total = self.calculate_accumulated_investment_until_year(year)
         return total
@@ -188,7 +193,11 @@ class SharesTransactionCalculator:
             if item.type == TransactionType.BUY:
                 total += item.count
             else:
-                total -= item.count
+                # If its a sell transaction but the count is possitive
+                if item.count > 0:
+                    total -= item.count
+                else:
+                    total += item.count
         return total
 
     def calculate_shares_count_on_year(self, year: int) -> int:
@@ -205,10 +214,11 @@ class SharesTransactionCalculator:
         query = self._get_multiple_transactions_query(year)
 
         for item in query:
-            if item.type == TransactionType.BUY:
-                total += item.count
-            else:
+            # If its a sell transaction but the count is possitive
+            if item.type == TransactionType.SELL and item.count > 0:
                 total -= item.count
+                continue
+            total += item.count
         return total
 
     def get_shares_count_until_current_year(self) -> int:
@@ -216,14 +226,43 @@ class SharesTransactionCalculator:
         total = self.calculate_shares_count_until_year(year)
         return total
 
-    def calculate_accumulated_return_from_sales_until_year(self, year: int) -> Decimal:
+    def calculate_total_sales_until_year(self, year: int) -> Decimal:
         total: Decimal = Decimal(0)
         if year == settings.YEAR_FOR_ALL:
             year = date.today().year
+
         query = self._get_multiple_sell_transactions_query(year, use_accumulated=True)
+
         transactions_utils = TransactionCalculator()
-        total = transactions_utils.calculate_transactions_amount(
+        total = transactions_utils.calculate_investments(
             query, use_portfolio_currency=self.use_portfolio_currency
         )
         # logger.debug(f"Total accumulated return from sales: {total}")
+        return total
+
+    def calculate_total_investments_until_year(self, year: int) -> Decimal:
+        total: Decimal = Decimal(0)
+        if year == settings.YEAR_FOR_ALL:
+            year = date.today().year
+
+        query = self._get_multiple_buy_transactions_query(year, use_accumulated=True)
+
+        transactions_utils = TransactionCalculator()
+        total = transactions_utils.calculate_investments(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
+        # logger.debug(f"Total accumulated return from sales: {total}")
+        return total
+
+    def calculate_total_commissions_until_year(self, year: int) -> Decimal:
+        total: Decimal = Decimal(0)
+        if year == settings.YEAR_FOR_ALL:
+            year = date.today().year
+
+        query = self._get_multiple_transactions_query(year, use_accumulated=True)
+
+        transactions_utils = TransactionCalculator()
+        total = transactions_utils.calculate_commissions(
+            query, use_portfolio_currency=self.use_portfolio_currency
+        )
         return total

@@ -1,6 +1,6 @@
 FROM python:3.10-slim
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/
 
 ENV PYTHONPATH "${PYTHONPATH}:/usr/src"
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -10,8 +10,8 @@ ENV PYTHONUNBUFFERED 1
 ENV POETRY_VERSION 1.5.0
 ENV POETRY_HOME /opt/poetry
 ENV POETRY_VIRTUALENVS_IN_PROJECT true
-ENV POETRY_CACHE_DIR ${WORKDIR}/.cache
-ENV VIRTUAL_ENVIRONMENT_PATH ${WORKDIR}/.venv
+ENV POETRY_CACHE_DIR /usr/src/.cache
+ENV VIRTUAL_ENVIRONMENT_PATH /usr/src/.venv
 
 LABEL org.opencontainers.image.authors='renefernandez@duck.com' \
       org.opencontainers.image.url='https://github.com/bocabitlabs/buho-stocks/pkgs/container/buho-stocks' \
@@ -31,7 +31,7 @@ COPY poetry.lock ./
 # Using Poetry to install dependencies without requiring the project main files to be present
 RUN pip install poetry==${POETRY_VERSION} && poetry install --only main --no-root --no-directory
 
-COPY ./backend $WORKDIR
+COPY ./backend /usr/src/app
 COPY ./etc /usr/src/etc
 
 RUN chmod +x /usr/src/etc/entrypoint.sh

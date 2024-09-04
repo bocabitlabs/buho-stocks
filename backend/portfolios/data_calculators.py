@@ -13,7 +13,7 @@ class PortfolioDataCalculator:
 
     def get_portfolio_first_year(self) -> int | None:
         query = SharesTransaction.objects.filter(
-            company__portfolio=self.portfolio.id, company__is_closed=False
+            company__portfolio=self.portfolio.id
         ).order_by("transaction_date")
         if query.exists():
             transaction = query[0]

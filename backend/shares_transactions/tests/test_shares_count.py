@@ -1,6 +1,5 @@
 import datetime
 import logging
-from decimal import Decimal
 
 from faker import Faker
 
@@ -22,105 +21,362 @@ class SharesCountTestCase(BaseApiTestCase):
         # Create company
         # Add shares
         self.company = CompanyFactory.create()
-        self.shares_count = 0
-        self.total_amount = 0
-        self.total_transactions = 0
-        self.years = [2018, 2020, 2021, datetime.date.today().year]
-        self.counts = [10, 20, 30, 40, 50]
-        self.accumulated_counts = [10, 30, 60, 100, 150]
-        self.prices = [Decimal(10), Decimal(20), Decimal(30), Decimal(40), Decimal(50)]
-        self.exchange_rate = 0.5
-        self.commissions = [Decimal(1), Decimal(2), Decimal(3), Decimal(4), Decimal(5)]
-        self.prices_times_counts = [
-            10 * 10 * self.exchange_rate + self.exchange_rate * 1,
-            20 * 20 * self.exchange_rate + self.exchange_rate * 2,
-            30 * 30 * self.exchange_rate + self.exchange_rate * 3,
-            40 * 40 * self.exchange_rate + self.exchange_rate * 4,
-            50 * 50 * self.exchange_rate + self.exchange_rate * 5,
-        ]
-        self.sell_counts = [1, 2, 3, 4, 5]
-        self.sell_prices = [
-            Decimal(5),
-            Decimal(10),
-            Decimal(15),
-            Decimal(20),
-            Decimal(25),
-        ]
-        self.accumulated_counts_after_sell = [9, 27, 54, 90, 135]
 
-        for index in range(0, len(self.years)):
-            first_datetime = datetime.datetime.strptime(
-                f"{self.years[index]}-01-01", "%Y-%m-%d"
-            )
-            SharesTransactionFactory.create(
-                company=self.company,
-                gross_price_per_share_currency=self.company.base_currency,
-                total_commission_currency=self.company.base_currency,
-                count=self.counts[index],
-                type=TransactionType.BUY,
-                gross_price_per_share=self.prices[index],
-                exchange_rate=self.exchange_rate,
-                total_commission=self.commissions[index],
-                transaction_date=datetime.date(
-                    first_datetime.year, first_datetime.month, first_datetime.day
-                ),
-            )
-            self.shares_count += self.counts[index]
-            self.total_transactions += 1
+    def test_get_shares_count_for_one_transaction(self):
 
-    # def setUp(self):
-    #     pass
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
 
-    def test_get_transactions_count(self):
-        self.assertEqual(
-            len(self.company.shares_transactions.all()), self.total_transactions
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=0,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
         )
 
-    def test_get_shares_count_for_all(self):
         utils = SharesTransactionCalculator(self.company.shares_transactions)
-        self.assertEqual(utils.get_shares_count_until_current_year(), self.shares_count)
+        self.assertEqual(utils.get_shares_count_until_current_year(), 10)
+
+    def test_get_shares_count_for_two_transactions(self):
+
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=0,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=0,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(utils.get_shares_count_until_current_year(), 20)
 
     def test_get_shares_count_for_year(self):
-        for index in range(0, len(self.years)):
-            utils = SharesTransactionCalculator(self.company.shares_transactions)
-            self.assertEqual(
-                utils.calculate_shares_count_on_year(self.years[index]),
-                self.counts[index],
-            )
 
-    def test_get_shares_count_with_sells(self):
-        for index in range(0, len(self.years)):
-            first_datetime = datetime.datetime.strptime(
-                f"{self.years[index]}-01-01", "%Y-%m-%d"
-            )
-            SharesTransactionFactory.create(
-                company=self.company,
-                gross_price_per_share=self.sell_prices[index],
-                gross_price_per_share_currency=self.company.base_currency,
-                total_commission=self.commissions[index],
-                total_commission_currency=self.company.base_currency,
-                count=self.sell_counts[index],
-                type=TransactionType.SELL,
-                exchange_rate=self.exchange_rate,
-                transaction_date=datetime.date(
-                    first_datetime.year, first_datetime.month, first_datetime.day
-                ),
-            )
-            self.shares_count -= self.sell_counts[index]
-            self.total_transactions += 1
-        self.assertEqual(
-            len(self.company.shares_transactions.all()), self.total_transactions
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
         )
 
-        # utils = SharesTransactionCalculator(self.company.shares_transactions)
-        # self.assertEqual(
-        #     utils.get_accumulated_investment_until_current_year(), self.shares_count
-        # )
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
 
-        for index in range(0, len(self.years)):
-            utils = SharesTransactionCalculator(self.company.shares_transactions)
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
 
-            self.assertEqual(
-                utils.calculate_shares_count_until_year(self.years[index]),
-                self.accumulated_counts_after_sell[index],
-            )
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(
+            utils.calculate_shares_count_on_year(first_datetime.year),
+            10,
+        )
+        self.assertEqual(
+            utils.calculate_shares_count_on_year(second_datetime.year),
+            10,
+        )
+
+    def test_get_shares_count_on_year_accumulated(self):
+
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(
+            utils.calculate_shares_count_until_year(first_datetime.year),
+            10,
+        )
+        self.assertEqual(
+            utils.calculate_shares_count_until_year(second_datetime.year),
+            20,
+        )
+
+    def test_get_shares_count_with_positive_sells(self):
+
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.SELL,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(
+            utils.calculate_shares_count_on_year(first_datetime.year),
+            10,
+        )
+        self.assertEqual(
+            utils.calculate_shares_count_on_year(second_datetime.year),
+            -10,
+        )
+
+    def test_get_shares_count_with_negative_sells(self):
+
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=-10,
+            total_amount=100,
+            type=TransactionType.SELL,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(
+            utils.calculate_shares_count_on_year(first_datetime.year),
+            10,
+        )
+        self.assertEqual(
+            utils.calculate_shares_count_on_year(second_datetime.year),
+            -10,
+        )
+
+    def test_get_shares_count_with_positive_sells_accumulated(self):
+
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.SELL,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(
+            utils.calculate_shares_count_until_year(first_datetime.year),
+            10,
+        )
+        self.assertEqual(
+            utils.calculate_shares_count_until_year(second_datetime.year),
+            0,
+        )
+
+    def test_get_shares_count_with_negative_sells_accumulated(self):
+
+        first_datetime = datetime.datetime.strptime("2021-01-01", "%Y-%m-%d")
+        second_datetime = datetime.datetime.strptime(
+            f"{datetime.date.today().year}-01-01", "%Y-%m-%d"
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=10,
+            total_amount=100,
+            type=TransactionType.BUY,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                first_datetime.year, first_datetime.month, first_datetime.day
+            ),
+        )
+
+        SharesTransactionFactory.create(
+            company=self.company,
+            gross_price_per_share_currency=self.company.base_currency,
+            total_commission_currency=self.company.base_currency,
+            count=-10,
+            total_amount=100,
+            type=TransactionType.SELL,
+            gross_price_per_share=10,
+            exchange_rate=1,
+            total_commission=5,
+            transaction_date=datetime.date(
+                second_datetime.year, second_datetime.month, second_datetime.day
+            ),
+        )
+
+        utils = SharesTransactionCalculator(self.company.shares_transactions)
+        self.assertEqual(
+            utils.calculate_shares_count_until_year(first_datetime.year),
+            20,
+        )
+        self.assertEqual(
+            utils.calculate_shares_count_until_year(second_datetime.year),
+            10,
+        )

@@ -92,13 +92,11 @@ export const fetchCompaniesAll = async (
 
 export function useCompaniesAll(
   portfolioId: number | undefined,
-  sorting?: MRT_SortingState,
-  pagination?: MRT_PaginationState,
   closed: boolean = false,
   options?: QueryOptions<ICompany[], Error>,
 ) {
   return useQuery<ICompany[], Error>({
-    queryKey: ["portfolios", portfolioId, closed],
+    queryKey: ["allCompanies", portfolioId, closed],
     queryFn: () => fetchCompaniesAll(portfolioId, closed),
     ...options,
   });
