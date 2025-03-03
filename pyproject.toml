@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "buho-stocks"
-version = "1.0.4"
+version = "1.0.5"
 description = "Application to manage and track a stocks portfolio with dividends and return for a Buy & Hold investmentinvestment strategy."
 authors = ["Rene Fernandez <renefernandez@duck.com>"]
 license = "GPL-3.0-or-later"
@@ -31,7 +31,7 @@ redis = "^5.0.1"
 requests = "^2.31.0"
 requests-cache = "^1.1.0"
 sentry-sdk = "2.8.0"
-yfinance = "^0.2.40"
+yfinance = "0.2.54"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.4"
