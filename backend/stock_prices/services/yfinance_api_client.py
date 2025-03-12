@@ -41,7 +41,7 @@ user_agent_rotator = UserAgent(
 user_agents = user_agent_rotator.get_user_agents()
 user_agent = user_agent_rotator.get_random_user_agent()
 
-session = requests_cache.CachedLimiterSession(
+session = CachedLimiterSession(
     cache_name="yfinance.cache",
     limiter=Limiter(
         RequestRate(2, Duration.SECOND * 5)
