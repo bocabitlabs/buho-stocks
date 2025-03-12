@@ -29,10 +29,12 @@ class YFinanceExchangeClient:
         # Get the close value for the first key of the dict
         logger.debug((exchange_rate_dict[0]))
         if exchange_rate_dict and exchange_rate_dict[0]:
-            values = exchange_rate_dict[0].keys()
-            logger.debug(values)
-            date_timestamp = list(values)[0]
-            value = exchange_rate_dict[0][date_timestamp]["Close"]
+            first_column = list(exchange_rate_dict[0].keys())[
+                0
+            ]  # Get the first column name
+            logger.debug(first_column)
+            value = exchange_rate_dict[0][first_column][("Close", ticker)]
+
             # Return as formatted dict
             parsed_dict = self.exchange_rate_as_dict(
                 from_currency, to_currency, exchange_date.strftime("%Y-%m-%d"), value
