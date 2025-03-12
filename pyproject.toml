@@ -32,6 +32,8 @@ requests = "^2.31.0"
 requests-cache = "^1.1.0"
 sentry-sdk = "2.8.0"
 yfinance = "0.2.54"
+random-user-agent = "^1.0.1"
+requests-ratelimiter = "^0.7.0"
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.4"
