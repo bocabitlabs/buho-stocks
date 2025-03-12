@@ -1,6 +1,6 @@
 import logging
 import time
-from typing import Any, Tuple, TypedDict
+from typing import Any, Tuple
 
 import requests_cache
 import yfinance as yf
@@ -55,14 +55,6 @@ session.headers["User-agent"] = user_agent
 logger = logging.getLogger("buho_backend")
 
 
-class TypedYFinanceStockPrice(TypedDict):
-    Open: float
-    High: float
-    Low: float
-    Close: float
-    Volume: int
-
-
 class YFinanceApiClient:
     def __init__(self, wait_time=2):
         self.wait_time = wait_time
@@ -115,7 +107,7 @@ class YFinanceApiClient:
         ticker: str,
         currency: str,
         price_date: Timestamp,
-        element_values: TypedYFinanceStockPrice,
+        element_values: dict,
     ) -> TypedStockPrice:
         price = element_values["Close"]
         if currency == "GBP":
@@ -159,9 +151,7 @@ class YFinanceApiClient:
 
     def get_company_data_between_dates(
         self, ticker: str, from_date: str, to_date: str
-    ) -> (
-        tuple[dict[Timestamp, TypedYFinanceStockPrice] | None, str] | Tuple[None, None]
-    ):
+    ) -> tuple[dict[Timestamp, dict] | None, str] | Tuple[None, None]:
         try:
             currency = self.get_company_currency(ticker)
             result = yf.download(ticker, start=from_date, end=to_date, session=session)
