@@ -6,14 +6,52 @@ import requests_cache
 import yfinance as yf
 from django.conf import settings
 from pandas import Timestamp  # type: ignore
+from random_user_agent.params import OperatingSystem, SoftwareName
+from random_user_agent.user_agent import UserAgent
 from redis import Redis
+from requests import Session
+from requests_cache import CacheMixin
+from requests_ratelimiter import (
+    Duration,
+    Limiter,
+    LimiterMixin,
+    MemoryQueueBucket,
+    RequestRate,
+)
 
 from stock_prices.services.types import TypedStockPrice
+
+
+class CachedLimiterSession(CacheMixin, LimiterMixin, Session):
+    pass
+
 
 connection = Redis(host=settings.REDIS_HOSTNAME, port=settings.REDIS_PORT)
 backend = requests_cache.RedisCache(connection=connection)
 
-session = requests_cache.CachedSession("yfinance.cache", backend=backend)
+software_names = [SoftwareName.CHROME.value, SoftwareName.FIREFOX.value]
+operating_systems = [
+    OperatingSystem.WINDOWS.value,
+    OperatingSystem.LINUX.value,
+    OperatingSystem.MAC_OS_X.value,
+]
+user_agent_rotator = UserAgent(
+    software_names=software_names, operating_systems=operating_systems, limit=100
+)
+user_agents = user_agent_rotator.get_user_agents()
+user_agent = user_agent_rotator.get_random_user_agent()
+
+session = requests_cache.CachedLimiterSession(
+    cache_name="yfinance.cache",
+    limiter=Limiter(
+        RequestRate(2, Duration.SECOND * 5)
+    ),  # max 2 requests per 5 seconds
+    bucket_class=MemoryQueueBucket,
+    backend=backend,
+)
+
+session.headers["User-agent"] = user_agent
+
 logger = logging.getLogger("buho_backend")
 
 
