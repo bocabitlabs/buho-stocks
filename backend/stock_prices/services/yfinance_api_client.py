@@ -109,7 +109,7 @@ class YFinanceApiClient:
         price_date: Timestamp,
         element_values: dict,
     ) -> TypedStockPrice:
-        price = element_values["Close"]
+        price = element_values[("Close", ticker)]
         if currency == "GBP":
             price = self.convert_price_to_gbp(price)
 

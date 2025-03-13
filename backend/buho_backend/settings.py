@@ -270,29 +270,13 @@ if config("LOG_TO_FILE", default=False, cast=bool):
         },
         "handlers": {
             "console": {"class": "logging.StreamHandler", "formatter": "console"},
-            "debug_file": {
-                "level": "DEBUG",
+            "file": {
+                "level": LOG_LEVEL,
                 "class": "logging.handlers.RotatingFileHandler",
                 "formatter": "file",
                 "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
                 "backupCount": 10,
-                "filename": os.path.join(LOGS_ROOT, "debug.log"),
-            },
-            "info_file": {
-                "level": "INFO",
-                "class": "logging.handlers.RotatingFileHandler",
-                "formatter": "file",
-                "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
-                "backupCount": 10,
-                "filename": os.path.join(LOGS_ROOT, "info.log"),
-            },
-            "error_file": {
-                "level": "ERROR",
-                "class": "logging.handlers.RotatingFileHandler",
-                "formatter": "file",
-                "maxBytes": 15728640,  # 1024 * 1024 * 15B = 15MB
-                "backupCount": 10,
-                "filename": os.path.join(LOGS_ROOT, "error.log"),
+                "filename": os.path.join(LOGS_ROOT, "buho_stocks.log"),
             },
         },
         "loggers": {
