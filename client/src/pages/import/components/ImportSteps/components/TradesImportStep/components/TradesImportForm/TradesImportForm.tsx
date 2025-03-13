@@ -35,7 +35,7 @@ export default function TradesImportForm({
   portfolio,
   trade,
   onSubmitCallback,
-}: Props) {
+}: Readonly<Props>) {
   const { t } = useTranslation();
   const dateFormat = "YYYY-MM-DD";
   const [formSent, setFormSent] = useState(false);

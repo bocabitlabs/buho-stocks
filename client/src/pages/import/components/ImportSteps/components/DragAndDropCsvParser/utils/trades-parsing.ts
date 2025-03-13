@@ -81,10 +81,28 @@ function parseTrades(tradesRows: (string | number)[][]) {
     const companyISIN = line[17].toString();
     const market = line[18].toString();
 
-    const newDate = new Date(date);
-    const year = newDate.getFullYear();
-    const month = newDate.getMonth() + 1;
-    const day = newDate.getDay();
+    let parsedDate;
+    if (typeof date === "string" && date.includes(",")) {
+      // Parse date format "2025-02-24, 05:42:12"
+      const dateTimeParts = date.split(", ");
+      const dateParts = dateTimeParts[0].split("-");
+      parsedDate = new Date(
+        parseInt(dateParts[0]), // year
+        parseInt(dateParts[1]) - 1, // month (0-based)
+        parseInt(dateParts[2]), // day
+      );
+    } else {
+      // Use the existing date parsing logic
+      parsedDate = new Date(date);
+    }
+
+    // Use the parsed date
+    const year = parsedDate.getFullYear();
+    const month = parsedDate.getMonth() + 1;
+    const day = parsedDate.getDate();
+
+    console.log("Parsed date is: ", `${year}-${month}-${day}`);
+
     const description = `${ticker} (${companyISIN}) - ${companyName}. ${count} shares at ${price} ${currency}. Total ${total} ${currency}. Commission ${commission} ${currency}. Total with commission ${totalWithCommission} ${currency}`;
 
     const parsedRow = {
