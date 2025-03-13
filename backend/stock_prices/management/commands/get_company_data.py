@@ -23,6 +23,22 @@ class Command(BaseCommand):
         self.stdout.write(f"Getting data for {ticker}")
 
         api_client = YFinanceApiClient()
-        currency = api_client.get_company_data_between_dates(ticker, from_date, to_date)
+        results, currency = api_client.get_company_data_between_dates(
+            ticker, from_date, to_date
+        )
+        self.stdout.write(self.style.SUCCESS(f"{ticker} Results: {results}"))
 
-        self.stdout.write(self.style.SUCCESS(f"{ticker} Data: {currency}"))
+        for price_date in results:
+            element_values = results[price_date]
+
+            first_date = list(results.keys())[0]
+            self.stdout.write(self.style.SUCCESS(f"{ticker} first_date: {results}"))
+
+            yapi = YFinanceApiClient()
+
+            data = yapi.get_formatted_price_dict(
+                ticker, currency, first_date, element_values
+            )
+
+            self.stdout.write(self.style.SUCCESS(f"{ticker} Currency: {currency}"))
+            self.stdout.write(self.style.SUCCESS(f"{ticker} Data: {data}"))
